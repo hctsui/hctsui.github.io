@@ -1102,19 +1102,6 @@
         "en": "MATH2020 Advanced Calculus II",
         "zh": "MATH2020 高等微積分（二）"
       }
-    },
-    {
-      "id": "teaching-9-test",
-      "type": "teaching",
-      "order": 9,
-      "term": {
-        "en": "Fall 2026",
-        "zh": "11111"
-      },
-      "course": {
-        "en": "test",
-        "zh": "test"
-      }
     }
   ]
 }
