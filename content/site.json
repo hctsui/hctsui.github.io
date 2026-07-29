@@ -2,7 +2,56 @@
   "schema_version": 2,
   "settings": {
     "timezone": "Asia/Tokyo",
-    "homepage_publication_limit": 2
+    "homepage_publication_limit": 2,
+    "content_groups": {
+      "publication": [
+        {
+          "id": "journal-articles",
+          "label": {
+            "en": "Journal Articles",
+            "zh": "期刊論文"
+          },
+          "order": 0,
+          "preset": true
+        },
+        {
+          "id": "preprints",
+          "label": {
+            "en": "Preprints",
+            "zh": "預印本"
+          },
+          "order": 1,
+          "preset": true
+        },
+        {
+          "id": "survey-papers",
+          "label": {
+            "en": "Survey Papers",
+            "zh": "綜述論文"
+          },
+          "order": 2,
+          "preset": true
+        }
+      ],
+      "teaching": [
+        {
+          "id": "national-tsing-hua-university",
+          "label": {
+            "en": "National Tsing Hua University",
+            "zh": "國立清華大學"
+          },
+          "order": 0
+        },
+        {
+          "id": "texas",
+          "label": {
+            "en": "Texas",
+            "zh": "德州"
+          },
+          "order": 1
+        }
+      ]
+    }
   },
   "activities": [
     {
@@ -822,7 +871,8 @@
           },
           "url": "https://drive.google.com/file/d/1-7W2H3vzHCM4E3asVgfFNbzuP1ojudmO/view?usp=drive_link"
         }
-      ]
+      ],
+      "group_id": "preprints"
     },
     {
       "id": "publication-2504.18879-2",
@@ -870,7 +920,8 @@
           },
           "url": "https://drive.google.com/file/d/1fzSgTiE4V_rNHtDgoTLtZVMoaWrTHBAx/view?usp=drive_link"
         }
-      ]
+      ],
+      "group_id": "preprints"
     },
     {
       "id": "publication-2603.10376-3",
@@ -926,7 +977,8 @@
       "homepage_authors_html": {
         "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
         "zh": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>"
-      }
+      },
+      "group_id": "preprints"
     },
     {
       "id": "publication-2604.03618-4",
@@ -982,7 +1034,8 @@
       "homepage_authors_html": {
         "en": "<strong>Hung-Chun Tsui</strong>",
         "zh": "<strong>Hung-Chun Tsui</strong>"
-      }
+      },
+      "group_id": "preprints"
     }
   ],
   "teaching": [
@@ -997,6 +1050,15 @@
       "course": {
         "en": "MATH2410 Algebra I",
         "zh": "MATH2410 代數（一）"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1010,6 +1072,15 @@
       "course": {
         "en": "MATH2420 Algebra II",
         "zh": "MATH2420 代數（二）"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1023,6 +1094,15 @@
       "course": {
         "en": "MATH2870 Discrete Mathematics",
         "zh": "MATH2870 離散數學"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1036,6 +1116,15 @@
       "course": {
         "en": "MATH3450 Cryptography",
         "zh": "MATH3450 密碼學"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1049,6 +1138,15 @@
       "course": {
         "en": "MATH1410 Linear Algebra I",
         "zh": "MATH1410 線性代數（一）"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1062,6 +1160,15 @@
       "course": {
         "en": "MATH1420 Linear Algebra II",
         "zh": "MATH1420 線性代數（二）"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1075,6 +1182,15 @@
       "course": {
         "en": "MATH3050 Complex Analysis",
         "zh": "MATH3050 複變數函數論"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1088,6 +1204,15 @@
       "course": {
         "en": "MATH2010 Advanced Calculus I",
         "zh": "MATH2010 高等微積分（一）"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
       }
     },
     {
@@ -1101,6 +1226,37 @@
       "course": {
         "en": "MATH2020 Advanced Calculus II",
         "zh": "MATH2020 高等微積分（二）"
+      },
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "group_id": "national-tsing-hua-university",
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      }
+    },
+    {
+      "id": "teaching-0-haha",
+      "type": "teaching",
+      "group_id": "texas",
+      "order": 0,
+      "role": {
+        "en": "man",
+        "zh": "人"
+      },
+      "institution": {
+        "en": "Texas",
+        "zh": "德州"
+      },
+      "term": {
+        "en": "2027",
+        "zh": "2027"
+      },
+      "course": {
+        "en": "HAHA",
+        "zh": "HAHA"
       }
     }
   ]

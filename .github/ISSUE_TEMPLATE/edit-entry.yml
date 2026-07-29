@@ -124,6 +124,7 @@ body:
       options:
         - "Keep unchanged / 維持不變"
         - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
+        - "Texas / 德州 [texas]"
         - "Other / 其他（建立新機構大標題）"
       default: 0
   - type: input
