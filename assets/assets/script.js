@@ -1,45 +1,35 @@
-const menuButton = document.querySelector('.menu-button');
-const nav = document.querySelector('.site-nav');
-
-if (menuButton && nav) {
-  menuButton.addEventListener('click', () => {
-    const isOpen = nav.classList.toggle('open');
-    menuButton.setAttribute('aria-expanded', String(isOpen));
+const menuButton=document.querySelector('.menu-button');
+const nav=document.querySelector('.site-nav');
+if(menuButton&&nav){
+  menuButton.addEventListener('click',()=>{
+    const open=nav.classList.toggle('open');
+    menuButton.setAttribute('aria-expanded',String(open));
   });
-
-  nav.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      nav.classList.remove('open');
-      menuButton.setAttribute('aria-expanded', 'false');
-    });
-  });
+  nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+    nav.classList.remove('open');
+    menuButton.setAttribute('aria-expanded','false');
+  }));
 }
 
-const year = document.querySelector('#year');
-if (year) year.textContent = new Date().getFullYear();
+const toggle=document.querySelector('.language-toggle');
+const enNodes=document.querySelectorAll('[data-en]');
+const zhNodes=document.querySelectorAll('[data-zh]');
 
-const languageToggle = document.querySelector('.language-toggle');
-const englishNodes = document.querySelectorAll('[data-en]');
-const chineseNodes = document.querySelectorAll('[data-zh]');
-
-function setLanguage(language) {
-  const useChinese = language === 'zh';
-  document.documentElement.lang = useChinese ? 'zh-Hant' : 'en';
-  englishNodes.forEach((node) => { node.hidden = useChinese; });
-  chineseNodes.forEach((node) => { node.hidden = !useChinese; });
-
-  if (languageToggle) {
-    languageToggle.textContent = useChinese ? 'English' : '中文';
-    languageToggle.setAttribute('aria-label', useChinese ? 'Switch to English' : '切換至中文版');
+function applyLanguage(lang){
+  const zh=lang==='zh';
+  enNodes.forEach(el=>el.hidden=zh);
+  zhNodes.forEach(el=>el.hidden=!zh);
+  document.documentElement.lang=zh?'zh-Hant':'en';
+  if(toggle){
+    toggle.textContent=zh?'English':'中文';
+    toggle.setAttribute('aria-label',zh?'Switch to English':'切換至中文版');
   }
-
-  localStorage.setItem('site-language', useChinese ? 'zh' : 'en');
+  localStorage.setItem('site-language',lang);
 }
+applyLanguage(localStorage.getItem('site-language')||'en');
+if(toggle) toggle.addEventListener('click',()=>{
+  applyLanguage(document.documentElement.lang==='zh-Hant'?'en':'zh');
+});
 
-if (languageToggle) {
-  languageToggle.addEventListener('click', () => {
-    setLanguage(document.documentElement.lang === 'zh-Hant' ? 'en' : 'zh');
-  });
-}
-
-setLanguage(localStorage.getItem('site-language') || 'en');
+const year=document.querySelector('#year');
+if(year) year.textContent=new Date().getFullYear();
