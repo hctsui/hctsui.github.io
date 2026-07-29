@@ -1,0 +1,78 @@
+name: Move expired Upcoming entries
+
+on:
+  schedule:
+    # 00:15 in Japan/Taiwan time (15:15 UTC on the previous date)
+    - cron: "15 15 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: website-content-manager
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-upcoming:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out cms branch
+        uses: actions/checkout@v4
+        with:
+          ref: cms
+          fetch-depth: 0
+
+      - name: Rebuild using today's date
+        run: |
+          python3 tools/build_site.py
+          python3 tools/build_catalog.py
+          python3 tools/validate_site.py
+
+      - name: Commit only when something expired
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CONTENT-CATALOG.md \
+            index.html cv.html publications.html activities.html teaching.html \
+            zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No Upcoming entry changed today."
+          else
+            git commit -m "Move expired Upcoming entries"
+            git push origin HEAD:cms
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare public website
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+
+          rm -rf _site
+          mkdir -p _site
+          cp index.html cv.html publications.html activities.html teaching.html photo.jpg _site/
+          cp -R assets zh admin _site/
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy website
+        if: steps.commit.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
