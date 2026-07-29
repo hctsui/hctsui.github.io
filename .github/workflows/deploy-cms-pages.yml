@@ -50,15 +50,37 @@ jobs:
       - name: Compile PDF CV
         uses: xu-cheng/latex-action@v4
         with:
-          root_file: cv/Hung-Chun-Tsui-CV.tex
+          working_directory: cv
+          root_file: Hung-Chun-Tsui-CV.tex
           texlive_version: 2025
           os: debian
 
       - name: Stage PDF for the website
+        shell: bash
         run: |
-          test -s cv/Hung-Chun-Tsui-CV.pdf
+          set -euo pipefail
+
+          PDF_PATH=""
+          for candidate in             "cv/Hung-Chun-Tsui-CV.pdf"             "Hung-Chun-Tsui-CV.pdf"
+          do
+            if [ -s "$candidate" ]; then
+              PDF_PATH="$candidate"
+              break
+            fi
+          done
+
+          if [ -z "$PDF_PATH" ]; then
+            echo "::error::LaTeX compilation completed, but the PDF could not be found."
+            echo "Files produced near the repository root:"
+            find . -maxdepth 3 -type f \( -name '*.pdf' -o -name '*.log' \) -print
+            exit 1
+          fi
+
           mkdir -p files
-          cp cv/Hung-Chun-Tsui-CV.pdf files/Hung-Chun-Tsui-CV.pdf
+          cp "$PDF_PATH" files/Hung-Chun-Tsui-CV.pdf
+          test -s files/Hung-Chun-Tsui-CV.pdf
+          echo "Staged PDF from: $PDF_PATH"
+          ls -lh files/Hung-Chun-Tsui-CV.pdf
 
       - name: Prepare public website
         run: |
