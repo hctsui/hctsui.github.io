@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: hctsui-website-update
+  group: hctsui-content-update
   cancel-in-progress: false
 
 permissions:
@@ -19,9 +19,9 @@ permissions:
 jobs:
   update-upcoming:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 10
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
 
     steps:
       - name: Check out cms branch
@@ -51,21 +51,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Compile PDF CV
-        if: steps.changes.outputs.changed == 'true'
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: cv/Hung-Chun-Tsui-CV.tex
-          texlive_version: 2025
-          os: debian
-
-      - name: Stage PDF for the website
-        if: steps.changes.outputs.changed == 'true'
-        run: |
-          mkdir -p files
-          cp cv/Hung-Chun-Tsui-CV.pdf files/Hung-Chun-Tsui-CV.pdf
-
-      - name: Commit expired entries and CV update
+      - name: Commit expired entries and LaTeX source update
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
@@ -76,26 +62,7 @@ jobs:
           git commit -m "Move expired Upcoming entries and rebuild CV"
           git push origin HEAD:cms
 
-      - name: Prepare public website
-        if: steps.changes.outputs.changed == 'true'
-        run: |
-          rm -rf _site
-          mkdir -p _site
-          cp index.html cv.html publications.html activities.html teaching.html photo.jpg _site/
-          cp -R assets zh admin content files _site/
-          touch _site/.nojekyll
-
-      - name: Configure GitHub Pages
-        if: steps.changes.outputs.changed == 'true'
-        uses: actions/configure-pages@v6
-
-      - name: Upload GitHub Pages artifact
-        if: steps.changes.outputs.changed == 'true'
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: _site
-
-      - name: Deploy website
-        if: steps.changes.outputs.changed == 'true'
-        id: deployment
-        uses: actions/deploy-pages@v5
+  deploy-site:
+    if: needs.update-upcoming.outputs.changed == 'true'
+    needs: update-upcoming
+    uses: ./.github/workflows/deploy-cms-pages.yml

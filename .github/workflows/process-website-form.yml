@@ -5,7 +5,7 @@ on:
     types: [opened]
 
 concurrency:
-  group: hctsui-website-update
+  group: hctsui-content-update
   cancel-in-progress: false
 
 permissions:
@@ -22,9 +22,11 @@ jobs:
       startsWith(github.event.issue.title, '[Website:') &&
       github.event.issue.author_association == 'OWNER'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 10
+    outputs:
+      entry_id: ${{ steps.process.outputs.entry_id }}
+      action: ${{ steps.process.outputs.action }}
+      result_b64: ${{ steps.process.outputs.result_b64 }}
 
     steps:
       - name: Check out cms branch
@@ -40,28 +42,28 @@ jobs:
           TRANSLATION_MODEL: openai/gpt-4o-mini
         run: |
           python3 tools/process_request.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
-          echo "entry_id=$(python3 -c 'import json; print(json.load(open("/tmp/result.json"))["entry_id"])')" >> "$GITHUB_OUTPUT"
-          echo "action=$(python3 -c 'import json; print(json.load(open("/tmp/result.json"))["action"])')" >> "$GITHUB_OUTPUT"
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import base64
+          import json
 
-      - name: Rebuild website and LaTeX CV
+          path = "/tmp/result.json"
+          result = json.load(open(path, encoding="utf-8"))
+          encoded = base64.b64encode(
+              json.dumps(result, ensure_ascii=False).encode("utf-8")
+          ).decode("ascii")
+          print(f"entry_id={result['entry_id']}")
+          print(f"action={result['action']}")
+          print(f"result_b64={encoded}")
+          PY
+
+      - name: Rebuild website and LaTeX source
         run: |
           python3 tools/build_site.py
           python3 tools/build_cv.py
           python3 tools/update_cv_links.py
           python3 tools/build_catalog.py
           python3 tools/validate_site.py
-
-      - name: Compile PDF CV
-        uses: xu-cheng/latex-action@v4
-        with:
-          root_file: cv/Hung-Chun-Tsui-CV.tex
-          texlive_version: 2025
-          os: debian
-
-      - name: Stage PDF for the website
-        run: |
-          mkdir -p files
-          cp cv/Hung-Chun-Tsui-CV.pdf files/Hung-Chun-Tsui-CV.pdf
+          test -s cv/Hung-Chun-Tsui-CV.tex
 
       - name: Commit website and LaTeX source update
         run: |
@@ -78,33 +80,27 @@ jobs:
             git push origin HEAD:cms
           fi
 
-      - name: Prepare public website
-        run: |
-          rm -rf _site
-          mkdir -p _site
-          cp index.html cv.html publications.html activities.html teaching.html photo.jpg _site/
-          cp -R assets zh admin content files _site/
-          touch _site/.nojekyll
+  deploy-site:
+    needs: update-site
+    uses: ./.github/workflows/deploy-cms-pages.yml
 
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
-
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: _site
-
-      - name: Deploy website
-        id: deployment
-        uses: actions/deploy-pages@v5
-
+  confirm:
+    needs: [update-site, deploy-site]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
       - name: Confirm and close form
         env:
           GH_TOKEN: ${{ github.token }}
+          RESULT_B64: ${{ needs.update-site.outputs.result_b64 }}
         run: |
           python3 - <<'PY'
+          import base64
           import json
-          result = json.load(open('/tmp/result.json', encoding='utf-8'))
+          import os
+
+          result = json.loads(base64.b64decode(os.environ["RESULT_B64"]).decode("utf-8"))
           lines = [
               f"完成：{result['action']}。中英文網頁、LaTeX CV、PDF CV、排序、Last updated 與網站部署都已自動處理。",
               "",
@@ -112,19 +108,30 @@ jobs:
               "",
               "PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf",
           ]
-          if result.get('notes'):
-              lines += ["", "### 智慧處理", *[f"- {x}" for x in result['notes']]]
-          if result.get('warnings'):
-              lines += ["", "### 請留意", *[f"- {x}" for x in result['warnings']]]
-          open('/tmp/comment.md','w',encoding='utf-8').write('\n'.join(lines))
+          if result.get("notes"):
+              lines += ["", "### 智慧處理", *[f"- {x}" for x in result["notes"]]]
+          if result.get("warnings"):
+              lines += ["", "### 請留意", *[f"- {x}" for x in result["warnings"]]]
+          open("/tmp/comment.md", "w", encoding="utf-8").write("\n".join(lines))
           PY
           gh issue comment "${{ github.event.issue.number }}" --body-file /tmp/comment.md
           gh issue close "${{ github.event.issue.number }}"
 
+  explain-failure:
+    if: >-
+      always() &&
+      (needs.update-site.result == 'failure' ||
+       needs.update-site.result == 'cancelled' ||
+       needs.deploy-site.result == 'failure' ||
+       needs.deploy-site.result == 'cancelled')
+    needs: [update-site, deploy-site]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
       - name: Explain failure
-        if: failure()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue comment "${{ github.event.issue.number }}" \
-            --body "自動更新失敗，這個表單暫時不會關閉。請打開本次 Actions 的第一個紅色步驟；若是 Compile PDF CV，錯誤訊息會指出 LaTeX 的確切行號。"
+            --body "自動更新失敗，表單暫時不會關閉。請查看本次 Actions 的第一個紅色步驟；現在資料更新與 Pages 部署已分離，不會再有兩個部署互相取消。"
