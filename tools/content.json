@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "conference-2026-number-theory-summer-school",
+      "kind": "conference",
+      "show_upcoming": true,
+      "start_date": "2026-08-24",
+      "end_date": "2026-08-28",
+      "title": {
+        "en": "The 33rd Number Theory Summer School: Arithmetic of Function Fields",
+        "zh": "第 33 屆數論暑期學校：函數體的算術"
+      },
+      "url": "https://edu.tsuda.ac.jp/~t-hara/ss2026/index.html",
+      "venue": {
+        "en": "Yataro",
+        "zh": "矢太樓"
+      },
+      "city": {
+        "en": "Nagasaki",
+        "zh": "長崎"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      }
+    }
+  ]
+}
