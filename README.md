@@ -1,12 +1,18 @@
-# hctsui.github.io — v19
+# hctsui.github.io — v20
 
-Home layout fixes:
-- `Hung-Chun Tsui` stays on one line on normal desktop screens.
-- The landscape photo column is wider and shifted farther right.
-- The photo uses a 16:9 landscape crop.
-- The image filename is now `assets/photo.jpg`.
+Changes:
+- Address and office are merged into one Contact entry, styled like the email entries.
+- Every Activities content section now uses the same background, spacing, and borders.
+- The easiest photo location is now the repository root: `photo.jpg`.
 
-To replace the image, upload your own JPG to:
-`assets/photo.jpg`
+Photo setup:
+1. Put `photo.jpg` beside `index.html` in the repository root.
+2. Use lowercase exactly: `photo.jpg`.
+3. Delete or overwrite the included placeholder.
+4. GitHub filenames are case-sensitive.
 
-The spelling must be exactly `photo.jpg`, all lowercase.
+The page also tries these fallbacks automatically:
+- `assets/photo.jpg`
+- `photo.JPG`
+- `assets/photo.JPG`
+- `.jpeg` and `.png` variants
