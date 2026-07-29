@@ -30,12 +30,14 @@ jobs:
         with:
           ref: cms
 
-      - name: Verify CV automation files
+      - name: Verify website and CV automation files
         run: |
           test -f content/site.json
           test -f tools/build_site.py
           test -f tools/build_cv.py
-          test -f tools/enhance_teaching.py
+          test -f tools/process_request_v4.py
+          test -f tools/render_grouped_sections.py
+          test -f tools/build_dynamic_forms.py
           test -f tools/update_cv_links.py
           test -f tools/validate_site.py
           test -f cv/Hung-Chun-Tsui-CV.template.tex
@@ -44,7 +46,7 @@ jobs:
         run: |
           python3 tools/build_site.py
           python3 tools/build_cv.py
-          python3 tools/enhance_teaching.py
+          python3 tools/render_grouped_sections.py
           python3 tools/update_cv_links.py
           python3 tools/validate_site.py
           test -s cv/Hung-Chun-Tsui-CV.tex
@@ -61,30 +63,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           PDF_PATH=""
-          for candidate in \
-            "cv/Hung-Chun-Tsui-CV.pdf" \
-            "Hung-Chun-Tsui-CV.pdf"
-          do
+          for candidate in "cv/Hung-Chun-Tsui-CV.pdf" "Hung-Chun-Tsui-CV.pdf"; do
             if [ -s "$candidate" ]; then
               PDF_PATH="$candidate"
               break
             fi
           done
-
           if [ -z "$PDF_PATH" ]; then
             echo "::error::LaTeX compilation completed, but the PDF could not be found."
-            echo "Files produced near the repository root:"
             find . -maxdepth 3 -type f \( -name '*.pdf' -o -name '*.log' \) -print
             exit 1
           fi
-
           mkdir -p files
           cp "$PDF_PATH" files/Hung-Chun-Tsui-CV.pdf
           test -s files/Hung-Chun-Tsui-CV.pdf
-          echo "Staged PDF from: $PDF_PATH"
-          ls -lh files/Hung-Chun-Tsui-CV.pdf
 
       - name: Prepare public website
         run: |

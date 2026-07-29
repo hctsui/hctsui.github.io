@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: hctsui-content-update
+  group: hctsui-daily-content-update
   cancel-in-progress: false
 
 permissions:
@@ -34,33 +34,42 @@ jobs:
         run: |
           python3 tools/build_site.py
           python3 tools/build_cv.py
-          python3 tools/enhance_teaching.py
+          python3 tools/render_grouped_sections.py
           python3 tools/update_cv_links.py
+          python3 tools/build_dynamic_forms.py
           python3 tools/build_catalog.py
           python3 tools/validate_site.py
 
-      - name: Detect whether Upcoming changed
+      - name: Detect whether generated content changed
         id: changes
         run: |
           if [ -z "$(git status --porcelain -- \
             CONTENT-CATALOG.md cv/Hung-Chun-Tsui-CV.tex \
             index.html cv.html publications.html activities.html teaching.html \
-            zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html)" ]; then
+            zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html \
+            .github/ISSUE_TEMPLATE/add-publication.yml \
+            .github/ISSUE_TEMPLATE/add-teaching.yml \
+            .github/ISSUE_TEMPLATE/edit-entry.yml \
+            .github/ISSUE_TEMPLATE/reorder-entries.yml)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No Upcoming entry changed today."
+            echo "No generated content changed today."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Commit expired entries and LaTeX source update
+      - name: Commit generated changes
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CONTENT-CATALOG.md cv/Hung-Chun-Tsui-CV.tex \
             index.html cv.html publications.html activities.html teaching.html \
-            zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html
-          git commit -m "Move expired Upcoming entries and rebuild CV"
+            zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html \
+            .github/ISSUE_TEMPLATE/add-publication.yml \
+            .github/ISSUE_TEMPLATE/add-teaching.yml \
+            .github/ISSUE_TEMPLATE/edit-entry.yml \
+            .github/ISSUE_TEMPLATE/reorder-entries.yml
+          git commit -m "Rebuild website, dynamic groups, and CV"
           git push origin HEAD:cms
 
   deploy-site:

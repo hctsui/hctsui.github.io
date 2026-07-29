@@ -61,13 +61,14 @@ jobs:
             git clean -fd
 
             rm -f /tmp/result.json
-            python3 tools/process_request_v3.py \
+            python3 tools/process_request_v4.py \
               "$GITHUB_EVENT_PATH" \
               --result-file /tmp/result.json
 
             python3 tools/build_site.py
             python3 tools/build_cv.py
-            python3 tools/enhance_teaching.py
+            python3 tools/render_grouped_sections.py
+            python3 tools/build_dynamic_forms.py
             python3 tools/update_cv_links.py
             python3 tools/build_catalog.py
             python3 tools/validate_site.py
@@ -78,7 +79,11 @@ jobs:
             git add content/site.json CONTENT-CATALOG.md \
               cv/Hung-Chun-Tsui-CV.tex \
               index.html cv.html publications.html activities.html teaching.html \
-              zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html
+              zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html \
+              .github/ISSUE_TEMPLATE/add-publication.yml \
+              .github/ISSUE_TEMPLATE/add-teaching.yml \
+              .github/ISSUE_TEMPLATE/edit-entry.yml \
+              .github/ISSUE_TEMPLATE/reorder-entries.yml
 
             if git diff --cached --quiet; then
               echo "No file change was required; treating the Issue as already applied."
