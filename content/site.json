@@ -679,6 +679,31 @@
         "zh": "名古屋大學, 名古屋, 日本"
       },
       "slides_url": ""
+    },
+    {
+      "id": "visit-2026-04-01-test",
+      "type": "visit",
+      "start_date": "2026-04-01",
+      "end_date": "2026-04-01",
+      "show_upcoming": false,
+      "title": {
+        "en": "test",
+        "zh": "test"
+      },
+      "title_html": {
+        "en": "test",
+        "zh": "test"
+      },
+      "url": "",
+      "description": {
+        "en": "Tempe, Korea · Supported by myself",
+        "zh": "Tempe, Korea · Supported by myself"
+      },
+      "description_html": {
+        "en": "Tempe, Korea · Supported by myself",
+        "zh": "Tempe, Korea · Supported by myself"
+      },
+      "slides_url": ""
     }
   ],
   "honors": [

@@ -15,6 +15,7 @@
 | 2026-07-02 – 2026-08-30 | Tohoku University | 東北大學 | `visit-2026-07-02-tohoku-university` |
 | 2026-06-12 – 2026-06-12 | Derivations of Multiple Zeta Values in Positive Characteristic | 正特徵多重 zeta 值的導子 | `talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac` |
 | 2026-06-11 – 2026-06-12 | Workshop on Arithmetic of Function Fields | 函數體算術工作坊 | `conference-2026-06-11-workshop-on-arithmetic-of-function-fields` |
+| 2026-04-01 – 2026-04-01 | test | test | `visit-2026-04-01-test` |
 | 2026-02-08 – 2026-02-08 | On Finite Multiple Harmonic u -series over Function Field | 函數體上的有限多重調和 u-級數 | `talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie` |
 | 2026-02-08 – 2026-02-11 | Nagoya-Kansai Zeta Workshop for Young Researchers | 名古屋—關西青年研究者 zeta 研討會 | `conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers` |
 | 2026-01-21 – 2026-01-22 | The 61st TMS Annual Meeting | 中華民國數學會第 61 屆年會 | `conference-2026-01-21-the-61st-tms-annual-meeting` |
