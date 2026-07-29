@@ -1126,7 +1126,7 @@
     {
       "id": "teaching-1-math2410-algebra-i",
       "type": "teaching",
-      "order": 1,
+      "order": 0,
       "term": {
         "en": "Fall 2025",
         "zh": "2025 秋"
@@ -1148,7 +1148,7 @@
     {
       "id": "teaching-2-math2420-algebra-ii",
       "type": "teaching",
-      "order": 0,
+      "order": 1,
       "term": {
         "en": "Spring 2026",
         "zh": "2026 春"
