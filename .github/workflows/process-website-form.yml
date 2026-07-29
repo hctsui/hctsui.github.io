@@ -13,6 +13,7 @@ permissions:
   issues: write
   pages: write
   id-token: write
+  models: read
 
 jobs:
   update-site:
@@ -33,6 +34,9 @@ jobs:
 
       - name: Process form
         id: process
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TRANSLATION_MODEL: openai/gpt-4o-mini
         run: |
           python3 tools/process_request.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
           echo "entry_id=$(python3 -c 'import json; print(json.load(open("/tmp/result.json"))["entry_id"])')" >> "$GITHUB_OUTPUT"
@@ -83,8 +87,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" \
-            --body "完成：${{ steps.process.outputs.action }}。中英文網頁、排序、Last updated 與網站部署都已自動處理。\n\nEntry ID: \`${{ steps.process.outputs.entry_id }}\`"
+          python3 - <<'PY'
+          import json
+          result = json.load(open('/tmp/result.json', encoding='utf-8'))
+          lines = [f"完成：{result['action']}。中英文網頁、排序、Last updated 與網站部署都已自動處理。", "", f"Entry ID: `{result['entry_id']}`"]
+          if result.get('notes'):
+              lines += ["", "### 智慧處理", *[f"- {x}" for x in result['notes']]]
+          if result.get('warnings'):
+              lines += ["", "### 請留意", *[f"- {x}" for x in result['warnings']]]
+          open('/tmp/comment.md','w',encoding='utf-8').write('\n'.join(lines))
+          PY
+          gh issue comment "${{ github.event.issue.number }}" --body-file /tmp/comment.md
           gh issue close "${{ github.event.issue.number }}"
 
       - name: Explain failure
@@ -93,4 +106,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue comment "${{ github.event.issue.number }}" \
-            --body "自動更新失敗，這個表單暫時不會關閉。請到 Actions 查看紅色錯誤訊息，並確認日期使用 YYYY-MM-DD。"
+            --body "自動更新失敗，這個表單暫時不會關閉。真正原因可能是必填欄位、日期、重複資料、網址或部署設定；請打開本次 Actions 的紅色步驟查看最後一行錯誤。"
