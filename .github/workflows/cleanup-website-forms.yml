@@ -1,0 +1,132 @@
+name: Cleanup website form issues
+
+on:
+  schedule:
+    # Daily at 00:45 Japan/Taiwan time (15:45 UTC on the previous date)
+    - cron: "45 15 * * *"
+  workflow_dispatch:
+    inputs:
+      include_legacy_forms:
+        description: "Also close old forms created before the applied label existed"
+        required: true
+        type: boolean
+        default: false
+      minimum_age_minutes:
+        description: "Only close forms older than this many minutes"
+        required: true
+        default: "30"
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Close completed or legacy website forms
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const includeLegacy =
+              context.eventName === "workflow_dispatch" &&
+              String(context.payload.inputs?.include_legacy_forms) === "true";
+
+            const minimumAge = Number(
+              context.payload.inputs?.minimum_age_minutes || "30"
+            );
+
+            if (!Number.isFinite(minimumAge) || minimumAge < 5) {
+              core.setFailed("minimum_age_minutes must be at least 5.");
+              return;
+            }
+
+            const cutoff = Date.now() - minimumAge * 60 * 1000;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issues = await github.paginate(
+              github.rest.issues.listForRepo,
+              {
+                owner,
+                repo,
+                state: "open",
+                per_page: 100,
+                sort: "created",
+                direction: "asc",
+              }
+            );
+
+            let closed = 0;
+            let skipped = 0;
+
+            for (const issue of issues) {
+              if (issue.pull_request) continue;
+              if (!issue.title.startsWith("[Website:")) continue;
+              if (new Date(issue.created_at).getTime() > cutoff) {
+                skipped++;
+                continue;
+              }
+
+              const labels = (issue.labels || []).map(label =>
+                typeof label === "string" ? label : label.name
+              );
+              const safelyApplied = labels.includes("website-form-applied");
+
+              // Scheduled runs only close forms positively marked as applied.
+              // Manual legacy mode may additionally archive old forms left open
+              // by the previous cancelled workflow implementation.
+              if (!safelyApplied && !includeLegacy) {
+                skipped++;
+                continue;
+              }
+
+              const body = safelyApplied
+                ? [
+                    "此表單的網站資料已成功套用；先前只有最後的確認／關閉步驟沒有完成。",
+                    "",
+                    "清理器已自動將表單關閉。"
+                  ].join("\n")
+                : [
+                    "此為舊版 workflow 遺留的未關閉表單，現已批次歸檔。",
+                    "",
+                    "若該筆內容沒有出現在網站或 CV，請重新送出表單。"
+                  ].join("\n");
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body,
+              });
+
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: issue.number,
+                state: "closed",
+              });
+
+              closed++;
+              core.info(`Closed website form issue #${issue.number}`);
+            }
+
+            await core.summary
+              .addHeading("Website form cleanup")
+              .addTable([
+                [
+                  {data: "Closed", header: true},
+                  {data: "Skipped", header: true},
+                  {data: "Legacy mode", header: true},
+                  {data: "Minimum age", header: true},
+                ],
+                [
+                  String(closed),
+                  String(skipped),
+                  includeLegacy ? "Yes" : "No",
+                  `${minimumAge} minutes`,
+                ],
+              ])
+              .write();

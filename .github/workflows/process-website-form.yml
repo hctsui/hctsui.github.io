@@ -4,16 +4,17 @@ on:
   issues:
     types: [opened]
 
+# Only prevent duplicate processing of the same Issue.
+# Different Issues may run together; the push step below safely retries
+# against the newest cms branch instead of dropping queued submissions.
 concurrency:
-  group: hctsui-content-update
+  group: website-form-${{ github.event.issue.number }}
   cancel-in-progress: false
 
 permissions:
-  actions: read
+  actions: write
   contents: write
   issues: write
-  pages: write
-  id-token: write
   models: read
 
 jobs:
@@ -22,11 +23,11 @@ jobs:
       startsWith(github.event.issue.title, '[Website:') &&
       github.event.issue.author_association == 'OWNER'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     outputs:
-      entry_id: ${{ steps.process.outputs.entry_id }}
-      action: ${{ steps.process.outputs.action }}
-      result_b64: ${{ steps.process.outputs.result_b64 }}
+      entry_id: ${{ steps.result.outputs.entry_id }}
+      action: ${{ steps.result.outputs.action }}
+      result_b64: ${{ steps.result.outputs.result_b64 }}
 
     steps:
       - name: Check out cms branch
@@ -35,19 +36,80 @@ jobs:
           ref: cms
           fetch-depth: 0
 
-      - name: Process form
-        id: process
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Apply form safely and push
+        id: transaction
         env:
           GITHUB_TOKEN: ${{ github.token }}
           TRANSLATION_MODEL: openai/gpt-4o-mini
+        shell: bash
         run: |
-          python3 tools/process_request_v3.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
+          set -euo pipefail
+
+          # Multiple form runs may start at nearly the same time. Each attempt
+          # begins from the newest cms branch. If somebody else pushes first,
+          # this run discards its stale build, reapplies its own Issue, and tries again.
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            echo "=== Content update attempt ${attempt}/10 ==="
+
+            git fetch origin cms
+            git reset --hard origin/cms
+            git clean -fd
+
+            rm -f /tmp/result.json
+            python3 tools/process_request_v3.py \
+              "$GITHUB_EVENT_PATH" \
+              --result-file /tmp/result.json
+
+            python3 tools/build_site.py
+            python3 tools/build_cv.py
+            python3 tools/enhance_teaching.py
+            python3 tools/update_cv_links.py
+            python3 tools/build_catalog.py
+            python3 tools/validate_site.py
+            test -s cv/Hung-Chun-Tsui-CV.tex
+
+            ENTRY_ID="$(python3 -c "import json; print(json.load(open('/tmp/result.json', encoding='utf-8'))['entry_id'])")"
+
+            git add content/site.json CONTENT-CATALOG.md \
+              cv/Hung-Chun-Tsui-CV.tex \
+              index.html cv.html publications.html activities.html teaching.html \
+              zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html
+
+            if git diff --cached --quiet; then
+              echo "No file change was required; treating the Issue as already applied."
+              cp /tmp/result.json /tmp/final-result.json
+              exit 0
+            fi
+
+            git commit -m "Update website content: ${ENTRY_ID}"
+
+            if git push origin HEAD:cms; then
+              echo "Content update pushed successfully."
+              cp /tmp/result.json /tmp/final-result.json
+              exit 0
+            fi
+
+            echo "::warning::Another form updated cms first. Reapplying this Issue to the latest data."
+            sleep $((attempt * 2))
+          done
+
+          echo "::error::Could not update cms after 10 retries."
+          exit 1
+
+      - name: Export result
+        id: result
+        shell: bash
+        run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import base64
           import json
 
-          path = "/tmp/result.json"
-          result = json.load(open(path, encoding="utf-8"))
+          result = json.load(open("/tmp/final-result.json", encoding="utf-8"))
           encoded = base64.b64encode(
               json.dumps(result, ensure_ascii=False).encode("utf-8")
           ).decode("ascii")
@@ -56,37 +118,36 @@ jobs:
           print(f"result_b64={encoded}")
           PY
 
-      - name: Rebuild website and LaTeX source
+      - name: Mark form as applied
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          python3 tools/build_site.py
-          python3 tools/build_cv.py
-          python3 tools/enhance_teaching.py
-          python3 tools/update_cv_links.py
-          python3 tools/build_catalog.py
-          python3 tools/validate_site.py
-          test -s cv/Hung-Chun-Tsui-CV.tex
+          # This marker lets the cleanup workflow safely close the Issue
+          # even if the final confirm job is interrupted.
+          gh label create website-form-applied \
+            --repo "${{ github.repository }}" \
+            --color "0E8A16" \
+            --description "Website data was successfully written" \
+            2>/dev/null || true
 
-      - name: Commit website and LaTeX source update
+          gh issue edit "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --add-label website-form-applied
+
+      - name: Queue one website deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/site.json CONTENT-CATALOG.md \
-            cv/Hung-Chun-Tsui-CV.tex \
-            index.html cv.html publications.html activities.html teaching.html \
-            zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html
-          if git diff --cached --quiet; then
-            echo "No file change was required."
-          else
-            git commit -m "Update website content: ${{ steps.process.outputs.entry_id }}"
-            git push origin HEAD:cms
-          fi
-
-  deploy-site:
-    needs: update-site
-    uses: ./.github/workflows/deploy-cms-pages.yml
+          # Deployment is intentionally detached from this form run.
+          # Many submissions can be processed without their Process runs being cancelled.
+          gh workflow run deploy-cms-pages.yml \
+            --repo "${{ github.repository }}" \
+            --ref cms
 
   confirm:
-    needs: [update-site, deploy-site]
+    needs: update-site
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -95,17 +156,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RESULT_B64: ${{ needs.update-site.outputs.result_b64 }}
+        shell: bash
         run: |
           python3 - <<'PY'
           import base64
           import json
           import os
 
-          result = json.loads(base64.b64decode(os.environ["RESULT_B64"]).decode("utf-8"))
+          result = json.loads(
+              base64.b64decode(os.environ["RESULT_B64"]).decode("utf-8")
+          )
           lines = [
-              f"完成：{result['action']}。中英文網頁、LaTeX CV、PDF CV、排序、Last updated 與網站部署都已自動處理。",
+              f"完成：{result['action']}。",
               "",
               f"Entry ID: `{result['entry_id']}`",
+              "",
+              "資料、網站原始檔與 LaTeX CV 已更新；PDF／GitHub Pages 已加入部署佇列。",
               "",
               "PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf",
           ]
@@ -115,25 +181,20 @@ jobs:
               lines += ["", "### 請留意", *[f"- {x}" for x in result["warnings"]]]
           open("/tmp/comment.md", "w", encoding="utf-8").write("\n".join(lines))
           PY
-          if ! gh api --method POST \
+
+          gh api --method POST \
             "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
-            -F body=@/tmp/comment.md >/dev/null; then
-            echo "::warning::網站已更新，但無法在 Issue 留下完成訊息。"
-          fi
-          if ! gh api --method PATCH \
+            -F body=@/tmp/comment.md >/dev/null \
+            || echo "::warning::無法在 Issue 留下完成訊息。"
+
+          gh api --method PATCH \
             "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}" \
-            -f state=closed >/dev/null; then
-            echo "::warning::網站已更新，但無法自動關閉 Issue。"
-          fi
+            -f state=closed >/dev/null \
+            || echo "::warning::無法自動關閉 Issue。"
 
   explain-failure:
-    if: >-
-      always() &&
-      (needs.update-site.result == 'failure' ||
-       needs.update-site.result == 'cancelled' ||
-       needs.deploy-site.result == 'failure' ||
-       needs.deploy-site.result == 'cancelled')
-    needs: [update-site, deploy-site]
+    if: always() && needs.update-site.result == 'failure'
+    needs: update-site
     runs-on: ubuntu-latest
     permissions:
       issues: write
