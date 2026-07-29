@@ -56,9 +56,9 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| Fall 2025 | MATH2410 Algebra I | MATH2410 代數（一） | `teaching-1-math2410-algebra-i` |
-| 2027 | HAHA | HAHA | `teaching-0-haha` |
 | Spring 2026 | MATH2420 Algebra II | MATH2420 代數（二） | `teaching-2-math2420-algebra-ii` |
+| 2027 | HAHA | HAHA | `teaching-0-haha` |
+| Fall 2025 | MATH2410 Algebra I | MATH2410 代數（一） | `teaching-1-math2410-algebra-i` |
 | Spring 2026 | MATH2870 Discrete Mathematics | MATH2870 離散數學 | `teaching-3-math2870-discrete-mathematics` |
 | Fall 2025 | MATH3450 Cryptography | MATH3450 密碼學 | `teaching-4-math3450-cryptography` |
 | Fall 2024 | MATH1410 Linear Algebra I | MATH1410 線性代數（一） | `teaching-5-math1410-linear-algebra-i` |

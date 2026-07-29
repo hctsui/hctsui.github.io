@@ -40,7 +40,7 @@
             "en": "National Tsing Hua University",
             "zh": "國立清華大學"
           },
-          "order": 0
+          "order": 1
         },
         {
           "id": "texas",
@@ -48,10 +48,52 @@
             "en": "Texas",
             "zh": "德州"
           },
-          "order": 1
+          "order": 0
         }
       ]
-    }
+    },
+    "entry_order": {
+      "conference": [
+        "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
+        "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+        "conference-2026-number-theory-summer-school",
+        "conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop",
+        "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference",
+        "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
+        "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers",
+        "conference-2026-01-21-the-61st-tms-annual-meeting",
+        "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
+        "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
+        "conference-2025-09-01-japan-taiwan-number-theory-conference",
+        "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
+        "conference-2025-06-30-iwasawa-2025",
+        "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
+        "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+        "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+        "conference-2025-01-14-the-60th-tms-annual-meeting",
+        "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+        "conference-2024-01-22-the-59th-tms-annual-meeting",
+        "conference-2023-01-16-the-58th-tms-annual-meeting"
+      ],
+      "honor": [
+        "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
+        "honor-2025-nstc-graduate-research-fellowship",
+        "honor-2024-chow-hung-ching-scholarship",
+        "honor-2024-tms-outstanding-students-prize"
+      ],
+      "talk": [
+        "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
+        "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
+        "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
+        "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
+        "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
+        "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro"
+      ],
+      "visit": [
+        "visit-2026-07-02-tohoku-university"
+      ]
+    },
+    "manually_ordered_kinds": []
   },
   "activities": [
     {
@@ -1042,7 +1084,7 @@
     {
       "id": "teaching-1-math2410-algebra-i",
       "type": "teaching",
-      "order": 0,
+      "order": 1,
       "term": {
         "en": "Fall 2025",
         "zh": "2025 秋"
@@ -1064,7 +1106,7 @@
     {
       "id": "teaching-2-math2420-algebra-ii",
       "type": "teaching",
-      "order": 1,
+      "order": 0,
       "term": {
         "en": "Spring 2026",
         "zh": "2026 春"
