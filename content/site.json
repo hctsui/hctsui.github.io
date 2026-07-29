@@ -40,14 +40,6 @@
             "en": "National Tsing Hua University",
             "zh": "國立清華大學"
           },
-          "order": 1
-        },
-        {
-          "id": "texas",
-          "label": {
-            "en": "Texas",
-            "zh": "德州"
-          },
           "order": 0
         }
       ]
@@ -1319,28 +1311,6 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
-    },
-    {
-      "id": "teaching-0-haha",
-      "type": "teaching",
-      "group_id": "texas",
-      "order": 0,
-      "role": {
-        "en": "man",
-        "zh": "人"
-      },
-      "institution": {
-        "en": "Texas",
-        "zh": "德州"
-      },
-      "term": {
-        "en": "2027",
-        "zh": "2027"
-      },
-      "course": {
-        "en": "HAHA",
-        "zh": "HAHA"
       }
     }
   ]

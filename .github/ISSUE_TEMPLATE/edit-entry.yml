@@ -123,7 +123,6 @@ body:
       description: 只適用於 Teaching。
       options:
         - "Keep unchanged / 維持不變"
-        - "Texas / 德州 [texas]"
         - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
         - "Other / 其他（建立新機構大標題）"
       default: 0

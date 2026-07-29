@@ -24,7 +24,6 @@ body:
     attributes:
       label: Institution section / 機構大標題 [必填]
       options:
-        - "Texas / 德州 [texas]"
         - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
         - "Other / 其他（建立新機構大標題）"
       default: 0
