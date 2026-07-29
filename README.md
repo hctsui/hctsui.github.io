@@ -1,7 +1,13 @@
-# hctsui.github.io — v10
+# hctsui.github.io — v11
 
-Changes:
-- Publications `Preprints` section now uses the same section-label + heading layout as Activities.
-- Teaching institution and role now use the same subsection layout as Activities.
-- Teaching course cards are unchanged.
-- arXiv identifiers were corrected from each paper's actual arXiv link.
+Navigation:
+Home / CV / Publications / Activities / Teaching / Contact
+
+CV page contains:
+- Download PDF CV
+- Research Interests
+- Education
+- Honors and Awards
+- Academic Visit
+
+All pages use the same title structure and active navigation highlight.
