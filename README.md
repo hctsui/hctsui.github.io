@@ -1,13 +1,9 @@
-# hctsui.github.io — v11
+# hctsui.github.io — v12
 
-Navigation:
-Home / CV / Publications / Activities / Teaching / Contact
-
-CV page contains:
-- Download PDF CV
-- Research Interests
-- Education
-- Honors and Awards
-- Academic Visit
-
-All pages use the same title structure and active navigation highlight.
+Changes:
+- Removed honors.html and zh/honors.html.
+- Removed the repeated Academic Visit section from CV.
+- Current navigation item is enclosed in a small color-matched outline.
+- Homepage uses the title Selected Publications.
+- Homepage automatically selects the newest two publications from publications.html.
+- CV, ORCID, arXiv, ResearchGate, PDF, and Slides links use button styling.
