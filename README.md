@@ -1,9 +1,7 @@
-# hctsui.github.io — v9
+# hctsui.github.io — v10
 
 Changes:
-- Publications page now has a `Preprints` subsection title.
-- Activities uses a stronger green palette.
-- Teaching uses a pink/magenta palette to distinguish it from Publications.
-- CV link added to the homepage.
-- About section removed.
-- Advisor information moved to the homepage hero, directly below the affiliation.
+- Publications `Preprints` section now uses the same section-label + heading layout as Activities.
+- Teaching institution and role now use the same subsection layout as Activities.
+- Teaching course cards are unchanged.
+- arXiv identifiers were corrected from each paper's actual arXiv link.
