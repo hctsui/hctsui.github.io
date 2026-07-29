@@ -54,6 +54,98 @@ PRESET_PUBLICATION_GROUPS = [
 
 DEFAULT_INSTITUTION = {"en": "National Tsing Hua University", "zh": "國立清華大學"}
 
+GROUPED_KINDS = {"publication", "teaching"}
+UNGROUPED_KINDS = {"conference", "talk", "visit", "honor"}
+SORTABLE_KINDS = GROUPED_KINDS | UNGROUPED_KINDS
+
+
+def entries_of_kind(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
+    if kind in {"conference", "talk", "visit"}:
+        return [entry for entry in data.get("activities", []) if entry.get("type") == kind]
+    if kind == "honor":
+        return list(data.get("honors", []))
+    if kind == "publication":
+        return list(data.get("publications", []))
+    if kind == "teaching":
+        return list(data.get("teaching", []))
+    raise ValueError(f"Unknown sortable kind: {kind}")
+
+
+def default_ungrouped_ids(data: dict[str, Any], kind: str) -> list[str]:
+    entries = entries_of_kind(data, kind)
+    if kind == "honor":
+        entries.sort(
+            key=lambda entry: (
+                -int(entry.get("year", 0)),
+                int(entry.get("order", 999999)),
+                str(entry.get("id", "")),
+            )
+        )
+    else:
+        entries.sort(
+            key=lambda entry: (str(entry.get("start_date", "")), str(entry.get("id", ""))),
+            reverse=True,
+        )
+    return [str(entry.get("id")) for entry in entries]
+
+
+def entry_order_settings(data: dict[str, Any]) -> dict[str, list[str]]:
+    settings = data.setdefault("settings", {})
+    value = settings.setdefault("entry_order", {})
+    if not isinstance(value, dict):
+        value = {}
+        settings["entry_order"] = value
+    return value
+
+
+def manually_ordered_kinds(data: dict[str, Any]) -> set[str]:
+    settings = data.setdefault("settings", {})
+    raw = settings.setdefault("manually_ordered_kinds", [])
+    if not isinstance(raw, list):
+        raw = []
+        settings["manually_ordered_kinds"] = raw
+    return {str(kind) for kind in raw}
+
+
+def mark_manually_ordered(data: dict[str, Any], kind: str) -> None:
+    settings = data.setdefault("settings", {})
+    kinds = manually_ordered_kinds(data)
+    kinds.add(kind)
+    settings["manually_ordered_kinds"] = sorted(kinds)
+
+
+def sync_ungrouped_order(data: dict[str, Any], kind: str) -> None:
+    if kind not in UNGROUPED_KINDS:
+        return
+    order_map = entry_order_settings(data)
+    current_ids = {str(entry.get("id")) for entry in entries_of_kind(data, kind)}
+    defaults = [entry_id for entry_id in default_ungrouped_ids(data, kind) if entry_id in current_ids]
+    if kind not in manually_ordered_kinds(data):
+        order_map[kind] = defaults
+        return
+    previous = [str(entry_id) for entry_id in order_map.get(kind, []) if str(entry_id) in current_ids]
+    missing = [entry_id for entry_id in defaults if entry_id not in previous]
+    # A new item must never disturb an existing hand-made order. It is appended
+    # and can then be moved from Admin whenever desired.
+    order_map[kind] = previous + missing
+
+
+def parse_ordering_payload(raw: str) -> dict[str, Any]:
+    text = raw.strip()
+    # GitHub Issue Forms wrap textarea values in a fenced block whenever the
+    # field has `render: json`. Accept both fenced and plain JSON so old open
+    # Issues remain usable after this fix.
+    fenced = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", text, flags=re.I | re.S)
+    if fenced:
+        text = fenced.group(1).strip()
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Ordering payload is not valid JSON: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("Ordering payload must be one JSON object.")
+    return payload
+
 
 def slugify(value: str) -> str:
     value = base.strip_markup(value).casefold().strip()
@@ -194,6 +286,8 @@ def migrate_data(data: dict[str, Any]) -> dict[str, Any]:
 
     normalize_orders(data, "publication")
     normalize_orders(data, "teaching")
+    for kind in sorted(UNGROUPED_KINDS):
+        sync_ungrouped_order(data, kind)
     return data
 
 
@@ -446,31 +540,50 @@ def cleanup_empty_groups(data: dict[str, Any]) -> None:
 
 
 def remove_entry(data: dict[str, Any], fields: dict[str, str]) -> str:
+    entry_id = base.get(fields, "Entry ID / 項目 ID", True)
+    _, existing = base.locate(data, entry_id)
+    kind = str(existing.get("type") or "")
     entry_id = ORIGINAL_REMOVE_ENTRY(data, fields)
     cleanup_empty_groups(data)
+    if kind in UNGROUPED_KINDS:
+        sync_ungrouped_order(data, kind)
     return entry_id
 
 
 def reorder_entries(data: dict[str, Any], fields: dict[str, str]) -> str:
     raw = base.get(fields, "Ordering payload / 排序資料", True)
-    try:
-        payload = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"Ordering payload is not valid JSON: {exc}") from exc
+    payload = parse_ordering_payload(raw)
 
-    kind = str(payload.get("kind") or "")
-    if kind not in {"publication", "teaching", "honor"}:
-        raise ValueError("Ordering supports publication, teaching, or honor.")
+    kind = str(payload.get("kind") or "").strip().casefold()
+    if kind not in SORTABLE_KINDS:
+        supported = ", ".join(sorted(SORTABLE_KINDS))
+        raise ValueError(f"Unsupported ordering kind: {kind}. Supported kinds: {supported}.")
 
-    if kind == "honor":
-        ids = [str(x) for x in payload.get("entries", [])]
-        current = {str(entry.get("id")) for entry in data.get("honors", [])}
-        if len(ids) != len(set(ids)) or set(ids) != current:
-            raise ValueError("Honor ordering must contain every honor Entry ID exactly once.")
-        by_id = {str(entry.get("id")): entry for entry in data.get("honors", [])}
-        for order, entry_id in enumerate(ids):
-            by_id[entry_id]["order"] = order
-        return "reorder-honor"
+    if kind in UNGROUPED_KINDS:
+        entries = entries_of_kind(data, kind)
+        ids_raw = payload.get("entries")
+        if not isinstance(ids_raw, list):
+            raise ValueError(f"{kind} ordering requires an entries array.")
+        ids = [str(value) for value in ids_raw]
+        current = {str(entry.get("id")) for entry in entries}
+        if len(ids) != len(set(ids)):
+            raise ValueError(f"{kind} ordering contains a duplicate Entry ID.")
+        if set(ids) != current:
+            missing = sorted(current - set(ids))
+            unknown = sorted(set(ids) - current)
+            details = []
+            if missing:
+                details.append("missing: " + ", ".join(missing))
+            if unknown:
+                details.append("unknown: " + ", ".join(unknown))
+            raise ValueError(
+                f"{kind} ordering must contain every Entry ID exactly once"
+                + (" (" + "; ".join(details) + ")" if details else "")
+                + "."
+            )
+        entry_order_settings(data)[kind] = ids
+        mark_manually_ordered(data, kind)
+        return f"reorder-{kind}"
 
     section = "publications" if kind == "publication" else "teaching"
     groups_payload = payload.get("groups")
@@ -527,7 +640,15 @@ def process(title: str, fields: dict[str, str], data: dict[str, Any]) -> tuple[s
         return "Removed entry", remove_entry(data, fields)
     if title.startswith("[Website: Reorder]"):
         return "Reordered website entries", reorder_entries(data, fields)
-    return ORIGINAL_PROCESS(title, fields, data)
+    action, entry_id = ORIGINAL_PROCESS(title, fields, data)
+    try:
+        _, entry = base.locate(data, entry_id)
+        kind = str(entry.get("type") or "")
+    except ValueError:
+        kind = ""
+    if kind in UNGROUPED_KINDS:
+        sync_ungrouped_order(data, kind)
+    return action, entry_id
 
 
 base.load_data = load_data

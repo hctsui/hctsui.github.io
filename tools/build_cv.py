@@ -239,28 +239,25 @@ def replace_block(text: str, marker: str, content: str) -> str:
     return updated
 
 
+def ordered_ungrouped(data: dict[str, Any], kind: str, entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    order_ids = data.get("settings", {}).get("entry_order", {}).get(kind, [])
+    if isinstance(order_ids, list) and order_ids:
+        rank = {str(entry_id): index for index, entry_id in enumerate(order_ids)}
+        return sorted(entries, key=lambda entry: (rank.get(str(entry.get("id")), 999999), str(entry.get("id", ""))))
+    if kind == "honor":
+        return sorted(entries, key=lambda entry: (-int(entry.get("year", 0)), int(entry.get("order", 999999)), str(entry.get("id", ""))))
+    return sorted(entries, key=lambda entry: (entry.get("start_date", ""), entry.get("id", "")), reverse=True)
+
+
 def build(today: date) -> Path:
     data = load_data()
     activities = data.get("activities", [])
     archived = [entry for entry in activities if not activity_is_upcoming(entry, today)]
 
-    visits = sorted(
-        [entry for entry in archived if entry.get("type") == "visit"],
-        key=lambda entry: (entry.get("start_date", ""), entry.get("id", "")),
-        reverse=True,
-    )
-    talks = sorted(
-        [entry for entry in archived if entry.get("type") == "talk"],
-        key=lambda entry: (entry.get("start_date", ""), entry.get("id", "")),
-    )
-    conferences = sorted(
-        [entry for entry in archived if entry.get("type") == "conference"],
-        key=lambda entry: (entry.get("start_date", ""), entry.get("id", "")),
-    )
-    honors = sorted(
-        data.get("honors", []),
-        key=lambda entry: (int(entry.get("year", 0)), -int(entry.get("order", 999999))),
-    )
+    visits = ordered_ungrouped(data, "visit", [entry for entry in archived if entry.get("type") == "visit"])
+    talks = ordered_ungrouped(data, "talk", [entry for entry in archived if entry.get("type") == "talk"])
+    conferences = ordered_ungrouped(data, "conference", [entry for entry in archived if entry.get("type") == "conference"])
+    honors = ordered_ungrouped(data, "honor", list(data.get("honors", [])))
     publications = sorted(
         data.get("publications", []),
         key=lambda entry: (entry.get("date", ""), int(entry.get("order", 999999))),
