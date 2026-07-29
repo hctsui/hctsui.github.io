@@ -1067,3 +1067,16 @@ html[lang="zh"] .section-label{
   letter-spacing:.16em;
   text-transform:none;
 }
+
+
+/* Activities hero: vertical top-to-bottom gradient */
+html body[data-page="activities"] .page-hero{
+  background:
+    linear-gradient(
+      180deg,
+      var(--surface) 0%,
+      var(--surface) 38%,
+      var(--accent-soft) 100%
+    ) !important;
+  border-bottom:1px solid var(--line);
+}
