@@ -75,6 +75,36 @@ body:
     id: auxiliary
     attributes:
       label: New slides or PDF URL / 新投影片或 PDF 連結 [選填]
+
+  - type: dropdown
+    id: teaching-role
+    attributes:
+      label: New teaching role / 新教學身分 [選填]
+      description: 只適用於教學項目。
+      options:
+        - Keep unchanged / 維持不變
+        - Teaching Assistant / 助教
+        - Lecturer / 講師
+        - Other / 其他（下方自訂）
+      default: 0
+  - type: input
+    id: custom-role-en
+    attributes:
+      label: New custom role (English) / 新自訂身分英文 [選填]
+      description: 上方選 Other 時填寫。
+  - type: input
+    id: custom-role-zh
+    attributes:
+      label: New custom role (Chinese) / 新自訂身分中文 [選填・可自動翻譯]
+  - type: input
+    id: institution-en
+    attributes:
+      label: New institution (English or shortcut) / 新機構英文或簡寫 [選填]
+      description: 只適用於教學項目，例如 NTHU。
+  - type: input
+    id: institution-zh
+    attributes:
+      label: New institution (Chinese) / 新機構中文 [選填・可自動翻譯]
   - type: dropdown
     id: upcoming
     attributes:

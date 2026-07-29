@@ -14,8 +14,9 @@ body:
     id: chinese-mode
     attributes:
       label: Chinese handling / 中文欄位處理 [必填]
-      description: 建議使用自動翻譯；同系列會議與既有機構會優先沿用網站舊譯名。
+      description: 預設只讓中文題目照抄英文，避免 AI 誤用另一篇論文的題目；作者與期刊欄位仍會優先沿用可靠舊譯名。
       options:
+        - Keep English title if Chinese title is blank / 中文題目留空時照抄英文
         - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
         - I will fill Chinese fields myself / 中文由我自行填寫
       default: 0
