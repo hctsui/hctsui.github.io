@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+<title id="title">HC monogram</title>
+<desc id="desc">A decorative placeholder image with the initials HC.</desc>
+<rect width="800" height="1000" fill="#f0f1f4"/>
+<path d="M0 760 C180 650 280 720 410 650 C560 570 650 610 800 500 V1000 H0Z" fill="#0000aa" opacity=".16"/>
+<circle cx="610" cy="230" r="155" fill="#0000aa" opacity=".12"/>
+<text x="400" y="560" text-anchor="middle" font-family="Georgia, serif" font-size="230" fill="#000077">HC</text>
+<text x="400" y="655" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" letter-spacing="9" fill="#555b66">HUNG-CHUN TSUI</text>
+</svg>
