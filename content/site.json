@@ -679,6 +679,31 @@
         "zh": "名古屋大學, 名古屋, 日本"
       },
       "slides_url": ""
+    },
+    {
+      "id": "conference-2026-08-11-2025-taipei-conference-on-arithmetic-geometry",
+      "type": "conference",
+      "start_date": "2026-08-11",
+      "end_date": "2026-08-11",
+      "show_upcoming": false,
+      "title": {
+        "en": "2025 Taipei Conference on Arithmetic Geometry",
+        "zh": "2025 臺北算術幾何會議"
+      },
+      "title_html": {
+        "en": "2025 Taipei Conference on Arithmetic Geometry",
+        "zh": "2025 臺北算術幾何會議"
+      },
+      "url": "",
+      "description": {
+        "en": "Texas A&M University, Texas, USA",
+        "zh": "德州農工大學, 德州, 美國"
+      },
+      "description_html": {
+        "en": "Texas A&amp;M University, Texas, USA",
+        "zh": "德州農工大學, 德州, 美國"
+      },
+      "slides_url": ""
     }
   ],
   "honors": [
