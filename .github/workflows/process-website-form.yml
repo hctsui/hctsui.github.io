@@ -42,17 +42,32 @@ jobs:
           echo "entry_id=$(python3 -c 'import json; print(json.load(open("/tmp/result.json"))["entry_id"])')" >> "$GITHUB_OUTPUT"
           echo "action=$(python3 -c 'import json; print(json.load(open("/tmp/result.json"))["action"])')" >> "$GITHUB_OUTPUT"
 
-      - name: Rebuild bilingual pages
+      - name: Rebuild website and LaTeX CV
         run: |
           python3 tools/build_site.py
+          python3 tools/build_cv.py
+          python3 tools/update_cv_links.py
           python3 tools/build_catalog.py
           python3 tools/validate_site.py
 
-      - name: Commit website update
+      - name: Compile PDF CV
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: cv/Hung-Chun-Tsui-CV.tex
+          texlive_version: 2025
+          os: debian
+
+      - name: Stage PDF for the website
+        run: |
+          mkdir -p files
+          cp cv/Hung-Chun-Tsui-CV.pdf files/Hung-Chun-Tsui-CV.pdf
+
+      - name: Commit website and LaTeX source update
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add content/site.json CONTENT-CATALOG.md \
+            cv/Hung-Chun-Tsui-CV.tex \
             index.html cv.html publications.html activities.html teaching.html \
             zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html
           if git diff --cached --quiet; then
@@ -64,11 +79,10 @@ jobs:
 
       - name: Prepare public website
         run: |
-
           rm -rf _site
           mkdir -p _site
           cp index.html cv.html publications.html activities.html teaching.html photo.jpg _site/
-          cp -R assets zh admin content _site/
+          cp -R assets zh admin content files _site/
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages
@@ -90,7 +104,13 @@ jobs:
           python3 - <<'PY'
           import json
           result = json.load(open('/tmp/result.json', encoding='utf-8'))
-          lines = [f"完成：{result['action']}。中英文網頁、排序、Last updated 與網站部署都已自動處理。", "", f"Entry ID: `{result['entry_id']}`"]
+          lines = [
+              f"完成：{result['action']}。中英文網頁、LaTeX CV、PDF CV、排序、Last updated 與網站部署都已自動處理。",
+              "",
+              f"Entry ID: `{result['entry_id']}`",
+              "",
+              "PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf",
+          ]
           if result.get('notes'):
               lines += ["", "### 智慧處理", *[f"- {x}" for x in result['notes']]]
           if result.get('warnings'):
@@ -106,4 +126,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue comment "${{ github.event.issue.number }}" \
-            --body "自動更新失敗，這個表單暫時不會關閉。真正原因可能是必填欄位、日期、重複資料、網址或部署設定；請打開本次 Actions 的紅色步驟查看最後一行錯誤。"
+            --body "自動更新失敗，這個表單暫時不會關閉。請打開本次 Actions 的第一個紅色步驟；若是 Compile PDF CV，錯誤訊息會指出 LaTeX 的確切行號。"

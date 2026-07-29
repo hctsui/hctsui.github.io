@@ -27,13 +27,31 @@ jobs:
         with:
           ref: cms
 
+      - name: Rebuild website and LaTeX CV
+        run: |
+          python3 tools/build_site.py
+          python3 tools/build_cv.py
+          python3 tools/update_cv_links.py
+          python3 tools/validate_site.py
+
+      - name: Compile PDF CV
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: cv/Hung-Chun-Tsui-CV.tex
+          texlive_version: 2025
+          os: debian
+
+      - name: Stage PDF for the website
+        run: |
+          mkdir -p files
+          cp cv/Hung-Chun-Tsui-CV.pdf files/Hung-Chun-Tsui-CV.pdf
+
       - name: Prepare public website
         run: |
-
           rm -rf _site
           mkdir -p _site
           cp index.html cv.html publications.html activities.html teaching.html photo.jpg _site/
-          cp -R assets zh admin content _site/
+          cp -R assets zh admin content files _site/
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages
