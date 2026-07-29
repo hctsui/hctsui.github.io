@@ -983,6 +983,47 @@
         "en": "<strong>Hung-Chun Tsui</strong>",
         "zh": "<strong>Hung-Chun Tsui</strong>"
       }
+    },
+    {
+      "id": "publication-2026-04-05-111111",
+      "type": "publication",
+      "date": "2026-04-05",
+      "year": 2026,
+      "order": 4,
+      "arxiv": "",
+      "title": {
+        "en": "111111",
+        "zh": "正特徵的 u-多重 zeta 值"
+      },
+      "title_html": {
+        "en": "111111",
+        "zh": "正特徵的 u-多重 zeta 值"
+      },
+      "authors": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "authors_html": {
+        "en": "<strong>Hung-Chun Tsui</strong>",
+        "zh": "<strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "IMRN",
+        "zh": "arXiv:2604.03618"
+      },
+      "venue_html": {
+        "en": "IMRN",
+        "zh": "arXiv:2604.03618"
+      },
+      "links": [
+        {
+          "label": {
+            "en": "Journal",
+            "zh": "期刊頁面"
+          },
+          "url": "https://11111111"
+        }
+      ]
     }
   ],
   "teaching": [
