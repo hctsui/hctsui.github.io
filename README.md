@@ -1,10 +1,8 @@
-# hctsui.github.io — v15
+# hctsui.github.io — v16
 
-Home was redesigned as an editorial academic homepage:
-- muted warm paper background and slate-blue portrait panel;
-- clearer name typography and readable Chinese name;
-- asymmetric hero instead of stacked Google Sites-style sections;
-- Selected Publications and Upcoming share one two-column section;
-- CV / ORCID / Email remain as restrained rectangular buttons.
-
-All other pages retain the existing layout.
+Home refinements:
+- The first section now uses the same warm neutral background, accent color, borders,
+  and card language as the other pages.
+- The asymmetric editorial layout is retained.
+- The photo area is now a bordered rounded card instead of a detached dark panel.
+- CV / ORCID / Email buttons are rounded pill buttons again.
