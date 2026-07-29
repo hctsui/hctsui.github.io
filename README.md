@@ -1,8 +1,13 @@
-# hctsui.github.io — v16
+# hctsui.github.io — v17
 
 Home refinements:
-- The first section now uses the same warm neutral background, accent color, borders,
-  and card language as the other pages.
-- The asymmetric editorial layout is retained.
-- The photo area is now a bordered rounded card instead of a detached dark panel.
-- CV / ORCID / Email buttons are rounded pill buttons again.
+- subtle brick-red gradient in the first section;
+- Contact restored to the Home brick-red palette;
+- CV / ORCID / Email all use the same rounded outline button;
+- homepage portrait now uses `assets/profile.jpg`.
+
+To use your own photo:
+1. crop/export it as JPG;
+2. name it `profile.jpg`;
+3. upload it to the repository's `assets` folder, replacing the included placeholder.
+Recommended portrait ratio: 4:5, at least 1200 × 1500 px.
