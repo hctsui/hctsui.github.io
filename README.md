@@ -1,8 +1,4 @@
-# hctsui.github.io — v21
+# hctsui.github.io — v22
 
-Changes:
-- All Activities content sections are forcibly normalized to the same white/warm background.
-- Removed the outer photo card/frame.
-- Kept only one subtle rounded border around the landscape image itself.
-- Increased the gap between the name column and photo.
-- Shifted the photo farther right on desktop.
+- Restored the subtle green gradient on the Activities page hero.
+- Kept Academic Visit, Presentations, and Conferences and Workshops on the same neutral background.
