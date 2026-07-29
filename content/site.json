@@ -1008,6 +1008,47 @@
         "en": "<strong>Hung-Chun Tsui</strong>",
         "zh": "<strong>Hung-Chun Tsui</strong>"
       }
+    },
+    {
+      "id": "publication-2222-hihi",
+      "type": "publication",
+      "date": "2026-05-05",
+      "year": 2026,
+      "order": 4,
+      "arxiv": "2222",
+      "title": {
+        "en": "hihi",
+        "zh": "hihi"
+      },
+      "title_html": {
+        "en": "hihi",
+        "zh": "hihi"
+      },
+      "authors": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "authors_html": {
+        "en": "<strong>Hung-Chun Tsui</strong>",
+        "zh": "<strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "arXiv:2222",
+        "zh": "arXiv:2222"
+      },
+      "venue_html": {
+        "en": "arXiv:2222",
+        "zh": "arXiv:2222"
+      },
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2222"
+        }
+      ]
     }
   ],
   "teaching": [
