@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           TRANSLATION_MODEL: openai/gpt-4o-mini
         run: |
-          python3 tools/process_request.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
+          python3 tools/process_request_v3.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import base64
           import json
@@ -60,6 +60,7 @@ jobs:
         run: |
           python3 tools/build_site.py
           python3 tools/build_cv.py
+          python3 tools/enhance_teaching.py
           python3 tools/update_cv_links.py
           python3 tools/build_catalog.py
           python3 tools/validate_site.py
@@ -114,8 +115,16 @@ jobs:
               lines += ["", "### 請留意", *[f"- {x}" for x in result["warnings"]]]
           open("/tmp/comment.md", "w", encoding="utf-8").write("\n".join(lines))
           PY
-          gh issue comment "${{ github.event.issue.number }}" --body-file /tmp/comment.md
-          gh issue close "${{ github.event.issue.number }}"
+          if ! gh api --method POST \
+            "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -F body=@/tmp/comment.md >/dev/null; then
+            echo "::warning::網站已更新，但無法在 Issue 留下完成訊息。"
+          fi
+          if ! gh api --method PATCH \
+            "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}" \
+            -f state=closed >/dev/null; then
+            echo "::warning::網站已更新，但無法自動關閉 Issue。"
+          fi
 
   explain-failure:
     if: >-
@@ -133,5 +142,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" \
-            --body "自動更新失敗，表單暫時不會關閉。請查看本次 Actions 的第一個紅色步驟；現在資料更新與 Pages 部署已分離，不會再有兩個部署互相取消。"
+          gh api --method POST \
+            "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="自動更新失敗，表單暫時不會關閉。請查看本次 Actions 的第一個紅色步驟。" \
+            >/dev/null || echo "::warning::無法在 Issue 留下失敗訊息。"

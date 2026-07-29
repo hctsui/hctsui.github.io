@@ -34,6 +34,7 @@ jobs:
         run: |
           python3 tools/build_site.py
           python3 tools/build_cv.py
+          python3 tools/enhance_teaching.py
           python3 tools/update_cv_links.py
           python3 tools/build_catalog.py
           python3 tools/validate_site.py
