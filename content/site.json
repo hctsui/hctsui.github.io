@@ -1078,6 +1078,48 @@
         "zh": "<strong>Hung-Chun Tsui</strong>"
       },
       "group_id": "preprints"
+    },
+    {
+      "id": "publication-2027-01-01-4",
+      "type": "publication",
+      "date": "2027-01-01",
+      "year": 2027,
+      "order": 0,
+      "arxiv": "",
+      "title": {
+        "en": "4",
+        "zh": "4"
+      },
+      "title_html": {
+        "en": "4",
+        "zh": "4"
+      },
+      "authors": {
+        "en": "7654",
+        "zh": "張庭瑋, 崔鴻竣"
+      },
+      "authors_html": {
+        "en": "7654",
+        "zh": "張庭瑋, <strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "",
+        "zh": ""
+      },
+      "venue_html": {
+        "en": "",
+        "zh": ""
+      },
+      "links": [
+        {
+          "label": {
+            "en": "Journal",
+            "zh": "期刊頁面"
+          },
+          "url": "https://444"
+        }
+      ],
+      "group_id": "survey-papers"
     }
   ],
   "teaching": [
