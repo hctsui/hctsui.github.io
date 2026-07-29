@@ -47,7 +47,6 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| 2026-05-05 | hihi | hihi | `publication-2222-hihi` |
 | 2026-04-05 | On u -Multiple Zeta Values in Positive Characteristic | 正特徵的 u-多重 zeta 值 | `publication-2604.03618-4` |
 | 2026-03-11 | Algebra Structures of Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的代數結構 | `publication-2603.10376-3` |
 | 2025-04-26 | On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic | 正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係 | `publication-2504.18879-2` |
