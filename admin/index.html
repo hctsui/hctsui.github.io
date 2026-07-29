@@ -14,30 +14,30 @@
 <header>
 <p class="eyebrow">Private workflow · public page</p>
 <h1>網站內容管理</h1>
-<p class="lead">不必改 HTML。選擇要新增的資料，填完 GitHub 表單後，中英文頁面、排序、首頁 Upcoming 與最後更新日期會自動處理。</p>
+<p class="lead">不必改 HTML。選擇要新增的資料，表單會在新分頁開啟，因此這個管理頁會保留。送出後，中英文頁面、排序、首頁 Upcoming 與最後更新日期會自動處理。</p>
 </header>
 <section>
 <h2>新增內容</h2>
 <div class="actions">
-<a class="button" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-conference.yml">新增會議／工作坊</a>
-<a class="button" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-talk.yml">新增學術報告</a>
-<a class="button" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-visit.yml">新增學術訪問</a>
-<a class="button" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-honor.yml">新增獎項／榮譽</a>
-<a class="button" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-publication.yml">新增論文／預印本</a>
-<a class="button" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-teaching.yml">新增教學課程</a>
+<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-conference.yml">新增會議／工作坊</a>
+<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-talk.yml">新增學術報告</a>
+<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-visit.yml">新增學術訪問</a>
+<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-honor.yml">新增獎項／榮譽</a>
+<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-publication.yml">新增論文／預印本</a>
+<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-teaching.yml">新增教學課程</a>
 </div>
 <h2>編輯或刪除</h2>
 <div class="actions">
-<a class="button secondary" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=edit-entry.yml">編輯既有項目</a>
-<a class="button secondary" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=remove-entry.yml">刪除既有項目</a>
-<a class="button secondary" href="https://github.com/hctsui/hctsui.github.io/blob/main/MANAGE-WEBSITE.md">查看完整說明</a>
+<a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=edit-entry.yml">編輯既有項目</a>
+<a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=remove-entry.yml">刪除既有項目</a>
+<a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/blob/cms/MANAGE-WEBSITE.md">查看完整說明</a>
 </div>
 </section>
 <section class="panel">
 <div class="toolbar"><div><h2 style="margin:0">項目 ID 目錄</h2><div class="status" id="status">正在讀取資料……</div></div><input id="search" type="search" placeholder="搜尋日期、標題或 ID"></div>
 <div class="table-wrap"><table><thead><tr><th>類型</th><th>日期</th><th>中文名稱</th><th>Entry ID</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
 </section>
-<p class="note">只有 GitHub repository 擁有者送出的網站表單才會觸發自動修改；其他人即使看到這個頁面，也不能藉此改動網站。</p>
+<p class="note"><strong>智慧處理：</strong>中文欄位可以留空並選擇自動翻譯。系統會優先沿用網站中既有的學校、城市與同系列會議譯名，再使用 GitHub Models 產生臺灣繁體中文草稿。只有 repository 擁有者送出的表單會觸發修改。</p>
 </main>
 <script>
 const repo='https://github.com/hctsui/hctsui.github.io';
@@ -47,9 +47,9 @@ const label={conference:'會議',talk:'演講',visit:'訪問',honor:'獎項',pub
 function bilingual(obj){return obj?.zh||obj?.en||''}
 function dateText(x){if(x.type==='honor')return String(x.year||'');if(x.type==='publication')return x.date||'';if(x.type==='teaching')return bilingual(x.term);return [x.start_date,x.end_date].filter(Boolean).join(' – ')}
 function titleText(x){return bilingual(x.title)||bilingual(x.course)}
-function render(){const q=search.value.trim().toLowerCase();rows.replaceChildren();const filtered=records.filter(x=>[x.type,dateText(x),titleText(x),x.id].join(' ').toLowerCase().includes(q));for(const x of filtered){const tr=document.createElement('tr');tr.innerHTML=`<td>${label[x.type]||x.type}</td><td>${dateText(x)}</td><td>${titleText(x)}</td><td class="id">${x.id}</td><td><button class="copy" data-id="${x.id}">複製</button></td>`;rows.append(tr)}statusEl.textContent=`共 ${filtered.length} 筆資料`}
+function render(){const q=search.value.trim().toLowerCase();rows.replaceChildren();const filtered=records.filter(x=>[x.type,dateText(x),titleText(x),x.id].join(' ').toLowerCase().includes(q));for(const x of filtered){const tr=document.createElement('tr');tr.innerHTML=`<td>${label[x.type]||x.type}</td><td>${dateText(x)}</td><td>${titleText(x)}</td><td class="id">${x.id}</td><td><button class="copy" data-id="${x.id}">複製 ID</button> <button class="copy edit" data-id="${x.id}">編輯</button></td>`;rows.append(tr)}statusEl.textContent=`共 ${filtered.length} 筆資料`}
 fetch('../content/site.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(data=>{records=[...(data.activities||[]),...(data.honors||[]),...(data.publications||[]),...(data.teaching||[])];records.sort((a,b)=>dateText(b).localeCompare(dateText(a)));render()}).catch(()=>statusEl.textContent='讀取失敗。請從正式 GitHub Pages 網址開啟這個管理頁。');
-search.addEventListener('input',render);rows.addEventListener('click',async e=>{const b=e.target.closest('button[data-id]');if(!b)return;await navigator.clipboard.writeText(b.dataset.id);const old=b.textContent;b.textContent='已複製';setTimeout(()=>b.textContent=old,1200)});
+search.addEventListener('input',render);rows.addEventListener('click',async e=>{const b=e.target.closest('button[data-id]');if(!b)return;await navigator.clipboard.writeText(b.dataset.id);if(b.classList.contains('edit')){window.open(repo+'/issues/new?template=edit-entry.yml','_blank','noopener');return}const old=b.textContent;b.textContent='已複製';setTimeout(()=>b.textContent=old,1200)});
 </script>
 </body>
 </html>
