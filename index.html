@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Hung-Chun Tsui — PhD student in mathematics at National Tsing Hua University. Research in function field arithmetic, multiple zeta values, and multiple Eisenstein series.">
+  <meta name="description" content="Academic website of Hung-Chun Tsui, PhD student in mathematics at National Tsing Hua University.">
   <meta name="author" content="Hung-Chun Tsui">
   <meta property="og:title" content="Hung-Chun Tsui">
-  <meta property="og:description" content="PhD student in mathematics working on number theory in positive characteristic.">
   <meta property="og:type" content="website">
   <title>Hung-Chun Tsui | Mathematics</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -20,231 +19,145 @@
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header">
-    <div class="container nav-wrap">
-      <a class="brand" href="#top" aria-label="Hung-Chun Tsui home">HC Tsui</a>
-      <button class="menu-button" aria-expanded="false" aria-controls="site-nav"><span data-en>Menu</span><span data-zh hidden>選單</span></button>
-      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
-        <a href="#about"><span data-en>About</span><span data-zh hidden>關於我</span></a>
-        <a href="#research"><span data-en>Research</span><span data-zh hidden>研究</span></a>
-        <a href="#publications"><span data-en>Publications</span><span data-zh hidden>著作</span></a>
-        <a href="#activities"><span data-en>Activities</span><span data-zh hidden>學術活動</span></a>
-        <a href="#education"><span data-en>Education</span><span data-zh hidden>學歷</span></a>
-        <a href="#contact"><span data-en>Contact</span><span data-zh hidden>聯絡方式</span></a>
-        <button class="language-toggle" type="button" aria-label="切換至中文版">中文</button>
-      </nav>
+<body data-page="home">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">HC Tsui</a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span data-lang="en">Menu</span><span data-lang="zh" hidden>選單</span>
+    </button>
+    <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+      <a data-nav="home" href="index.html"><span data-lang="en">Home</span><span data-lang="zh" hidden>首頁</span></a>
+      <a data-nav="publications" href="publications.html"><span data-lang="en">Publications</span><span data-lang="zh" hidden>論文</span></a>
+      <a data-nav="activities" href="activities.html"><span data-lang="en">Activities</span><span data-lang="zh" hidden>學術活動</span></a>
+      <a data-nav="teaching" href="teaching.html"><span data-lang="en">Teaching</span><span data-lang="zh" hidden>教學</span></a>
+      <a href="index.html#contact"><span data-lang="en">Contact</span><span data-lang="zh" hidden>聯絡方式</span></a>
+      <button class="language-toggle" type="button" aria-label="切換至中文版">中文</button>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <h1>Hung-Chun Tsui <span class="cjk">崔鴻竣</span></h1>
+      <p class="lead">
+        <span data-lang="en">PhD student in the Department of Mathematics at <a href="https://www.nthu.edu.tw/" target="_blank" rel="noopener">National Tsing Hua University</a>, Taiwan.</span>
+        <span data-lang="zh" hidden>國立清華大學數學系博士生。</span>
+      </p>
+      <div class="hero-links">
+        <a class="button primary" href="publications.html"><span data-lang="en">Publications</span><span data-lang="zh" hidden>論文</span></a>
+        <a class="button" href="mailto:hctsui@gapp.nthu.edu.tw"><span data-lang="en">Email</span><span data-lang="zh" hidden>電子郵件</span></a>
+      </div>
+      <div class="social-links" aria-label="Academic profiles">
+        <a href="https://orcid.org/0009-0009-7445-5634" target="_blank" rel="noopener">ORCID</a>
+        <a href="https://arxiv.org/search/math?query=Tsui%2C+H&searchtype=author" target="_blank" rel="noopener">arXiv</a>
+        <a href="https://www.researchgate.net/profile/Hung-Chun-Tsui" target="_blank" rel="noopener">ResearchGate</a>
+      </div>
     </div>
-  </header>
+    <aside class="portrait-card" aria-label="Profile image">
+      <img src="assets/profile-placeholder.svg" alt="HC monogram placeholder">
+      <p><span data-lang="en">Shikanoshima, Fukuoka, Japan<br>September 2025</span><span data-lang="zh" hidden>日本福岡志賀島<br>2025 年 9 月</span></p>
+    </aside>
+  </div>
+</section>
 
-  <main id="main">
-    <section id="top" class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <h1>Hung-Chun Tsui <span class="cjk">崔鴻竣</span></h1>
-          <p class="lead">
-            <span data-en>PhD student in the Department of Mathematics at
-            <a href="https://www.nthu.edu.tw/" target="_blank" rel="noopener">National Tsing Hua University</a>, Taiwan.</span>
-            <span data-zh hidden>國立清華大學數學系博士生。</span>
-          </p>
-          <div class="hero-links">
-            <a class="button primary" href="#publications"><span data-en>Publications</span><span data-zh hidden>著作</span></a>
-            <a class="button" href="mailto:hctsui@gapp.nthu.edu.tw"><span data-en>Email</span><span data-zh hidden>電子郵件</span></a>
-          </div>
-          <div class="social-links" aria-label="Academic profiles">
-            <a href="https://orcid.org/0009-0009-7445-5634" target="_blank" rel="noopener">ORCID</a>
-            <a href="https://arxiv.org/search/math?query=Tsui%2C+H&searchtype=author" target="_blank" rel="noopener">arXiv</a>
-            <a href="https://www.researchgate.net/profile/Hung-Chun-Tsui" target="_blank" rel="noopener">ResearchGate</a>
-          </div>
-        </div>
-
-        <aside class="portrait-card" aria-label="Profile">
-          <img src="assets/profile-placeholder.svg" alt="HC monogram placeholder">
-          <p><span data-en>September 2025<br>Shikanoshima, Fukuoka, Japan</span><span data-zh hidden>2025 年 9 月<br>日本福岡志賀島</span></p>
-          <small><span data-en>Replace this image with your portrait later.</span><span data-zh hidden>之後可替換成個人照片。</span></small>
-        </aside>
-      </div>
-    </section>
-
-    <section id="about" class="section">
-      <div class="container split">
-        <div>
-          <p class="section-label"><span data-en>About</span><span data-zh hidden>關於我</span></p>
-          <h2><span data-en>About me</span><span data-zh hidden>關於我</span></h2>
-        </div>
-        <div class="prose">
-          <p>
-            <span data-en>I am a PhD student in mathematics at National Tsing Hua University. My research focuses on number theory in positive characteristic, especially function field arithmetic, multiple zeta values, and multiple Eisenstein series.</span>
-            <span data-zh hidden>我是國立清華大學數學系博士生，研究方向為正特徵數論，特別是函數體算術、多重 zeta 值與多重 Eisenstein 級數。</span>
-          </p>
-          <p>
-            <span data-en>My PhD advisor is Professor <a href="https://sites.google.com/gapp.nthu.edu.tw/cychang/" target="_blank" rel="noopener">Chieh-Yu Chang</a>.</span>
-            <span data-zh hidden>我的博士指導教授為 <a href="https://sites.google.com/gapp.nthu.edu.tw/cychang/" target="_blank" rel="noopener">張祈瑜教授</a>。</span>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section id="research" class="section alternate">
-      <div class="container">
-        <p class="section-label"><span data-en>Research</span><span data-zh hidden>研究</span></p>
-        <h2><span data-en>Research interests</span><span data-zh hidden>研究興趣</span></h2>
-        <div class="interest-grid">
-          <article class="interest-card">
-            <h3><span data-en>Function field arithmetic</span><span data-zh hidden>函數體算術</span></h3>
-          </article>
-          <article class="interest-card">
-            <h3><span data-en>Multiple zeta values</span><span data-zh hidden>多重 zeta 值</span></h3>
-          </article>
-          <article class="interest-card">
-            <h3><span data-en>Multiple Eisenstein series</span><span data-zh hidden>多重 Eisenstein 級數</span></h3>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="publications" class="section">
-      <div class="container">
-        <div class="section-heading-row">
-          <div>
-            <p class="section-label"><span data-en>Research output</span><span data-zh hidden>研究成果</span></p>
-            <h2><span data-en>Preprints</span><span data-zh hidden>預印本</span></h2>
-          </div>
-          <a class="text-link" href="https://arxiv.org/search/math?query=Tsui%2C+H&searchtype=author" target="_blank" rel="noopener"><span data-en>View all on arXiv →</span><span data-zh hidden>在 arXiv 查看全部 →</span></a>
-        </div>
-
-        <ol class="publication-list">
-          <li>
-            <article class="publication">
-              <div class="pub-year">2026</div>
-              <div>
-                <h3>On <em>u</em>-Multiple Zeta Values in Positive Characteristic</h3>
-                <p class="authors"><strong>Hung-Chun Tsui</strong></p>
-                <p class="venue">Preprint, arXiv:2604.03618</p>
-                <div class="pub-links">
-                  <a href="https://arxiv.org/abs/2604.03618" target="_blank" rel="noopener">arXiv</a>
-                  <a href="https://arxiv.org/pdf/2604.03618" target="_blank" rel="noopener">PDF</a>
-                </div>
-              </div>
-            </article>
-          </li>
-          <li>
-            <article class="publication">
-              <div class="pub-year">2026</div>
-              <div>
-                <h3>Algebra Structures of Multiple Eisenstein Series in Positive Characteristic</h3>
-                <p class="authors">Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong></p>
-                <p class="venue">Preprint, arXiv:2603.10376</p>
-                <div class="pub-links">
-                  <a href="https://arxiv.org/abs/2603.10376" target="_blank" rel="noopener">arXiv</a>
-                  <a href="https://arxiv.org/pdf/2603.10376" target="_blank" rel="noopener">PDF</a>
-                </div>
-              </div>
-            </article>
-          </li>
-          <li>
-            <article class="publication">
-              <div class="pub-year">2025</div>
-              <div>
-                <h3>On <em>q</em>-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic</h3>
-                <p class="authors">Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong></p>
-                <p class="venue">Preprint, arXiv:2504.18879</p>
-                <div class="pub-links">
-                  <a href="https://arxiv.org/abs/2504.18879" target="_blank" rel="noopener">arXiv</a>
-                  <a href="https://arxiv.org/pdf/2504.18879" target="_blank" rel="noopener">PDF</a>
-                </div>
-              </div>
-            </article>
-          </li>
-          <li>
-            <article class="publication">
-              <div class="pub-year">2025</div>
-              <div>
-                <h3>Uniqueness of <em>v</em>-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas</h3>
-                <p class="authors">Ting-Wei Chang and <strong>Hung-Chun Tsui</strong></p>
-                <p class="venue">Preprint, arXiv:2504.15697</p>
-                <div class="pub-links">
-                  <a href="https://arxiv.org/abs/2504.15697" target="_blank" rel="noopener">arXiv</a>
-                  <a href="https://arxiv.org/pdf/2504.15697" target="_blank" rel="noopener">PDF</a>
-                </div>
-              </div>
-            </article>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <section id="activities" class="section alternate">
-      <div class="container">
-        <p class="section-label"><span data-en>Activities</span><span data-zh hidden>學術活動</span></p>
-        <h2><span data-en>Upcoming</span><span data-zh hidden>近期活動</span></h2>
-        <div class="timeline">
-          <article class="timeline-item">
-            <time datetime="2026-08-24"><span data-en>24–28 August 2026</span><span data-zh hidden>2026 年 8 月 24–28 日</span></time>
-            <div>
-              <h3>The 33rd Number Theory Summer School: Arithmetic of Function Fields</h3>
-              <p><span data-en>Yataro, Nagasaki, Japan · Participant</span><span data-zh hidden>日本長崎矢太樓 · 參加者</span></p>
-            </div>
-          </article>
-        </div>
-
-      </div>
-    </section>
-
-    <section id="education" class="section">
-      <div class="container">
-        <p class="section-label"><span data-en>Background</span><span data-zh hidden>背景</span></p>
-        <h2><span data-en>Education</span><span data-zh hidden>學歷</span></h2>
-        <div class="education-list">
-          <article>
-            <div class="date"><span data-en>Feb. 2025–present</span><span data-zh hidden>2025 年 2 月至今</span></div>
-            <div>
-              <h3><span data-en>PhD in Mathematics <em>(direct admission)</em></span><span data-zh hidden>數學博士班 <em>（逕讀博士）</em></span></h3>
-              <p><span data-en>National Tsing Hua University</span><span data-zh hidden>國立清華大學</span></p>
-            </div>
-          </article>
-          <article>
-            <div class="date"><span data-en>Sep. 2021–Dec. 2024</span><span data-zh hidden>2021 年 9 月至 2024 年 12 月</span></div>
-            <div>
-              <h3><span data-en>BS in Mathematics <em>(graduated with distinction)</em></span><span data-zh hidden>數學學士 <em>（書卷獎畢業）</em></span></h3>
-              <p><span data-en>National Tsing Hua University</span><span data-zh hidden>國立清華大學</span></p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" class="section contact-section">
-      <div class="container split">
-        <div>
-          <p class="section-label"><span data-en>Contact</span><span data-zh hidden>聯絡方式</span></p>
-          <h2><span data-en>Get in touch</span><span data-zh hidden>聯絡方式</span></h2>
-        </div>
-        <div class="contact-grid">
-          <div>
-            <span><span data-en>Institutional email</span><span data-zh hidden>學校信箱</span></span>
-            <a href="mailto:hctsui@gapp.nthu.edu.tw">hctsui@gapp.nthu.edu.tw</a>
-          </div>
-          <div>
-            <span><span data-en>Personal email</span><span data-zh hidden>私人信箱</span></span>
-            <a href="mailto:hctsui.math@gmail.com">hctsui.math@gmail.com</a>
-          </div>
-          <div>
-            <span><span data-en>Affiliation</span><span data-zh hidden>所屬機構</span></span>
-            <p><span data-en>Department of Mathematics<br>National Tsing Hua University<br>Taiwan</span><span data-zh hidden>國立清華大學數學系<br>臺灣</span></p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>© <span id="year"></span> Hung-Chun Tsui</p>
-      <p><span data-en>Last updated: July 2026 · Hosted on GitHub Pages</span><span data-zh hidden>最後更新：2026 年 7 月 · 由 GitHub Pages 託管</span></p>
+<section class="section" id="about">
+  <div class="container split">
+    <div>
+      <p class="section-label"><span data-lang="en">About</span><span data-lang="zh" hidden>簡介</span></p>
+      <h2><span data-lang="en">About me</span><span data-lang="zh" hidden>個人簡介</span></h2>
     </div>
-  </footer>
+    <div class="prose">
+      <p data-lang="en">I am a PhD student in mathematics at National Tsing Hua University. My advisor is Professor <a href="https://sites.google.com/gapp.nthu.edu.tw/cychang/" target="_blank" rel="noopener">Chieh-Yu Chang</a>.</p>
+      <p data-lang="zh" hidden>現就讀國立清華大學數學系博士班，指導教授為<a href="https://sites.google.com/gapp.nthu.edu.tw/cychang/" target="_blank" rel="noopener">張祈瑜教授</a>。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section alternate" id="research">
+  <div class="container">
+    <p class="section-label"><span data-lang="en">Research</span><span data-lang="zh" hidden>研究</span></p>
+    <h2><span data-lang="en">Research interests</span><span data-lang="zh" hidden>研究領域</span></h2>
+    <div class="interest-grid compact">
+      <article class="interest-card"><h3><span data-lang="en">Function Field Arithmetic</span><span data-lang="zh" hidden>函數體算術</span></h3></article>
+      <article class="interest-card"><h3><span data-lang="en">Multiple Zeta Values</span><span data-lang="zh" hidden>多重 zeta 值</span></h3></article>
+      <article class="interest-card"><h3><span data-lang="en">Multiple Eisenstein Series</span><span data-lang="zh" hidden>多重 Eisenstein 級數</span></h3></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="selected-publications">
+  <div class="container">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-label"><span data-lang="en">Research output</span><span data-lang="zh" hidden>研究成果</span></p>
+        <h2><span data-lang="en">Selected preprints</span><span data-lang="zh" hidden>預印本</span></h2>
+      </div>
+      <a class="text-link" href="publications.html"><span data-lang="en">All publications →</span><span data-lang="zh" hidden>查看全部論文 →</span></a>
+    </div>
+    <ol class="publication-list">
+      <li><article class="publication"><div class="pub-year">2026</div><div>
+        <h3>On <em>u</em>-Multiple Zeta Values in Positive Characteristic</h3>
+        <p class="authors"><strong>Hung-Chun Tsui</strong></p>
+        <p class="venue"><em>Submitted</em>, 2026.</p>
+        <div class="pub-links"><a href="https://arxiv.org/abs/2604.03618" target="_blank" rel="noopener">arXiv</a><a href="https://drive.google.com/file/d/18W5VfIkiHStD1tUsgJRjtaTscF8MsbE6/view?usp=sharing" target="_blank" rel="noopener">PDF</a></div>
+      </div></article></li>
+      <li><article class="publication"><div class="pub-year">2026</div><div>
+        <h3>Algebra Structures of Multiple Eisenstein Series in Positive Characteristic</h3>
+        <p class="authors">Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong></p>
+        <p class="venue"><em>Submitted</em>, 2026.</p>
+        <div class="pub-links"><a href="https://arxiv.org/abs/2603.10376" target="_blank" rel="noopener">arXiv</a><a href="https://drive.google.com/file/d/1odZc8AKcOgvHsn5gvIwKg9MWMdvJ6GcJ/view?usp=sharing" target="_blank" rel="noopener">PDF</a></div>
+      </div></article></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section alternate" id="recent">
+  <div class="container">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-label"><span data-lang="en">Recent</span><span data-lang="zh" hidden>近期</span></p>
+        <h2><span data-lang="en">Academic activities</span><span data-lang="zh" hidden>學術動態</span></h2>
+      </div>
+      <a class="text-link" href="activities.html"><span data-lang="en">All activities →</span><span data-lang="zh" hidden>查看完整紀錄 →</span></a>
+    </div>
+    <div class="timeline">
+      <article class="timeline-item"><time>2026/7/2–8/30</time><div><h3>Academic visit at Tohoku University</h3><p>Sendai, Japan</p></div></article>
+      <article class="timeline-item"><time>2026/7/6</time><div><h3>Recent Developments on Multiple Eisenstein Series in Positive Characteristic</h3><p>Tohoku University Number Theory Seminar</p></div></article>
+      <article class="timeline-item"><time>2026/6/12</time><div><h3>Derivations of Multiple Zeta Values in Positive Characteristic</h3><p>Workshop on Arithmetic of Function Fields</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="education">
+  <div class="container">
+    <p class="section-label"><span data-lang="en">Background</span><span data-lang="zh" hidden>學術背景</span></p>
+    <h2><span data-lang="en">Education</span><span data-lang="zh" hidden>學歷</span></h2>
+    <div class="education-list">
+      <article><div class="date"><span data-lang="en">Feb. 2025–present</span><span data-lang="zh" hidden>2025 年 2 月至今</span></div><div><h3><span data-lang="en">PhD in Mathematics <em>(direct admission)</em></span><span data-lang="zh" hidden>數學博士班（逕讀博士）</span></h3><p><span data-lang="en">National Tsing Hua University</span><span data-lang="zh" hidden>國立清華大學</span></p></div></article>
+      <article><div class="date"><span data-lang="en">Sep. 2021–Dec. 2024</span><span data-lang="zh" hidden>2021 年 9 月至 2024 年 12 月</span></div><div><h3><span data-lang="en">BS in Mathematics <em>(graduated with distinction)</em></span><span data-lang="zh" hidden>數學學士</span></h3><p><span data-lang="en">National Tsing Hua University</span><span data-lang="zh" hidden>國立清華大學</span></p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="section contact-section" id="contact">
+  <div class="container split">
+    <div><p class="section-label"><span data-lang="en">Contact</span><span data-lang="zh" hidden>聯絡方式</span></p><h2><span data-lang="en">Get in touch</span><span data-lang="zh" hidden>聯絡方式</span></h2></div>
+    <div class="contact-grid">
+      <div><span><span data-lang="en">Institutional email</span><span data-lang="zh" hidden>學校信箱</span></span><a href="mailto:hctsui@gapp.nthu.edu.tw">hctsui@gapp.nthu.edu.tw</a></div>
+      <div><span><span data-lang="en">Personal email</span><span data-lang="zh" hidden>個人信箱</span></span><a href="mailto:hctsui.math@gmail.com">hctsui.math@gmail.com</a></div>
+      <div><span><span data-lang="en">Affiliation</span><span data-lang="zh" hidden>所屬單位</span></span><p><span data-lang="en">Department of Mathematics<br>National Tsing Hua University<br>Taiwan</span><span data-lang="zh" hidden>國立清華大學數學系<br>臺灣</span></p></div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Hung-Chun Tsui</p>
+    <p><span data-lang="en">Academic website hosted on GitHub Pages</span><span data-lang="zh" hidden>學術個人網站・GitHub Pages</span></p>
+  </div>
+</footer>
 </body>
 </html>
