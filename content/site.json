@@ -1,0 +1,1107 @@
+{
+  "schema_version": 2,
+  "settings": {
+    "timezone": "Asia/Tokyo",
+    "homepage_publication_limit": 2
+  },
+  "activities": [
+    {
+      "id": "visit-2026-07-02-tohoku-university",
+      "type": "visit",
+      "start_date": "2026-07-02",
+      "end_date": "2026-08-30",
+      "show_upcoming": false,
+      "title": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "title_html": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "url": "",
+      "description": {
+        "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+        "zh": "仙台, 日本 · 獲日本台灣交流協會補助"
+      },
+      "description_html": {
+        "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+        "zh": "仙台, 日本 · 獲日本台灣交流協會補助"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
+      "type": "talk",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-06",
+      "show_upcoming": false,
+      "title": {
+        "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的近期發展"
+      },
+      "title_html": {
+        "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的近期發展"
+      },
+      "url": "",
+      "description": {
+        "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
+        "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+      },
+      "description_html": {
+        "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
+        "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+      },
+      "slides_url": "https://drive.google.com/file/d/1HmrxcOYRdzcAFKnnCzarS6wfa4d7gSbS/view?usp=sharing"
+    },
+    {
+      "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
+      "type": "talk",
+      "start_date": "2026-06-12",
+      "end_date": "2026-06-12",
+      "show_upcoming": false,
+      "title": {
+        "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵多重 zeta 值的導子"
+      },
+      "title_html": {
+        "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵多重 zeta 值的導子"
+      },
+      "url": "",
+      "description": {
+        "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
+        "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+      },
+      "description_html": {
+        "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
+        "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
+      "type": "talk",
+      "start_date": "2026-02-08",
+      "end_date": "2026-02-08",
+      "show_upcoming": false,
+      "title": {
+        "en": "On Finite Multiple Harmonic u -series over Function Field",
+        "zh": "函數體上的有限多重調和 u-級數"
+      },
+      "title_html": {
+        "en": "On Finite Multiple Harmonic <em>u</em>-series over Function Field",
+        "zh": "函數體上的有限多重調和 u-級數"
+      },
+      "url": "",
+      "description": {
+        "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
+        "zh": "名古屋—關西青年研究者 zeta 研討會 , 名古屋大學, 名古屋, 日本"
+      },
+      "description_html": {
+        "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
+        "zh": "名古屋—關西青年研究者 zeta 研討會\n, 名古屋大學, 名古屋, 日本"
+      },
+      "slides_url": "https://drive.google.com/file/d/1lwDJ5mT_b7K84dxeCCNd5DcY-ORmDCHZ/view?usp=sharing"
+    },
+    {
+      "id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
+      "type": "talk",
+      "start_date": "2025-09-30",
+      "end_date": "2025-09-30",
+      "show_upcoming": false,
+      "title": {
+        "en": "On u -analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+        "zh": "多重 zeta 值的 u-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+      },
+      "title_html": {
+        "en": "On <em>u</em>-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+        "zh": "多重 zeta 值的 u-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+      },
+      "url": "",
+      "description": {
+        "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
+        "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+      },
+      "description_html": {
+        "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
+        "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
+      "type": "talk",
+      "start_date": "2025-09-03",
+      "end_date": "2025-09-03",
+      "show_upcoming": false,
+      "title": {
+        "en": "On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 q-shuffle 關係"
+      },
+      "title_html": {
+        "en": "On <em>q</em>-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 q-shuffle 關係"
+      },
+      "url": "",
+      "description": {
+        "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
+        "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+      },
+      "description_html": {
+        "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
+        "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+      },
+      "slides_url": "https://drive.google.com/file/d/1UAwe7PzgwOy-H2U2m3mVj0RLqfC_8Rar/view?usp=sharing"
+    },
+    {
+      "id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
+      "type": "talk",
+      "start_date": "2025-04-17",
+      "end_date": "2025-04-17",
+      "show_upcoming": false,
+      "title": {
+        "en": "On the Uniqueness of v -adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+        "zh": "Gross–Koblitz–Thakur 公式中 v-adic Gamma 函數的唯一性"
+      },
+      "title_html": {
+        "en": "On the Uniqueness of <em>v</em>-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+        "zh": "Gross–Koblitz–Thakur 公式中 v-adic Gamma 函數的唯一性"
+      },
+      "url": "",
+      "description": {
+        "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+      },
+      "description_html": {
+        "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop",
+      "type": "conference",
+      "start_date": "2026-07-17",
+      "end_date": "2026-07-17",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 72nd Kansai Multiple Zeta Workshop",
+        "zh": "第 72 回關西多重 zeta 值研討會"
+      },
+      "title_html": {
+        "en": "The 72nd Kansai Multiple Zeta Workshop",
+        "zh": "第 72 回關西多重 zeta 值研討會"
+      },
+      "url": "https://sites.google.com/site/kmzsince2011/past/2026?authuser=0",
+      "description": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "description_html": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference",
+      "type": "conference",
+      "start_date": "2026-07-07",
+      "end_date": "2026-07-10",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 25th Sendai–Hiroshima Number Theory Conference",
+        "zh": "第 25 屆仙台—廣島數論會議"
+      },
+      "title_html": {
+        "en": "The 25th Sendai–Hiroshima Number Theory Conference",
+        "zh": "第 25 屆仙台—廣島數論會議"
+      },
+      "url": "https://hiro2.pm.tokushima-u.ac.jp/~hiroki/hiroshima26.html",
+      "description": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "description_html": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
+      "type": "conference",
+      "start_date": "2026-06-11",
+      "end_date": "2026-06-12",
+      "show_upcoming": false,
+      "title": {
+        "en": "Workshop on Arithmetic of Function Fields",
+        "zh": "函數體算術工作坊"
+      },
+      "title_html": {
+        "en": "Workshop on Arithmetic of Function Fields",
+        "zh": "函數體算術工作坊"
+      },
+      "url": "https://sites.google.com/view/workshoponarithmeticoffunction/home",
+      "description": {
+        "en": "National Cheng Kung University, Tainan, Taiwan",
+        "zh": "國立成功大學, 臺南, 臺灣"
+      },
+      "description_html": {
+        "en": "National Cheng Kung University, Tainan, Taiwan",
+        "zh": "國立成功大學, 臺南, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers",
+      "type": "conference",
+      "start_date": "2026-02-08",
+      "end_date": "2026-02-11",
+      "show_upcoming": false,
+      "title": {
+        "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
+        "zh": "名古屋—關西青年研究者 zeta 研討會"
+      },
+      "title_html": {
+        "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
+        "zh": "名古屋—關西青年研究者 zeta 研討會"
+      },
+      "url": "https://sites.google.com/view/zetayoung19?authuser=0",
+      "description": {
+        "en": "Nagoya University, Nagoya, Japan",
+        "zh": "名古屋大學, 名古屋, 日本"
+      },
+      "description_html": {
+        "en": "Nagoya University, Nagoya, Japan",
+        "zh": "名古屋大學, 名古屋, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-01-21-the-61st-tms-annual-meeting",
+      "type": "conference",
+      "start_date": "2026-01-21",
+      "end_date": "2026-01-22",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 61st TMS Annual Meeting",
+        "zh": "中華民國數學會第 61 屆年會"
+      },
+      "title_html": {
+        "en": "The 61st TMS Annual Meeting",
+        "zh": "中華民國數學會第 61 屆年會"
+      },
+      "url": "https://2026tms-en.tms.org.tw/",
+      "description": {
+        "en": "National Chung Cheng University, Chiayi, Taiwan",
+        "zh": "國立中正大學, 嘉義, 臺灣"
+      },
+      "description_html": {
+        "en": "National Chung Cheng University, Chiayi, Taiwan",
+        "zh": "國立中正大學, 嘉義, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
+      "type": "conference",
+      "start_date": "2025-12-15",
+      "end_date": "2025-12-19",
+      "show_upcoming": false,
+      "title": {
+        "en": "2025 Taipei Conference on Arithmetic Geometry",
+        "zh": "2025 臺北算術幾何會議"
+      },
+      "title_html": {
+        "en": "2025 Taipei Conference on Arithmetic Geometry",
+        "zh": "2025 臺北算術幾何會議"
+      },
+      "url": "https://www.math.sinica.edu.tw/202512taipeiag",
+      "description": {
+        "en": "Academia Sinica, Taipei, Taiwan",
+        "zh": "中央研究院, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "Academia Sinica, Taipei, Taiwan",
+        "zh": "中央研究院, 臺北, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
+      "type": "conference",
+      "start_date": "2025-09-29",
+      "end_date": "2025-10-03",
+      "show_upcoming": false,
+      "title": {
+        "en": "Various Aspects of Multiple Zeta Values",
+        "zh": "多重 zeta 值的各種面向"
+      },
+      "title_html": {
+        "en": "Various Aspects of Multiple Zeta Values",
+        "zh": "多重 zeta 值的各種面向"
+      },
+      "url": "https://sites.google.com/view/rimsmzv2025/home",
+      "description": {
+        "en": "Kyoto University, Kyoto, Japan",
+        "zh": "京都大學, 京都, 日本"
+      },
+      "description_html": {
+        "en": "Kyoto University, Kyoto, Japan",
+        "zh": "京都大學, 京都, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-09-01-japan-taiwan-number-theory-conference",
+      "type": "conference",
+      "start_date": "2025-09-01",
+      "end_date": "2025-09-05",
+      "show_upcoming": false,
+      "title": {
+        "en": "Japan-Taiwan Number Theory Conference",
+        "zh": "日臺數論會議"
+      },
+      "title_html": {
+        "en": "Japan-Taiwan Number Theory Conference",
+        "zh": "日臺數論會議"
+      },
+      "url": "https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html",
+      "description": {
+        "en": "Kyukamura Shikanoshima, Fukuoka, Japan",
+        "zh": "休暇村志賀島, 福岡, 日本"
+      },
+      "description_html": {
+        "en": "Kyukamura Shikanoshima, Fukuoka, Japan",
+        "zh": "休暇村志賀島, 福岡, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
+      "type": "conference",
+      "start_date": "2025-08-25",
+      "end_date": "2025-08-29",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 11th East Asia Number Theory Conference",
+        "zh": "第 11 屆東亞數論會議"
+      },
+      "title_html": {
+        "en": "The 11th East Asia Number Theory Conference",
+        "zh": "第 11 屆東亞數論會議"
+      },
+      "url": "https://www.math.ntnu.edu.tw/workshop/eantc2025/",
+      "description": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-06-30-iwasawa-2025",
+      "type": "conference",
+      "start_date": "2025-06-30",
+      "end_date": "2025-07-04",
+      "show_upcoming": false,
+      "title": {
+        "en": "Iwasawa 2025",
+        "zh": "Iwasawa 2025 國際會議"
+      },
+      "title_html": {
+        "en": "Iwasawa 2025",
+        "zh": "Iwasawa 2025 國際會議"
+      },
+      "url": "https://sites.google.com/ncts.ntu.edu.tw/iwasawa-2025/iwasawa-2025?authuser=0",
+      "description": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
+      "type": "conference",
+      "start_date": "2025-06-25",
+      "end_date": "2025-06-27",
+      "show_upcoming": false,
+      "title": {
+        "en": "Iwasawa Theory Taipei Summer School",
+        "zh": "Iwasawa 理論臺北暑期學校"
+      },
+      "title_html": {
+        "en": "Iwasawa Theory Taipei Summer School",
+        "zh": "Iwasawa 理論臺北暑期學校"
+      },
+      "url": "https://sites.google.com/ncts.ntu.edu.tw/iwasawa-summerschool/",
+      "description": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+      "type": "conference",
+      "start_date": "2025-02-17",
+      "end_date": "2025-02-22",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2",
+        "zh": "第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第二週"
+      },
+      "title_html": {
+        "en": "The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2",
+        "zh": "第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第二週"
+      },
+      "url": "https://www.apu.ac.jp/~rintaro/MK60/indexE.html",
+      "description": {
+        "en": "Kindai University, Osaka, Japan",
+        "zh": "近畿大學, 大阪, 日本"
+      },
+      "description_html": {
+        "en": "Kindai University, Osaka, Japan",
+        "zh": "近畿大學, 大阪, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+      "type": "conference",
+      "start_date": "2025-02-10",
+      "end_date": "2025-02-15",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1",
+        "zh": "第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第一週"
+      },
+      "title_html": {
+        "en": "The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1",
+        "zh": "第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第一週"
+      },
+      "url": "https://sites.google.com/view/the-17th-msj-siw1",
+      "description": {
+        "en": "Kyushu University Nishijin Plaza, Fukuoka, Japan",
+        "zh": "九州大學西新廣場, 福岡, 日本"
+      },
+      "description_html": {
+        "en": "Kyushu University Nishijin Plaza, Fukuoka, Japan",
+        "zh": "九州大學西新廣場, 福岡, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-01-14-the-60th-tms-annual-meeting",
+      "type": "conference",
+      "start_date": "2025-01-14",
+      "end_date": "2025-01-15",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 60th TMS Annual Meeting",
+        "zh": "中華民國數學會第 60 屆年會"
+      },
+      "title_html": {
+        "en": "The 60th TMS Annual Meeting",
+        "zh": "中華民國數學會第 60 屆年會"
+      },
+      "url": "https://2025tms-en.tms.org.tw/",
+      "description": {
+        "en": "National Central University, Taoyuan, Taiwan",
+        "zh": "國立中央大學, 桃園, 臺灣"
+      },
+      "description_html": {
+        "en": "National Central University, Taoyuan, Taiwan",
+        "zh": "國立中央大學, 桃園, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+      "type": "conference",
+      "start_date": "2025-01-02",
+      "end_date": "2025-01-03",
+      "show_upcoming": false,
+      "title": {
+        "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic",
+        "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+      },
+      "title_html": {
+        "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic",
+        "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+      },
+      "url": "https://idv.sinica.edu.tw/mathas/202501SCV/index.html",
+      "description": {
+        "en": "Academia Sinica, Taipei, Taiwan",
+        "zh": "中央研究院, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "Academia Sinica, Taipei, Taiwan",
+        "zh": "中央研究院, 臺北, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2024-01-22-the-59th-tms-annual-meeting",
+      "type": "conference",
+      "start_date": "2024-01-22",
+      "end_date": "2024-01-23",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 59th TMS Annual Meeting",
+        "zh": "中華民國數學會第 59 屆年會"
+      },
+      "title_html": {
+        "en": "The 59th TMS Annual Meeting",
+        "zh": "中華民國數學會第 59 屆年會"
+      },
+      "url": "https://2024tms.tms.org.tw/",
+      "description": {
+        "en": "National Chengchi University, Taipei, Taiwan",
+        "zh": "國立政治大學, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "National Chengchi University, Taipei, Taiwan",
+        "zh": "國立政治大學, 臺北, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2023-01-16-the-58th-tms-annual-meeting",
+      "type": "conference",
+      "start_date": "2023-01-16",
+      "end_date": "2023-01-17",
+      "show_upcoming": false,
+      "title": {
+        "en": "The 58th TMS Annual Meeting",
+        "zh": "中華民國數學會第 58 屆年會"
+      },
+      "title_html": {
+        "en": "The 58th TMS Annual Meeting",
+        "zh": "中華民國數學會第 58 屆年會"
+      },
+      "url": "https://www.math.nthu.edu.tw/~2022TMS/home_en.html",
+      "description": {
+        "en": "National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "國立清華大學, 新竹, 臺灣"
+      },
+      "description_html": {
+        "en": "National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "國立清華大學, 新竹, 臺灣"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-number-theory-summer-school",
+      "type": "conference",
+      "start_date": "2026-08-24",
+      "end_date": "2026-08-28",
+      "show_upcoming": true,
+      "title": {
+        "en": "The 33rd Number Theory Summer School: Arithmetic of Function Fields",
+        "zh": "第 33 屆數論暑期學校：函數體的算術"
+      },
+      "title_html": {
+        "en": "The 33rd Number Theory Summer School: Arithmetic of Function Fields",
+        "zh": "第 33 屆數論暑期學校：函數體的算術"
+      },
+      "url": "https://edu.tsuda.ac.jp/~t-hara/ss2026/index.html",
+      "description": {
+        "en": "Yataro, Nagasaki, Japan",
+        "zh": "矢太樓, 長崎, 日本"
+      },
+      "description_html": {
+        "en": "Yataro, Nagasaki, Japan",
+        "zh": "矢太樓, 長崎, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+      "type": "conference",
+      "start_date": "2026-11-07",
+      "end_date": "2026-11-07",
+      "show_upcoming": true,
+      "title": {
+        "en": "The 73rd Kansai Multiple Zeta Workshop",
+        "zh": "第 73 回關西多重 zeta 值研討會"
+      },
+      "title_html": {
+        "en": "The 73rd Kansai Multiple Zeta Workshop",
+        "zh": "第 73 回關西多重 zeta 值研討會"
+      },
+      "url": "https://sites.google.com/site/kmzsince2011/past/2026?authuser=0",
+      "description": {
+        "en": "Nagoya University, Nagoya, Japan",
+        "zh": "名古屋大學, 名古屋, 日本"
+      },
+      "description_html": {
+        "en": "Nagoya University, Nagoya, Japan",
+        "zh": "名古屋大學, 名古屋, 日本"
+      },
+      "slides_url": ""
+    },
+    {
+      "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
+      "type": "conference",
+      "start_date": "2026-11-08",
+      "end_date": "2026-11-08",
+      "show_upcoming": true,
+      "title": {
+        "en": "​The 2nd Multiple Eisenstein Series Research Meeting",
+        "zh": "第二屆多重 Eisenstein 級數研究會"
+      },
+      "title_html": {
+        "en": "​The 2nd Multiple Eisenstein Series Research Meeting",
+        "zh": "第二屆多重 Eisenstein 級數研究會"
+      },
+      "url": "https://eisensteinseries.github.io/MESMeeting/",
+      "description": {
+        "en": "Nagoya University, Nagoya, Japan",
+        "zh": "名古屋大學, 名古屋, 日本"
+      },
+      "description_html": {
+        "en": "Nagoya University, Nagoya, Japan",
+        "zh": "名古屋大學, 名古屋, 日本"
+      },
+      "slides_url": ""
+    }
+  ],
+  "honors": [
+    {
+      "id": "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
+      "type": "honor",
+      "year": 2026,
+      "order": 0,
+      "title": {
+        "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+        "zh": "臺日青年科研人才交流計畫"
+      },
+      "title_html": {
+        "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+        "zh": "臺日青年科研人才交流計畫"
+      },
+      "url": "",
+      "organization": {
+        "en": "Japan–Taiwan Exchange Association",
+        "zh": "日本台灣交流協會"
+      },
+      "organization_html": {
+        "en": "Japan–Taiwan Exchange Association",
+        "zh": "日本台灣交流協會"
+      }
+    },
+    {
+      "id": "honor-2025-nstc-graduate-research-fellowship",
+      "type": "honor",
+      "year": 2025,
+      "order": 1,
+      "title": {
+        "en": "NSTC Graduate Research Fellowship",
+        "zh": "國科會博士生研究獎學金"
+      },
+      "title_html": {
+        "en": "NSTC Graduate Research Fellowship",
+        "zh": "國科會博士生研究獎學金"
+      },
+      "url": "",
+      "organization": {
+        "en": "National Science and Technology Council",
+        "zh": "國家科學及技術委員會"
+      },
+      "organization_html": {
+        "en": "National Science and Technology Council",
+        "zh": "國家科學及技術委員會"
+      }
+    },
+    {
+      "id": "honor-2024-chow-hung-ching-scholarship",
+      "type": "honor",
+      "year": 2024,
+      "order": 2,
+      "title": {
+        "en": "Chow Hung-Ching Scholarship",
+        "zh": "周鴻經獎學金"
+      },
+      "title_html": {
+        "en": "Chow Hung-Ching Scholarship",
+        "zh": "周鴻經獎學金"
+      },
+      "url": "",
+      "organization": {
+        "en": "Academia Sinica",
+        "zh": "中央研究院"
+      },
+      "organization_html": {
+        "en": "Academia Sinica",
+        "zh": "中央研究院"
+      }
+    },
+    {
+      "id": "honor-2024-tms-outstanding-students-prize",
+      "type": "honor",
+      "year": 2024,
+      "order": 3,
+      "title": {
+        "en": "TMS Outstanding Students Prize",
+        "zh": "中技社數學傑出大學生獎"
+      },
+      "title_html": {
+        "en": "TMS Outstanding Students Prize",
+        "zh": "中技社數學傑出大學生獎"
+      },
+      "url": "",
+      "organization": {
+        "en": "Taiwan Mathematical Society",
+        "zh": "中華民國數學會"
+      },
+      "organization_html": {
+        "en": "Taiwan Mathematical Society",
+        "zh": "中華民國數學會"
+      }
+    }
+  ],
+  "publications": [
+    {
+      "id": "publication-2504.15697-1",
+      "type": "publication",
+      "date": "2025-04-22",
+      "year": 2025,
+      "order": 0,
+      "arxiv": "2504.15697",
+      "title": {
+        "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
+        "zh": "函數體上 Gross–Koblitz 型公式中 v-adic Gamma 函數的唯一性"
+      },
+      "title_html": {
+        "en": "Uniqueness of <em>v</em>-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
+        "zh": "函數體上 Gross–Koblitz 型公式中 v-adic Gamma 函數的唯一性"
+      },
+      "authors": {
+        "en": "Ting-Wei Chang and Hung-Chun Tsui",
+        "zh": "張庭瑋, 崔鴻竣"
+      },
+      "authors_html": {
+        "en": "Ting-Wei Chang and <strong>Hung-Chun Tsui</strong>",
+        "zh": "張庭瑋, <strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "arXiv:2504.15697",
+        "zh": "arXiv:2504.15697"
+      },
+      "venue_html": {
+        "en": "arXiv:2504.15697",
+        "zh": "arXiv:2504.15697"
+      },
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2504.15697"
+        },
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://drive.google.com/file/d/1-7W2H3vzHCM4E3asVgfFNbzuP1ojudmO/view?usp=drive_link"
+        }
+      ]
+    },
+    {
+      "id": "publication-2504.18879-2",
+      "type": "publication",
+      "date": "2025-04-26",
+      "year": 2025,
+      "order": 1,
+      "arxiv": "2504.18879",
+      "title": {
+        "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係"
+      },
+      "title_html": {
+        "en": "On <em>q</em>-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係"
+      },
+      "authors": {
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
+        "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
+      },
+      "authors_html": {
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
+        "zh": "張庭瑋, 陳松筠, 黃斐浚, <strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "arXiv:2504.18879",
+        "zh": "arXiv:2504.18879"
+      },
+      "venue_html": {
+        "en": "arXiv:2504.18879",
+        "zh": "arXiv:2504.18879"
+      },
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2504.18879v3"
+        },
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://drive.google.com/file/d/1fzSgTiE4V_rNHtDgoTLtZVMoaWrTHBAx/view?usp=drive_link"
+        }
+      ]
+    },
+    {
+      "id": "publication-2603.10376-3",
+      "type": "publication",
+      "date": "2026-03-11",
+      "year": 2026,
+      "order": 2,
+      "arxiv": "2603.10376",
+      "title": {
+        "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的代數結構"
+      },
+      "title_html": {
+        "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的代數結構"
+      },
+      "authors": {
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
+        "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
+      },
+      "authors_html": {
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
+        "zh": "張庭瑋, 陳松筠, 黃斐浚, <strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "arXiv:2603.10376",
+        "zh": "arXiv:2603.10376"
+      },
+      "venue_html": {
+        "en": "arXiv:2603.10376",
+        "zh": "arXiv:2603.10376"
+      },
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2603.10376"
+        },
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://drive.google.com/file/d/1odZc8AKcOgvHsn5gvIwKg9MWMdvJ6GcJ/view?usp=sharing"
+        }
+      ],
+      "homepage_title_html": {
+        "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的代數結構"
+      },
+      "homepage_authors_html": {
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
+        "zh": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>"
+      }
+    },
+    {
+      "id": "publication-2604.03618-4",
+      "type": "publication",
+      "date": "2026-04-05",
+      "year": 2026,
+      "order": 3,
+      "arxiv": "2604.03618",
+      "title": {
+        "en": "On u -Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 u-多重 zeta 值"
+      },
+      "title_html": {
+        "en": "On <em>u</em>-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 u-多重 zeta 值"
+      },
+      "authors": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "authors_html": {
+        "en": "<strong>Hung-Chun Tsui</strong>",
+        "zh": "<strong>崔鴻竣</strong>"
+      },
+      "venue": {
+        "en": "arXiv:2604.03618",
+        "zh": "arXiv:2604.03618"
+      },
+      "venue_html": {
+        "en": "arXiv:2604.03618",
+        "zh": "arXiv:2604.03618"
+      },
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2604.03618"
+        },
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://drive.google.com/file/d/18W5VfIkiHStD1tUsgJRjtaTscF8MsbE6/view?usp=sharing"
+        }
+      ],
+      "homepage_title_html": {
+        "en": "On <em>u</em>-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 u-多重 zeta 值"
+      },
+      "homepage_authors_html": {
+        "en": "<strong>Hung-Chun Tsui</strong>",
+        "zh": "<strong>Hung-Chun Tsui</strong>"
+      }
+    }
+  ],
+  "teaching": [
+    {
+      "id": "teaching-1-math2410-algebra-i",
+      "type": "teaching",
+      "order": 0,
+      "term": {
+        "en": "Fall 2025",
+        "zh": "2025 秋"
+      },
+      "course": {
+        "en": "MATH2410 Algebra I",
+        "zh": "MATH2410 代數（一）"
+      }
+    },
+    {
+      "id": "teaching-2-math2420-algebra-ii",
+      "type": "teaching",
+      "order": 1,
+      "term": {
+        "en": "Spring 2026",
+        "zh": "2026 春"
+      },
+      "course": {
+        "en": "MATH2420 Algebra II",
+        "zh": "MATH2420 代數（二）"
+      }
+    },
+    {
+      "id": "teaching-3-math2870-discrete-mathematics",
+      "type": "teaching",
+      "order": 2,
+      "term": {
+        "en": "Spring 2026",
+        "zh": "2026 春"
+      },
+      "course": {
+        "en": "MATH2870 Discrete Mathematics",
+        "zh": "MATH2870 離散數學"
+      }
+    },
+    {
+      "id": "teaching-4-math3450-cryptography",
+      "type": "teaching",
+      "order": 3,
+      "term": {
+        "en": "Fall 2025",
+        "zh": "2025 秋"
+      },
+      "course": {
+        "en": "MATH3450 Cryptography",
+        "zh": "MATH3450 密碼學"
+      }
+    },
+    {
+      "id": "teaching-5-math1410-linear-algebra-i",
+      "type": "teaching",
+      "order": 4,
+      "term": {
+        "en": "Fall 2024",
+        "zh": "2024 秋"
+      },
+      "course": {
+        "en": "MATH1410 Linear Algebra I",
+        "zh": "MATH1410 線性代數（一）"
+      }
+    },
+    {
+      "id": "teaching-6-math1420-linear-algebra-ii",
+      "type": "teaching",
+      "order": 5,
+      "term": {
+        "en": "Spring 2025",
+        "zh": "2025 春"
+      },
+      "course": {
+        "en": "MATH1420 Linear Algebra II",
+        "zh": "MATH1420 線性代數（二）"
+      }
+    },
+    {
+      "id": "teaching-7-math3050-complex-analysis",
+      "type": "teaching",
+      "order": 6,
+      "term": {
+        "en": "Spring 2025",
+        "zh": "2025 春"
+      },
+      "course": {
+        "en": "MATH3050 Complex Analysis",
+        "zh": "MATH3050 複變數函數論"
+      }
+    },
+    {
+      "id": "teaching-8-math2010-advanced-calculus-i",
+      "type": "teaching",
+      "order": 7,
+      "term": {
+        "en": "Fall 2023",
+        "zh": "2023 秋"
+      },
+      "course": {
+        "en": "MATH2010 Advanced Calculus I",
+        "zh": "MATH2010 高等微積分（一）"
+      }
+    },
+    {
+      "id": "teaching-9-math2020-advanced-calculus-ii",
+      "type": "teaching",
+      "order": 8,
+      "term": {
+        "en": "Spring 2024",
+        "zh": "2024 春"
+      },
+      "course": {
+        "en": "MATH2020 Advanced Calculus II",
+        "zh": "MATH2020 高等微積分（二）"
+      }
+    }
+  ]
+}
