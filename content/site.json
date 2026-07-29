@@ -1143,27 +1143,6 @@
         "en": "MATH2020 Advanced Calculus II",
         "zh": "MATH2020 高等微積分（二）"
       }
-    },
-    {
-      "id": "teaching-9-calculus",
-      "type": "teaching",
-      "order": 9,
-      "role": {
-        "en": "Lecturer",
-        "zh": "講師"
-      },
-      "institution": {
-        "en": "Texas A&M University",
-        "zh": "Texas A&M University"
-      },
-      "term": {
-        "en": "Fall 2027",
-        "zh": "Fall 2027"
-      },
-      "course": {
-        "en": "Calculus",
-        "zh": "Calculus"
-      }
     }
   ]
 }
