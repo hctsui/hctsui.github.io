@@ -1069,14 +1069,14 @@ html[lang="zh"] .section-label{
 }
 
 
-/* Activities hero: vertical top-to-bottom gradient */
+/* Activities hero: vertical gradient, darker at top and lighter at bottom */
 html body[data-page="activities"] .page-hero{
   background:
     linear-gradient(
       180deg,
-      var(--surface) 0%,
-      var(--surface) 38%,
-      var(--accent-soft) 100%
+      var(--accent-soft) 0%,
+      #edf6f2 42%,
+      var(--surface) 100%
     ) !important;
   border-bottom:1px solid var(--line);
 }
