@@ -1,9 +1,8 @@
-# hctsui.github.io — v12
+# hctsui.github.io — v13
 
 Changes:
-- Removed honors.html and zh/honors.html.
-- Removed the repeated Academic Visit section from CV.
-- Current navigation item is enclosed in a small color-matched outline.
-- Homepage uses the title Selected Publications.
-- Homepage automatically selects the newest two publications from publications.html.
-- CV, ORCID, arXiv, ResearchGate, PDF, and Slides links use button styling.
+- Removed Research Interests from the homepage.
+- Removed the Publications and Email pill buttons from the homepage.
+- Homepage CV / ORCID / arXiv / ResearchGate links now use a quieter inline text-link style.
+- CV Research Interests now use section-style rows instead of a bullet list.
+- Teaching page subtitle rewritten to match the rest of the site.
