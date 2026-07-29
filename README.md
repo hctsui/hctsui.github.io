@@ -1,8 +1,12 @@
-# hctsui.github.io — v18
+# hctsui.github.io — v19
 
-Changes:
-- Home image area widened for landscape photography.
-- Portrait image ratio changed to 16:10.
-- Home gradient strengthened with visible color from both upper-left and lower-right.
-- Contact section now includes full postal address and office information.
-- English and Traditional Chinese homepages are both updated.
+Home layout fixes:
+- `Hung-Chun Tsui` stays on one line on normal desktop screens.
+- The landscape photo column is wider and shifted farther right.
+- The photo uses a 16:9 landscape crop.
+- The image filename is now `assets/photo.jpg`.
+
+To replace the image, upload your own JPG to:
+`assets/photo.jpg`
+
+The spelling must be exactly `photo.jpg`, all lowercase.
