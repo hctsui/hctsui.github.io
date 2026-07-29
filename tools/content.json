@@ -72,6 +72,30 @@
         "zh": "日本"
       },
       "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4"
+    },
+    {
+      "kind": "conference",
+      "show_upcoming": true,
+      "start_date": "2026-11-08",
+      "end_date": "2026-11-08",
+      "title": {
+        "en": "​The 2nd Multiple Eisenstein Series Research Meeting",
+        "zh": "第二屆多重 Eisenstein 級數研究會"
+      },
+      "url": "https://eisensteinseries.github.io/MESMeeting/",
+      "venue": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      },
+      "city": {
+        "en": "Nagoya",
+        "zh": "名古屋"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
     }
   ]
 }
