@@ -1,59 +1,60 @@
 name: Add teaching course / 新增教學課程
-description: Add a teaching-assistant or lecturer course to the website and CV.
+description: Add a teaching course under an institution heading.
 title: "[Website: Add teaching] "
 body:
   - type: markdown
     attributes:
       value: |
-        **欄位標示**
-        - **[必填]**：送出前一定要填。
-        - **[選填]**：可以留空；留空時網站不會輸出空白文字。
-        - **[可自動翻譯]**：中文可留空；系統會優先沿用既有譯名。
-        - 機構可直接輸入簡寫，例如 `NTHU`。未知學校也可以直接輸入完整英文名稱，不需要先修改選單。
+        **分組邏輯**
+        - Teaching 頁面依「機構」自動產生大標題。
+        - 選 Other 可新增任何學校；新增後，該學校會出現在未來表單選單。
+        - 課程內仍顯示 Teaching Assistant、Lecturer 或自訂身分，不再另外產生重複的身分大標題。
+        - 排序請在 Admin 的「網站排序」功能調整。
   - type: dropdown
     id: chinese-mode
     attributes:
       label: Chinese handling / 中文欄位處理 [必填]
       options:
-        - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
-        - I will fill Chinese fields myself / 中文由我自行填寫
+        - "Auto translate blank Chinese fields / 自動翻譯空白中文欄位"
+        - "I will fill Chinese fields myself / 中文由我自行填寫"
       default: 0
     validations: {required: true}
+  - type: dropdown
+    id: institution-section
+    attributes:
+      label: Institution section / 機構大標題 [必填]
+      options:
+        - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
+        - "Other / 其他（建立新機構大標題）"
+      default: 0
+    validations: {required: true}
+  - type: input
+    id: custom-institution-en
+    attributes:
+      label: Custom institution (English) / 自訂機構英文 [選填]
+      description: 只有選 Other 時填寫。
+  - type: input
+    id: custom-institution-zh
+    attributes:
+      label: Custom institution (Chinese) / 自訂機構中文 [選填・可自動翻譯]
   - type: dropdown
     id: role
     attributes:
       label: Role / 教學身分 [必填]
-      description: 未來若有其他身分，選 Other 並在下方自行填寫即可。
       options:
-        - Teaching Assistant / 助教
-        - Lecturer / 講師
-        - Other / 其他（下方自訂）
+        - "Teaching Assistant / 助教"
+        - "Lecturer / 講師"
+        - "Other / 其他（下方自訂）"
       default: 0
     validations: {required: true}
   - type: input
     id: custom-role-en
     attributes:
       label: Custom role (English) / 自訂身分英文 [選填]
-      description: 只有上方選 Other 時需要填寫。
-      placeholder: "Instructor"
   - type: input
     id: custom-role-zh
     attributes:
       label: Custom role (Chinese) / 自訂身分中文 [選填・可自動翻譯]
-      description: 只有上方選 Other 時使用。
-      placeholder: "授課教師"
-  - type: input
-    id: institution-en
-    attributes:
-      label: Institution (English or shortcut) / 機構英文或簡寫 [必填]
-      description: 可輸入 NTHU、Tohoku University，或任何新的學校名稱。
-      placeholder: "NTHU"
-    validations: {required: true}
-  - type: input
-    id: institution-zh
-    attributes:
-      label: Institution (Chinese) / 機構中文 [選填・可自動翻譯]
-      placeholder: "國立清華大學"
   - type: input
     id: term-en
     attributes:
@@ -75,11 +76,3 @@ body:
     id: course-zh
     attributes:
       label: Course (Chinese) / 課程中文 [選填・可自動翻譯]
-      placeholder: "MATH2410 代數（一）"
-  - type: dropdown
-    id: top
-    attributes:
-      label: Place at top? / 是否放在最前面 [必填]
-      options: ["Yes / 是", "No / 否"]
-      default: 1
-    validations: {required: true}

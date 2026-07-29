@@ -1,5 +1,5 @@
 name: Add publication / 新增論文
-description: Add a paper or preprint and update the homepage automatically.
+description: Add a paper, article, survey, or another publication type.
 title: "[Website: Add publication] "
 body:
   - type: markdown
@@ -7,28 +7,45 @@ body:
       value: |
         **欄位標示**
         - **[必填]**：送出前一定要填。
-        - **[選填]**：可以留空；留空時網站不會輸出空白文字或按鈕。
-        - **[可自動翻譯]**：中文可留空；系統會優先沿用既有譯名，再產生臺灣繁體中文草稿。
-        - 日期一律使用 `YYYY-MM-DD`。
+        - **[選填]**：可以留空；留空時網站不輸出空白文字或按鈕。
+        - 中文題目留空時預設照抄英文，避免誤配其他論文的舊翻譯。
+        - 大標題可選既有分類；選 Other 後，新分類會自動加入未來表單。
   - type: dropdown
     id: chinese-mode
     attributes:
       label: Chinese handling / 中文欄位處理 [必填]
-      description: 預設只讓中文題目照抄英文，避免 AI 誤用另一篇論文的題目；作者與期刊欄位仍會優先沿用可靠舊譯名。
       options:
-        - Keep English title if Chinese title is blank / 中文題目留空時照抄英文
-        - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
-        - I will fill Chinese fields myself / 中文由我自行填寫
+        - "Keep English title if Chinese title is blank / 中文題目留空時照抄英文"
+        - "Auto translate blank Chinese fields / 自動翻譯空白中文欄位"
+        - "I will fill Chinese fields myself / 中文由我自行填寫"
       default: 0
     validations: {required: true}
-  - type: markdown
+  - type: dropdown
+    id: publication-section
     attributes:
-      value: 作者請照顯示順序輸入；系統會自動將 Hung-Chun Tsui／崔鴻竣加粗。題目需要斜體時可用 `[i]u[/i]`。
+      label: Publication section / 論文大標題 [必填]
+      description: Auto 會在有 DOI、期刊頁面或正式期刊資訊時歸入 Journal Articles；其餘歸入 Preprints。Survey Papers 請明確選取。
+      options:
+        - "Auto detect from metadata / 依期刊資訊自動判斷"
+        - "Journal Articles / 期刊論文 [journal-articles]"
+        - "Preprints / 預印本 [preprints]"
+        - "Survey Papers / 綜述論文 [survey-papers]"
+        - "Other / 其他（建立新大標題）"
+      default: 0
+    validations: {required: true}
+  - type: input
+    id: custom-section-en
+    attributes:
+      label: Custom publication section (English) / 自訂論文大標題英文 [選填]
+      description: 只有選 Other 時填寫，例如 Book Chapters。
+  - type: input
+    id: custom-section-zh
+    attributes:
+      label: Custom publication section (Chinese) / 自訂論文大標題中文 [選填・可自動翻譯]
   - type: input
     id: date
     attributes:
       label: Public date / 公開日期 [必填]
-      description: arXiv 公開日或你希望用來排序的日期。
       placeholder: "2026-04-05"
     validations: {required: true}
   - type: input
@@ -59,7 +76,6 @@ body:
     id: arxiv-url
     attributes:
       label: arXiv URL / arXiv 連結 [選填]
-      description: 若已填 arXiv 編號，可留空自動產生。
   - type: input
     id: pdf-url
     attributes:
@@ -81,7 +97,7 @@ body:
     id: venue-en
     attributes:
       label: Venue or status (English) / 期刊或狀態英文 [選填]
-      description: 留空時會顯示 arXiv 編號。
+      description: 例如 Submitted，或完整期刊名稱、卷期與頁碼。
   - type: input
     id: venue-zh
     attributes:
