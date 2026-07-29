@@ -1,0 +1,35 @@
+name: Add teaching course / 新增教學課程
+description: Add a teaching-assistant course to both language versions.
+title: "[Website: Add teaching] "
+body:
+  - type: input
+    id: term-en
+    attributes:
+      label: Term (English) / 學期英文
+      placeholder: "Fall 2026"
+    validations: {required: true}
+  - type: input
+    id: term-zh
+    attributes:
+      label: Term (Chinese) / 學期中文
+      placeholder: "2026 秋"
+    validations: {required: true}
+  - type: input
+    id: course-en
+    attributes:
+      label: Course (English) / 課程英文
+      placeholder: "MATH2410 Algebra I"
+    validations: {required: true}
+  - type: input
+    id: course-zh
+    attributes:
+      label: Course (Chinese) / 課程中文
+      placeholder: "MATH2410 代數（一）"
+    validations: {required: true}
+  - type: dropdown
+    id: top
+    attributes:
+      label: Place at top? / 是否放在最前面
+      options: ["Yes / 是", "No / 否"]
+      default: 1
+    validations: {required: true}

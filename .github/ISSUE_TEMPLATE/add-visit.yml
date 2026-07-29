@@ -1,0 +1,63 @@
+name: Add academic visit / 新增學術訪問
+description: Add an academic visit, including optional funding information.
+title: "[Website: Add visit] "
+body:
+  - type: input
+    id: start-date
+    attributes:
+      label: Start date / 開始日期
+      placeholder: "2026-07-02"
+    validations: {required: true}
+  - type: input
+    id: end-date
+    attributes:
+      label: End date / 結束日期
+      placeholder: "2026-08-30"
+    validations: {required: true}
+  - type: dropdown
+    id: upcoming
+    attributes:
+      label: Show on Upcoming? / 是否先顯示於 Upcoming
+      options: ["Yes / 是", "No / 否"]
+      default: 1
+    validations: {required: true}
+  - type: input
+    id: institution-en
+    attributes:
+      label: Institution (English) / 機構英文
+    validations: {required: true}
+  - type: input
+    id: institution-zh
+    attributes:
+      label: Institution (Chinese) / 機構中文
+    validations: {required: true}
+  - type: input
+    id: url
+    attributes:
+      label: Institution or visit URL / 機構或訪問連結
+  - type: input
+    id: city-en
+    attributes:
+      label: City (English) / 城市英文
+  - type: input
+    id: city-zh
+    attributes:
+      label: City (Chinese) / 城市中文
+  - type: input
+    id: country-en
+    attributes:
+      label: Country (English) / 國家英文
+  - type: input
+    id: country-zh
+    attributes:
+      label: Country (Chinese) / 國家中文
+  - type: input
+    id: funding-en
+    attributes:
+      label: Funding note (English) / 補助說明英文
+      placeholder: "Supported by the Japan–Taiwan Exchange Association"
+  - type: input
+    id: funding-zh
+    attributes:
+      label: Funding note (Chinese) / 補助說明中文
+      placeholder: "獲日本台灣交流協會補助"

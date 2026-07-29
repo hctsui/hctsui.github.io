@@ -1,0 +1,58 @@
+name: Add publication / 新增論文
+description: Add a paper or preprint and update the homepage automatically.
+title: "[Website: Add publication] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        作者欄請照你想顯示的順序輸入；程式會自動將 Hung-Chun Tsui／崔鴻竣加粗。題目需要斜體時可用 `[i]u[/i]`。
+  - type: input
+    id: date
+    attributes:
+      label: Public date / 公開日期
+      description: arXiv 公開日或你希望用來排序的日期。
+      placeholder: "2026-04-05"
+    validations: {required: true}
+  - type: input
+    id: title-en
+    attributes:
+      label: Title (English) / 英文題目
+    validations: {required: true}
+  - type: input
+    id: title-zh
+    attributes:
+      label: Title (Chinese) / 中文題目
+    validations: {required: true}
+  - type: input
+    id: authors-en
+    attributes:
+      label: Authors (English) / 作者英文
+    validations: {required: true}
+  - type: input
+    id: authors-zh
+    attributes:
+      label: Authors (Chinese) / 作者中文
+    validations: {required: true}
+  - type: input
+    id: arxiv
+    attributes:
+      label: arXiv number / arXiv 編號
+      placeholder: "2604.03618"
+  - type: input
+    id: arxiv-url
+    attributes:
+      label: arXiv URL / arXiv 連結
+      description: 若已填 arXiv 編號，可留空自動產生。
+  - type: input
+    id: pdf-url
+    attributes:
+      label: PDF URL / PDF 連結
+  - type: input
+    id: venue-en
+    attributes:
+      label: Venue or status (English) / 期刊或狀態英文
+      description: 留空時會顯示 arXiv 編號。
+  - type: input
+    id: venue-zh
+    attributes:
+      label: Venue or status (Chinese) / 期刊或狀態中文

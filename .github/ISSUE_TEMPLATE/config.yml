@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Website manager guide / 網站管理說明
+    url: https://github.com/hctsui/hctsui.github.io/blob/main/MANAGE-WEBSITE.md
+    about: Read the step-by-step guide before using the forms.

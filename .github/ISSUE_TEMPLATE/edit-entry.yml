@@ -1,0 +1,66 @@
+name: Edit existing entry / 編輯既有項目
+description: Change selected fields without manually editing HTML.
+title: "[Website: Edit] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        先從 `CONTENT-CATALOG.md` 或 `/admin/` 複製 Entry ID。只填要修改的欄位，其餘留空。
+  - type: input
+    id: entry-id
+    attributes:
+      label: Entry ID / 項目 ID
+    validations: {required: true}
+  - type: input
+    id: title-en
+    attributes:
+      label: New English title/name/course / 新英文題目、名稱或課名
+  - type: input
+    id: title-zh
+    attributes:
+      label: New Chinese title/name/course / 新中文題目、名稱或課名
+  - type: input
+    id: start
+    attributes:
+      label: New start/public date / 新開始或公開日期
+      placeholder: "YYYY-MM-DD"
+  - type: input
+    id: end
+    attributes:
+      label: New end date / 新結束日期
+      placeholder: "YYYY-MM-DD"
+  - type: input
+    id: year
+    attributes:
+      label: New year / 新年份
+      placeholder: "2026"
+  - type: input
+    id: url
+    attributes:
+      label: New main URL / 新主要連結
+  - type: textarea
+    id: desc-en
+    attributes:
+      label: New English description/organization/term / 新英文說明、單位或學期
+  - type: textarea
+    id: desc-zh
+    attributes:
+      label: New Chinese description/organization/term / 新中文說明、單位或學期
+  - type: input
+    id: authors-en
+    attributes:
+      label: New authors (English) / 新作者英文
+  - type: input
+    id: authors-zh
+    attributes:
+      label: New authors (Chinese) / 新作者中文
+  - type: input
+    id: auxiliary
+    attributes:
+      label: New slides or PDF URL / 新投影片或 PDF 連結
+  - type: dropdown
+    id: upcoming
+    attributes:
+      label: Upcoming setting / Upcoming 設定
+      options: ["Keep unchanged / 維持不變", "Yes / 是", "No / 否"]
+      default: 0
