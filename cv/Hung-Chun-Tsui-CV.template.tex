@@ -1,0 +1,255 @@
+\documentclass[10pt, letterpaper]{article}
+\usepackage[
+    ignoreheadfoot, % set margins without considering header and footer
+    top=2 cm, % seperation between body and page edge from the top
+    bottom=2 cm, % seperation between body and page edge from the bottom
+    left=2 cm, % seperation between body and page edge from the left
+    right=2 cm, % seperation between body and page edge from the right
+    footskip=1.0 cm, % seperation between body and footer
+    % showframe % for debugging 
+]{geometry} % for adjusting page geometry
+\usepackage[explicit]{titlesec}
+\usepackage{tabularx} 
+\usepackage{array}
+\usepackage[dvipsnames]{xcolor} 
+\definecolor{primaryColor}{RGB}{0, 0, 0} 
+\definecolor{secondaryColor}{RGB}{0, 0, 170}
+\usepackage{enumitem} 
+\usepackage{fontawesome5}
+\usepackage{amsmath}
+\usepackage[
+    pdftitle={Hung-Chun Tsui CV},
+    pdfauthor={Hung-Chun Tsui},
+    pdfcreator={LaTeX with RenderCV},
+    colorlinks=true,
+    urlcolor=secondaryColor
+]{hyperref} 
+\usepackage[pscoord]{eso-pic}
+\usepackage{calc} 
+\usepackage{bookmark}
+\usepackage{lastpage} 
+\usepackage{changepage}
+\usepackage{paracol} 
+\usepackage{ifthen}
+\usepackage{needspace} 
+\usepackage{iftex} 
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
+%\usepackage{newpxtext,newpxmath}
+\usepackage[osf,sc]{mathpazo} \usepackage{euscript} \usepackage{calrsfs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt} 
+\pagestyle{empty} 
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt} 
+\setlength{\topskip}{0pt} 
+\setlength{\columnsep}{0.15cm}
+\makeatletter
+\let\ps@customFooterStyle\ps@plain 
+\patchcmd{\ps@customFooterStyle}{\thepage}{
+    \color{gray}\textit{\small Hung-Chun Tsui - Page \thepage{} of \pageref*{LastPage}}
+}{}{} 
+\makeatother
+\pagestyle{customFooterStyle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\titleformat{\section}{
+    \needspace{4\baselineskip}
+    \Large\color{primaryColor}
+}{
+}{
+}{
+    \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
+}[] 
+
+\titlespacing{\section}{
+    -1pt
+}{
+    0.3 cm
+}{
+    0.2 cm
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{one}{
+    \begin{adjustwidth}{
+        0.2 cm + 0.00001 cm
+    }{
+        0.2 cm + 0.00001 cm
+    }
+}{
+    \end{adjustwidth}
+    \vspace{0.1cm}
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{conf}[2][]{
+    \one
+    \def\secondColumn{#2}
+    \setcolumnwidth{14.5cm, \fill, 5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endone
+    \vspace{0.1cm}
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{pub}[2][]{
+    \one
+    \def\secondColumn{#2}
+    \setcolumnwidth{11cm, \fill, 15 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endone
+    \vspace{0.1cm}
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{edu}[3][]{
+    \one
+    \def\thirdColumn{#3}
+    \setcolumnwidth{1 cm, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endone
+    \vspace{0.1cm}
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{teaching}[3][]{
+    \one
+    \def\thirdColumn{#3}
+    \setcolumnwidth{5 cm, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endone
+    \vspace{0.1cm}
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
+}{
+    \par\kern\topsep
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\CVLastUpdated}{__CV_LAST_UPDATED__}
+\newcommand{\placelastupdatedtext}{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
+  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+    \put(
+        \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
+        \LenToUnit{\paperheight-1.0 cm}
+    ){\vtop{{\null}\makebox[0pt][c]{
+        \small\color{gray}\textit{Last updated : \CVLastUpdated}\hspace{\widthof{Last updated : \CVLastUpdated}}
+    }}}%
+  }%
+}%
+
+\let\hrefWithoutArrow\href
+\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+    \newcommand{\AND}{\unskip
+        \cleaders\copy\ANDbox\hskip\wd\ANDbox
+        \ignorespaces
+    }
+    \newsavebox\ANDbox
+    \sbox\ANDbox{}
+
+    \placelastupdatedtext
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{header}
+        \fontsize{30 pt}{30 pt}
+        \textbf{Hung-Chun Tsui}
+
+        \vspace{0.3 cm}
+
+        \normalsize
+        {\color{secondaryColor}\mbox{{\footnotesize\faMapMarker*}\hspace*{0.13cm} \hrefWithoutArrow{https://www.nthu.edu.tw/}{National Tsing Hua University, Taiwan}}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{mailto:hctsui@gapp.nthu.edu.tw}{{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}hctsui@gapp.nthu.edu.tw}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://hctsui.github.io/}{{\footnotesize\faLink}\hspace*{0.13cm}https://hctsui.github.io}}%
+    \end{header}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \vspace{0.3 cm - 0.3 cm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Research Interests}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{one}
+Function Field Arithmetic
+\end{one}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{one}
+Multiple Zeta Values and Multiple Eisenstein Series in Positive Characteristic
+\end{one}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Education}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{edu}{\textbf{PhD}}{Feb 2025 – Present}
+    \textbf{National Tsing Hua University, Mathematics} \\
+    {\small (Direct Admission)}
+\end{edu}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{edu}{\textbf{BS}}{Sept 2021 – Dec 2024}
+    \textbf{National Tsing Hua University, Mathematics} \\
+    {\small (Graduated with Distinction)}
+\end{edu}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Publications and Preprints}
+% CMS:PUBLICATIONS:START
+% Generated automatically from content/site.json.
+% CMS:PUBLICATIONS:END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Academic Visits}
+% CMS:VISITS:START
+% Generated automatically from content/site.json.
+% CMS:VISITS:END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Presentations}
+% CMS:TALKS:START
+% Generated automatically from content/site.json.
+% CMS:TALKS:END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Honors and Awards}
+% CMS:HONORS:START
+% Generated automatically from content/site.json.
+% CMS:HONORS:END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conferences and Workshops}
+% CMS:CONFERENCES:START
+% Generated automatically from content/site.json.
+% CMS:CONFERENCES:END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Teaching Experience}
+% CMS:TEACHING:START
+% Generated automatically from content/site.json.
+% CMS:TEACHING:END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Personal Information}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{one}
+    \renewcommand{\arraystretch}{1.2} % 控制行間距，1.2 比較舒適
+    \begin{tabular}{@{} p{3cm} @{\hspace{0.2cm}} p{12cm} @{}}
+        \textbf{Language}    & Mandarin (Native) \textbf{|} English (CEFR C1) \textbf{|} Japanese (CEFR A1) \\
+        \textbf{Address}    & No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.) \\
+        \textbf{Email}       & \hrefWithoutArrow{mailto:hctsui@gapp.nthu.edu.tw}{hctsui@gapp.nthu.edu.tw} \textbf{|} \hrefWithoutArrow{mailto:hctsui.math@gmail.com}{hctsui.math@gmail.com} \\
+        \textbf{Website}     & \url{https://hctsui.github.io}\\
+        \textbf{ORCID} & \hrefWithoutArrow{https://orcid.org/0009-0009-7445-5634}{0009-0009-7445-5634}
+    \end{tabular}
+\end{one}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
