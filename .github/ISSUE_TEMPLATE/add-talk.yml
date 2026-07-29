@@ -5,22 +5,39 @@ body:
   - type: markdown
     attributes:
       value: |
-        填完送出後，網站會自動更新中英文版本。若題目中需要斜體，可寫 `[i]u[/i]`。
+        **欄位標示**
+        - **[必填]**：送出前一定要填。
+        - **[選填]**：可以留空；留空時網站不會輸出空白文字或按鈕。
+        - **[可自動翻譯]**：中文可留空；系統會優先沿用既有譯名，再產生臺灣繁體中文草稿。
+        - 日期一律使用 `YYYY-MM-DD`。
+  - type: dropdown
+    id: chinese-mode
+    attributes:
+      label: Chinese handling / 中文欄位處理 [必填]
+      description: 建議使用自動翻譯；同系列會議與既有機構會優先沿用網站舊譯名。
+      options:
+        - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
+        - I will fill Chinese fields myself / 中文由我自行填寫
+      default: 0
+    validations: {required: true}
+  - type: markdown
+    attributes:
+      value: 題目中需要斜體時可寫 `[i]u[/i]`。
   - type: input
     id: date
     attributes:
-      label: Talk date / 演講日期
+      label: Talk date / 演講日期 [必填]
       placeholder: "2026-07-06"
     validations: {required: true}
   - type: input
     id: end-date
     attributes:
-      label: End date (optional) / 結束日期（選填）
-      description: 一般單日演講不必填。
+      label: End date (optional) / 結束日期 [選填]
+      description: 一般單日演講不必填，系統會使用演講日期。
   - type: dropdown
     id: upcoming
     attributes:
-      label: Show on Upcoming? / 是否先顯示於 Upcoming
+      label: Show on Upcoming? / 是否先顯示於 Upcoming [必填]
       description: 結束日過後會自動移到學術報告列表。
       options: ["Yes / 是", "No / 否"]
       default: 0
@@ -28,52 +45,50 @@ body:
   - type: input
     id: title-en
     attributes:
-      label: Talk title (English) / 演講英文題目
+      label: Talk title (English) / 演講英文題目 [必填]
     validations: {required: true}
   - type: input
     id: title-zh
     attributes:
-      label: Talk title (Chinese) / 演講中文題目
-    validations: {required: true}
+      label: Talk title (Chinese) / 演講中文題目 [選填・可自動翻譯]
   - type: input
     id: url
     attributes:
-      label: Talk or event URL / 演講或活動連結
+      label: Talk or event URL / 演講或活動連結 [選填]
   - type: input
     id: event-en
     attributes:
-      label: Event (English) / 活動英文名稱
+      label: Event (English) / 活動英文名稱 [選填]
       placeholder: "Tohoku University Number Theory Seminar"
   - type: input
     id: event-zh
     attributes:
-      label: Event (Chinese) / 活動中文名稱
-      placeholder: "東北大學數論研討會"
+      label: Event (Chinese) / 活動中文名稱 [選填・可自動翻譯]
   - type: input
     id: institution-en
     attributes:
-      label: Institution (English) / 機構英文
+      label: Institution (English) / 機構英文 [選填]
   - type: input
     id: institution-zh
     attributes:
-      label: Institution (Chinese) / 機構中文
+      label: Institution (Chinese) / 機構中文 [選填・可自動翻譯]
   - type: input
     id: city-en
     attributes:
-      label: City (English) / 城市英文
+      label: City (English) / 城市英文 [選填]
   - type: input
     id: city-zh
     attributes:
-      label: City (Chinese) / 城市中文
+      label: City (Chinese) / 城市中文 [選填・可自動翻譯]
   - type: input
     id: country-en
     attributes:
-      label: Country (English) / 國家英文
+      label: Country (English) / 國家英文 [選填]
   - type: input
     id: country-zh
     attributes:
-      label: Country (Chinese) / 國家中文
+      label: Country (Chinese) / 國家中文 [選填・可自動翻譯]
   - type: input
     id: slides
     attributes:
-      label: Slides URL / 投影片連結
+      label: Slides URL / 投影片連結 [選填]

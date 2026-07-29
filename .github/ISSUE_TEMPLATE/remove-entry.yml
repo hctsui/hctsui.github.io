@@ -4,17 +4,16 @@ title: "[Website: Remove] "
 body:
   - type: markdown
     attributes:
-      value: |
-        從 `CONTENT-CATALOG.md` 或 `/admin/` 複製要刪除項目的 Entry ID。
+      value: 從 `/admin/` 複製要刪除項目的 Entry ID。兩個欄位都是必填。
   - type: input
     id: entry-id
     attributes:
-      label: Entry ID / 項目 ID
+      label: Entry ID / 項目 ID [必填]
     validations: {required: true}
   - type: checkboxes
     id: confirm
     attributes:
-      label: Confirmation / 確認
+      label: Confirmation / 確認 [必填]
       options:
         - label: I understand this entry will be removed from both language versions. / 我知道這會從中英文網站刪除。
           required: true

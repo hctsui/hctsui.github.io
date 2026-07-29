@@ -5,54 +5,83 @@ body:
   - type: markdown
     attributes:
       value: |
-        作者欄請照你想顯示的順序輸入；程式會自動將 Hung-Chun Tsui／崔鴻竣加粗。題目需要斜體時可用 `[i]u[/i]`。
+        **欄位標示**
+        - **[必填]**：送出前一定要填。
+        - **[選填]**：可以留空；留空時網站不會輸出空白文字或按鈕。
+        - **[可自動翻譯]**：中文可留空；系統會優先沿用既有譯名，再產生臺灣繁體中文草稿。
+        - 日期一律使用 `YYYY-MM-DD`。
+  - type: dropdown
+    id: chinese-mode
+    attributes:
+      label: Chinese handling / 中文欄位處理 [必填]
+      description: 建議使用自動翻譯；同系列會議與既有機構會優先沿用網站舊譯名。
+      options:
+        - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
+        - I will fill Chinese fields myself / 中文由我自行填寫
+      default: 0
+    validations: {required: true}
+  - type: markdown
+    attributes:
+      value: 作者請照顯示順序輸入；系統會自動將 Hung-Chun Tsui／崔鴻竣加粗。題目需要斜體時可用 `[i]u[/i]`。
   - type: input
     id: date
     attributes:
-      label: Public date / 公開日期
+      label: Public date / 公開日期 [必填]
       description: arXiv 公開日或你希望用來排序的日期。
       placeholder: "2026-04-05"
     validations: {required: true}
   - type: input
     id: title-en
     attributes:
-      label: Title (English) / 英文題目
+      label: Title (English) / 英文題目 [必填]
     validations: {required: true}
   - type: input
     id: title-zh
     attributes:
-      label: Title (Chinese) / 中文題目
-    validations: {required: true}
+      label: Title (Chinese) / 中文題目 [選填・可自動翻譯]
   - type: input
     id: authors-en
     attributes:
-      label: Authors (English) / 作者英文
+      label: Authors (English) / 作者英文 [必填]
     validations: {required: true}
   - type: input
     id: authors-zh
     attributes:
-      label: Authors (Chinese) / 作者中文
-    validations: {required: true}
+      label: Authors (Chinese) / 作者中文 [選填・可自動翻譯]
+      description: 未知中文姓名會保留英文，不會擅自音譯。
   - type: input
     id: arxiv
     attributes:
-      label: arXiv number / arXiv 編號
+      label: arXiv number / arXiv 編號 [選填]
       placeholder: "2604.03618"
   - type: input
     id: arxiv-url
     attributes:
-      label: arXiv URL / arXiv 連結
+      label: arXiv URL / arXiv 連結 [選填]
       description: 若已填 arXiv 編號，可留空自動產生。
   - type: input
     id: pdf-url
     attributes:
-      label: PDF URL / PDF 連結
+      label: PDF URL / PDF 連結 [選填]
+  - type: input
+    id: doi-url
+    attributes:
+      label: DOI URL / DOI 連結 [選填]
+      placeholder: "https://doi.org/..."
+  - type: input
+    id: journal-url
+    attributes:
+      label: Journal page URL / 期刊頁面連結 [選填]
+  - type: input
+    id: code-url
+    attributes:
+      label: Code URL / 程式碼連結 [選填]
   - type: input
     id: venue-en
     attributes:
-      label: Venue or status (English) / 期刊或狀態英文
+      label: Venue or status (English) / 期刊或狀態英文 [選填]
       description: 留空時會顯示 arXiv 編號。
   - type: input
     id: venue-zh
     attributes:
-      label: Venue or status (Chinese) / 期刊或狀態中文
+      label: Venue or status (Chinese) / 期刊或狀態中文 [選填・可自動翻譯]
