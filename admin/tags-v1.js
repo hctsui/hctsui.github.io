@@ -731,8 +731,8 @@
     $('#newTagZh').value = '';
     $('#newTagEn').value = '';
     saveDictionaryLocal();
-    renderDictionary();
-    return flash('已新增標籤');
+    renderPreview();
+    return flash('已新增標籤，草稿預覽已更新');
   };
 
   $('#tagManagerRows').oninput = (event) => {
@@ -756,7 +756,7 @@
       if (translations.tags[index] && translations.tags[next]) {
         [translations.tags[index], translations.tags[next]] = [translations.tags[next], translations.tags[index]];
         saveDictionaryLocal();
-        renderDictionary();
+        renderPreview();
       }
       return;
     }
@@ -775,8 +775,8 @@
       translations.tags = translations.tags.filter((item) => item.id !== source);
       tagSelectedFilters.delete(source);
       saveDictionaryLocal();
-      renderDictionary();
-      return flash('標籤已合併');
+      renderPreview();
+      return flash('標籤已合併，草稿預覽已更新');
     }
     if (button.dataset.deleteTag) {
       const id = button.dataset.deleteTag;
@@ -790,8 +790,8 @@
       }
       tagSelectedFilters.delete(id);
       saveDictionaryLocal();
-      renderDictionary();
-      return flash('標籤已刪除');
+      renderPreview();
+      return flash('標籤已刪除，草稿預覽已更新');
     }
   };
 
