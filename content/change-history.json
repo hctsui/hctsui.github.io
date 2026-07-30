@@ -25597,6 +25597,116 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-50-op-1",
+      "batch_issue": 50,
+      "applied_at": "2026-07-30T14:04:55.408329Z",
+      "expires_at": "2026-08-06T14:04:55.408329Z",
+      "reverted_by": null,
+      "request_digest": "ae7d40db838db247d0744788cf2355f5095a77838b6c3b9896eb00b9e6251b1e",
+      "request_action": "update",
+      "action": "update",
+      "type": "visit",
+      "entry_id": "visit-2026-07-02-tohoku-university",
+      "label": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "before": {
+        "id": "visit-2026-07-02-tohoku-university",
+        "type": "visit",
+        "start_date": "2026-07-02",
+        "end_date": "2026-08-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "title_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "description": {
+          "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+          "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "description_html": {
+          "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+          "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "slides_url": "",
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "visit_description": {
+          "en": "Supported by Japan–Taiwan Exchange Association.",
+          "zh": "本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "funding_organization": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "公益財團法人日本台灣交流協會"
+        },
+        "funding_program": {
+          "en": "",
+          "zh": ""
+        },
+        "description_mode": "manual"
+      },
+      "after": {
+        "id": "visit-2026-07-02-tohoku-university",
+        "type": "visit",
+        "start_date": "2026-07-02",
+        "end_date": "2026-08-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "title_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "description": {
+          "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+          "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "description_html": {
+          "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+          "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "slides_url": "",
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "visit_description": {
+          "en": "Supported by Japan–Taiwan Exchange Association.",
+          "zh": "本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "funding_organization": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "公益財團法人日本台灣交流協會"
+        },
+        "funding_program": {
+          "en": "",
+          "zh": ""
+        }
+      },
+      "index_before": 0,
+      "index_after": 0,
+      "undo_of": null
     }
   ]
 }
