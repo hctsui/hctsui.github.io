@@ -470,6 +470,50 @@ body:
 '''
 
 
+def category_edit_forms(data: dict[str, Any]) -> dict[str, str]:
+    """Generate short category-specific edit forms.
+
+    GitHub Issue Forms cannot conditionally hide fields, so each content type
+    gets its own form. All forms intentionally keep the legacy field labels
+    expected by process_request.py.
+    """
+    generic = edit_form(data)
+
+    def extract(start_id: str, next_id: str | None = None) -> str:
+        start = generic.index(f"  - type:", generic.index(f"    id: {start_id}") - 30)
+        if next_id is None:
+            return generic[start:]
+        end = generic.index("  - type:", generic.index(f"    id: {next_id}") - 30)
+        return generic[start:end]
+
+    header = generic.split("  - type: input\n    id: title-en", 1)[0]
+    title = extract("title-en", "start")
+    dates = extract("start", "year")
+    year = extract("year", "url")
+    url = extract("url", "desc-en")
+    desc = extract("desc-en", "authors-en")
+    authors = extract("authors-en", "auxiliary")
+    auxiliary = extract("auxiliary", "publication-section")
+    publication = extract("publication-section", "institution-section")
+    teaching = extract("institution-section", "upcoming")
+    upcoming = extract("upcoming")
+
+    def named(name: str, description: str, body: str) -> str:
+        prefix = f"name: {name}\ndescription: {description}\ntitle: \"[Website: Edit] \"\n"
+        body_start = header.index("body:")
+        common = header[header.index("body:") + len("body:\n"):]
+        return prefix + "body:\n" + common + body
+
+    return {
+        "edit-conference.yml": named("Edit conference / 編輯會議", "Only conference fields are shown.", title + dates + url + desc + upcoming),
+        "edit-talk.yml": named("Edit talk / 編輯學術報告", "Only talk fields are shown.", title + dates + url + desc + auxiliary + upcoming),
+        "edit-visit.yml": named("Edit academic visit / 編輯學術訪問", "Only visit fields are shown.", title + dates + url + desc + upcoming),
+        "edit-honor.yml": named("Edit honor or award / 編輯獎項", "Only honor fields are shown.", title + year + url + desc),
+        "edit-publication.yml": named("Edit publication / 編輯論文或作品", "Only publication fields are shown.", title + extract("start", "end") + authors + publication),
+        "edit-teaching.yml": named("Edit teaching entry / 編輯教學經驗", "Only teaching fields are shown.", title + desc + teaching),
+    }
+
+
 def reorder_form() -> str:
     return '''name: Save website ordering / 儲存網站排序
 description: Save the order copied by the Admin page for any website category.
@@ -511,6 +555,7 @@ def main() -> None:
         "add-teaching.yml": teaching_form(data),
         "edit-entry.yml": edit_form(data),
         "reorder-entries.yml": reorder_form(),
+        **category_edit_forms(data),
     }
     for name, text in outputs.items():
         (FORMS / name).write_text(quote_flow_labels(text), encoding="utf-8")
