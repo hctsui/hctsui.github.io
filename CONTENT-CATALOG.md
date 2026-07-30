@@ -6,15 +6,12 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| 2099-01-30 – 2099-07-30 | ZZTEST Conference A | 測試會議 A | `conference-2099-01-30-a` |
 | 2026-11-08 – 2026-11-08 | ​The 2nd Multiple Eisenstein Series Research Meeting | 第二屆多重 Eisenstein 級數研究會 | `conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6` |
 | 2026-11-07 – 2026-11-07 | The 73rd Kansai Multiple Zeta Workshop | 第 73 回關西多重 zeta 值研討會 | `conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4` |
 | 2026-08-24 – 2026-08-28 | The 33rd Number Theory Summer School: Arithmetic of Function Fields | 第 33 屆數論暑期學校：函數體的算術 | `conference-2026-number-theory-summer-school` |
-| 2026-07-31 – 2026-07-31 | ZZTEST Talk B | 測試報告 B | `talk-2026-07-31-b` |
 | 2026-07-17 – 2026-07-17 | The 72nd Kansai Multiple Zeta Workshop | 第 72 回關西多重 zeta 值研討會 | `conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop` |
 | 2026-07-07 – 2026-07-10 | The 25th Sendai–Hiroshima Number Theory Conference | 第 25 屆仙台—廣島數論會議 | `conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference` |
 | 2026-07-06 – 2026-07-06 | Recent Developments on Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的近期發展 | `talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p` |
-| 2026-07-04 – 2026-07-13 | Texas A&M University | 德州農工大學 | `visit-2026-07-04-entry` |
 | 2026-07-02 – 2026-08-30 | Tohoku University | 東北大學 | `visit-2026-07-02-tohoku-university` |
 | 2026-06-12 – 2026-06-12 | Derivations of Multiple Zeta Values in Positive Characteristic | 正特徵多重 zeta 值的導子 | `talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac` |
 | 2026-06-11 – 2026-06-12 | Workshop on Arithmetic of Function Fields | 函數體算術工作坊 | `conference-2026-06-11-workshop-on-arithmetic-of-function-fields` |
@@ -41,8 +38,6 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| 2099 | ZZTEST Honor 1 | 測試榮譽 1 | `honor-2099-1` |
-| 2098 | ZZTEST Honor 2 | 測試榮譽 2 | `honor-2098-2` |
 | 2026 | Taiwan–Japan Young Scientific Talent Exchange Program | 臺日青年科研人才交流計畫 | `honor-2026-taiwan-japan-young-scientific-talent-exchange-program` |
 | 2025 | NSTC Graduate Research Fellowship | 國科會博士生研究獎學金 | `honor-2025-nstc-graduate-research-fellowship` |
 | 2024 | Chow Hung-Ching Scholarship | 周鴻經獎學金 | `honor-2024-chow-hung-ching-scholarship` |
@@ -52,9 +47,6 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| 2066-10-30 | ZZTEST Journal Paper 1 | 測試期刊論文 1 | `publication-2066-10-30-1` |
-| 2066-10-30 | ZZTEST Custom Paper 2 | 測試自訂論文 2 | `publication-2066-10-30-2` |
-| 2026-07-24 | ZZTEST Custom Paper 3 | 測試自訂論文 3 | `publication-2026-07-24-3` |
 | 2026-04-05 | On u -Multiple Zeta Values in Positive Characteristic | 正特徵的 u-多重 zeta 值 | `publication-2604.03618-4` |
 | 2026-03-11 | Algebra Structures of Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的代數結構 | `publication-2603.10376-3` |
 | 2025-04-26 | On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic | 正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係 | `publication-2504.18879-2` |
@@ -73,7 +65,4 @@
 | Spring 2025 | MATH3050 Complex Analysis | MATH3050 複變數函數論 | `teaching-7-math3050-complex-analysis` |
 | Fall 2023 | MATH2010 Advanced Calculus I | MATH2010 高等微積分（一） | `teaching-8-math2010-advanced-calculus-i` |
 | Spring 2024 | MATH2020 Advanced Calculus II | MATH2020 高等微積分（二） | `teaching-9-math2020-advanced-calculus-ii` |
-| Fall 2099 | ZZTEST Course 1 | 測試課程 1 | `teaching-Fall 2099-1` |
-| Spring 2100 | ZZTEST Course 2 | 測試課程 2 | `teaching-Spring 2100-2` |
-| Summer 2100 | ZZTEST Course 3 | 測試課程 3 | `teaching-Summer 2100-3` |
 

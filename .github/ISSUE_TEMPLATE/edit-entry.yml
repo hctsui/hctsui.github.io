@@ -62,7 +62,6 @@ body:
         - "Journal Articles / 期刊論文 [journal-articles]"
         - "Preprints / 預印本 [preprints]"
         - "Survey Papers / 綜述論文 [survey-papers]"
-        - "ZZ Test Papers / 測試論文 [zz-test-papers]"
         - "Other / 其他（建立新大標題）"
       default: 0
   - type: input
@@ -99,8 +98,6 @@ body:
       options:
         - "Keep unchanged / 維持不變"
         - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
-        - "Tohoku University / 東北大學 [tohoku-university]"
-        - "Texas A&M University / 德州農工大學 [texas-a-m-university]"
         - "Other / 其他（建立新機構大標題）"
       default: 0
   - type: input

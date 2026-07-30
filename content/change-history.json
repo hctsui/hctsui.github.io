@@ -586,6 +586,587 @@
       "index_before": null,
       "index_after": 11,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-1",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "e76044483df9d5c770040ec06f7bf3d04f33505da6e046b0df398f520efd88e2",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "conference",
+      "entry_id": "conference-2099-01-30-a",
+      "label": {
+        "en": "ZZTEST Conference A",
+        "zh": "測試會議 A"
+      },
+      "before": {
+        "type": "conference",
+        "start_date": "2099-01-30",
+        "end_date": "2099-07-30",
+        "title": {
+          "en": "ZZTEST Conference A",
+          "zh": "測試會議 A"
+        },
+        "venue": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "city": {
+          "en": "Osaka",
+          "zh": "大阪"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "url": "",
+        "show_upcoming": true,
+        "description": {
+          "en": "Tohoku University, Osaka, Japan",
+          "zh": "東北大學, 大阪, 日本"
+        },
+        "description_html": {
+          "en": "Tohoku University, Osaka, Japan",
+          "zh": "東北大學, 大阪, 日本"
+        },
+        "title_html": {
+          "en": "ZZTEST Conference A",
+          "zh": "測試會議 A"
+        },
+        "id": "conference-2099-01-30-a",
+        "venue_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        }
+      },
+      "after": null,
+      "index_before": 27,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-2",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "2732b0e8902cf1416249bf72f1ed5991f5980de81154a95380c4c2e12c5ed255",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "talk",
+      "entry_id": "talk-2026-07-31-b",
+      "label": {
+        "en": "ZZTEST Talk B",
+        "zh": "測試報告 B"
+      },
+      "before": {
+        "type": "talk",
+        "start_date": "2026-07-31",
+        "end_date": "2026-07-31",
+        "title": {
+          "en": "ZZTEST Talk B",
+          "zh": "測試報告 B"
+        },
+        "event": {
+          "en": "ZZTEST Seminar",
+          "zh": ""
+        },
+        "venue": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "",
+        "slides_url": "",
+        "show_upcoming": false,
+        "description": {
+          "en": "ZZTEST Seminar, National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "ZZTEST Seminar, National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "title_html": {
+          "en": "ZZTEST Talk B",
+          "zh": "測試報告 B"
+        },
+        "id": "talk-2026-07-31-b",
+        "venue_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        }
+      },
+      "after": null,
+      "index_before": 27,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-3",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "30e2824c8713195e05d11d6d97adb1aac1da6ebc7dec2e04b20a02d4697c1922",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "honor",
+      "entry_id": "honor-2099-1",
+      "label": {
+        "en": "ZZTEST Honor 1",
+        "zh": "測試榮譽 1"
+      },
+      "before": {
+        "type": "honor",
+        "year": 2099,
+        "title": {
+          "en": "ZZTEST Honor 1",
+          "zh": "測試榮譽 1"
+        },
+        "organization": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "url": "",
+        "title_html": {
+          "en": "ZZTEST Honor 1",
+          "zh": "測試榮譽 1"
+        },
+        "organization_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "id": "honor-2099-1"
+      },
+      "after": null,
+      "index_before": 4,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-4",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "a3288ccd689fd12389ee4b99793e8c79df350620851a56a0ff07ee8b9db6e671",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "honor",
+      "entry_id": "honor-2098-2",
+      "label": {
+        "en": "ZZTEST Honor 2",
+        "zh": "測試榮譽 2"
+      },
+      "before": {
+        "type": "honor",
+        "year": 2098,
+        "title": {
+          "en": "ZZTEST Honor 2",
+          "zh": "測試榮譽 2"
+        },
+        "organization": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "title_html": {
+          "en": "ZZTEST Honor 2",
+          "zh": "測試榮譽 2"
+        },
+        "organization_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "id": "honor-2098-2"
+      },
+      "after": null,
+      "index_before": 4,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-5",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "67a6e5c676ad4fcf87efafd275a1be46450eb23fd2fe1e0cc4acf1f5513eb585",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "publication",
+      "entry_id": "publication-2066-10-30-2",
+      "label": {
+        "en": "ZZTEST Custom Paper 2",
+        "zh": "測試自訂論文 2"
+      },
+      "before": {
+        "type": "publication",
+        "date": "2066-10-30",
+        "title": {
+          "en": "ZZTEST Custom Paper 2",
+          "zh": "測試自訂論文 2"
+        },
+        "authors": {
+          "en": "A. Tester",
+          "zh": "測試者"
+        },
+        "venue": {
+          "en": "Journal of ZZ Tests",
+          "zh": "ZZ 測試期刊"
+        },
+        "arxiv": "",
+        "arxiv_url": "",
+        "pdf_url": "",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "group_id": "zz-test-papers",
+        "year": 2066,
+        "links": [],
+        "title_html": {
+          "en": "ZZTEST Custom Paper 2",
+          "zh": "測試自訂論文 2"
+        },
+        "authors_html": {
+          "en": "A. Tester",
+          "zh": "測試者"
+        },
+        "venue_html": {
+          "en": "Journal of ZZ Tests",
+          "zh": "ZZ 測試期刊"
+        },
+        "id": "publication-2066-10-30-2"
+      },
+      "after": null,
+      "index_before": 5,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-6",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "b8c6b7abe6b3f0ec41ebab466d830f4c8c7c3797a549ae4d926fe77c5825cdee",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "publication",
+      "entry_id": "publication-2026-07-24-3",
+      "label": {
+        "en": "ZZTEST Custom Paper 3",
+        "zh": "測試自訂論文 3"
+      },
+      "before": {
+        "type": "publication",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-07-24",
+        "title": {
+          "en": "ZZTEST Custom Paper 3",
+          "zh": "測試自訂論文 3"
+        },
+        "authors": {
+          "en": "",
+          "zh": ""
+        },
+        "venue": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv": "",
+        "arxiv_url": "",
+        "pdf_url": "",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "group_id": "zz-test-papers",
+        "year": 2026,
+        "links": [],
+        "title_html": {
+          "en": "ZZTEST Custom Paper 3",
+          "zh": "測試自訂論文 3"
+        },
+        "authors_html": {
+          "en": "",
+          "zh": ""
+        },
+        "venue_html": {
+          "en": "",
+          "zh": ""
+        },
+        "id": "publication-2026-07-24-3"
+      },
+      "after": null,
+      "index_before": 5,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-7",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "082061ad2583bb4078b52cd4599f3a5ba972cb0c34f47b391448c843fa6044b5",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "publication",
+      "entry_id": "publication-2066-10-30-1",
+      "label": {
+        "en": "ZZTEST Journal Paper 1",
+        "zh": "測試期刊論文 1"
+      },
+      "before": {
+        "type": "publication",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2066-10-30",
+        "title": {
+          "en": "ZZTEST Journal Paper 1",
+          "zh": "測試期刊論文 1"
+        },
+        "authors": {
+          "en": "A. Tester",
+          "zh": "測試者"
+        },
+        "venue": {
+          "en": "Journal of ZZ Tests",
+          "zh": "ZZ 測試期刊"
+        },
+        "arxiv": "",
+        "arxiv_url": "",
+        "pdf_url": "",
+        "doi_url": "https://doi.org/10.0000/zztest",
+        "journal_url": "",
+        "code_url": "",
+        "group_id": "journal-articles",
+        "year": 2066,
+        "links": [
+          {
+            "label": {
+              "en": "DOI",
+              "zh": "DOI"
+            },
+            "url": "https://doi.org/10.0000/zztest"
+          }
+        ],
+        "title_html": {
+          "en": "ZZTEST Journal Paper 1",
+          "zh": "測試期刊論文 1"
+        },
+        "authors_html": {
+          "en": "A. Tester",
+          "zh": "測試者"
+        },
+        "venue_html": {
+          "en": "Journal of ZZ Tests",
+          "zh": "ZZ 測試期刊"
+        },
+        "id": "publication-2066-10-30-1"
+      },
+      "after": null,
+      "index_before": 4,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-8",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "80d52288cf8b7ecd351163a69423fe984c790e79ea0661eacaef3b2f4e8272fa",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "teaching",
+      "entry_id": "teaching-Fall 2099-1",
+      "label": {
+        "en": "ZZTEST Course 1",
+        "zh": "測試課程 1"
+      },
+      "before": {
+        "type": "teaching",
+        "institution": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "role": {
+          "en": "Teaching Assistant",
+          "zh": "助教"
+        },
+        "term": {
+          "en": "Fall 2099",
+          "zh": "2099 秋"
+        },
+        "course": {
+          "en": "ZZTEST Course 1",
+          "zh": "測試課程 1"
+        },
+        "group_id": "tohoku-university",
+        "order": 999,
+        "id": "teaching-Fall 2099-1"
+      },
+      "after": null,
+      "index_before": 9,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-9",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "1758a8a87f6d904b1e9752f400b5e8d64643310a761770df80d9bb7b51fbc2a7",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "teaching",
+      "entry_id": "teaching-Summer 2100-3",
+      "label": {
+        "en": "ZZTEST Course 3",
+        "zh": "測試課程 3"
+      },
+      "before": {
+        "type": "teaching",
+        "institution": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "role": {
+          "en": "Lecturer",
+          "zh": "講師"
+        },
+        "term": {
+          "en": "Summer 2100",
+          "zh": "2100 夏"
+        },
+        "course": {
+          "en": "ZZTEST Course 3",
+          "zh": "測試課程 3"
+        },
+        "group_id": "tohoku-university",
+        "order": 999,
+        "id": "teaching-Summer 2100-3"
+      },
+      "after": null,
+      "index_before": 10,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-10",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "75c6c0b7bd19ee5b658c23a2f2764c3ebd8273dff2c65821134102c52cdc67b9",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "teaching",
+      "entry_id": "teaching-Spring 2100-2",
+      "label": {
+        "en": "ZZTEST Course 2",
+        "zh": "測試課程 2"
+      },
+      "before": {
+        "type": "teaching",
+        "institution": {
+          "en": "Texas A&M University",
+          "zh": "德州農工大學"
+        },
+        "role": {
+          "en": "Course Coordinator",
+          "zh": "課程協調人"
+        },
+        "term": {
+          "en": "Spring 2100",
+          "zh": "2100 春"
+        },
+        "course": {
+          "en": "ZZTEST Course 2",
+          "zh": "測試課程 2"
+        },
+        "group_id": "texas-a-m-university",
+        "order": 999,
+        "id": "teaching-Spring 2100-2"
+      },
+      "after": null,
+      "index_before": 9,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-38-op-11",
+      "batch_issue": 38,
+      "applied_at": "2026-07-30T03:21:43.495324Z",
+      "expires_at": "2026-08-06T03:21:43.495324Z",
+      "reverted_by": null,
+      "request_digest": "6debcc09ecdd292a32045e45e468b178638d0747128cc42379b445fe1b0597e2",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "visit",
+      "entry_id": "visit-2026-07-04-entry",
+      "label": {
+        "en": "Texas A&M University",
+        "zh": "德州農工大學"
+      },
+      "before": {
+        "type": "visit",
+        "start_date": "2026-07-04",
+        "end_date": "2026-07-13",
+        "title": {
+          "en": "Texas A&M University",
+          "zh": "德州農工大學"
+        },
+        "city": {
+          "en": "College Station",
+          "zh": "大學城"
+        },
+        "country": {
+          "en": "United States",
+          "zh": "美國"
+        },
+        "visit_description": {
+          "en": "ZZTEST Visit Note",
+          "zh": ""
+        },
+        "url": "",
+        "show_upcoming": true,
+        "description": {
+          "en": "College Station, United States · ZZTEST Visit Note",
+          "zh": "大學城, 美國"
+        },
+        "description_html": {
+          "en": "College Station, United States · ZZTEST Visit Note",
+          "zh": "大學城, 美國"
+        },
+        "title_html": {
+          "en": "Texas A&amp;M University",
+          "zh": "德州農工大學"
+        },
+        "id": "visit-2026-07-04-entry"
+      },
+      "after": null,
+      "index_before": 27,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
