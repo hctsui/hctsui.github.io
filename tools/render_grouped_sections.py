@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Render dynamic publication and teaching section headings for web and CV."""
-
+"""Render dynamic publication and teaching headings for the website only."""
 from __future__ import annotations
 
 import html
@@ -9,9 +8,8 @@ import re
 from pathlib import Path
 from typing import Any
 
-import build_cv
 import build_site
-import process_request_v4 as groups
+import process_request as groups
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -21,11 +19,11 @@ def esc(value: Any) -> str:
     return html.escape(str(value or ""), quote=True)
 
 
-def pair(entry: dict[str, Any], field: str, lang: str, fallback: str = "") -> str:
+def pair(entry: dict[str, Any], field: str, lang: str) -> str:
     value = entry.get(field)
     if isinstance(value, dict):
-        return str(value.get(lang) or value.get("en") or fallback)
-    return str(value or fallback)
+        return str(value.get(lang) or "")
+    return str(value or "")
 
 
 def sorted_groups(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
@@ -61,10 +59,11 @@ def publication_web(data: dict[str, Any], lang: str) -> str:
         label = groups.group_label(group, lang)
         section_label = "稿件類型" if lang == "zh" else "Manuscript type"
         rows = "\n".join(build_site.render_publication_li(entry, lang) for entry in entries)
+        heading = f'<h2>{esc(label)}</h2>' if label else ""
         sections.append(
             f'<section class="teaching-group" data-group-id="{esc(group.get("id"))}">'
             f'<p class="section-label">{esc(section_label)}</p>'
-            f'<h2>{esc(label)}</h2>'
+            f'{heading}'
             f'<ol class="publication-list">{rows}</ol>'
             f'</section>'
         )
@@ -86,17 +85,19 @@ def teaching_web(data: dict[str, Any], lang: str) -> str:
         for entry in entries:
             term = pair(entry, "term", lang)
             course = pair(entry, "course", lang)
-            role = pair(entry, "role", lang, "助教" if lang == "zh" else "Teaching Assistant")
+            role = pair(entry, "role", lang)
+            role_html = f'<p class="venue">{esc(role)}</p>' if role else ""
             cards.append(
                 f'<article class="teaching-card" data-entry-id="{esc(entry.get("id"))}">'
                 f'<div class="date">{esc(term)}</div>'
-                f'<div><h3>{esc(course)}</h3><p class="venue">{esc(role)}</p></div>'
+                f'<div><h3>{esc(course)}</h3>{role_html}</div>'
                 f'</article>'
             )
+        heading_html = f'<h2>{esc(heading)}</h2>' if heading else ""
         sections.append(
             f'<section class="teaching-group" data-group-id="{esc(group.get("id"))}">'
             f'<p class="section-label">{"機構" if lang == "zh" else "Institution"}</p>'
-            f'<h2>{esc(heading)}</h2>'
+            f'{heading_html}'
             f'<div class="teaching-grid">{"".join(cards)}</div>'
             f'</section>'
         )
@@ -130,73 +131,13 @@ def replace_page_section(path: Path, marker: str, content: str) -> None:
     path.write_text(text[:start] + replacement + text[end:], encoding="utf-8")
 
 
-def cv_publications(data: dict[str, Any]) -> str:
-    chunks: list[str] = []
-    number = 1
-    for group in sorted_groups(data, "publication"):
-        entries = entries_for(data, "publication", str(group.get("id")))
-        if not entries:
-            continue
-        heading = (
-            "\\begin{one}\n"
-            f"    {{\\textbf{{\\large {build_cv.latex_escape(groups.group_label(group, 'en'))}}}}}\n"
-            "\\end{one}"
-        )
-        rows: list[str] = []
-        for entry in entries:
-            rows.append(build_cv.render_publication(entry, number))
-            number += 1
-        chunks.append(heading + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(rows))
-    return "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(chunks)
-
-
-def cv_teaching(data: dict[str, Any]) -> str:
-    chunks: list[str] = []
-    for group in sorted_groups(data, "teaching"):
-        entries = entries_for(data, "teaching", str(group.get("id")))
-        if not entries:
-            continue
-        heading = (
-            "\\begin{one}\n"
-            f"    {{\\textbf{{\\large {build_cv.latex_escape(groups.group_label(group, 'en'))}}}}}\n"
-            "\\end{one}"
-        )
-        rows: list[str] = []
-        for entry in entries:
-            term = pair(entry, "term", "en")
-            course = pair(entry, "course", "en")
-            role = pair(entry, "role", "en", "Teaching Assistant")
-            rows.append(
-                f"\\begin{{conf}}{{{build_cv.latex_escape(term)}}}\n"
-                f"{build_cv.latex_escape(course)} \\\\\n"
-                f"{{\\small\\textit{{{build_cv.latex_escape(role)}}}}}\n"
-                "\\end{conf}"
-            )
-        chunks.append(heading + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(rows))
-    return "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(chunks)
-
-
-def replace_tex(path: Path, marker: str, content: str) -> None:
-    text = path.read_text(encoding="utf-8")
-    start = f"% CMS:{marker}:START"
-    end = f"% CMS:{marker}:END"
-    pattern = re.compile(rf"({re.escape(start)}\n)(.*?)({re.escape(end)})", re.S)
-    updated, count = pattern.subn(lambda m: m.group(1) + content.rstrip() + "\n" + m.group(3), text, count=1)
-    if count != 1:
-        raise RuntimeError(f"Missing or duplicated CV marker: {marker}")
-    path.write_text(updated, encoding="utf-8")
-
-
 def main() -> None:
     data = groups.migrate_data(json.loads(DATA_FILE.read_text(encoding="utf-8")))
     replace_page_section(ROOT / "publications.html", "PUBLICATIONS", publication_web(data, "en"))
     replace_page_section(ROOT / "zh" / "publications.html", "PUBLICATIONS", publication_web(data, "zh"))
     replace_page_section(ROOT / "teaching.html", "TEACHING", teaching_web(data, "en"))
     replace_page_section(ROOT / "zh" / "teaching.html", "TEACHING", teaching_web(data, "zh"))
-    cv_path = ROOT / "cv" / "Hung-Chun-Tsui-CV.tex"
-    replace_tex(cv_path, "PUBLICATIONS", cv_publications(data))
-    replace_tex(cv_path, "TEACHING", cv_teaching(data))
-    print("Rendered dynamic publication and teaching groups for website and CV.")
+    print("Rendered dynamic publication and teaching groups for website.")
 
 
 if __name__ == "__main__":

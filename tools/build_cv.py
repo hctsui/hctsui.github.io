@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
-"""Generate the LaTeX CV from content/site.json without changing its design.
-
-The template contains fixed typography/layout and invisible CMS markers. This
-script replaces only the six managed CV sections and writes a compilable .tex.
-"""
-
+"""Generate English and Traditional-Chinese LaTeX CVs from site.json."""
 from __future__ import annotations
-
 import argparse
 import html as html_lib
 import json
@@ -16,78 +10,54 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
+import process_request as core
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
-TEMPLATE_FILE = ROOT / "cv" / "Hung-Chun-Tsui-CV.template.tex"
-OUTPUT_FILE = ROOT / "cv" / "Hung-Chun-Tsui-CV.tex"
-
-LATEX_ESCAPES = {
-    "\\": r"\textbackslash{}",
-    "&": r"\&",
-    "%": r"\%",
-    "$": r"\$",
-    "#": r"\#",
-    "_": r"\_",
-    "{": r"\{",
-    "}": r"\}",
-    "~": r"\textasciitilde{}",
-    "^": r"\textasciicircum{}",
+TEMPLATES = {
+    "en": ROOT / "cv" / "Hung-Chun-Tsui-CV.template.tex",
+    "zh": ROOT / "cv" / "Hung-Chun-Tsui-CV-zh.template.tex",
 }
+OUTPUTS = {
+    "en": ROOT / "cv" / "Hung-Chun-Tsui-CV.tex",
+    "zh": ROOT / "cv" / "Hung-Chun-Tsui-CV-zh.tex",
+}
+LATEX_ESCAPES = {"\\": r"\textbackslash{}", "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_", "{": r"\{", "}": r"\}", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}"}
 
 
 def load_data() -> dict[str, Any]:
-    return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    return core.migrate_data(json.loads(DATA_FILE.read_text(encoding="utf-8")))
 
 
 def site_today(data: dict[str, Any], override: str | None = None) -> date:
     value = override or os.environ.get("SITE_TODAY", "")
     if value:
         return date.fromisoformat(value)
-    tz = ZoneInfo(data.get("settings", {}).get("timezone", "Asia/Tokyo"))
-    return datetime.now(tz).date()
+    return datetime.now(ZoneInfo(data.get("settings", {}).get("timezone", "Asia/Tokyo"))).date()
 
 
 def latex_escape(value: Any) -> str:
-    text = html_lib.unescape(str(value or ""))
-    text = text.replace("\u00a0", " ")
-    text = text.replace("–", "--").replace("—", "---")
-    text = text.replace("−", "-")
+    text = html_lib.unescape(str(value or "")).replace("\u00a0", " ").replace("–", "--").replace("—", "---").replace("−", "-")
     return "".join(LATEX_ESCAPES.get(ch, ch) for ch in text)
 
 
 def latex_url(value: Any) -> str:
-    # hyperref handles common URL punctuation. Escape only TeX comment/group chars.
-    text = str(value or "").strip()
-    return text.replace("%", r"\%").replace("#", r"\#").replace("&", r"\&")
+    return str(value or "").strip().replace("%", r"\%").replace("#", r"\#").replace("&", r"\&")
 
 
 def rich_to_latex(value: Any, *, author: bool = False) -> str:
-    """Convert the small HTML subset stored in site.json to LaTeX."""
-    source = html_lib.unescape(str(value or ""))
-    source = source.replace("<br>", " ").replace("<br/>", " ").replace("<br />", " ")
-
+    source = html_lib.unescape(str(value or "")).replace("<br>", " ").replace("<br/>", " ").replace("<br />", " ")
     tokens: dict[str, str] = {}
-
     def token(content: str) -> str:
-        key = f"@@CVTOKEN{len(tokens)}@@"
-        tokens[key] = content
-        return key
-
-    def strong_repl(match: re.Match[str]) -> str:
+        key = f"@@CVTOKEN{len(tokens)}@@"; tokens[key] = content; return key
+    def strong(match: re.Match[str]) -> str:
         inner = re.sub(r"<[^>]+>", "", match.group(1))
-        wrapped = rf"\underline{{{latex_escape(inner)}}}" if author else rf"\textbf{{{latex_escape(inner)}}}"
-        return token(wrapped)
-
-    def emphasis_repl(match: re.Match[str]) -> str:
-        inner = re.sub(r"<[^>]+>", "", match.group(1)).strip()
-        escaped = latex_escape(inner)
-        # Variables such as q, u, and v are better represented in math italics.
-        wrapped = rf"${escaped}$" if re.fullmatch(r"[A-Za-z0-9]+", inner) else rf"\textit{{{escaped}}}"
-        return token(wrapped)
-
-    source = re.sub(r"<(?:strong|b)>(.*?)</(?:strong|b)>", strong_repl, source, flags=re.I | re.S)
-    source = re.sub(r"<(?:em|i)>(.*?)</(?:em|i)>", emphasis_repl, source, flags=re.I | re.S)
+        return token(rf"\underline{{{latex_escape(inner)}}}" if author else rf"\textbf{{{latex_escape(inner)}}}")
+    def emphasis(match: re.Match[str]) -> str:
+        inner = re.sub(r"<[^>]+>", "", match.group(1)).strip(); escaped = latex_escape(inner)
+        return token(rf"${escaped}$" if re.fullmatch(r"[A-Za-z0-9]+", inner) else rf"\textit{{{escaped}}}")
+    source = re.sub(r"<(?:strong|b)>(.*?)</(?:strong|b)>", strong, source, flags=re.I|re.S)
+    source = re.sub(r"<(?:em|i)>(.*?)</(?:em|i)>", emphasis, source, flags=re.I|re.S)
     source = re.sub(r"<[^>]+>", "", source)
     result = latex_escape(source)
     for key, replacement in tokens.items():
@@ -95,217 +65,184 @@ def rich_to_latex(value: Any, *, author: bool = False) -> str:
     return result.strip()
 
 
-def field_rich(entry: dict[str, Any], field: str, lang: str = "en", *, author: bool = False) -> str:
+def field_rich(entry: dict[str, Any], field: str, lang: str, *, author: bool = False) -> str:
     rich = entry.get(f"{field}_html", {})
     if isinstance(rich, dict) and rich.get(lang):
         return rich_to_latex(rich[lang], author=author)
     plain = entry.get(field, {})
     if isinstance(plain, dict):
-        return latex_escape(plain.get(lang) or plain.get("en") or "")
+        return latex_escape(plain.get(lang) or "")
     return latex_escape(plain)
 
 
-def date_value(value: str) -> date:
-    return date.fromisoformat(value)
+def pair(entry: dict[str, Any], field: str, lang: str) -> str:
+    value = entry.get(field)
+    return str(value.get(lang) or "") if isinstance(value, dict) else str(value or "")
 
 
-def display_date(value: str) -> str:
-    d = date_value(value)
-    return f"{d.year}/{d.month}/{d.day}"
+def display_date(value: str, lang: str) -> str:
+    d = date.fromisoformat(value)
+    return f"{d.year}/{d.month}/{d.day}" if lang == "en" else f"{d.year} 年 {d.month} 月 {d.day} 日"
 
 
-def display_range(entry: dict[str, Any]) -> str:
-    start = str(entry.get("start_date", ""))
-    end = str(entry.get("end_date") or start)
-    if not start:
-        return latex_escape(entry.get("year", ""))
-    if end == start:
-        return display_date(start)
-    return f"{display_date(start)} -- {display_date(end)}"
+def display_range(entry: dict[str, Any], lang: str) -> str:
+    start = str(entry.get("start_date", "")); end = str(entry.get("end_date") or start)
+    if not start: return latex_escape(entry.get("year", ""))
+    if end == start: return display_date(start, lang)
+    sep = " -- " if lang == "en" else "至"
+    return f"{display_date(start, lang)}{sep}{display_date(end, lang)}"
 
 
 def activity_is_upcoming(entry: dict[str, Any], today: date) -> bool:
-    if not entry.get("show_upcoming"):
-        return False
+    if not entry.get("show_upcoming"): return False
     end = str(entry.get("end_date") or entry.get("start_date") or "")
-    return bool(end and date_value(end) >= today)
+    return bool(end and date.fromisoformat(end) >= today)
 
 
 def linked_bold(title: str, url: str) -> str:
     content = rf"\textbf{{{title}}}"
-    if not url:
-        return content
-    return rf"\hrefWithoutArrow{{{latex_url(url)}}}{{{content}}}"
+    return rf"\hrefWithoutArrow{{{latex_url(url)}}}{{{content}}}" if url and title else content
 
 
-def render_activity(entry: dict[str, Any], *, kind: str) -> str:
-    title = field_rich(entry, "title")
-    url = str(entry.get("url", "")).strip()
-    description = field_rich(entry, "description")
-    date_text = display_range(entry)
-
+def render_activity(entry: dict[str, Any], lang: str, *, kind: str) -> str:
+    title = field_rich(entry, "title", lang); url = str(entry.get("url", "")).strip(); description = field_rich(entry, "description", lang)
     title_line = linked_bold(title, url)
     if kind == "talk" and entry.get("slides_url"):
-        title_line += (
-            r" {\color{secondaryColor}["
-            + rf"\hrefWithoutArrow{{{latex_url(entry['slides_url'])}}}{{slides}}"
-            + "]}"
-        )
-
+        label = "投影片" if lang == "zh" else "slides"
+        title_line += r" {\color{secondaryColor}[" + rf"\hrefWithoutArrow{{{latex_url(entry['slides_url'])}}}{{{label}}}" + "]}"
     body = title_line
-    if description:
-        body += r"\\" + description
-    return (
-        rf"\begin{{conf}}{{{date_text}}}" + "\n"
-        + body + "\n"
-        + r"\end{conf}"
-    )
+    if description: body += r"\\" + description
+    return rf"\begin{{conf}}{{{display_range(entry, lang)}}}" + "\n" + body + "\n" + r"\end{conf}"
 
 
-def publication_links(entry: dict[str, Any]) -> str:
-    preferred = {"PDF": 0, "arXiv": 1, "Journal": 2, "DOI": 3, "Code": 4}
-    links = [link for link in entry.get("links", []) if link.get("url")]
-    links.sort(key=lambda link: preferred.get((link.get("label") or {}).get("en", ""), 99))
-    rendered: list[str] = []
+def publication_links(entry: dict[str, Any], lang: str) -> str:
+    preferred = {"PDF":0,"arXiv":1,"Journal":2,"DOI":3,"Code":4}
+    links = [x for x in entry.get("links", []) if x.get("url")]
+    links.sort(key=lambda x: preferred.get((x.get("label") or {}).get("en", ""), 99))
+    rendered=[]
     for link in links:
-        label = str((link.get("label") or {}).get("en") or "Link")
-        display = {"PDF": "pdf", "Journal": "journal", "Code": "code"}.get(label, label)
+        labels=link.get("label") or {}; canonical=str(labels.get("en") or "Link")
+        display = str(labels.get(lang) or "")
+        if not display:
+            display = {"PDF":"pdf","Journal":"journal","Code":"code"}.get(canonical, canonical)
         rendered.append(rf"\hrefWithoutArrow{{{latex_url(link['url'])}}}{{{latex_escape(display)}}}")
-    if not rendered:
-        return ""
-    return r" {\color{secondaryColor}[" + "|".join(rendered) + "]}"
+    return r" {\color{secondaryColor}[" + "|".join(rendered) + "]}" if rendered else ""
 
 
-def publication_status(entry: dict[str, Any]) -> str:
-    venue_plain = entry.get("venue", {})
-    venue = ""
-    if isinstance(venue_plain, dict):
-        venue = str(venue_plain.get("en") or "").strip()
-    elif venue_plain:
-        venue = str(venue_plain).strip()
+def publication_status(entry: dict[str, Any], lang: str) -> str:
+    """Render only status text explicitly present in this language."""
+    venue = pair(entry, "venue", lang).strip()
     year = str(entry.get("year", ""))
-    if not venue or venue.lower().startswith("arxiv:"):
-        return rf"\textit{{Submitted}}, {latex_escape(year)}."
-    return rf"\textit{{{latex_escape(venue)}}}, {latex_escape(year)}."
+    if venue:
+        return rf"\textit{{{latex_escape(venue)}}}, {latex_escape(year)}."
+    return latex_escape(year) + "."
 
 
-def render_publication(entry: dict[str, Any], number: int) -> str:
-    authors = field_rich(entry, "authors", author=True)
-    title = field_rich(entry, "title")
-    links = publication_links(entry)
-    return (
-        rf"\begin{{pub}}{{{authors}}}" + "\n"
-        + rf"{{[{number}]}} \textbf{{{title}}}{links} \\" + "\n"
-        + publication_status(entry) + "\n"
-        + r"\end{pub}"
-    )
+def render_publication(entry: dict[str, Any], number: int, lang: str) -> str:
+    authors=field_rich(entry,"authors",lang,author=True); title=field_rich(entry,"title",lang)
+    return rf"\begin{{pub}}{{{authors}}}" + "\n" + rf"{{[{number}]}} \textbf{{{title}}}{publication_links(entry,lang)} \\" + "\n" + publication_status(entry,lang) + "\n" + r"\end{pub}"
 
 
-def render_honor(entry: dict[str, Any]) -> str:
-    title = field_rich(entry, "title")
-    org = field_rich(entry, "organization")
-    url = str(entry.get("url", "")).strip()
-    body = linked_bold(title, url)
-    if org:
-        body += r"\\" + org
-    return (
-        rf"\begin{{conf}}{{{latex_escape(entry.get('year', ''))}}}" + "\n"
-        + body + "\n"
-        + r"\end{conf}"
-    )
+def render_honor(entry: dict[str, Any], lang: str) -> str:
+    title=field_rich(entry,"title",lang); org=field_rich(entry,"organization",lang); body=linked_bold(title,str(entry.get("url","")).strip())
+    if org: body += r"\\"+org
+    return rf"\begin{{conf}}{{{latex_escape(entry.get('year',''))}}}"+"\n"+body+"\n"+r"\end{conf}"
 
 
-def render_teaching(entry: dict[str, Any]) -> str:
-    term = entry.get("term", {})
-    course = entry.get("course", {})
-    term_en = str(term.get("en") if isinstance(term, dict) else term or "")
-    course_en = str(course.get("en") if isinstance(course, dict) else course or "")
-    if course_en and not course_en.upper().startswith("NTHU "):
-        course_en = "NTHU " + course_en
-    return (
-        rf"\begin{{conf}}{{{latex_escape(term_en)}}}" + "\n"
-        + latex_escape(course_en) + "\n"
-        + r"\end{conf}"
-    )
+def sorted_groups(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
+    return sorted(core.content_groups(data,kind), key=lambda g:(int(g.get("order",999999)),str(g.get("id",""))))
+
+
+def entries_for(data: dict[str, Any], kind: str, gid: str) -> list[dict[str, Any]]:
+    section="publications" if kind=="publication" else "teaching"
+    return sorted([x for x in data.get(section,[]) if x.get("group_id")==gid], key=lambda x:(int(x.get("order",999999)),str(x.get("id",""))))
+
+
+def cv_publications(data: dict[str, Any], lang: str) -> str:
+    chunks=[]
+    for group in sorted_groups(data,"publication"):
+        entries=entries_for(data,"publication",str(group.get("id")))
+        if not entries: continue
+        label=core.group_label(group,lang)
+        heading = ""
+        if label:
+            heading="\\begin{one}\n"+f"    {{\\textbf{{\\large {latex_escape(label)}}}}}\n"+"\\end{one}\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
+        # Numbering intentionally restarts inside every publication section.
+        rows="\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_publication(entry,index,lang) for index,entry in enumerate(entries,1))
+        chunks.append(heading+rows)
+    return "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(chunks)
+
+
+def cv_teaching(data: dict[str, Any], lang: str) -> str:
+    chunks=[]
+    for group in sorted_groups(data,"teaching"):
+        entries=entries_for(data,"teaching",str(group.get("id")))
+        if not entries: continue
+        label=core.group_label(group,lang); heading=""
+        if label:
+            heading="\\begin{one}\n"+f"    {{\\textbf{{\\large {latex_escape(label)}}}}}\n"+"\\end{one}\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
+        rows=[]
+        for entry in entries:
+            term=pair(entry,"term",lang); course=pair(entry,"course",lang); role=pair(entry,"role",lang)
+            body=latex_escape(course)
+            if role: body += r"\\" + "\n" + f"{{\\small\\textit{{{latex_escape(role)}}}}}"
+            rows.append(f"\\begin{{conf}}{{{latex_escape(term)}}}\n{body}\n\\end{{conf}}")
+        chunks.append(heading+"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(rows))
+    return "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(chunks)
 
 
 def replace_block(text: str, marker: str, content: str) -> str:
-    start = f"% CMS:{marker}:START"
-    end = f"% CMS:{marker}:END"
-    pattern = re.compile(rf"({re.escape(start)}\n)(.*?)({re.escape(end)})", re.S)
-    updated, count = pattern.subn(lambda match: match.group(1) + content.rstrip() + "\n" + match.group(3), text, count=1)
-    if count != 1:
-        raise RuntimeError(f"Missing or duplicated CV marker: {marker}")
+    start=f"% CMS:{marker}:START"; end=f"% CMS:{marker}:END"
+    pattern=re.compile(rf"({re.escape(start)}\n)(.*?)({re.escape(end)})",re.S)
+    updated,count=pattern.subn(lambda m:m.group(1)+content.rstrip()+"\n"+m.group(3),text,count=1)
+    if count!=1: raise RuntimeError(f"Missing or duplicated CV marker: {marker}")
     return updated
 
 
 def ordered_ungrouped(data: dict[str, Any], kind: str, entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    order_ids = data.get("settings", {}).get("entry_order", {}).get(kind, [])
-    if isinstance(order_ids, list) and order_ids:
-        rank = {str(entry_id): index for index, entry_id in enumerate(order_ids)}
-        return sorted(entries, key=lambda entry: (rank.get(str(entry.get("id")), 999999), str(entry.get("id", ""))))
-    if kind == "honor":
-        return sorted(entries, key=lambda entry: (-int(entry.get("year", 0)), int(entry.get("order", 999999)), str(entry.get("id", ""))))
-    return sorted(entries, key=lambda entry: (entry.get("start_date", ""), entry.get("id", "")), reverse=True)
+    ids=data.get("settings",{}).get("entry_order",{}).get(kind,[])
+    if isinstance(ids,list) and ids:
+        rank={str(x):i for i,x in enumerate(ids)}
+        return sorted(entries,key=lambda x:(rank.get(str(x.get("id")),999999),str(x.get("id",""))))
+    if kind=="honor": return sorted(entries,key=lambda x:(-int(x.get("year",0)),int(x.get("order",999999)),str(x.get("id",""))))
+    return sorted(entries,key=lambda x:(x.get("start_date",""),x.get("id","")),reverse=True)
 
 
-def build(today: date) -> Path:
-    data = load_data()
-    activities = data.get("activities", [])
-    archived = [entry for entry in activities if not activity_is_upcoming(entry, today)]
+def updated_text(today: date, lang: str) -> str:
+    if lang=="zh": return f"{today.year} 年 {today.month} 月 {today.day} 日"
+    months=["January","February","March","April","May","June","July","August","September","October","November","December"]
+    return f"{months[today.month-1]} {today.day}, {today.year}"
 
-    visits = ordered_ungrouped(data, "visit", [entry for entry in archived if entry.get("type") == "visit"])
-    talks = ordered_ungrouped(data, "talk", [entry for entry in archived if entry.get("type") == "talk"])
-    conferences = ordered_ungrouped(data, "conference", [entry for entry in archived if entry.get("type") == "conference"])
-    honors = ordered_ungrouped(data, "honor", list(data.get("honors", [])))
-    publications = sorted(
-        data.get("publications", []),
-        key=lambda entry: (entry.get("date", ""), int(entry.get("order", 999999))),
-    )
-    teaching = sorted(data.get("teaching", []), key=lambda entry: int(entry.get("order", 999999)))
 
-    blocks = {
-        "PUBLICATIONS": "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(
-            render_publication(entry, index) for index, entry in enumerate(publications, 1)
-        ),
-        "VISITS": "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(entry, kind="visit") for entry in visits),
-        "TALKS": "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(entry, kind="talk") for entry in talks),
-        "HONORS": "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_honor(entry) for entry in honors),
-        "CONFERENCES": "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(
-            render_activity(entry, kind="conference") for entry in conferences
-        ),
-        "TEACHING": (
-            "\\begin{one}\n    {\\textbf{\\large Teaching Assistant}}\n\\end{one}\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_teaching(entry) for entry in teaching)
-        ),
+def build_language(data: dict[str, Any], today: date, lang: str) -> Path:
+    activities=data.get("activities",[]); archived=[x for x in activities if not activity_is_upcoming(x,today)]
+    visits=ordered_ungrouped(data,"visit",[x for x in archived if x.get("type")=="visit"])
+    talks=ordered_ungrouped(data,"talk",[x for x in archived if x.get("type")=="talk"])
+    conferences=ordered_ungrouped(data,"conference",[x for x in archived if x.get("type")=="conference"])
+    honors=ordered_ungrouped(data,"honor",list(data.get("honors",[])))
+    blocks={
+        "PUBLICATIONS":cv_publications(data,lang),
+        "VISITS":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(x,lang,kind="visit") for x in visits),
+        "TALKS":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(x,lang,kind="talk") for x in talks),
+        "HONORS":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_honor(x,lang) for x in honors),
+        "CONFERENCES":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(x,lang,kind="conference") for x in conferences),
+        "TEACHING":cv_teaching(data,lang),
     }
+    text=TEMPLATES[lang].read_text(encoding="utf-8").replace("__CV_LAST_UPDATED__",updated_text(today,lang))
+    for marker,content in blocks.items(): text=replace_block(text,marker,content)
+    OUTPUTS[lang].write_text(text,encoding="utf-8")
+    return OUTPUTS[lang]
 
-    text = TEMPLATE_FILE.read_text(encoding="utf-8")
-    month_names = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December",
-    ]
-    text = text.replace(
-        "__CV_LAST_UPDATED__",
-        f"{month_names[today.month - 1]} {today.day}, {today.year}",
-    )
-    for marker, content in blocks.items():
-        text = replace_block(text, marker, content)
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_FILE.write_text(text, encoding="utf-8")
-    return OUTPUT_FILE
+def build(today: date) -> list[Path]:
+    data=load_data()
+    return [build_language(data,today,lang) for lang in ("en","zh")]
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--today", help="Override site date using YYYY-MM-DD")
-    args = parser.parse_args()
-    data = load_data()
-    output = build(site_today(data, args.today))
-    print(f"Generated {output.relative_to(ROOT)}")
+    parser=argparse.ArgumentParser(); parser.add_argument("--today"); args=parser.parse_args()
+    data=load_data(); outputs=build(site_today(data,args.today))
+    for output in outputs: print(f"Generated {output.relative_to(ROOT)}")
 
 
-if __name__ == "__main__":
-    main()
+if __name__=="__main__": main()

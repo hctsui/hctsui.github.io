@@ -55,14 +55,14 @@ def inline_value(entry: dict[str, Any], field: str, lang: str) -> str:
         return str(rich[lang])
     plain = entry.get(field, {})
     if isinstance(plain, dict):
-        return esc(plain.get(lang) or plain.get("en") or "")
+        return esc(plain.get(lang) or "")
     return esc(plain)
 
 
 def plain_value(entry: dict[str, Any], field: str, lang: str) -> str:
     plain = entry.get(field, {})
     if isinstance(plain, dict):
-        return str(plain.get(lang) or plain.get("en") or "")
+        return str(plain.get(lang) or "")
     return str(plain or "")
 
 
