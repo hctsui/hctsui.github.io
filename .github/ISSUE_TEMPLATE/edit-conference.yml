@@ -1,0 +1,48 @@
+name: Edit conference / 編輯會議
+description: Only show fields used by conferences and workshops.
+title: "[Website: Edit] "
+body:
+  - type: markdown
+    attributes:
+      value: 從 `/admin/` 複製 Entry ID。空白欄位代表維持原值；在文字欄輸入 `[CLEAR]` 可清除該欄。
+  - type: dropdown
+    id: bilingual-mode
+    attributes:
+      label: Bilingual completion / 雙語欄位補全 [必填]
+      description: 只有選擇使用對照表時，才會用完整欄位的一對一對照補全。
+      options:
+        - "Keep blanks / 空白保持空白"
+        - "Use Admin dictionary / 使用 Admin 中英對照表補全"
+      default: 0
+    validations: {required: true}
+  - type: input
+    id: entry-id
+    attributes: {label: "Entry ID / 項目 ID [必填]"}
+    validations: {required: true}
+  - type: input
+    id: title-en
+    attributes: {label: "New English title/name/course / 新英文題目、名稱或課名 [選填]"}
+  - type: input
+    id: title-zh
+    attributes: {label: "New Chinese title/name/course / 新中文題目、名稱或課名 [選填・可由對照表補全]"}
+  - type: input
+    id: start
+    attributes: {label: "New start/public date / 新開始或公開日期 [選填]", placeholder: "YYYY-MM-DD"}
+  - type: input
+    id: end
+    attributes: {label: "New end date / 新結束日期 [選填]", placeholder: "YYYY-MM-DD"}
+  - type: input
+    id: url
+    attributes: {label: "New main URL / 新主要連結 [選填]"}
+  - type: textarea
+    id: desc-en
+    attributes: {label: "New English description/organization/term / 新英文說明、單位或學期 [選填]"}
+  - type: textarea
+    id: desc-zh
+    attributes: {label: "New Chinese description/organization/term / 新中文說明、單位或學期 [選填・可由對照表補全]"}
+  - type: dropdown
+    id: upcoming
+    attributes:
+      label: Upcoming setting / Upcoming 設定 [選填]
+      options: ["Keep unchanged / 維持不變", "Yes / 是", "No / 否"]
+      default: 0

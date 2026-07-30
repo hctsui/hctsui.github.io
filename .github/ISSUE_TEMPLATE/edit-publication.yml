@@ -1,0 +1,75 @@
+name: Edit publication / 編輯論文或作品
+description: Only show publication metadata and publication-group fields.
+title: "[Website: Edit] "
+body:
+  - type: markdown
+    attributes:
+      value: 從 `/admin/` 複製 Entry ID。空白欄位代表維持原值；在文字欄輸入 `[CLEAR]` 可清除該欄。
+  - type: dropdown
+    id: bilingual-mode
+    attributes:
+      label: Bilingual completion / 雙語欄位補全 [必填]
+      description: 只有選擇使用對照表時，才會用完整欄位的一對一對照補全。
+      options:
+        - "Keep blanks / 空白保持空白"
+        - "Use Admin dictionary / 使用 Admin 中英對照表補全"
+      default: 0
+    validations: {required: true}
+  - type: input
+    id: entry-id
+    attributes: {label: "Entry ID / 項目 ID [必填]"}
+    validations: {required: true}
+  - type: input
+    id: title-en
+    attributes: {label: "New English title/name/course / 新英文題目、名稱或課名 [選填]"}
+  - type: input
+    id: title-zh
+    attributes: {label: "New Chinese title/name/course / 新中文題目、名稱或課名 [選填・可由對照表補全]"}
+  - type: input
+    id: start
+    attributes: {label: "New start/public date / 新開始或公開日期 [選填]", placeholder: "YYYY-MM-DD"}
+  - type: input
+    id: authors-en
+    attributes: {label: "New authors (English) / 新作者英文 [選填]"}
+  - type: input
+    id: authors-zh
+    attributes: {label: "New authors (Chinese) / 新作者中文 [選填・可由對照表補全]"}
+  - type: dropdown
+    id: publication-section
+    attributes:
+      label: New publication section / 新論文大標題 [選填]
+      options:
+        - "Keep unchanged / 維持不變"
+        - "Auto detect from updated metadata / 依更新後資訊自動判斷"
+        - "Journal Articles / 期刊論文 [journal-articles]"
+        - "Preprints / 預印本 [preprints]"
+        - "Survey Papers / 綜述論文 [survey-papers]"
+        - "Other / 其他（建立新大標題）"
+      default: 0
+  - type: input
+    id: custom-pub-section-en
+    attributes: {label: "New custom publication section (English) / 新自訂論文大標題英文 [選填]"}
+  - type: input
+    id: custom-pub-section-zh
+    attributes: {label: "New custom publication section (Chinese) / 新自訂論文大標題中文 [選填・可由對照表補全]"}
+  - type: input
+    id: venue-en
+    attributes: {label: "New venue or status (English) / 新期刊或狀態英文 [選填]"}
+  - type: input
+    id: venue-zh
+    attributes: {label: "New venue or status (Chinese) / 新期刊或狀態中文 [選填・可由對照表補全]"}
+  - type: input
+    id: arxiv
+    attributes: {label: "New arXiv number / 新 arXiv 編號 [選填]"}
+  - type: input
+    id: pdf-url
+    attributes: {label: "New PDF URL / 新 PDF 連結 [選填]"}
+  - type: input
+    id: doi-url
+    attributes: {label: "New DOI URL / 新 DOI 連結 [選填]"}
+  - type: input
+    id: journal-url
+    attributes: {label: "New journal page URL / 新期刊頁面連結 [選填]"}
+  - type: input
+    id: code-url
+    attributes: {label: "New code URL / 新程式碼連結 [選填]"}
