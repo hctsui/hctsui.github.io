@@ -63,6 +63,6 @@
 | Fall 2024 | MATH1410 Linear Algebra I | MATH1410 線性代數（一） | `teaching-5-math1410-linear-algebra-i` |
 | Spring 2025 | MATH1420 Linear Algebra II | MATH1420 線性代數（二） | `teaching-6-math1420-linear-algebra-ii` |
 | Spring 2025 | MATH3050 Complex Analysis | MATH3050 複變數函數論 | `teaching-7-math3050-complex-analysis` |
-| Spring 2024 | MATH2020 Advanced Calculus II | MATH2020 高等微積分（二） | `teaching-9-math2020-advanced-calculus-ii` |
 | Fall 2023 | MATH2010 Advanced Calculus I | MATH2010 高等微積分（一） | `teaching-8-math2010-advanced-calculus-i` |
+| Spring 2024 | MATH2020 Advanced Calculus II | MATH2020 高等微積分（二） | `teaching-9-math2020-advanced-calculus-ii` |
 

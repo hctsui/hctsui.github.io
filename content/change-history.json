@@ -5047,6 +5047,166 @@
       "index_before": 4,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-42-op-1",
+      "batch_issue": 42,
+      "applied_at": "2026-07-30T08:19:23.802805Z",
+      "expires_at": "2026-08-06T08:19:23.802805Z",
+      "reverted_by": null,
+      "request_digest": "9027f0dcb5865da58d8f4e2dfd17729d004a09410a615f90931f791ca3c4d940",
+      "request_action": "update",
+      "action": "update",
+      "type": "visit",
+      "entry_id": "visit-2026-07-02-tohoku-university",
+      "label": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "before": {
+        "id": "visit-2026-07-02-tohoku-university",
+        "type": "visit",
+        "start_date": "2026-07-02",
+        "end_date": "2026-08-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "title_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "description": {
+          "en": "Supported by the Japan–Taiwan Exchange Association",
+          "zh": "獲日本臺灣交流協會補助"
+        },
+        "description_html": {
+          "en": "Supported by the Japan–Taiwan Exchange Association",
+          "zh": "獲日本臺灣交流協會補助"
+        },
+        "slides_url": "",
+        "city": {
+          "en": "Supported by the Japan–Taiwan Exchange Association",
+          "zh": "獲日本臺灣交流協會補助"
+        },
+        "country": {
+          "en": "",
+          "zh": ""
+        },
+        "visit_description": {
+          "en": "",
+          "zh": ""
+        }
+      },
+      "after": {
+        "id": "visit-2026-07-02-tohoku-university",
+        "type": "visit",
+        "start_date": "2026-07-02",
+        "end_date": "2026-08-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "title_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "description": {
+          "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+          "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
+        },
+        "description_html": {
+          "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+          "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
+        },
+        "slides_url": "",
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "visit_description": {
+          "en": "Supported by the Japan–Taiwan Exchange Association",
+          "zh": "獲日本臺灣交流協會補助"
+        }
+      },
+      "index_before": 0,
+      "index_after": 0,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-42-op-2",
+      "batch_issue": 42,
+      "applied_at": "2026-07-30T08:19:23.802805Z",
+      "expires_at": "2026-08-06T08:19:23.802805Z",
+      "reverted_by": null,
+      "request_digest": "8634ddaba2d7e63d8cbbf625c45ed7585d8dbea41a2aa6896112b494597fcada",
+      "request_action": "reorder",
+      "action": "reorder",
+      "type": "teaching",
+      "entry_id": "order:teaching",
+      "label": {
+        "en": "teaching order",
+        "zh": "排序"
+      },
+      "before": {
+        "kind": "teaching",
+        "groups": [
+          {
+            "id": "national-tsing-hua-university",
+            "label": {
+              "en": "National Tsing Hua University",
+              "zh": "國立清華大學"
+            },
+            "preset": false,
+            "entries": [
+              "teaching-1-math2410-algebra-i",
+              "teaching-2-math2420-algebra-ii",
+              "teaching-3-math2870-discrete-mathematics",
+              "teaching-4-math3450-cryptography",
+              "teaching-5-math1410-linear-algebra-i",
+              "teaching-6-math1420-linear-algebra-ii",
+              "teaching-7-math3050-complex-analysis",
+              "teaching-9-math2020-advanced-calculus-ii",
+              "teaching-8-math2010-advanced-calculus-i"
+            ]
+          }
+        ]
+      },
+      "after": {
+        "kind": "teaching",
+        "groups": [
+          {
+            "id": "national-tsing-hua-university",
+            "label": {
+              "en": "National Tsing Hua University",
+              "zh": "國立清華大學"
+            },
+            "preset": false,
+            "entries": [
+              "teaching-1-math2410-algebra-i",
+              "teaching-2-math2420-algebra-ii",
+              "teaching-3-math2870-discrete-mathematics",
+              "teaching-4-math3450-cryptography",
+              "teaching-5-math1410-linear-algebra-i",
+              "teaching-6-math1420-linear-algebra-ii",
+              "teaching-7-math3050-complex-analysis",
+              "teaching-8-math2010-advanced-calculus-i",
+              "teaching-9-math2020-advanced-calculus-ii"
+            ]
+          }
+        ]
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }

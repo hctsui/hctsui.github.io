@@ -105,25 +105,25 @@
       },
       "url": "",
       "description": {
-        "en": "Supported by the Japan–Taiwan Exchange Association",
-        "zh": "獲日本臺灣交流協會補助"
+        "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+        "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
       },
       "description_html": {
-        "en": "Supported by the Japan–Taiwan Exchange Association",
-        "zh": "獲日本臺灣交流協會補助"
+        "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+        "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
       },
       "slides_url": "",
       "city": {
-        "en": "Supported by the Japan–Taiwan Exchange Association",
-        "zh": "獲日本臺灣交流協會補助"
+        "en": "Sendai",
+        "zh": "仙台"
       },
       "country": {
-        "en": "",
-        "zh": ""
+        "en": "Japan",
+        "zh": "日本"
       },
       "visit_description": {
-        "en": "",
-        "zh": ""
+        "en": "Supported by the Japan–Taiwan Exchange Association",
+        "zh": "獲日本臺灣交流協會補助"
       }
     },
     {
@@ -1243,7 +1243,7 @@
     {
       "id": "teaching-8-math2010-advanced-calculus-i",
       "type": "teaching",
-      "order": 8,
+      "order": 7,
       "term": {
         "en": "Fall 2023",
         "zh": "2023 秋"
@@ -1265,7 +1265,7 @@
     {
       "id": "teaching-9-math2020-advanced-calculus-ii",
       "type": "teaching",
-      "order": 7,
+      "order": 8,
       "term": {
         "en": "Spring 2024",
         "zh": "2024 春"
