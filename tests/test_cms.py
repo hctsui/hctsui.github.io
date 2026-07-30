@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from build_cv import build_sections, rich_to_latex  # noqa: E402
-from build_site import render_activity, render_category  # noqa: E402
+from build_site import render_activity, render_category, render_home_sections  # noqa: E402
 from category_config import (  # noqa: E402
     all_items,
     categories_for_page,
@@ -150,6 +150,58 @@ class CategoryArchitectureTests(unittest.TestCase):
         entry = {"id": "c", "type": "conference", "start_date": "2026-01-01", "end_date": "2026-01-01", "title": {"en": "Example", "zh": "範例"}, "role": {"en": "Speaker", "zh": "講者"}}
         self.assertIn('class="activity-role">Speaker</span>', render_activity(entry, "en"))
 
+    def test_home_keeps_legacy_two_column_overview_and_links(self) -> None:
+        data = minimal_site()
+        data["publications"].append(
+            {
+                "id": "publication-example",
+                "type": "publication",
+                "category_id": "publication-preprints",
+                "group_id": "preprints",
+                "order": 0,
+                "date": "2026-01-01",
+                "year": 2026,
+                "title": {"en": "Example Paper", "zh": "範例論文"},
+                "authors": {"en": "Author", "zh": "作者"},
+                "venue": {"en": "Preprint", "zh": "預印本"},
+                "links": [],
+            }
+        )
+        data["activities"].append(
+            {
+                "id": "conference-upcoming",
+                "type": "conference",
+                "category_id": "activity-conferences",
+                "order": 0,
+                "start_date": "2026-12-01",
+                "end_date": "2026-12-01",
+                "show_upcoming": True,
+                "title": {"en": "Upcoming Meeting", "zh": "近期會議"},
+            }
+        )
+        categories = categories_for_page(data, "home")
+        rendered = render_home_sections(data, categories, "en", date(2026, 1, 1))
+        self.assertEqual(rendered.count('class="home-overview"'), 1)
+        self.assertIn('class="container home-overview-grid"', rendered)
+        self.assertIn('data-category-id="home-publications"', rendered)
+        self.assertIn('data-category-id="home-upcoming"', rendered)
+        self.assertIn('id="latest-publications"', rendered)
+        self.assertIn('href="publications.html">All publications →</a>', rendered)
+        self.assertIn('href="activities.html">All activities →</a>', rendered)
+
+    def test_home_contact_keeps_public_anchor_and_split_layout(self) -> None:
+        data = minimal_site()
+        rendered = render_home_sections(
+            data,
+            categories_for_page(data, "home"),
+            "zh",
+            date(2026, 1, 1),
+        )
+        self.assertIn('data-category-id="home-contact" id="contact"', rendered)
+        self.assertIn('class="container split"', rendered)
+        self.assertIn('href="publications.html">所有論文 →</a>', rendered)
+        self.assertIn('href="activities.html">所有活動 →</a>', rendered)
+
 
 class CvRenderingTests(unittest.TestCase):
     def test_heading_math_mode_is_preserved_in_chinese_cv(self) -> None:
@@ -203,6 +255,23 @@ class BatchOperationTests(unittest.TestCase):
         current = {"kind": "talk", "entries": ["a", "new", "b", "c"]}
         desired = {"kind": "talk", "entries": ["c", "a", "b"]}
         self.assertEqual(rebase_order(copy.deepcopy(current), desired)["entries"], ["c", "new", "a", "b"])
+
+
+class AdminCompatibilityTests(unittest.TestCase):
+    def test_layout_extension_handles_both_initialization_orders(self) -> None:
+        script = (ROOT / "admin" / "layout-v2.js").read_text(encoding="utf-8")
+        self.assertIn("const baseLoadOrder=loadOrder;", script)
+        self.assertIn("if($('#layoutOrderPage')){renderUnifiedOrder();return}", script)
+        self.assertIn("setupUnifiedOrderUI();\nif(site)renderAll();", script)
+
+    def test_legacy_admin_tools_remain_available(self) -> None:
+        page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
+        for tab in ("catalog", "add", "draft", "order", "trash", "dictionary", "headings"):
+            self.assertIn(f'data-tab="{tab}"', page)
+        for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
+            self.assertIn(f"'{item_type}'", page)
+        self.assertIn('<script src="tags-v1.js"></script>', page)
+        self.assertIn('<script src="layout-v2.js"></script>', page)
 
 
 if __name__ == "__main__":
