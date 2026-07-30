@@ -14,8 +14,13 @@ def dt(s):return datetime.fromisoformat(s.replace('Z','+00:00'))
 def canon(x):return json.dumps(x,ensure_ascii=False,sort_keys=True,separators=(',',':'))
 def digest(x):return hashlib.sha256(canon(x).encode()).hexdigest()
 def semantic(x):
+ if isinstance(x,list):return [semantic(v) for v in x]
  if not isinstance(x,dict):return x
- return {k:semantic(v) for k,v in x.items() if k!='order' and not k.endswith('_html')}
+ # Ignore fields that are generated or consumed after an item is saved.
+ # `group_label` is a form-only helper: normalize_groups() moves it into
+ # settings.content_groups and removes it from the stored item.
+ ignored={'order','group_label'}
+ return {k:semantic(v) for k,v in x.items() if k not in ignored and not k.endswith('_html')}
 def clean(s):return html.escape(str(s or '').strip(),quote=False)
 def normalize_item(x):
  x=copy.deepcopy(x);t=x['type']
