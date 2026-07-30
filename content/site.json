@@ -122,8 +122,8 @@
         "zh": "日本"
       },
       "visit_description": {
-        "en": "",
-        "zh": ""
+        "en": "Supported by Japan–Taiwan Exchange Association.",
+        "zh": "本次訪問經費由公益財團法人日本台灣交流協會提供。"
       },
       "funding_organization": {
         "en": "Japan–Taiwan Exchange Association",
@@ -133,7 +133,7 @@
         "en": "",
         "zh": ""
       },
-      "description_mode": "auto"
+      "description_mode": "manual"
     },
     {
       "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",

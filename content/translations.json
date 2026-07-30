@@ -2194,7 +2194,8 @@
     },
     {
       "tags": [
-        "region"
+        "region",
+        "china"
       ],
       "en": "Hong Kong",
       "zh": "香港"
@@ -2307,7 +2308,8 @@
     },
     {
       "tags": [
-        "region"
+        "region",
+        "china"
       ],
       "en": "Macau",
       "zh": "澳門"
