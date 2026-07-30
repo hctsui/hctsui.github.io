@@ -1,145 +1,72 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>HC Tsui Website Manager</title>
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>HC Tsui Batch Website Manager</title>
 <style>
-:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#2d2926;background:#f7f3ed;line-height:1.55}*{box-sizing:border-box}body{margin:0}.wrap{width:min(1240px,calc(100% - 36px));margin:0 auto;padding:48px 0 72px}header{margin-bottom:32px}h1{font-family:Georgia,serif;font-size:clamp(2rem,5vw,3.6rem);line-height:1.05;margin:.3rem 0 1rem}h2{font-family:Georgia,serif;margin-top:2.2rem}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8d493d}.lead{max-width:850px;color:#625b56}.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:28px 0}.button{display:block;padding:15px 17px;border:1px solid #cdbeb3;border-radius:14px;text-decoration:none;color:#2d2926;background:#fff;box-shadow:0 8px 20px rgba(61,43,35,.05);font-weight:700;cursor:pointer;text-align:left}.button:hover{border-color:#8d493d;transform:translateY(-1px)}.secondary{background:transparent}.panel{background:#fff;border:1px solid #ded3ca;border-radius:18px;padding:20px;box-shadow:0 12px 28px rgba(61,43,35,.06)}.toolbar{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}.toolbar-title{min-width:220px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.control{display:grid;gap:4px}.control label{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#746960}.toolbar input,.toolbar select{min-width:185px;padding:10px 12px;border:1px solid #cfc4bb;border-radius:10px;background:#fff;color:#2d2926;font:inherit}.toolbar input{min-width:min(100%,290px)}.status{font-size:.9rem;color:#756c66}.order-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:13px 14px;border-radius:12px;background:#f7f3ed;border:1px solid #ded3ca}.order-bar[hidden]{display:none}.order-help{margin-right:auto;color:#625b56;font-size:.9rem}.table-wrap{overflow:auto;margin-top:14px}table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #eee6df;vertical-align:top}th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:#746960}.id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;word-break:break-all}.group-name{font-weight:800;color:#68453a}.row-actions{white-space:nowrap}.small-button{border:1px solid #cfc4bb;background:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;font:inherit;font-size:.8rem;margin:0 3px 4px 0}.small-button:hover{border-color:#8d493d}.small-button:disabled{opacity:.38;cursor:not-allowed}.danger{color:#8d2f25;border-color:#d9aaa4}.danger:hover{background:#fff4f2;border-color:#8d2f25}.primary-action{background:#2d2926;color:#fff;border-color:#2d2926}.group-row td{background:#f3ece6;border-top:2px solid #d8c7bb;border-bottom:1px solid #d8c7bb}.group-row .group-title{font-family:Georgia,serif;font-size:1.05rem;font-weight:800}.order-number{color:#8d493d;font-weight:800}.translation-table input{width:100%;min-width:210px;padding:8px 10px;border:1px solid #cfc4bb;border-radius:8px;font:inherit}.translation-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.translation-status{font-size:.9rem;color:#625b56;margin-top:8px}.note{padding:14px 16px;border-left:4px solid #8d493d;background:#f2e8e2;border-radius:8px;margin-top:22px}.flash{position:fixed;right:18px;bottom:18px;max-width:min(480px,calc(100% - 36px));padding:12px 15px;border-radius:12px;background:#2d2926;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s}.flash.show{opacity:1;transform:translateY(0)}@media(max-width:800px){.wrap{width:min(100% - 24px,1240px);padding-top:28px}.controls{width:100%}.control,.toolbar input,.toolbar select{width:100%;min-width:0}th:nth-child(5),td:nth-child(5){display:none}.row-actions{white-space:normal}}
-</style>
-</head>
-<body>
-<main class="wrap">
-<header>
-<p class="eyebrow">Private workflow · public page</p>
-<h1>網站內容管理</h1>
-<p class="lead">新增、編輯、刪除與排序都由表單處理。Teaching 會依機構分組，Publication 會依作品類型分組；自訂的新群組會自動加入未來的表單選單。</p>
-</header>
-<section>
-<h2>新增內容</h2>
-<div class="actions">
-<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-conference.yml">新增會議／工作坊</a>
-<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-talk.yml">新增學術報告</a>
-<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-visit.yml">新增學術訪問</a>
-<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-honor.yml">新增獎項／榮譽</a>
-<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-publication.yml">新增論文／其他作品</a>
-<a class="button" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=add-teaching.yml">新增教學課程</a>
-</div>
-<h2>編輯或刪除</h2>
-<div class="actions">
-<div class="button secondary" style="cursor:default">
-  <strong>依類別編輯既有項目</strong>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-    <select id="editCategory" aria-label="選擇編輯類別" style="flex:1;min-width:150px;padding:9px;border:1px solid #cfc4bb;border-radius:9px;background:#fff;font:inherit">
-      <option value="conference">會議／工作坊</option>
-      <option value="talk">學術報告</option>
-      <option value="visit">學術訪問</option>
-      <option value="honor">獎項／榮譽</option>
-      <option value="publication">論文／作品</option>
-      <option value="teaching">教學課程</option>
-    </select>
-    <button class="small-button primary-action" id="openEditForm" type="button">開啟編輯表單</button>
-  </div>
-</div>
-<a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=remove-entry.yml">刪除既有項目</a>
-<a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/blob/cms/MANAGE-WEBSITE.md">查看完整說明</a>
-</div>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#292522;background:#f7f3ed;line-height:1.5}*{box-sizing:border-box}body{margin:0}.wrap{width:min(1320px,calc(100% - 28px));margin:auto;padding:32px 0 70px}h1,h2,h3{font-family:Georgia,serif}.grid{display:grid;grid-template-columns:minmax(300px,1fr) minmax(420px,1.45fr);gap:18px}.panel{background:#fff;border:1px solid #ded3ca;border-radius:18px;padding:18px;box-shadow:0 10px 28px #3d2b2310}.toolbar,.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:end}.field{display:grid;gap:4px;margin:9px 0}.field label{font-size:.78rem;font-weight:800;color:#6f6259}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #cfc4bb;border-radius:9px;background:#fff;font:inherit}.field textarea{min-height:90px;font-family:ui-monospace,monospace}.button{border:1px solid #c7b8ad;background:#fff;border-radius:9px;padding:9px 12px;font:inherit;font-weight:700;cursor:pointer}.primary{background:#292522;color:#fff}.danger{color:#8d2f25}.muted{color:#746b65;font-size:.9rem}.records,.drafts{max-height:520px;overflow:auto}.row{padding:10px 0;border-bottom:1px solid #eee6df}.row strong{display:block}.tag{display:inline-block;padding:2px 7px;border-radius:999px;background:#f0e6df;font-size:.75rem}.diff{border-left:4px solid #8d493d;background:#faf6f2;padding:10px;margin:8px 0;border-radius:8px}.added{border-color:#247a46}.deleted{border-color:#a1342b}.json{white-space:pre-wrap;word-break:break-word;font:12px ui-monospace,monospace;background:#201d1b;color:#f8f4ef;padding:12px;border-radius:10px;max-height:380px;overflow:auto}.flash{position:fixed;right:16px;bottom:16px;background:#292522;color:#fff;padding:10px 14px;border-radius:10px;display:none}.tabs button.active{background:#292522;color:#fff}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main class="wrap">
+<p class="muted">Local batch draft · one GitHub submission</p><h1>網站批次管理</h1>
+<p>所有新增、修改、刪除先保存在這台裝置。送出前可以檢查自動補全、完整物件與差異；最後只建立一張 GitHub Issue。</p>
+<div class="grid">
+<section class="panel">
+<div class="tabs actions"><button class="button active" data-tab="catalog">項目</button><button class="button" data-tab="add">新增</button><button class="button" data-tab="draft">草稿</button></div>
+<div id="catalogTab"><div class="toolbar"><div class="field" style="flex:1"><label>搜尋</label><input id="search"></div><div class="field"><label>類別</label><select id="filter"><option value="">全部</option></select></div></div><div id="records" class="records"></div></div>
+<div id="addTab" hidden><div class="field"><label>類別</label><select id="addType"></select></div><div id="addFields"></div><button class="button primary" id="addDraft">加入草稿</button></div>
+<div id="draftTab" hidden><div id="drafts" class="drafts"></div><div class="actions"><button class="button danger" id="clearDraft">清空草稿</button></div></div>
 </section>
 <section class="panel">
-<div class="toolbar">
-<div class="toolbar-title"><h2 style="margin:0">項目目錄與網站排序</h2><div class="status" id="status">正在讀取資料……</div></div>
-<div class="controls">
-<div class="control"><label for="search">搜尋</label><input id="search" type="search" placeholder="標題、群組、日期或 ID"></div>
-<div class="control"><label for="category">類別</label><select id="category"><option value="all">全部類別</option><option value="conference">會議／工作坊</option><option value="talk">演講</option><option value="visit">學術訪問</option><option value="honor">獎項</option><option value="publication">論文／作品</option><option value="teaching">教學</option></select></div>
-<div class="control"><label for="sort">檢視排序</label><select id="sort"><option value="manual">網站實際順序（預設）</option><option value="category">依類別</option><option value="database">資料庫原始順序</option><option value="newest">日期新到舊</option><option value="oldest">日期舊到新</option><option value="title">名稱</option><option value="id">Entry ID</option></select></div>
-</div>
-</div>
-<div class="order-bar" id="orderBar">
-<div class="order-help" id="orderHelp">選擇任一單一類別後，即可進入網站排序模式。</div>
-<button class="small-button primary-action" id="startOrder" type="button">開始網站排序</button>
-<button class="small-button primary-action" id="saveOrder" type="button" hidden>儲存目前順序</button>
-<button class="small-button" id="cancelOrder" type="button" hidden>取消</button>
-</div>
-<div class="table-wrap"><table><thead><tr><th>類型</th><th>大標題／機構</th><th>日期／學期</th><th>名稱</th><th>Entry ID</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
-</section>
-
-<section class="panel" id="translationPanel" style="margin-top:24px">
-<div class="toolbar">
-<div class="toolbar-title"><h2 style="margin:0">中英對照資料庫</h2><div class="translation-status" id="translationStatus">正在讀取對照表……</div></div>
-<div class="controls"><div class="control"><label for="translationSearch">搜尋對照</label><input id="translationSearch" type="search" placeholder="英文或中文"></div></div>
-</div>
-<p class="lead" style="margin-bottom:8px">表單的「使用 Admin 中英對照表補全」只做完整字串的一對一比對，不使用 AI、模糊比對、同系列名稱或既有網站資料推測。</p>
-<div class="translation-actions">
-<button class="small-button primary-action" id="addTranslation" type="button">新增一組對照</button>
-<button class="small-button" id="reloadTranslations" type="button">放棄草稿並重新載入</button>
-<button class="small-button" id="downloadTranslations" type="button">下載 JSON 備份</button>
-<button class="small-button primary-action" id="publishTranslations" type="button">複製 JSON 並開啟 GitHub 編輯器</button>
-</div>
-<div class="table-wrap"><table class="translation-table"><thead><tr><th>English</th><th>中文</th><th>操作</th></tr></thead><tbody id="translationRows"></tbody></table></div>
-<p class="note"><strong>保存方式：</strong>每次編輯會即時保存於這台裝置的瀏覽器。完成後按「複製 JSON 並開啟 GitHub 編輯器」，在 GitHub 頁面全選原內容、貼上並 commit；不需要建立 Issue，也不會逐列等待 Action。</p>
-</section>
-<p class="note"><strong>排序方式：</strong>先選擇 Conference、Talk、Visit、Honor、Publication 或 Teaching 其中一類，再按「開始網站排序」。Publication 與 Teaching 可調整大標題及項目；其他類別可調整所有項目。儲存後貼到自動開啟的表單，網站與 CV 會使用同一順序。</p>
-</main>
-<div class="flash" id="flash" role="status" aria-live="polite"></div>
+<h2>預覽與送出</h2><div id="summary" class="muted">尚無變更。</div><div id="preview"></div>
+<h3>批次資料</h3><pre id="payload" class="json">{}</pre>
+<div class="actions"><button class="button" id="copyPayload">複製 JSON</button><button class="button primary" id="submitBatch">一鍵開啟 GitHub 批次送出</button></div>
+<p class="muted">一般大小會直接預填 Issue；資料太大時會自動複製 JSON，開啟單欄批次表單，只需貼一次。</p>
+</section></div></main><div class="flash" id="flash"></div>
 <script>
-const repo='https://github.com/hctsui/hctsui.github.io';
-const rows=document.querySelector('#rows'),statusEl=document.querySelector('#status'),search=document.querySelector('#search'),category=document.querySelector('#category'),sort=document.querySelector('#sort'),flash=document.querySelector('#flash');
-const startOrder=document.querySelector('#startOrder'),saveOrder=document.querySelector('#saveOrder'),cancelOrder=document.querySelector('#cancelOrder'),orderHelp=document.querySelector('#orderHelp');
-let records=[],dataStore={},groups={publication:[],teaching:[]},entryOrders={},ordering=false,orderState=null;
-const labels={conference:'會議',talk:'演講',visit:'訪問',honor:'獎項',publication:'論文',teaching:'教學'};
-const editTemplates={conference:'edit-conference.yml',talk:'edit-talk.yml',visit:'edit-visit.yml',honor:'edit-honor.yml',publication:'edit-publication.yml',teaching:'edit-teaching.yml'};
-const editCategory=document.querySelector('#editCategory'),openEditForm=document.querySelector('#openEditForm');
-const typeRank={conference:0,talk:1,visit:2,honor:3,publication:4,teaching:5};
-function bilingual(obj){return obj?.zh||obj?.en||''}function allBilingual(obj){return [obj?.zh,obj?.en].filter(Boolean).join(' ')}
-function slug(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'group'}
-function defaultIds(data,kind){let xs=[];if(['conference','talk','visit'].includes(kind))xs=(data.activities||[]).filter(x=>x.type===kind).sort((a,b)=>String(b.start_date||'').localeCompare(String(a.start_date||''))||String(b.id).localeCompare(String(a.id)));else if(kind==='honor')xs=[...(data.honors||[])].sort((a,b)=>(b.year||0)-(a.year||0)||(a.order??999)-(b.order??999)||String(a.id).localeCompare(String(b.id)));return xs.map(x=>x.id)}
-function normalizeData(data){data.settings=data.settings||{};data.settings.content_groups=data.settings.content_groups||{};data.settings.entry_order=data.settings.entry_order||{};const presets=[{id:'journal-articles',label:{en:'Journal Articles',zh:'期刊論文'},order:0,preset:true},{id:'preprints',label:{en:'Preprints',zh:'預印本'},order:1,preset:true},{id:'survey-papers',label:{en:'Survey Papers',zh:'綜述論文'},order:2,preset:true}];groups.publication=[...(data.settings.content_groups.publication||[])];for(const p of presets)if(!groups.publication.some(g=>g.id===p.id))groups.publication.push(p);groups.teaching=[...(data.settings.content_groups.teaching||[])];if(!groups.teaching.some(g=>g.id==='national-tsing-hua-university'))groups.teaching.push({id:'national-tsing-hua-university',label:{en:'National Tsing Hua University',zh:'國立清華大學'},order:0});for(const x of data.publications||[]){if(!x.group_id)x.group_id=(x.links||[]).some(l=>['DOI','Journal'].includes(l.label?.en))?'journal-articles':'preprints'}for(const x of data.teaching||[]){const en=x.institution?.en||'National Tsing Hua University';x.group_id=x.group_id||(en.toLowerCase()==='nthu'?'national-tsing-hua-university':slug(en));if(!groups.teaching.some(g=>g.id===x.group_id))groups.teaching.push({id:x.group_id,label:x.institution||{en,zh:x.institution?.zh||en},order:groups.teaching.length})}groups.publication.sort((a,b)=>(a.order??999)-(b.order??999));groups.teaching.sort((a,b)=>(a.order??999)-(b.order??999));for(const kind of ['conference','talk','visit','honor']){const defaults=defaultIds(data,kind),current=new Set(defaults),stored=Array.isArray(data.settings.entry_order[kind])?data.settings.entry_order[kind].filter(id=>current.has(id)):[];entryOrders[kind]=[...stored,...defaults.filter(id=>!stored.includes(id))]}return data}
-function groupFor(x){if(x.type==='publication')return groups.publication.find(g=>g.id===x.group_id);if(x.type==='teaching')return groups.teaching.find(g=>g.id===x.group_id);return null}
-function groupText(x){const g=groupFor(x);return bilingual(g?.label)||''}
-function groupRank(x){const g=groupFor(x);return g?.order??999}
-function dateText(x){if(x.type==='honor')return String(x.year||'');if(x.type==='publication')return x.date||'';if(x.type==='teaching')return bilingual(x.term);return [x.start_date,x.end_date].filter(Boolean).join(' – ')}
-function dateKey(x){if(x.type==='honor')return `${x.year||''}-01-01`;if(x.type==='publication')return x.date||'';if(x.type==='teaching')return String(x.order??'').padStart(8,'0');return x.start_date||''}
-function titleText(x){return bilingual(x.title)||bilingual(x.course)}
-function searchable(x){return [x.type,labels[x.type],groupText(x),dateText(x),allBilingual(x.title),allBilingual(x.course),allBilingual(x.role),allBilingual(x.institution),allBilingual(x.organization),allBilingual(x.description),x.id].join(' ').toLowerCase()}
-function manualRank(x){if(['publication','teaching'].includes(x.type))return x.order??999;const ids=entryOrders[x.type]||[],i=ids.indexOf(x.id);return i<0?999999:i}
-function manualCompare(a,b){return (typeRank[a.type]??99)-(typeRank[b.type]??99)||groupRank(a)-groupRank(b)||manualRank(a)-manualRank(b)||a._index-b._index}
-function compare(a,b,mode){if(mode==='manual')return manualCompare(a,b);if(mode==='database')return a._index-b._index;if(mode==='category')return (typeRank[a.type]??99)-(typeRank[b.type]??99)||a._index-b._index;if(mode==='newest')return dateKey(b).localeCompare(dateKey(a))||a._index-b._index;if(mode==='oldest')return dateKey(a).localeCompare(dateKey(b))||a._index-b._index;if(mode==='title')return titleText(a).localeCompare(titleText(b),'zh-Hant')||a._index-b._index;if(mode==='id')return String(a.id).localeCompare(String(b.id));return a._index-b._index}
-function cell(text,className=''){const td=document.createElement('td');td.textContent=text||'';if(className)td.className=className;return td}function button(text,action,id='',className=''){const b=document.createElement('button');b.type='button';b.className=`small-button ${className}`.trim();b.dataset.action=action;if(id)b.dataset.id=id;b.textContent=text;return b}
-function showFlash(message){flash.textContent=message;flash.classList.add('show');clearTimeout(showFlash.timer);showFlash.timer=setTimeout(()=>flash.classList.remove('show'),3200)}
-async function copyText(value){try{await navigator.clipboard.writeText(value)}catch{const area=document.createElement('textarea');area.value=value;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();document.execCommand('copy');area.remove()}}
-function regularRender(){const q=search.value.trim().toLowerCase(),chosen=category.value;rows.replaceChildren();const filtered=records.filter(x=>(chosen==='all'||x.type===chosen)&&(!q||searchable(x).includes(q))).sort((a,b)=>compare(a,b,sort.value));for(const x of filtered){const tr=document.createElement('tr');tr.append(cell(labels[x.type]||x.type),cell(groupText(x),'group-name'),cell(dateText(x)),cell(titleText(x)),cell(x.id,'id'));const actions=document.createElement('td');actions.className='row-actions';actions.append(button('複製 ID','copy',x.id),button('編輯','edit',x.id),button('刪除','remove',x.id,'danger'));tr.append(actions);rows.append(tr)}statusEl.textContent=`顯示 ${filtered.length}／${records.length} 筆資料`}
-function cloneOrderState(kind){if(!['publication','teaching'].includes(kind))return{kind,entries:records.filter(x=>x.type===kind).sort((a,b)=>manualRank(a)-manualRank(b)||a._index-b._index).map(x=>x.id)};const gs=(groups[kind]||[]).map(g=>({id:g.id,label:bilingual(g.label),entries:records.filter(x=>x.type===kind&&x.group_id===g.id).sort((a,b)=>(a.order??999)-(b.order??999)).map(x=>x.id)})).filter(g=>g.entries.length);return{kind,groups:gs}}
-function move(array,index,delta){const target=index+delta;if(target<0||target>=array.length)return;[array[index],array[target]]=[array[target],array[index]]}
-function orderingRender(){rows.replaceChildren();if(Array.isArray(orderState.entries)){orderState.entries.forEach(id=>{const x=records.find(r=>r.id===id),tr=document.createElement('tr');tr.append(cell(labels[x.type]||x.type),cell(''),cell(dateText(x)),cell(titleText(x)),cell(x.id,'id'));const a=document.createElement('td');a.append(button('↑','item-up',id),button('↓','item-down',id));tr.append(a);rows.append(tr)});statusEl.textContent=`正在調整 ${orderState.entries.length} 筆${labels[orderState.kind]||orderState.kind}順序`;return}orderState.groups.forEach((g,gi)=>{const gr=document.createElement('tr');gr.className='group-row';const td=document.createElement('td');td.colSpan=5;td.innerHTML=`<span class="order-number">${gi+1}.</span> <span class="group-title"></span>`;td.querySelector('.group-title').textContent=g.label;gr.append(td);const ga=document.createElement('td');ga.append(button('大標 ↑','group-up',g.id),button('大標 ↓','group-down',g.id));gr.append(ga);rows.append(gr);g.entries.forEach(id=>{const x=records.find(r=>r.id===id),tr=document.createElement('tr');tr.append(cell(labels[x.type]),cell(g.label,'group-name'),cell(dateText(x)),cell(titleText(x)),cell(x.id,'id'));const a=document.createElement('td');a.append(button('↑','item-up',id),button('↓','item-down',id));tr.append(a);rows.append(tr)})});statusEl.textContent=`正在調整 ${orderState.groups.length} 個大標題與 ${orderState.groups.reduce((n,g)=>n+g.entries.length,0)} 筆項目`}
-function render(){ordering?orderingRender():regularRender();updateOrderButton()}
-function updateOrderButton(){const supported=Object.hasOwn(labels,category.value);startOrder.disabled=!supported||ordering;orderHelp.textContent=ordering?'請調整順序；完成後按「儲存目前順序」。':supported?'此類別支援持久化網站與 CV 排序。':'請先選擇一個單一類別。'}
-function beginOrdering(){if(!Object.hasOwn(labels,category.value))return;ordering=true;orderState=cloneOrderState(category.value);search.value='';search.disabled=true;category.disabled=true;sort.disabled=true;startOrder.hidden=true;saveOrder.hidden=false;cancelOrder.hidden=false;render()}
-function endOrdering(){ordering=false;orderState=null;search.disabled=false;category.disabled=false;sort.disabled=false;startOrder.hidden=false;saveOrder.hidden=true;cancelOrder.hidden=true;render()}
-async function saveOrdering(){const payload=JSON.stringify(orderState,null,2);await copyText(payload);showFlash('排序 JSON 已複製；新分頁開啟後貼到「排序資料」欄位並送出。');window.open(repo+'/issues/new?template=reorder-entries.yml','_blank','noopener')}
-fetch('../content/site.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(data=>{dataStore=normalizeData(data);records=[...(data.activities||[]),...(data.honors||[]),...(data.publications||[]),...(data.teaching||[])].map((x,i)=>({...x,_index:i}));sort.value=localStorage.getItem('admin-sort')||'manual';category.value=localStorage.getItem('admin-category')||'all';render()}).catch(err=>{statusEl.textContent='讀取失敗。請從正式 GitHub Pages 網址開啟這個管理頁。';console.error(err)});
-search.addEventListener('input',render);category.addEventListener('change',()=>{localStorage.setItem('admin-category',category.value);render()});sort.addEventListener('change',()=>{localStorage.setItem('admin-sort',sort.value);render()});startOrder.addEventListener('click',beginOrdering);cancelOrder.addEventListener('click',endOrdering);saveOrder.addEventListener('click',saveOrdering);
-openEditForm.addEventListener('click',()=>window.open(repo+'/issues/new?template='+(editTemplates[editCategory.value]||'edit-entry.yml'),'_blank','noopener'));
-rows.addEventListener('click',async e=>{const b=e.target.closest('button[data-action]');if(!b)return;const action=b.dataset.action,id=b.dataset.id;if(ordering){if(action.startsWith('group-')){const i=orderState.groups.findIndex(g=>g.id===id);move(orderState.groups,i,action.endsWith('up')?-1:1)}else if(action.startsWith('item-')){if(Array.isArray(orderState.entries)){const i=orderState.entries.indexOf(id);move(orderState.entries,i,action.endsWith('up')?-1:1)}else{const g=orderState.groups.find(x=>x.entries.includes(id)),i=g.entries.indexOf(id);move(g.entries,i,action.endsWith('up')?-1:1)}}render();return}await copyText(id);if(action==='edit'){const item=records.find(x=>x.id===id),template=editTemplates[item?.type]||'edit-entry.yml';showFlash(`已複製 Entry ID，正在開啟${labels[item?.type]||''}編輯表單`);window.open(repo+'/issues/new?template='+template,'_blank','noopener');return}if(action==='remove'){showFlash('已複製 Entry ID，正在開啟刪除表單');window.open(repo+'/issues/new?template=remove-entry.yml','_blank','noopener');return}const old=b.textContent;b.textContent='已複製';showFlash('Entry ID 已複製');setTimeout(()=>b.textContent=old,1200)});
-
-const translationRows=document.querySelector('#translationRows'),translationStatus=document.querySelector('#translationStatus'),translationSearch=document.querySelector('#translationSearch');
-const addTranslation=document.querySelector('#addTranslation'),reloadTranslations=document.querySelector('#reloadTranslations'),downloadTranslations=document.querySelector('#downloadTranslations'),publishTranslations=document.querySelector('#publishTranslations');
-const translationDraftKey='hctsui-translations-draft-v1';let translationData={schema_version:1,pairs:[]},publishedTranslationData=null;
-function normalizeTranslationData(raw){const pairs=Array.isArray(raw?.pairs)?raw.pairs:[];return{schema_version:1,pairs:pairs.map(row=>({en:String(row?.en||''),zh:String(row?.zh||'')}))}}
-function saveTranslationDraft(){localStorage.setItem(translationDraftKey,JSON.stringify(translationData));translationStatus.textContent=`本機草稿：${translationData.pairs.length} 組對照（尚未發布的修改會保留在這台裝置）`}
-function translationKey(value){return String(value||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase()}
-function validateTranslations(){const en=new Map(),zh=new Map(),errors=[];translationData.pairs.forEach((row,i)=>{const ek=translationKey(row.en),zk=translationKey(row.zh);if(!ek||!zk)errors.push(`第 ${i+1} 列英文與中文都必須填寫`);if(ek&&en.has(ek)&&en.get(ek)!==row.zh)errors.push(`英文重複且對應不同中文：${row.en}`);if(zk&&zh.has(zk)&&zh.get(zk)!==row.en)errors.push(`中文重複且對應不同英文：${row.zh}`);if(ek)en.set(ek,row.zh);if(zk)zh.set(zk,row.en)});return errors}
-function renderTranslations(){const q=translationSearch.value.trim().toLowerCase();translationRows.replaceChildren();translationData.pairs.forEach((row,index)=>{if(q&&!`${row.en} ${row.zh}`.toLowerCase().includes(q))return;const tr=document.createElement('tr');for(const lang of ['en','zh']){const td=document.createElement('td'),input=document.createElement('input');input.value=row[lang];input.dataset.translationIndex=String(index);input.dataset.translationLang=lang;input.placeholder=lang==='en'?'English':'繁體中文';td.append(input);tr.append(td)}const action=document.createElement('td');action.append(button('刪除','translation-remove',String(index),'danger'));tr.append(action);translationRows.append(tr)});saveTranslationDraft()}
-function cleanTranslationPayload(){return{schema_version:1,pairs:translationData.pairs.map(row=>({en:row.en.trim(),zh:row.zh.trim()})).filter(row=>row.en||row.zh).sort((a,b)=>a.en.localeCompare(b.en,'en',{sensitivity:'base'}))}}
-function translationJSON(){const payload=cleanTranslationPayload(),old=translationData;translationData=payload;const errors=validateTranslations();translationData=old;if(errors.length)throw new Error(errors[0]);return JSON.stringify(payload,null,2)+'\n'}
-translationRows.addEventListener('input',e=>{const input=e.target.closest('input[data-translation-index]');if(!input)return;translationData.pairs[Number(input.dataset.translationIndex)][input.dataset.translationLang]=input.value;saveTranslationDraft()});
-translationRows.addEventListener('click',e=>{const b=e.target.closest('button[data-action="translation-remove"]');if(!b)return;translationData.pairs.splice(Number(b.dataset.id),1);renderTranslations()});
-translationSearch.addEventListener('input',renderTranslations);addTranslation.addEventListener('click',()=>{translationData.pairs.unshift({en:'',zh:''});renderTranslations();translationRows.querySelector('input')?.focus()});
-reloadTranslations.addEventListener('click',()=>{if(!publishedTranslationData)return;translationData=normalizeTranslationData(publishedTranslationData);localStorage.removeItem(translationDraftKey);renderTranslations();showFlash('已重新載入網站上的已發布對照表')});
-downloadTranslations.addEventListener('click',()=>{try{const blob=new Blob([translationJSON()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='translations.json';a.click();URL.revokeObjectURL(a.href)}catch(err){showFlash(err.message)}});
-publishTranslations.addEventListener('click',async()=>{try{const text=translationJSON();await copyText(text);showFlash('完整 JSON 已複製；請在 GitHub 編輯器全選、貼上並 commit。');window.open(repo+'/edit/cms/content/translations.json','_blank','noopener')}catch(err){showFlash(err.message)}});
-fetch('../content/translations.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(data=>{publishedTranslationData=normalizeTranslationData(data);const draft=localStorage.getItem(translationDraftKey);translationData=draft?normalizeTranslationData(JSON.parse(draft)):normalizeTranslationData(data);renderTranslations()}).catch(err=>{translationStatus.textContent='讀取對照表失敗。';console.error(err)});
-
-</script>
-</body>
-</html>
+const repo='https://github.com/hctsui/hctsui.github.io', TYPES=['conference','talk','visit','honor','publication','teaching'];
+const Z={conference:'會議／工作坊',talk:'學術報告',visit:'學術訪問',honor:'獎項／榮譽',publication:'論文／作品',teaching:'教學'};
+const section=t=>['conference','talk','visit'].includes(t)?'activities':t==='honor'?'honors':t==='publication'?'publications':'teaching';
+let site,dict={en:new Map,zh:new Map},records=[],draft=JSON.parse(localStorage.getItem('hctsui-batch-v1')||'[]');
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function flash(s){$('#flash').textContent=s;$('#flash').style.display='block';setTimeout(()=>$('#flash').style.display='none',2500)}
+function norm(s){return String(s||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase()}
+function term(en,zh){if(en&&!zh){let m=en.match(/^(Spring|Summer|Fall|Autumn|Winter)\s+(\d{4})$/i);if(m)zh=`${m[2]} ${{Spring:'春',Summer:'夏',Fall:'秋',Autumn:'秋',Winter:'冬'}[m[1][0].toUpperCase()+m[1].slice(1).toLowerCase()]}`}if(zh&&!en){let m=zh.match(/^(\d{4})\s*(春季?|夏季?|秋季?|冬季?)$/);if(m)en=`${{春:'Spring','春季':'Spring',夏:'Summer','夏季':'Summer',秋:'Fall','秋季':'Fall',冬:'Winter','冬季':'Winter'}[m[2]]} ${m[1]}`}return{en,zh}}
+function pair(en,zh,isTerm=false){en=(en||'').trim();zh=(zh||'').trim();if(isTerm)({en,zh}=term(en,zh));if(en&&!zh)zh=dict.en.get(norm(en))||'';else if(zh&&!en)en=dict.zh.get(norm(zh))||'';return{en,zh}}
+function htmlPair(p){return{en:esc(p.en),zh:esc(p.zh)}}
+function slug(s){return norm(s).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'entry'}
+function uid(t,anchor,title){let b=`${t}-${anchor}-${slug(title)}`;let ids=new Set(records.map(x=>x.id).concat(draft.map(x=>x.after?.id)));let n=2,r=b;while(ids.has(r))r=`${b}-${n++}`;return r}
+function allRecords(d){return [...(d.activities||[]),...(d.honors||[]),...(d.publications||[]),...(d.teaching||[])]}
+function effective(){let d=structuredClone(site);for(const op of draft){let a=d[section(op.type)]||[];if(op.op==='delete')d[section(op.type)]=a.filter(x=>x.id!==op.id);else if(op.op==='update'){let i=a.findIndex(x=>x.id===op.id);if(i>=0)a[i]=structuredClone(op.after)}else a.push(structuredClone(op.after))}return d}
+const schemas={
+conference:[['start_date','開始日期','date'],['end_date','結束日期','date'],['title.en','英文名稱'],['title.zh','中文名稱'],['venue.en','英文地點'],['venue.zh','中文地點'],['city.en','英文城市'],['city.zh','中文城市'],['country.en','英文國家'],['country.zh','中文國家'],['url','URL'],['show_upcoming','顯示 Upcoming','checkbox']],
+talk:[['start_date','演講日期','date'],['end_date','結束日期','date'],['title.en','英文題目'],['title.zh','中文題目'],['event.en','英文活動／研討會'],['event.zh','中文活動／研討會'],['venue.en','英文機構'],['venue.zh','中文機構'],['city.en','英文城市'],['city.zh','中文城市'],['country.en','英文國家'],['country.zh','中文國家'],['slides_url','投影片 URL'],['show_upcoming','顯示 Upcoming','checkbox']],
+visit:[['start_date','開始日期','date'],['end_date','結束日期','date'],['title.en','英文機構'],['title.zh','中文機構'],['city.en','英文城市'],['city.zh','中文城市'],['country.en','英文國家'],['country.zh','中文國家'],['visit_description.en','英文說明'],['visit_description.zh','中文說明'],['url','URL'],['show_upcoming','顯示 Upcoming','checkbox']],
+honor:[['year','年份','number'],['title.en','英文名稱'],['title.zh','中文名稱'],['organization.en','英文頒發機構'],['organization.zh','中文頒發機構'],['url','URL']],
+publication:[['date','日期','date'],['group_id','分類 ID'],['group_label.en','分類英文'],['group_label.zh','分類中文'],['title.en','英文題目'],['title.zh','中文題目'],['authors.en','英文作者'],['authors.zh','中文作者'],['venue.en','英文期刊／狀態'],['venue.zh','中文期刊／狀態'],['arxiv','arXiv ID'],['arxiv_url','arXiv URL'],['pdf_url','PDF URL'],['doi_url','DOI URL'],['journal_url','期刊頁 URL']],
+teaching:[['term.en','英文學期'],['term.zh','中文學期'],['course.en','英文課名'],['course.zh','中文課名'],['institution.en','英文機構'],['institution.zh','中文機構'],['role.en','英文身分'],['role.zh','中文身分'],['group_id','機構群組 ID']]
+};
+function get(o,p){return p.split('.').reduce((a,k)=>a?.[k],o)} function set(o,p,v){let a=o,ks=p.split('.');ks.slice(0,-1).forEach(k=>a=a[k]??={});a[ks.at(-1)]=v}
+function fields(type,obj={}){return schemas[type].map(([p,l,k='text'])=>`<div class="field"><label>${l}</label>${k==='checkbox'?`<input data-path="${p}" type="checkbox" ${get(obj,p)?'checked':''}>`:`<input data-path="${p}" type="${k}" value="${esc(get(obj,p)||'')}">`}</div>`).join('')}
+function readForm(root,type){let raw={type};root.querySelectorAll('[data-path]').forEach(i=>set(raw,i.dataset.path,i.type==='checkbox'?i.checked:i.value));return makeObject(type,raw)}
+function makeObject(t,r){let o=structuredClone(r), now=new Date().toISOString().slice(0,10);o.type=t;
+for(const key of ['title','venue','city','country','event','visit_description','organization','authors','term','course','institution','role','group_label'])if(o[key])o[key]=pair(o[key].en,o[key].zh,key==='term');
+if(['conference','talk','visit'].includes(t)){o.start_date=o.start_date||now;o.end_date=o.end_date||o.start_date;o.title_html=htmlPair(o.title||{});let parts=l=>t==='conference'?[o.venue?.[l],o.city?.[l],o.country?.[l]]:t==='talk'?[o.event?.[l],o.venue?.[l],o.city?.[l],o.country?.[l]]:[o.city?.[l],o.country?.[l]];o.description={en:parts('en').filter(Boolean).join(', '),zh:parts('zh').filter(Boolean).join(', ')};if(t==='visit'){for(const l of ['en','zh'])if(o.visit_description?.[l])o.description[l]+=(o.description[l]?' · ':'')+o.visit_description[l]}o.description_html=htmlPair(o.description)}
+if(t==='honor'){o.year=Number(o.year)||new Date().getFullYear();o.title_html=htmlPair(o.title||{});o.organization_html=htmlPair(o.organization||{})}
+if(t==='publication'){o.year=Number((o.date||now).slice(0,4));o.date=o.date||now;o.group_id=o.group_id||'preprints';o.title_html=htmlPair(o.title||{});o.authors_html=htmlPair(o.authors||{});o.venue_html=htmlPair(o.venue||{});o.links=[];[['arXiv',o.arxiv_url|| (o.arxiv?`https://arxiv.org/abs/${o.arxiv}`:'')],['PDF',o.pdf_url],['DOI',o.doi_url],['Journal',o.journal_url]].forEach(([x,u])=>{if(u)o.links.push({label:{en:x,zh:x},url:u})})}
+if(t==='teaching'){o.group_id=o.group_id||slug(o.institution?.en||o.institution?.zh);o.order=999}
+o.id=o.id||uid(t,o.start_date||o.date||o.year||o.term?.en||now,o.title?.en||o.title?.zh||o.course?.en||o.course?.zh);return o}
+function title(x){return x.title?.zh||x.title?.en||x.course?.zh||x.course?.en||x.id}
+function renderRecords(){let q=norm($('#search').value),f=$('#filter').value;$('#records').innerHTML=records.filter(x=>(!f||x.type===f)&&(!q||norm(JSON.stringify(x)).includes(q))).map(x=>`<div class="row"><span class="tag">${Z[x.type]}</span><strong>${esc(title(x))}</strong><span class="muted">${esc(x.id)}</span><div class="actions"><button class="button" data-edit="${x.id}">編輯草稿</button><button class="button danger" data-del="${x.id}">刪除草稿</button></div></div>`).join('')}
+function save(){localStorage.setItem('hctsui-batch-v1',JSON.stringify(draft));renderDraft();renderPreview()}
+function renderDraft(){$('#drafts').innerHTML=draft.length?draft.map((o,i)=>`<div class="row"><span class="tag">${o.op}</span><strong>${esc(title(o.after||o.before))}</strong><button class="button danger" data-drop="${i}">移除</button></div>`).join(''):'<p class="muted">尚無草稿。</p>'}
+function renderPreview(){let adds=draft.filter(x=>x.op==='add').length,ups=draft.filter(x=>x.op==='update').length,dels=draft.filter(x=>x.op==='delete').length;$('#summary').textContent=`新增 ${adds}、修改 ${ups}、刪除 ${dels}`;$('#preview').innerHTML=draft.map(o=>`<div class="diff ${o.op==='add'?'added':o.op==='delete'?'deleted':''}"><strong>${Z[o.type]} · ${o.op}</strong><div>${esc(title(o.after||o.before))}</div>${o.op==='update'?`<details><summary>查看修改前後</summary><pre>${esc(JSON.stringify({before:o.before,after:o.after},null,2))}</pre></details>`:`<details><summary>查看完整物件</summary><pre>${esc(JSON.stringify(o.after||o.before,null,2))}</pre></details>`}</div>`).join('');$('#payload').textContent=JSON.stringify(payload(),null,2)}
+function payload(){return{schema_version:1,created_at:new Date().toISOString(),operations:draft}}
+function editRecord(id){let x=records.find(x=>x.id===id);let box=document.createElement('div');box.innerHTML=`<h3>編輯 ${esc(title(x))}</h3>${fields(x.type,x)}<button class="button primary">儲存修改</button>`;$('#preview').replaceChildren(box);box.querySelector('button').onclick=()=>{let after=readForm(box,x.type);after.id=x.id;draft=draft.filter(o=>!(o.id===x.id&&o.op==='update'));draft.push({op:'update',type:x.type,id:x.id,before:x,after});save();flash('已加入修改草稿')}}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['catalog','add','draft'].forEach(t=>$(`#${t}Tab`).hidden=t!==b.dataset.tab)})
+$('#addType').innerHTML=$('#filter').innerHTML=TYPES.map(t=>`<option value="${t}">${Z[t]}</option>`).join('');function addFields(){$('#addFields').innerHTML=fields($('#addType').value)}$('#addType').onchange=addFields;addFields();
+$('#addDraft').onclick=()=>{let x=readForm($('#addFields'),$('#addType').value);draft.push({op:'add',type:x.type,after:x});save();flash('已加入新增草稿')}
+$('#records').onclick=e=>{let b=e.target.closest('button');if(b?.dataset.edit)editRecord(b.dataset.edit);if(b?.dataset.del){let x=records.find(x=>x.id===b.dataset.del);draft=draft.filter(o=>o.id!==x.id);draft.push({op:'delete',type:x.type,id:x.id,before:x});save();flash('已加入刪除草稿')}}
+$('#drafts').onclick=e=>{let b=e.target.closest('[data-drop]');if(b){draft.splice(Number(b.dataset.drop),1);save()}}
+$('#clearDraft').onclick=()=>{if(confirm('清空全部草稿？')){draft=[];save()}};$('#search').oninput=renderRecords;$('#filter').onchange=renderRecords;
+async function copy(s){await navigator.clipboard.writeText(s);flash('已複製')}
+$('#copyPayload').onclick=()=>copy(JSON.stringify(payload(),null,2));
+$('#submitBatch').onclick=async()=>{if(!draft.length)return flash('尚無變更');let j=JSON.stringify(payload()),body=`### Batch payload / 批次資料\n\n\`\`\`json\n${j}\n\`\`\``;let url=repo+'/issues/new?title='+encodeURIComponent('[Website: Batch] '+new Date().toLocaleString('zh-TW'))+'&body='+encodeURIComponent(body);if(url.length<14000){window.open(url,'_blank','noopener')}else{await copy(JSON.stringify(payload(),null,2));window.open(repo+'/issues/new?template=batch-changes.yml','_blank','noopener');flash('資料較大：已複製，請貼入唯一欄位')}}
+Promise.all([fetch('../content/site.json',{cache:'no-store'}).then(r=>r.json()),fetch('../content/translations.json',{cache:'no-store'}).then(r=>r.json())]).then(([s,d])=>{site=s;records=allRecords(s);for(const p of d.pairs||[]){dict.en.set(norm(p.en),p.zh);dict.zh.set(norm(p.zh),p.en)}renderRecords();renderDraft();renderPreview()}).catch(e=>flash('讀取網站資料失敗：'+e));
+</script></body></html>
