@@ -91,7 +91,6 @@
     {\large\bfseries #1}\par%
     \vspace{0.08cm}%
 }
-\newcommand{\cvmeta}[1]{{\small\color{secondaryColor}\textbf{#1}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{one}{
     \begin{adjustwidth}{
@@ -116,29 +115,40 @@
     \vspace{0.1cm}
 } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{pub}{
+\newenvironment{pub}[2][]{
     \one
+    \def\secondColumn{#2}
+    \setcolumnwidth{10.8cm,\fill}
+    \begin{paracol}{2}
 }{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
     \endone
     \vspace{0.1cm}
 } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{edu}[3][]{
     \one
-    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{5.4cm}@{}}
-    #2 & \mbox{#3}
-    \end{tabularx}
+    \def\thirdColumn{\mbox{#3}}
+    \setcolumnwidth{4.2cm,\fill,6.2cm}
+    \begin{paracol}{3}
+    {\raggedright\mbox{#2}} \switchcolumn
 }{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
     \endone
     \vspace{0.1cm}
 } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{teaching}[3][]{
     \one
-    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{3.8cm}@{}}
-    \textbf{#2} & \mbox{#3}
-    \end{tabularx}
+    \def\thirdColumn{\mbox{#3}}
+    \setcolumnwidth{7.4cm,\fill,3.2cm}
+    \begin{paracol}{3}
+    {\raggedright\mbox{#2}} \switchcolumn
 }{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
     \endone
     \vspace{0.1cm}
 } 
