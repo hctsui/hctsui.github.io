@@ -199,10 +199,10 @@ body:
     attributes: {{label: Country (Chinese) / 國家中文 [選填・可由對照表補全]}}
   - type: input
     id: funding-en
-    attributes: {{label: Funding note (English) / 補助說明英文 [選填]}}
+    attributes: {{label: Description (English) / 說明英文 [選填]}}
   - type: input
     id: funding-zh
-    attributes: {{label: Funding note (Chinese) / 補助說明中文 [選填・可由對照表補全]}}
+    attributes: {{label: Description (Chinese) / 說明中文 [選填・可由對照表補全]}}
 '''
 
 
@@ -498,6 +498,26 @@ def category_edit_forms(data: dict[str, Any]) -> dict[str, str]:
     teaching = extract("institution-section", "upcoming")
     upcoming = extract("upcoming")
 
+    visit_details = """  - type: input
+    id: visit-city-en
+    attributes: {label: "New city (English) / 新城市英文 [選填]"}
+  - type: input
+    id: visit-city-zh
+    attributes: {label: "New city (Chinese) / 新城市中文 [選填・可由對照表補全]"}
+  - type: input
+    id: visit-country-en
+    attributes: {label: "New country (English) / 新國家英文 [選填]"}
+  - type: input
+    id: visit-country-zh
+    attributes: {label: "New country (Chinese) / 新國家中文 [選填・可由對照表補全]"}
+  - type: textarea
+    id: visit-description-en
+    attributes: {label: "New description (English) / 新說明英文 [選填]"}
+  - type: textarea
+    id: visit-description-zh
+    attributes: {label: "New description (Chinese) / 新說明中文 [選填・可由對照表補全]"}
+"""
+
     def named(name: str, description: str, body: str) -> str:
         prefix = f"name: {name}\ndescription: {description}\ntitle: \"[Website: Edit] \"\n"
         body_start = header.index("body:")
@@ -507,7 +527,7 @@ def category_edit_forms(data: dict[str, Any]) -> dict[str, str]:
     return {
         "edit-conference.yml": named("Edit conference / 編輯會議", "Only conference fields are shown.", title + dates + url + desc + upcoming),
         "edit-talk.yml": named("Edit talk / 編輯學術報告", "Only talk fields are shown.", title + dates + url + desc + auxiliary + upcoming),
-        "edit-visit.yml": named("Edit academic visit / 編輯學術訪問", "Only visit fields are shown.", title + dates + url + desc + upcoming),
+        "edit-visit.yml": named("Edit academic visit / 編輯學術訪問", "Only visit fields are shown.", title + dates + url + visit_details + upcoming),
         "edit-honor.yml": named("Edit honor or award / 編輯獎項", "Only honor fields are shown.", title + year + url + desc),
         "edit-publication.yml": named("Edit publication / 編輯論文或作品", "Only publication fields are shown.", title + extract("start", "end") + authors + publication),
         "edit-teaching.yml": named("Edit teaching entry / 編輯教學經驗", "Only teaching fields are shown.", title + desc + teaching),
