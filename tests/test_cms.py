@@ -36,6 +36,32 @@ class TranslationValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicates"):
             validate_translation_data(data)
 
+    def test_tagged_dictionary_is_accepted(self) -> None:
+        data = {
+            "schema_version": 2,
+            "tags": [
+                {"id": "city", "label": {"en": "City", "zh": "城市"}},
+                {"id": "taiwan", "label": {"en": "Taiwan", "zh": "臺灣"}},
+            ],
+            "pairs": [
+                {"tags": ["city", "taiwan"], "en": "Tainan", "zh": "臺南"},
+            ],
+        }
+        self.assertEqual(len(validate_translation_data(data)), 1)
+
+    def test_unknown_pair_tag_is_rejected(self) -> None:
+        data = {
+            "schema_version": 2,
+            "tags": [
+                {"id": "city", "label": {"en": "City", "zh": "城市"}},
+            ],
+            "pairs": [
+                {"tags": ["missing"], "en": "Tainan", "zh": "臺南"},
+            ],
+        }
+        with self.assertRaisesRegex(ValueError, "unknown tag"):
+            validate_translation_data(data)
+
 
 class BatchOperationTests(unittest.TestCase):
     def test_add_id_collision_is_rejected(self) -> None:
