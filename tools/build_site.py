@@ -32,6 +32,20 @@ PAGE_FILES = [
     ROOT / "zh" / "teaching.html",
 ]
 
+PAGE_TITLES = {
+    "index.html": "Hung-Chun Tsui | Mathematics",
+    "cv.html": "Hung-Chun Tsui | CV",
+    "publications.html": "Hung-Chun Tsui | Publications",
+    "activities.html": "Hung-Chun Tsui | Activities",
+    "teaching.html": "Hung-Chun Tsui | Teaching",
+    "zh/index.html": "崔鴻竣｜數學",
+    "zh/cv.html": "崔鴻竣｜履歷",
+    "zh/publications.html": "崔鴻竣｜論文與預印本",
+    "zh/activities.html": "崔鴻竣｜學術活動",
+    "zh/teaching.html": "崔鴻竣｜教學經歷",
+}
+
+
 
 def load_data() -> dict[str, Any]:
     return json.loads(DATA_FILE.read_text(encoding="utf-8"))
@@ -183,6 +197,13 @@ def replace_block(text: str, marker: str, content: str) -> tuple[str, bool]:
     return new_text, old != new_inner
 
 
+def update_page_title(text: str, title: str) -> str:
+    updated, count = re.subn(r"<title>.*?</title>", f"<title>{esc(title)}</title>", text, count=1, flags=re.S)
+    if count != 1:
+        raise RuntimeError("Could not find page title")
+    return updated
+
+
 def update_footer(text: str, lang: str, today: date) -> str:
     formatted = f"{today.year}/{today.month}/{today.day}"
     if lang == "zh":
@@ -278,6 +299,8 @@ def build(today: date, update_date: bool = True) -> list[Path]:
         for marker, rendered in blocks.items():
             text, changed = replace_block(text, marker, rendered)
             changed_here = changed_here or changed
+        if rel in PAGE_TITLES:
+            text = update_page_title(text, PAGE_TITLES[rel])
         candidates[path] = text
         content_changed = content_changed or changed_here
 

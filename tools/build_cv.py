@@ -184,8 +184,10 @@ def cv_teaching(data: dict[str, Any], lang: str) -> str:
         rows=[]
         for entry in entries:
             term=pair(entry,"term",lang); course=pair(entry,"course",lang); role=pair(entry,"role",lang)
-            body=latex_escape(course)
-            if role: body += r"\\" + "\n" + f"{{\\small\\textit{{{latex_escape(role)}}}}}"
+            parts=[]
+            if role: parts.append(rf"\textit{{{latex_escape(role)}}}")
+            if course: parts.append(latex_escape(course))
+            body=r"\quad ".join(parts)
             rows.append(f"\\begin{{conf}}{{{latex_escape(term)}}}\n{body}\n\\end{{conf}}")
         chunks.append(heading+"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(rows))
     return "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(chunks)
