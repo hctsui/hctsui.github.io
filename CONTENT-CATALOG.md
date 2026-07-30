@@ -54,8 +54,8 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| publication | Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields | 函數體上 Gross–Koblitz 型公式中 v-adic Gamma 函數的唯一性 | `publication-2504.15697-1` |
-| publication | On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic | 正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係 | `publication-2504.18879-2` |
+| publication | Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields | 函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性 | `publication-2504.15697-1` |
+| publication | On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic | 正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係 | `publication-2504.18879-2` |
 | publication | Algebra Structures of Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的代數結構 | `publication-2603.10376-3` |
 | publication | On u -Multiple Zeta Values in Positive Characteristic | 正特徵的 u-多重 zeta 值 | `publication-2604.03618-4` |
 
@@ -75,8 +75,8 @@
 | talk | Derivations of Multiple Zeta Values in Positive Characteristic | 正特徵多重 zeta 值的導子 | `talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac` |
 | talk | On Finite Multiple Harmonic u -series over Function Field | 函數體上的有限多重調和 u-級數 | `talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie` |
 | talk | On u -analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field | 多重 zeta 值的 u-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述 | `talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-` |
-| talk | On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的 q-shuffle 關係 | `talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-` |
-| talk | On the Uniqueness of v -adic Gamma Functions in the Gross–Koblitz–Thakur Formulas | Gross–Koblitz–Thakur 公式中 v-adic Gamma 函數的唯一性 | `talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro` |
+| talk | On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的 q-洗牌關係 | `talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-` |
+| talk | On the Uniqueness of v -adic Gamma Functions in the Gross–Koblitz–Thakur Formulas | Gross–Koblitz–Thakur 公式中 v-進 Gamma 函數的唯一性 | `talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro` |
 
 ### Conferences and Workshops / 會議與工作坊
 
