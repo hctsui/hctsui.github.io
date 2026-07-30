@@ -4835,29 +4835,6 @@
     },
     {
       "tags": [
-        "institution"
-      ],
-      "en": "College of Science",
-      "zh": "理學院"
-    },
-    {
-      "tags": [
-        "institution",
-        "mathematics"
-      ],
-      "en": "Department of Mathematics",
-      "zh": "數學系"
-    },
-    {
-      "tags": [
-        "institution",
-        "mathematics"
-      ],
-      "en": "Institute of Mathematics",
-      "zh": "數學研究所"
-    },
-    {
-      "tags": [
         "institution",
         "taiwan",
         "mathematics"
@@ -4940,6 +4917,470 @@
       ],
       "en": "Teaching Assistant",
       "zh": "助教"
+    },
+    {
+      "en": "Peking University",
+      "zh": "北京大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Tsinghua University",
+      "zh": "清華大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Beijing Normal University",
+      "zh": "北京師範大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Capital Normal University",
+      "zh": "首都師範大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "University of Chinese Academy of Sciences",
+      "zh": "中國科學院大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Nankai University",
+      "zh": "南開大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Jilin University",
+      "zh": "吉林大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Harbin Institute of Technology",
+      "zh": "哈爾濱工業大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Fudan University",
+      "zh": "復旦大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Shanghai Jiao Tong University",
+      "zh": "上海交通大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "East China Normal University",
+      "zh": "華東師範大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Nanjing University",
+      "zh": "南京大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Zhejiang University",
+      "zh": "浙江大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "University of Science and Technology of China",
+      "zh": "中國科學技術大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Xiamen University",
+      "zh": "廈門大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Shandong University",
+      "zh": "山東大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Wuhan University",
+      "zh": "武漢大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Xiangtan University",
+      "zh": "湘潭大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Central South University",
+      "zh": "中南大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Sun Yat-sen University",
+      "zh": "中山大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Southern University of Science and Technology",
+      "zh": "南方科技大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Sichuan University",
+      "zh": "四川大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Xi'an Jiaotong University",
+      "zh": "西安交通大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Lanzhou University",
+      "zh": "蘭州大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Dalian University of Technology",
+      "zh": "大連理工大學",
+      "tags": [
+        "university",
+        "china"
+      ]
+    },
+    {
+      "en": "Beijing",
+      "zh": "北京",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Tianjin",
+      "zh": "天津",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Changchun",
+      "zh": "長春",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Harbin",
+      "zh": "哈爾濱",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Shanghai",
+      "zh": "上海",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Nanjing",
+      "zh": "南京",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Hangzhou",
+      "zh": "杭州",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Hefei",
+      "zh": "合肥",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Xiamen",
+      "zh": "廈門",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Jinan",
+      "zh": "濟南",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Wuhan",
+      "zh": "武漢",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Xiangtan",
+      "zh": "湘潭",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Changsha",
+      "zh": "長沙",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Guangzhou",
+      "zh": "廣州",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Shenzhen",
+      "zh": "深圳",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Chengdu",
+      "zh": "成都",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Xi'an",
+      "zh": "西安",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Lanzhou",
+      "zh": "蘭州",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Dalian",
+      "zh": "大連",
+      "tags": [
+        "city",
+        "china"
+      ]
+    },
+    {
+      "en": "Jilin",
+      "zh": "吉林",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Heilongjiang",
+      "zh": "黑龍江",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Jiangsu",
+      "zh": "江蘇",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Zhejiang",
+      "zh": "浙江",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Anhui",
+      "zh": "安徽",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Fujian",
+      "zh": "福建",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Shandong",
+      "zh": "山東",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Hubei",
+      "zh": "湖北",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Hunan",
+      "zh": "湖南",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Guangdong",
+      "zh": "廣東",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Sichuan",
+      "zh": "四川",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Shaanxi",
+      "zh": "陝西",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Gansu",
+      "zh": "甘肅",
+      "tags": [
+        "region",
+        "china"
+      ]
+    },
+    {
+      "en": "Liaoning",
+      "zh": "遼寧",
+      "tags": [
+        "region",
+        "china"
+      ]
     }
   ]
 }
