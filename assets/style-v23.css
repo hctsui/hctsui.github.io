@@ -482,6 +482,13 @@ body[data-page="home"] .language-toggle:hover{
   grid-template-columns:minmax(0,1.65fr) minmax(270px,.65fr);
   gap:64px;
 }
+.home-overview-grid.home-overview-single{
+  grid-template-columns:1fr;
+}
+.home-overview-single .home-upcoming{
+  padding-left:0;
+  border-left:0;
+}
 .home-section-head{
   display:flex;
   align-items:end;
