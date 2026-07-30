@@ -1,6 +1,5 @@
 {
   "schema_version": 1,
-  "description": "Exact whole-field bilingual dictionary. No keyword, substring, fuzzy, or AI translation.",
   "pairs": [
     {
       "en": "Academia Sinica",
@@ -409,6 +408,10 @@
     {
       "en": "Hualien County",
       "zh": "花蓮縣"
+    },
+    {
+      "en": "Hung-Chun Tsui",
+      "zh": "崔鴻竣"
     },
     {
       "en": "Hyogo Prefecture",
@@ -1348,7 +1351,7 @@
     },
     {
       "en": "Tokyo",
-      "zh": "東京都"
+      "zh": "東京"
     },
     {
       "en": "Tokyo Metropolitan University",
