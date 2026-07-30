@@ -9,13 +9,6 @@
       }
     },
     {
-      "id": "university",
-      "label": {
-        "en": "University",
-        "zh": "大學"
-      }
-    },
-    {
       "id": "person",
       "label": {
         "en": "Person",
@@ -101,6 +94,14 @@
     }
   ],
   "pairs": [
+    {
+      "tags": [
+        "institution",
+        "taiwan"
+      ],
+      "en": "National Science and Technology Council",
+      "zh": "國家科學及技術委員會"
+    },
     {
       "tags": [
         "city",
@@ -2563,7 +2564,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Chang Gung University",
@@ -2571,7 +2572,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "China Medical University",
@@ -2579,7 +2580,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Chung Yuan Christian University",
@@ -2587,7 +2588,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Feng Chia University",
@@ -2595,7 +2596,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Fu Jen Catholic University",
@@ -2603,7 +2604,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Kaohsiung Medical University",
@@ -2611,7 +2612,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Central University",
@@ -2619,7 +2620,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Cheng Kung University",
@@ -2627,7 +2628,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Chengchi University",
@@ -2635,7 +2636,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Chi Nan University",
@@ -2643,7 +2644,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Chung Cheng University",
@@ -2651,7 +2652,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Chung Hsing University",
@@ -2659,7 +2660,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Dong Hwa University",
@@ -2667,7 +2668,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Kaohsiung University of Science and Technology",
@@ -2675,7 +2676,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Sun Yat-sen University",
@@ -2683,7 +2684,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Taipei University",
@@ -2691,7 +2692,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Taipei University of Technology",
@@ -2699,7 +2700,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Taiwan Normal University",
@@ -2707,7 +2708,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Taiwan Ocean University",
@@ -2715,7 +2716,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Taiwan University",
@@ -2723,7 +2724,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Taiwan University of Science and Technology",
@@ -2731,7 +2732,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Tsing Hua University",
@@ -2739,7 +2740,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National University of Kaohsiung",
@@ -2747,7 +2748,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "National Yang Ming Chiao Tung University",
@@ -2755,7 +2756,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Providence University",
@@ -2763,7 +2764,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Soochow University",
@@ -2771,7 +2772,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Taipei Medical University",
@@ -2779,7 +2780,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Tamkang University",
@@ -2787,7 +2788,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Tunghai University",
@@ -2795,7 +2796,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "taiwan"
       ],
       "en": "Yuan Ze University",
@@ -2803,7 +2804,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Chiba University",
@@ -2811,7 +2812,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Doshisha University",
@@ -2819,7 +2820,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Gakushuin University",
@@ -2827,7 +2828,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Hiroshima University",
@@ -2835,7 +2836,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Hokkaido University",
@@ -2843,7 +2844,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Institute of Science Tokyo",
@@ -2851,7 +2852,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Kanazawa University",
@@ -2859,7 +2860,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Keio University",
@@ -2867,7 +2868,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Kobe University",
@@ -2875,7 +2876,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Kumamoto University",
@@ -2883,7 +2884,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Kyoto University",
@@ -2891,7 +2892,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Kyushu University",
@@ -2899,7 +2900,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Meiji University",
@@ -2907,7 +2908,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Nagoya University",
@@ -2915,7 +2916,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Nara Women's University",
@@ -2923,7 +2924,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Niigata University",
@@ -2931,7 +2932,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Ochanomizu University",
@@ -2939,7 +2940,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Okayama University",
@@ -2947,7 +2948,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Osaka Metropolitan University",
@@ -2955,7 +2956,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Ritsumeikan University",
@@ -2963,7 +2964,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Saitama University",
@@ -2971,7 +2972,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Shinshu University",
@@ -2979,7 +2980,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "The University of Osaka",
@@ -2987,7 +2988,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "The University of Tokyo",
@@ -2995,7 +2996,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Tohoku University",
@@ -3003,7 +3004,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Tokyo Metropolitan University",
@@ -3011,7 +3012,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Tokyo University of Science",
@@ -3019,7 +3020,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "University of Tsukuba",
@@ -3027,7 +3028,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Waseda University",
@@ -3035,7 +3036,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "japan"
       ],
       "en": "Yokohama National University",
@@ -3043,7 +3044,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Arizona State University",
@@ -3051,7 +3052,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Boston University",
@@ -3059,7 +3060,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Brandeis University",
@@ -3067,7 +3068,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Brown University",
@@ -3075,7 +3076,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "California Institute of Technology",
@@ -3083,7 +3084,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Carnegie Mellon University",
@@ -3091,7 +3092,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Case Western Reserve University",
@@ -3099,7 +3100,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Clemson University",
@@ -3107,7 +3108,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Colorado State University",
@@ -3115,7 +3116,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Columbia University",
@@ -3123,7 +3124,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Cornell University",
@@ -3131,7 +3132,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Dartmouth College",
@@ -3139,7 +3140,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Duke University",
@@ -3147,7 +3148,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Emory University",
@@ -3155,7 +3156,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Florida State University",
@@ -3163,7 +3164,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "George Washington University",
@@ -3171,7 +3172,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Georgetown University",
@@ -3179,7 +3180,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Georgia Institute of Technology",
@@ -3187,7 +3188,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Harvard University",
@@ -3195,7 +3196,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Illinois Institute of Technology",
@@ -3203,7 +3204,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Indiana University Bloomington",
@@ -3211,7 +3212,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Iowa State University",
@@ -3219,7 +3220,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Johns Hopkins University",
@@ -3227,7 +3228,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Louisiana State University",
@@ -3235,7 +3236,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Massachusetts Institute of Technology",
@@ -3243,7 +3244,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Michigan State University",
@@ -3251,7 +3252,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "New York University",
@@ -3259,7 +3260,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "North Carolina State University",
@@ -3267,7 +3268,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Northeastern University",
@@ -3275,7 +3276,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Northwestern University",
@@ -3283,7 +3284,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Ohio State University",
@@ -3291,7 +3292,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Oklahoma State University",
@@ -3299,7 +3300,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Oregon State University",
@@ -3307,7 +3308,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Pennsylvania State University",
@@ -3315,7 +3316,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Princeton University",
@@ -3323,7 +3324,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Purdue University",
@@ -3331,7 +3332,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Rensselaer Polytechnic Institute",
@@ -3339,7 +3340,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Rice University",
@@ -3347,7 +3348,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Rutgers University–New Brunswick",
@@ -3355,7 +3356,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Stanford University",
@@ -3363,7 +3364,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Stevens Institute of Technology",
@@ -3371,7 +3372,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Stony Brook University",
@@ -3379,7 +3380,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Syracuse University",
@@ -3387,7 +3388,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Texas A&M University",
@@ -3395,7 +3396,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Tufts University",
@@ -3403,7 +3404,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Tulane University",
@@ -3411,7 +3412,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University at Buffalo",
@@ -3419,7 +3420,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Arizona",
@@ -3427,7 +3428,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Berkeley",
@@ -3435,7 +3436,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Davis",
@@ -3443,7 +3444,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Irvine",
@@ -3451,7 +3452,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Los Angeles",
@@ -3459,7 +3460,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Merced",
@@ -3467,7 +3468,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Riverside",
@@ -3475,7 +3476,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, San Diego",
@@ -3483,7 +3484,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Santa Barbara",
@@ -3491,7 +3492,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of California, Santa Cruz",
@@ -3499,7 +3500,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Central Florida",
@@ -3507,7 +3508,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Chicago",
@@ -3515,7 +3516,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Cincinnati",
@@ -3523,7 +3524,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Colorado Boulder",
@@ -3531,7 +3532,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Connecticut",
@@ -3539,7 +3540,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Delaware",
@@ -3547,7 +3548,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Florida",
@@ -3555,7 +3556,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Georgia",
@@ -3563,7 +3564,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Hawaii at Manoa",
@@ -3571,7 +3572,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Houston",
@@ -3579,7 +3580,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Illinois Chicago",
@@ -3587,7 +3588,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Illinois Urbana-Champaign",
@@ -3595,7 +3596,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Iowa",
@@ -3603,7 +3604,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Kansas",
@@ -3611,7 +3612,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Kentucky",
@@ -3619,7 +3620,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Maryland, College Park",
@@ -3627,7 +3628,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Massachusetts Amherst",
@@ -3635,7 +3636,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Miami",
@@ -3643,7 +3644,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Michigan",
@@ -3651,7 +3652,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Minnesota Twin Cities",
@@ -3659,7 +3660,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Missouri",
@@ -3667,7 +3668,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Nebraska–Lincoln",
@@ -3675,7 +3676,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of New Mexico",
@@ -3683,7 +3684,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of North Carolina at Chapel Hill",
@@ -3691,7 +3692,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Notre Dame",
@@ -3699,7 +3700,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Oklahoma",
@@ -3707,7 +3708,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Oregon",
@@ -3715,7 +3716,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Pennsylvania",
@@ -3723,7 +3724,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Pittsburgh",
@@ -3731,7 +3732,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Rochester",
@@ -3739,7 +3740,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of South Carolina",
@@ -3747,7 +3748,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of South Florida",
@@ -3755,7 +3756,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Southern California",
@@ -3763,7 +3764,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Tennessee, Knoxville",
@@ -3771,7 +3772,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Texas at Austin",
@@ -3779,7 +3780,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Utah",
@@ -3787,7 +3788,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Virginia",
@@ -3795,7 +3796,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Washington",
@@ -3803,7 +3804,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "University of Wisconsin–Madison",
@@ -3811,7 +3812,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Vanderbilt University",
@@ -3819,7 +3820,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Virginia Tech",
@@ -3827,7 +3828,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Washington University in St. Louis",
@@ -3835,7 +3836,7 @@
     },
     {
       "tags": [
-        "university",
+        "institution",
         "united_states"
       ],
       "en": "Yale University",
@@ -4922,7 +4923,7 @@
       "en": "Peking University",
       "zh": "北京大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4930,7 +4931,7 @@
       "en": "Tsinghua University",
       "zh": "清華大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4938,7 +4939,7 @@
       "en": "Beijing Normal University",
       "zh": "北京師範大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4946,7 +4947,7 @@
       "en": "Capital Normal University",
       "zh": "首都師範大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4954,7 +4955,7 @@
       "en": "University of Chinese Academy of Sciences",
       "zh": "中國科學院大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4962,7 +4963,7 @@
       "en": "Nankai University",
       "zh": "南開大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4970,7 +4971,7 @@
       "en": "Jilin University",
       "zh": "吉林大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4978,7 +4979,7 @@
       "en": "Harbin Institute of Technology",
       "zh": "哈爾濱工業大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4986,7 +4987,7 @@
       "en": "Fudan University",
       "zh": "復旦大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -4994,7 +4995,7 @@
       "en": "Shanghai Jiao Tong University",
       "zh": "上海交通大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5002,7 +5003,7 @@
       "en": "East China Normal University",
       "zh": "華東師範大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5010,7 +5011,7 @@
       "en": "Nanjing University",
       "zh": "南京大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5018,7 +5019,7 @@
       "en": "Zhejiang University",
       "zh": "浙江大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5026,7 +5027,7 @@
       "en": "University of Science and Technology of China",
       "zh": "中國科學技術大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5034,7 +5035,7 @@
       "en": "Xiamen University",
       "zh": "廈門大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5042,7 +5043,7 @@
       "en": "Shandong University",
       "zh": "山東大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5050,7 +5051,7 @@
       "en": "Wuhan University",
       "zh": "武漢大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5058,7 +5059,7 @@
       "en": "Xiangtan University",
       "zh": "湘潭大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5066,7 +5067,7 @@
       "en": "Central South University",
       "zh": "中南大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5074,7 +5075,7 @@
       "en": "Sun Yat-sen University",
       "zh": "中山大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5082,7 +5083,7 @@
       "en": "Southern University of Science and Technology",
       "zh": "南方科技大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5090,7 +5091,7 @@
       "en": "Sichuan University",
       "zh": "四川大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5098,7 +5099,7 @@
       "en": "Xi'an Jiaotong University",
       "zh": "西安交通大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5106,7 +5107,7 @@
       "en": "Lanzhou University",
       "zh": "蘭州大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
@@ -5114,7 +5115,7 @@
       "en": "Dalian University of Technology",
       "zh": "大連理工大學",
       "tags": [
-        "university",
+        "institution",
         "china"
       ]
     },
