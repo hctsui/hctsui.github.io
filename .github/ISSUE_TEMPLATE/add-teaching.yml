@@ -4,19 +4,15 @@ title: "[Website: Add teaching] "
 body:
   - type: markdown
     attributes:
-      value: |
-        **分組邏輯**
-        - Teaching 頁面依「機構」自動產生大標題。
-        - 選 Other 可新增任何學校；新增後，該學校會出現在未來表單選單。
-        - 課程內仍顯示 Teaching Assistant、Lecturer 或自訂身分，不再另外產生重複的身分大標題。
-        - 排序請在 Admin 的「網站排序」功能調整。
+      value: 學期英文／中文至少填一個；課程英文／中文至少填一個。機構大標題會動態建立並自動移除空群組。
   - type: dropdown
-    id: chinese-mode
+    id: bilingual-mode
     attributes:
-      label: Chinese handling / 中文欄位處理 [必填]
+      label: Bilingual completion / 雙語欄位補全 [必填]
+      description: 對照表只做完整字串的一對一比對；不使用 AI、相似名稱、舊網站內容或模糊推測。
       options:
-        - "Auto translate blank Chinese fields / 自動翻譯空白中文欄位"
-        - "I will fill Chinese fields myself / 中文由我自行填寫"
+        - "Keep blanks / 空白保持空白"
+        - "Use Admin dictionary / 使用 Admin 中英對照表補全"
       default: 0
     validations: {required: true}
   - type: dropdown
@@ -30,49 +26,32 @@ body:
     validations: {required: true}
   - type: input
     id: custom-institution-en
-    attributes:
-      label: Custom institution (English) / 自訂機構英文 [選填]
-      description: 只有選 Other 時填寫。
+    attributes: {label: "Custom institution (English) / 自訂機構英文 [選填]"}
   - type: input
     id: custom-institution-zh
-    attributes:
-      label: Custom institution (Chinese) / 自訂機構中文 [選填・可自動翻譯]
+    attributes: {label: "Custom institution (Chinese) / 自訂機構中文 [選填・可由對照表補全]"}
   - type: dropdown
     id: role
     attributes:
       label: Role / 教學身分 [必填]
-      options:
-        - "Teaching Assistant / 助教"
-        - "Lecturer / 講師"
-        - "Other / 其他（下方自訂）"
+      options: ["Teaching Assistant / 助教", "Lecturer / 講師", "Other / 其他（下方自訂）"]
       default: 0
     validations: {required: true}
   - type: input
     id: custom-role-en
-    attributes:
-      label: Custom role (English) / 自訂身分英文 [選填]
+    attributes: {label: "Custom role (English) / 自訂身分英文 [選填]"}
   - type: input
     id: custom-role-zh
-    attributes:
-      label: Custom role (Chinese) / 自訂身分中文 [選填・可自動翻譯]
+    attributes: {label: "Custom role (Chinese) / 自訂身分中文 [選填・可由對照表補全]"}
   - type: input
     id: term-en
-    attributes:
-      label: Term (English) / 學期英文 [必填]
-      placeholder: "Fall 2026"
-    validations: {required: true}
+    attributes: {label: "Term (English) / 學期英文 [條件必填], placeholder: \"Fall 2026\""}
   - type: input
     id: term-zh
-    attributes:
-      label: Term (Chinese) / 學期中文 [選填・可自動翻譯]
-      placeholder: "2026 秋"
+    attributes: {label: "Term (Chinese) / 學期中文 [條件必填], placeholder: \"2026 秋\""}
   - type: input
     id: course-en
-    attributes:
-      label: Course (English) / 課程英文 [必填]
-      placeholder: "MATH2410 Algebra I"
-    validations: {required: true}
+    attributes: {label: "Course (English) / 課程英文 [條件必填], placeholder: \"MATH2410 Algebra I\""}
   - type: input
     id: course-zh
-    attributes:
-      label: Course (Chinese) / 課程中文 [選填・可自動翻譯]
+    attributes: {label: "Course (Chinese) / 課程中文 [條件必填]"}

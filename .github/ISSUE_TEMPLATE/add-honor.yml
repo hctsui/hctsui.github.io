@@ -4,46 +4,33 @@ title: "[Website: Add honor] "
 body:
   - type: markdown
     attributes:
-      value: |
-        **欄位標示**
-        - **[必填]**：送出前一定要填。
-        - **[選填]**：可以留空；留空時網站不會輸出空白文字或按鈕。
-        - **[可自動翻譯]**：中文可留空；系統會優先沿用既有譯名，再產生臺灣繁體中文草稿。
-        - 日期一律使用 `YYYY-MM-DD`。
+      value: 獎項英文／中文名稱至少填一個。
   - type: dropdown
-    id: chinese-mode
+    id: bilingual-mode
     attributes:
-      label: Chinese handling / 中文欄位處理 [必填]
-      description: 建議使用自動翻譯；同系列會議與既有機構會優先沿用網站舊譯名。
+      label: Bilingual completion / 雙語欄位補全 [必填]
+      description: 對照表只做完整字串的一對一比對；不使用 AI、相似名稱、舊網站內容或模糊推測。
       options:
-        - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
-        - I will fill Chinese fields myself / 中文由我自行填寫
+        - "Keep blanks / 空白保持空白"
+        - "Use Admin dictionary / 使用 Admin 中英對照表補全"
       default: 0
     validations: {required: true}
   - type: input
     id: year
-    attributes:
-      label: Year / 年份 [必填]
-      placeholder: "2026"
+    attributes: {label: "Year / 年份 [必填], placeholder: \"2026\""}
     validations: {required: true}
   - type: input
     id: name-en
-    attributes:
-      label: Honor name (English) / 獎項英文名稱 [必填]
-    validations: {required: true}
+    attributes: {label: "Honor name (English) / 獎項英文名稱 [條件必填]"}
   - type: input
     id: name-zh
-    attributes:
-      label: Honor name (Chinese) / 獎項中文名稱 [選填・可自動翻譯]
+    attributes: {label: "Honor name (Chinese) / 獎項中文名稱 [條件必填]"}
   - type: input
     id: org-en
-    attributes:
-      label: Organization (English) / 頒發單位英文 [選填]
+    attributes: {label: "Organization (English) / 頒發單位英文 [選填]"}
   - type: input
     id: org-zh
-    attributes:
-      label: Organization (Chinese) / 頒發單位中文 [選填・可自動翻譯]
+    attributes: {label: "Organization (Chinese) / 頒發單位中文 [選填・可由對照表補全]"}
   - type: input
     id: url
-    attributes:
-      label: Honor URL / 獎項連結 [選填]
+    attributes: {label: "Honor URL / 獎項連結 [選填]"}

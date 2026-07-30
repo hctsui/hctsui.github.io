@@ -5,26 +5,21 @@ body:
   - type: markdown
     attributes:
       value: |
-        **欄位標示**
-        - **[必填]**：送出前一定要填。
-        - **[選填]**：可以留空；留空時網站不輸出空白文字或按鈕。
-        - 中文題目留空時預設照抄英文，避免誤配其他論文的舊翻譯。
-        - 大標題可選既有分類；選 Other 後，新分類會自動加入未來表單。
+        題目英文／中文至少填一個；作者英文／中文至少填一個。各分組在 PDF CV 中會各自從 `[1]` 重新編號。
   - type: dropdown
-    id: chinese-mode
+    id: bilingual-mode
     attributes:
-      label: Chinese handling / 中文欄位處理 [必填]
+      label: Bilingual completion / 雙語欄位補全 [必填]
+      description: 對照表只做完整字串的一對一比對；不使用 AI、相似名稱、舊網站內容或模糊推測。
       options:
-        - "Keep English title if Chinese title is blank / 中文題目留空時照抄英文"
-        - "Auto translate blank Chinese fields / 自動翻譯空白中文欄位"
-        - "I will fill Chinese fields myself / 中文由我自行填寫"
+        - "Keep blanks / 空白保持空白"
+        - "Use Admin dictionary / 使用 Admin 中英對照表補全"
       default: 0
     validations: {required: true}
   - type: dropdown
     id: publication-section
     attributes:
       label: Publication section / 論文大標題 [必填]
-      description: Auto 會在有 DOI、期刊頁面或正式期刊資訊時歸入 Journal Articles；其餘歸入 Preprints。Survey Papers 請明確選取。
       options:
         - "Auto detect from metadata / 依期刊資訊自動判斷"
         - "Journal Articles / 期刊論文 [journal-articles]"
@@ -35,70 +30,47 @@ body:
     validations: {required: true}
   - type: input
     id: custom-section-en
-    attributes:
-      label: Custom publication section (English) / 自訂論文大標題英文 [選填]
-      description: 只有選 Other 時填寫，例如 Book Chapters。
+    attributes: {label: "Custom publication section (English) / 自訂論文大標題英文 [選填]"}
   - type: input
     id: custom-section-zh
-    attributes:
-      label: Custom publication section (Chinese) / 自訂論文大標題中文 [選填・可自動翻譯]
+    attributes: {label: "Custom publication section (Chinese) / 自訂論文大標題中文 [選填・可由對照表補全]"}
   - type: input
     id: date
-    attributes:
-      label: Public date / 公開日期 [必填]
-      placeholder: "2026-04-05"
+    attributes: {label: "Public date / 公開日期 [必填], placeholder: \"2026-04-05\""}
     validations: {required: true}
   - type: input
     id: title-en
-    attributes:
-      label: Title (English) / 英文題目 [必填]
-    validations: {required: true}
+    attributes: {label: "Title (English) / 英文題目 [條件必填]"}
   - type: input
     id: title-zh
-    attributes:
-      label: Title (Chinese) / 中文題目 [選填・可自動翻譯]
+    attributes: {label: "Title (Chinese) / 中文題目 [條件必填]"}
   - type: input
     id: authors-en
-    attributes:
-      label: Authors (English) / 作者英文 [必填]
-    validations: {required: true}
+    attributes: {label: "Authors (English) / 作者英文 [條件必填]"}
   - type: input
     id: authors-zh
-    attributes:
-      label: Authors (Chinese) / 作者中文 [選填・可自動翻譯]
-      description: 未知中文姓名會保留英文，不會擅自音譯。
+    attributes: {label: "Authors (Chinese) / 作者中文 [條件必填]"}
   - type: input
     id: arxiv
-    attributes:
-      label: arXiv number / arXiv 編號 [選填]
-      placeholder: "2604.03618"
+    attributes: {label: "arXiv number / arXiv 編號 [選填], placeholder: \"2604.03618\""}
   - type: input
     id: arxiv-url
-    attributes:
-      label: arXiv URL / arXiv 連結 [選填]
+    attributes: {label: "arXiv URL / arXiv 連結 [選填]"}
   - type: input
     id: pdf-url
-    attributes:
-      label: PDF URL / PDF 連結 [選填]
+    attributes: {label: "PDF URL / PDF 連結 [選填]"}
   - type: input
     id: doi-url
-    attributes:
-      label: DOI URL / DOI 連結 [選填]
-      placeholder: "https://doi.org/..."
+    attributes: {label: "DOI URL / DOI 連結 [選填]"}
   - type: input
     id: journal-url
-    attributes:
-      label: Journal page URL / 期刊頁面連結 [選填]
+    attributes: {label: "Journal page URL / 期刊頁面連結 [選填]"}
   - type: input
     id: code-url
-    attributes:
-      label: Code URL / 程式碼連結 [選填]
+    attributes: {label: "Code URL / 程式碼連結 [選填]"}
   - type: input
     id: venue-en
-    attributes:
-      label: Venue or status (English) / 期刊或狀態英文 [選填]
-      description: 例如 Submitted，或完整期刊名稱、卷期與頁碼。
+    attributes: {label: "Venue or status (English) / 期刊或狀態英文 [選填]"}
   - type: input
     id: venue-zh
-    attributes:
-      label: Venue or status (Chinese) / 期刊或狀態中文 [選填・可自動翻譯]
+    attributes: {label: "Venue or status (Chinese) / 期刊或狀態中文 [選填・可由對照表補全]"}

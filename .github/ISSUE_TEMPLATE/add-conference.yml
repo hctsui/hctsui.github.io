@@ -5,84 +5,55 @@ body:
   - type: markdown
     attributes:
       value: |
-        **欄位標示**
-        - **[必填]**：送出前一定要填。
-        - **[選填]**：可以留空；留空時網站不會輸出空白文字或按鈕。
-        - **[可自動翻譯]**：中文可留空；系統會優先沿用既有譯名，再產生臺灣繁體中文草稿。
-        - 日期一律使用 `YYYY-MM-DD`。
+        日期請使用 `YYYY-MM-DD`。會議英文／中文名稱至少填一個；其他雙語欄位可各自留空。
   - type: dropdown
-    id: chinese-mode
+    id: bilingual-mode
     attributes:
-      label: Chinese handling / 中文欄位處理 [必填]
-      description: 建議使用自動翻譯；同系列會議與既有機構會優先沿用網站舊譯名。
+      label: Bilingual completion / 雙語欄位補全 [必填]
+      description: 對照表只做完整字串的一對一比對；不使用 AI、相似名稱、舊網站內容或模糊推測。
       options:
-        - Auto translate blank Chinese fields / 自動翻譯空白中文欄位
-        - I will fill Chinese fields myself / 中文由我自行填寫
+        - "Keep blanks / 空白保持空白"
+        - "Use Admin dictionary / 使用 Admin 中英對照表補全"
       default: 0
     validations: {required: true}
   - type: input
     id: start-date
-    attributes:
-      label: Start date / 開始日期 [必填]
-      placeholder: "2026-08-24"
+    attributes: {label: "Start date / 開始日期 [必填], placeholder: \"2026-08-24\""}
     validations: {required: true}
   - type: input
     id: end-date
-    attributes:
-      label: End date / 結束日期 [選填]
-      description: 單日活動可留空，系統會自動使用開始日期。
-      placeholder: "2026-08-28"
+    attributes: {label: "End date / 結束日期 [選填], description: 單日活動可留空。"}
   - type: dropdown
     id: upcoming
     attributes:
       label: Show on Upcoming? / 是否先顯示於 Upcoming [必填]
-      description: 選 Yes 時，結束日過後會自動從 Upcoming 移到會議列表。
       options: ["Yes / 是", "No / 否"]
       default: 0
     validations: {required: true}
   - type: input
     id: title-en
-    attributes:
-      label: Conference name (English) / 會議英文名稱 [必填]
-      description: 請使用官方英文名稱；系統會參考過去同系列會議的格式。
-    validations: {required: true}
+    attributes: {label: "Conference name (English) / 會議英文名稱 [條件必填]"}
   - type: input
     id: title-zh
-    attributes:
-      label: Conference name (Chinese) / 會議中文名稱 [選填・可自動翻譯]
+    attributes: {label: "Conference name (Chinese) / 會議中文名稱 [條件必填]"}
   - type: input
     id: url
-    attributes:
-      label: Conference URL / 會議連結 [選填]
-      description: 漏寫 https:// 時會自動補上。
-      placeholder: "https://..."
+    attributes: {label: "Conference URL / 會議連結 [選填]"}
   - type: input
     id: venue-en
-    attributes:
-      label: Venue (English) / 地點英文 [選填]
-      placeholder: "Nagoya University"
+    attributes: {label: "Venue (English) / 地點英文 [選填]"}
   - type: input
     id: venue-zh
-    attributes:
-      label: Venue (Chinese) / 地點中文 [選填・可自動翻譯]
-      placeholder: "名古屋大學"
+    attributes: {label: "Venue (Chinese) / 地點中文 [選填・可由對照表補全]"}
   - type: input
     id: city-en
-    attributes:
-      label: City (English) / 城市英文 [選填]
-      placeholder: "Nagoya"
+    attributes: {label: "City (English) / 城市英文 [選填]"}
   - type: input
     id: city-zh
-    attributes:
-      label: City (Chinese) / 城市中文 [選填・可自動翻譯]
-      placeholder: "名古屋"
+    attributes: {label: "City (Chinese) / 城市中文 [選填・可由對照表補全]"}
   - type: input
     id: country-en
-    attributes:
-      label: Country (English) / 國家英文 [選填]
-      placeholder: "Japan"
+    attributes: {label: "Country (English) / 國家英文 [選填]"}
   - type: input
     id: country-zh
-    attributes:
-      label: Country (Chinese) / 國家中文 [選填・可自動翻譯]
-      placeholder: "日本"
+    attributes: {label: "Country (Chinese) / 國家中文 [選填・可由對照表補全]"}

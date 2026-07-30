@@ -2,16 +2,9 @@ name: Save website ordering / 儲存網站排序
 description: Save the order copied by the Admin page for any website category.
 title: "[Website: Reorder] "
 body:
-  - type: markdown
-    attributes:
-      value: |
-        請從 `/admin/` 選擇一個類別，進入網站排序模式，調整後按「儲存目前順序」。
-        Conference、Talk、Visit、Honor、Publication、Teaching 都支援；Publication 與 Teaching 也可調整大標題順序。
   - type: textarea
     id: ordering
     attributes:
       label: Ordering payload / 排序資料 [必填]
-      description: 直接貼上 Admin 複製的 JSON；不要手動刪改 Entry ID。
-      placeholder: 貼上完整 JSON
-    validations:
-      required: true
+      description: 直接貼上 Admin 複製的 JSON。
+    validations: {required: true}
