@@ -6,7 +6,7 @@ body:
     id: payload
     attributes:
       label: Batch payload / 批次資料
-      description: Paste the JSON copied by Admin.
+      description: Paste the JSON or compressed payload copied by Admin. Large translation-table updates are automatically gzip-compressed.
       render: json
     validations:
       required: true
