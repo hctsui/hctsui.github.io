@@ -85,6 +85,13 @@
 }{
     0.2 cm
 }
+\newcommand{\cvgroup}[1]{%
+    \needspace{3\baselineskip}%
+    \vspace{0.08cm}%
+    {\large\bfseries #1}\par%
+    \vspace{0.08cm}%
+}
+\newcommand{\cvmeta}[1]{{\small\color{secondaryColor}\textbf{#1}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{one}{
     \begin{adjustwidth}{
@@ -109,40 +116,29 @@
     \vspace{0.1cm}
 } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{pub}[2][]{
+\newenvironment{pub}{
     \one
-    \def\secondColumn{#2}
-    \setcolumnwidth{11cm, \fill, 15 cm}
-    \begin{paracol}{2}
 }{
-    \switchcolumn \raggedleft \secondColumn
-    \end{paracol}
     \endone
     \vspace{0.1cm}
 } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{edu}[3][]{
     \one
-    \def\thirdColumn{#3}
-    \setcolumnwidth{1 cm, \fill, 4.5 cm}
-    \begin{paracol}{3}
-    {\raggedright #2} \switchcolumn
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{5.4cm}@{}}
+    #2 & \mbox{#3}
+    \end{tabularx}
 }{
-    \switchcolumn \raggedleft \thirdColumn
-    \end{paracol}
     \endone
     \vspace{0.1cm}
 } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{teaching}[3][]{
     \one
-    \def\thirdColumn{#3}
-    \setcolumnwidth{5 cm, \fill, 4.5 cm}
-    \begin{paracol}{3}
-    {\raggedright #2} \switchcolumn
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{3.8cm}@{}}
+    \textbf{#2} & \mbox{#3}
+    \end{tabularx}
 }{
-    \switchcolumn \raggedleft \thirdColumn
-    \end{paracol}
     \endone
     \vspace{0.1cm}
 } 
