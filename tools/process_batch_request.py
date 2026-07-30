@@ -6,8 +6,9 @@ from pathlib import Path
 from typing import Any
 from translation_validation import normalize_translation_tags, validate_translation_data
 from heading_config import normalized_headings, validate_headings
+from category_config import migrate_category_data, validate_category_data, all_items
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
-SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching'}
+SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
 def parse_body(body):
  m=re.search(r'### Batch payload / 批次資料\s+(.+)',body,re.S);raw=(m.group(1) if m else body).strip();f=re.search(r'```(?:json)?\s*(.*?)```',raw,re.S);text=(f.group(1) if f else raw).strip()
  if text.startswith('gzip-base64:'):
@@ -27,7 +28,7 @@ def semantic(x):
 def clean(s):return html.escape(str(s or '').strip(),quote=False)
 def normalize_item(x):
  x=copy.deepcopy(x);t=x['type']
- for k in ('title','description','organization','authors','venue','role','organization_kind'):
+ for k in ('title','description','organization','authors','venue','role','organization_kind','date_label'):
   if isinstance(x.get(k),dict):x[k+'_html']={l:clean(v) for l,v in x[k].items()}
  if t=='publication':x['year']=int(str(x.get('date',''))[:4] or x.get('year') or 0)
  return x
@@ -155,6 +156,38 @@ def apply_heading_bundle(data,bundle):
   for group in settings.setdefault('content_groups',{}).get(kind,[]):
    gid=str(group.get('id') or '')
    if gid in labels:group['label']=copy.deepcopy(labels[gid])
+
+def layout_bundle(data):
+ settings=data.get('settings',{})
+ return {
+  'pages':copy.deepcopy(settings.get('pages',[])),
+  'categories':copy.deepcopy(settings.get('categories',[])),
+  'cv_category_order':copy.deepcopy(settings.get('cv_category_order',[])),
+  'assignments':{str(x.get('id')):{'category_id':str(x.get('category_id') or ''),'order':int(x.get('order',999999))} for x in all_items(data)},
+ }
+def normalized_layout_bundle(data,value):
+ if not isinstance(value,dict):raise ValueError('Layout operation requires an object.')
+ result={
+  'pages':copy.deepcopy(value.get('pages',[])),
+  'categories':copy.deepcopy(value.get('categories',[])),
+  'cv_category_order':copy.deepcopy(value.get('cv_category_order',[])),
+  'assignments':copy.deepcopy(value.get('assignments',{})),
+ }
+ probe=copy.deepcopy(data);settings=probe.setdefault('settings',{});settings['pages']=result['pages'];settings['categories']=result['categories'];settings['cv_category_order']=result['cv_category_order']
+ current_ids={str(x.get('id')) for x in all_items(probe)}
+ if set(result['assignments'])!=current_ids:raise ValueError('Layout assignments changed; reload Admin before submitting.')
+ for item in all_items(probe):
+  state=result['assignments'][str(item.get('id'))]
+  item['category_id']=str(state.get('category_id') or '')
+  item['order']=int(state.get('order',999999))
+ validate_category_data(probe)
+ return layout_bundle(probe)
+def apply_layout_bundle(data,bundle):
+ normalized=normalized_layout_bundle(data,bundle);settings=data.setdefault('settings',{});settings['pages']=copy.deepcopy(normalized['pages']);settings['categories']=copy.deepcopy(normalized['categories']);settings['cv_category_order']=copy.deepcopy(normalized['cv_category_order'])
+ by={str(x.get('id')):x for x in all_items(data)}
+ for iid,state in normalized['assignments'].items():
+  by[iid]['category_id']=state['category_id'];by[iid]['order']=int(state['order'])
+ return normalized
 def normalize_groups(data):
  groups=data.setdefault('settings',{}).setdefault('content_groups',{})
  for kind,sec in (('publication','publications'),('teaching','teaching')):
@@ -174,7 +207,32 @@ def apply_content(data,h,op,hid,issue,n,rd):
  if expected and semantic(cur)!=semantic(expected):raise ValueError(f'Conflict: {eid} changed after Admin loaded.')
  if action=='delete':a.pop(i);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='delete',action='delete',type=t,entry_id=eid,label=label(cur),before=cur,after=None,index_before=i,index_after=None,undo_of=None);return 'delete',eid
  after=normalize_item(op['after']);after['id']=eid;a[i]=after;append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='update',action='update',type=t,entry_id=eid,label=label(after),before=cur,after=copy.deepcopy(after),index_before=i,index_after=i,undo_of=None);return 'update',eid
+def layout_structure(value):
+ if not isinstance(value,dict):return {'pages':[],'categories':[],'cv_category_order':[]}
+ return {
+  'pages':copy.deepcopy(value.get('pages',[])),
+  'categories':copy.deepcopy(value.get('categories',[])),
+  'cv_category_order':copy.deepcopy(value.get('cv_category_order',[])),
+ }
+def layout_expected_matches(current,expected):
+ if not isinstance(expected,dict):return True
+ if layout_structure(current)!=layout_structure(expected):return False
+ expected_assignments=expected.get('assignments',{}) if isinstance(expected.get('assignments'),dict) else {}
+ current_assignments=current.get('assignments',{}) if isinstance(current.get('assignments'),dict) else {}
+ # Add/delete operations may have run earlier in this same batch. Compare only
+ # IDs that still exist on both sides; newly added and already deleted items are
+ # validated against the submitted `after` bundle below.
+ for iid in set(expected_assignments)&set(current_assignments):
+  left=expected_assignments[iid] if isinstance(expected_assignments[iid],dict) else {}
+  right=current_assignments[iid] if isinstance(current_assignments[iid],dict) else {}
+  if str(left.get('category_id') or '')!=str(right.get('category_id') or ''):return False
+  if int(left.get('order',999999))!=int(right.get('order',999999)):return False
+ return True
 def apply_special(data,trans,h,op,hid,issue,n,rd):
+ if op['op']=='layout':
+  before=layout_bundle(data);expected=op.get('before')
+  if expected and not layout_expected_matches(before,expected):raise ValueError('Conflict: page/category layout changed after Admin loaded.')
+  after=apply_layout_bundle(data,copy.deepcopy(op['after']));append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='layout',action='layout',type='layout',entry_id='layout',label={'en':'Page and category layout','zh':'頁面與類別'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'layout','layout'
  if op['op']=='reorder':
   before=capture_order(data,op['type'])
   # Ordering is safely rebased onto the current database. This handles items
@@ -195,7 +253,11 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
  if target.get('reverted_by'):raise ValueError(f'{tid} was already undone.')
  if dt(target['expires_at'])<=n:raise ValueError(f'Undo expired: {tid}')
  act=target['action'];t=target['type'];eid=target['entry_id']
- if act=='reorder':
+ if act=='layout':
+  cur=layout_bundle(data)
+  if cur!=normalized_layout_bundle(data,target['after']):raise ValueError('Cannot undo layout: layout changed later.')
+  restored=apply_layout_bundle(data,target['before']);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='layout',type='layout',entry_id='layout',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
+ elif act=='reorder':
   cur=capture_order(data,t)
   # Restore the old relative order while retaining entries/groups that were
   # added after the original ordering operation.
@@ -224,13 +286,16 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
 def validate_operation(op):
  if not isinstance(op,dict):raise ValueError('Every batch operation must be an object.')
  action=op.get('op')
- if action not in {'add','update','delete','undo','reorder','translations','headings'}:raise ValueError(f'Unsupported batch operation: {action}')
+ if action not in {'add','update','delete','undo','reorder','translations','headings','layout'}:raise ValueError(f'Unsupported batch operation: {action}')
  if action=='undo':
   if not str(op.get('history_id') or '').strip():raise ValueError('Undo operation is missing history_id.')
   return
  if action=='translations':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Translations operation requires before and after objects.')
   validate_translation_data(op['after']);return
+ if action=='layout':
+  if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Layout operation requires before and after objects.')
+  return
  if action=='headings':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Headings operation requires before and after objects.')
   # Full validation needs the current content-group IDs and is performed while applying.
@@ -247,16 +312,16 @@ def validate_operation(op):
 def main():
  p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
  if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
- data=json.load(open(SITE,encoding='utf-8'));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','headings','replayed')};ids=[]
+ data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','headings','layout','replayed')};ids=[]
  for i,op in enumerate(ops,1):
   validate_operation(op);hid=f'issue-{issue}-op-{i}';rd=digest(op)
   if hid in existing:
    if existing[hid].get('request_digest')!=rd:raise ValueError(f'{hid} exists with different content.')
    counts['replayed']+=1;continue
   if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd)
-  elif op['op'] in ('reorder','translations','headings'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
+  elif op['op'] in ('reorder','translations','headings','layout'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
   else:act,eid=apply_content(data,h,op,hid,issue,n,rd)
   counts[act]+=1;ids.append(eid);existing[hid]=h['operations'][-1]
- normalize_groups(data);validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
- summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','headings') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
+ normalize_groups(data);data=migrate_category_data(data);validate_category_data(data);validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','headings','layout') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
 if __name__=='__main__':main()

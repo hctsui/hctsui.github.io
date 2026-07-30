@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from translation_validation import normalize_translation, validate_translation_data
+from category_config import migrate_category_data
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -439,7 +440,7 @@ def migrate_data(data: dict[str, Any]) -> dict[str, Any]:
     normalize_orders(data, "teaching")
     for kind in sorted(UNGROUPED_KINDS):
         sync_ungrouped_order(data, kind)
-    return data
+    return migrate_category_data(data)
 
 
 def next_order(data: dict[str, Any], kind: str, group_id: str) -> int:

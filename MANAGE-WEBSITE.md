@@ -1,124 +1,102 @@
-# 網站與雙語 CV 管理說明
+# 網站與雙語履歷管理說明
 
-日常入口：
+日常入口：<https://hctsui.github.io/admin/>
 
-> https://hctsui.github.io/admin/
+## 頁面、類別與項目
 
-## 新增、編輯、刪除與排序
+目前網站採用「頁面 → 類別 → 項目」結構：
 
-Admin 可新增 Conference、Talk、Visit、Organization、Honor、Publication、Teaching，也可搜尋、編輯、刪除及持久化排序。
+- **頁面**固定為首頁、履歷、論文、學術活動與教學。
+- **類別**就是網站中的左上小字與大標題，可新增、刪除、改名、移到其他頁面及調整順序。
+- **項目**必須屬於某個類別。研究興趣、學歷、獎項、論文、活動、教學、聯絡資訊與個人資訊全部都是一般項目。
 
-- Publication 依作品類型分組；PDF CV 在每個大標題內重新從 `[1]` 編號。
-- Teaching 依機構分組。
-- 自訂群組會加入後續表單；刪除最後一筆後，空的自訂群組會自動移除。
-- Conference、Talk、Visit、Organization、Honor、Publication、Teaching 七類皆可排序。
+在 Admin 的「頁面與類別」分頁可管理：
 
+- 各頁頁首的小字、標題與簡介。
+- 類別的中英文小字、大標題與簡介。
+- 類別所在頁面。
+- 是否顯示於網站或 PDF 履歷。
+- 新增與刪除類別。刪除含有項目的類別時，必須把項目移到同類型的其他類別。
 
-## Conference 身分與 Organization
+移動類別到另一頁時，該類別中的所有項目會一起移動。以前寫死在程式中的研究興趣與學歷已轉成一般項目，刪除後不會再被自動補回。
 
-Conference and Workshops 表單可選擇身分：
+## 統一排序
 
-- `Participant`：預設，不在網站與 CV 額外顯示標籤。
-- `Speaker`、`Organizer`、`Co-organizer`：會在該會議旁顯示中英文身分。
-- `Other`：可自行輸入中英文身分。
+「排序」分頁依頁面顯示所有類別與其項目：
 
-勾選「同時列入 Organization」後，同一筆會議仍保留在 Conferences and Workshops，並另外出現在 `Organization / 學術活動籌辦`；資料只保存一份。Seminar、讀書會等不屬於 Conference and Workshops 的籌辦經歷，請使用獨立的 Organization 類型新增。
+- 可調整同一頁面類別的順序。
+- 可調整每個類別內項目的順序。
+- 可把項目移到同類型的其他類別。
+- 可在單一類別內依日期新到舊、日期舊到新或名稱快速排序。
+- 「PDF 履歷」檢視可獨立調整履歷中的類別順序；類別名稱與項目內容仍與網站共用。
 
-Organization 區塊同時套用到英文網站、中文網站、英文 PDF CV 與中文 PDF CV。沒有任何項目時，整段標題與內容都不會顯示。
+所有調整先存為瀏覽器草稿，右側會顯示類別及項目修改前後差異，最後才透過一張 GitHub Issue 送出。
 
-## 全站標題管理
+## Conference 與 Organization
 
-Admin 的「標題管理」分頁集中管理：
+Conference／Workshop 與 Organization 是兩種**完全獨立**的項目，不會自動複製或連動。需要同一活動同時出現在兩區時，可建立兩筆資料。
 
-- 首頁的 Selected Publications、Upcoming、Contact。
-- CV 網頁的頁首、Research Interests、Education、Honors and Awards，以及 PDF CV 的 Personal Information。
-- Publications 頁首、分類左上小字，以及 Preprints、Journal Articles 等動態分類大標題。
-- Activities 頁首與 Academic Visits、Presentations、Organization、Conferences and Workshops。
-- Teaching 頁首、機構左上小字，以及各教學機構的大標題。
+會議／工作坊可選擇身分：
 
-所有欄位都有英文與中文版本。與 PDF CV 共用的標題會同步更新兩份 LaTeX CV；Publication 分類與 Teaching 機構名稱也會同步出現在網站與 CV。修改只先保存為 Admin 本機草稿，會顯示逐欄修改前後預覽，最後才與其他草稿一起送出 GitHub Issue。預設值完全沿用目前網站文字。
+- 一般參與者：預設，不顯示額外標記。
+- 講者。
+- 主辦人。
+- 協辦人。
+- 其他：自行填寫中英文身分。
 
-## 雙語欄位補全
+Organization 可記錄會議、工作坊、研討會、讀書會或其他學術活動籌辦，並填寫主辦人、協辦人、召集人或自訂身分。沒有 Organization 項目時，網站與兩份 PDF 履歷都不顯示空標題。
 
-每張含雙語欄位的表單都有：
+## 中英文網站與 PDF 履歷連動
 
-- `Keep blanks / 空白保持空白`：預設。沒有填的另一種語言保持空白。
-- `Use Admin dictionary / 使用 Admin 中英對照表補全`：只查 `content/translations.json` 的完整一對一對照。
+同一份 `content/site.json` 產生：
 
-補全規則：
+- 英文網站與中文網站。
+- 英文 PDF 履歷。
+- 中文 PDF 履歷。
 
-- 英文有值、中文空白：英文在對照表完全命中時才填中文。
-- 中文有值、英文空白：中文在對照表完全命中時才填英文。
-- 找不到：保持空白。
-- 不使用 AI、模糊比對、同系列活動名稱、舊網站內容或其他推測。
+類別標題、項目所屬類別及類別內排序會同步到 PDF 履歷。只有勾選「顯示於 PDF 履歷」的類別會輸出，並可在排序分頁的「PDF 履歷」檢視調整類別順序。
 
-新增資料時，主要題目或名稱只要求至少一種語言。編輯既有資料時，空白欄位代表「維持原值」；要清除某個既有語言欄位，請輸入 `[CLEAR]`。
+中文履歷標題及題目支援：
 
-## 編輯中英對照資料庫
-
-在 Admin 的「中英對照資料庫」中：
-
-1. 可直接新增、修改、刪除及搜尋對照。
-2. 修改會立即保存在目前瀏覽器的本機草稿，不會每列送一次 Issue。
-3. 對照表修改會與其他內容草稿一起出現在右側預覽。
-4. 按「前往 GitHub 送出批次」後建立一張 Issue；大型批次會自動 gzip 壓縮，貼入單欄表單即可；後端會自動解壓，不會碰到 GitHub 單一欄位 65,536 字元限制。
-5. GitHub Action 成功寫入後，Issue 會出現 `website-form-applied` 標籤與完成訊息，並由同一個 workflow 的後續 deployment job 建立網站與 PDF。確認完成後，再回 Admin 手動清除本機草稿。
-
-若遠端對照表在本機草稿期間已更新，Admin 不會自動套用舊草稿，以避免覆蓋他人的新資料。
-
-### 匯入字詞與標籤檔案
-
-在同一分頁按「匯入／匯出」：
-
-1. 選擇 JSON 檔案。
-2. 選擇「安全合併」或「完整取代」。
-3. 按「讀取並預覽」；Admin 會先驗證資料並顯示新增、刪除、改名、文字修改、標籤修改與排序差異。
-4. 確認後按「套用為草稿」。這一步只更新目前瀏覽器的本機草稿，不會直接修改 GitHub。
-5. 最後仍透過一般批次預覽與 GitHub Issue 送出。
-
-「匯出目前草稿」可下載完整 schema v2 JSON；可把這個檔案交給其他工具修改後再匯入。Admin 也提供可直接下載的 compact import 範例，支援 `match`、`remove_pairs`、`remove_tags`、`tag_order` 與每筆詞條的 `tag_mode`。
-
-程式會拒絕：
-
-- 任一側空白的資料列。
-- 完全重複的對照列（包含 Unicode NFKC 正規化後的重複）。
-- 同一英文對應多個中文。
-- 同一中文對應多個英文。
-
-## 英文與中文 PDF CV
-
-同一份 `content/site.json` 會產生：
-
-- 英文 CV：`https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf`
-- 中文 CV：`https://hctsui.github.io/files/Hung-Chun-Tsui-CV-zh.pdf`
-
-英文 CV 頁面下載英文版，中文 CV 頁面下載中文版。中文 CV 使用 XeLaTeX、ctex 與 Noto CJK 繁體中文字型編譯。
-
-## Upcoming
-
-Conference、Talk、Visit 可選擇先顯示在 Upcoming。結束日期過後，每日 workflow 會重新生成網站與兩份 CV。
-
-## 日期與斜體
-
-日期使用 `YYYY-MM-DD`。題目中需要斜體時可寫：
-
-```text
-[i]u[/i]-Multiple Zeta Values
-```
-
-## 主要檔案
-
-- `content/site.json`：網站與 CV 的內容資料庫
-- `content/translations.json`：唯一的中英對照資料庫
-- `tools/process_request.py`：單筆表單處理及精確補全
-- `tools/process_batch_request.py`：Admin 批次交易、衝突檢查與七日還原
-- `tools/translation_validation.py`：單筆、批次與最終驗證共用的對照表規則
-- `tools/build_site.py`：網站生成
-- `tools/build_cv.py`：英文及中文 LaTeX CV 生成
-- `cv/Hung-Chun-Tsui-CV.template.tex`：英文 CV 模板
-- `cv/Hung-Chun-Tsui-CV-zh.template.tex`：中文 CV 模板
-
+- `$t$` 或 `\(t\)`：數學模式。
+- `[i]t[/i]` 或 `<em>t</em>`：斜體／數學變數。
+- 舊資料中中文題目的 `q`、`t`、`u`、`v`、`L`、`zeta`、`Gamma` 會在中文 PDF 中恢復為適當的數學模式。
 
 ## 學術訪問 Funding
 
-Admin 的學術訪問表單可另外填寫「資助機構」與「資助計畫」。開啟「自動生成說明」後，只要某一語言的資助欄位有內容，就會自動產生該語言的「其他說明」；這個結果優先於「自動填寫另一語言」，不會被反向覆寫。關閉後可自行填寫「其他說明」。
+學術訪問表單可填「資助機構」與「資助計畫」。開啟「自動生成說明」後，只要某一語言的資助欄位有內容，就會自動產生該語言的「其他說明」；生成內容優先於「自動填寫另一語言」，不會被另一語言覆蓋。
+
+最終格式為：
+
+```text
+城市, 國家 · 其他說明
+```
+
+## 中英對照與標籤
+
+「中英對照」分頁可新增、修改、刪除、合併及排序標籤，也可編輯字詞對照。所有修改都先成為本機草稿。
+
+「匯入／匯出」支援 JSON：
+
+1. 選擇安全合併或完整取代。
+2. 讀取並預覽新增、刪除、文字、標籤與排序差異。
+3. 套用為本機草稿。
+4. 與其他網站草稿一起送出。
+
+大型字詞庫會自動 gzip 壓縮，避免 GitHub 單一欄位 65,536 字元限制。
+
+## 日期與格式
+
+日期使用 `YYYY/MM/DD` 輸入，儲存時轉為 ISO 日期。中英文欄位只使用中英對照表的完整精確配對，不使用模糊或 AI 翻譯；手動內容不會被自動內容覆蓋。
+
+## 主要檔案
+
+- `content/site.json`：頁面、類別、項目與排序資料。
+- `content/translations.json`：中英字詞與標籤。
+- `admin/index.html`：內容編輯介面。
+- `admin/layout-v2.js`：頁面、類別與統一排序管理。
+- `admin/tags-v1.js`：字詞、標籤、匯入與一致性檢查。
+- `tools/category_config.py`：schema 3 類別模型與驗證。
+- `tools/process_batch_request.py`：批次套用、衝突檢查與七日還原。
+- `tools/build_site.py`：中英文網站生成。
+- `tools/build_cv.py`：中英文 LaTeX 履歷生成。

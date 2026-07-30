@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Render managed website content without changing the site's layout or CSS.
-
-The script replaces only content inside invisible CMS markers already present in
-HTML files. Everything outside those markers is left byte-for-byte unchanged.
-"""
-
+"""Generate all bilingual website sections from managed pages and categories."""
 from __future__ import annotations
 
 import argparse
@@ -17,371 +12,314 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from heading_config import HEADING_DEFAULTS, heading_value
+import process_request as core
+from category_config import categories_for_page, items_for_category, migrate_category_data, normalized_pages
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
-PAGE_FILES = [
-    ROOT / "index.html",
-    ROOT / "cv.html",
-    ROOT / "publications.html",
-    ROOT / "activities.html",
-    ROOT / "teaching.html",
-    ROOT / "zh" / "index.html",
-    ROOT / "zh" / "cv.html",
-    ROOT / "zh" / "publications.html",
-    ROOT / "zh" / "activities.html",
-    ROOT / "zh" / "teaching.html",
-]
-
-PAGE_TITLES = {
-    "index.html": "Hung-Chun Tsui | Mathematics",
-    "cv.html": "Hung-Chun Tsui | CV",
-    "publications.html": "Hung-Chun Tsui | Publications",
-    "activities.html": "Hung-Chun Tsui | Activities",
-    "teaching.html": "Hung-Chun Tsui | Teaching",
-    "zh/index.html": "崔鴻竣｜數學",
-    "zh/cv.html": "崔鴻竣｜履歷",
-    "zh/publications.html": "崔鴻竣｜論文與預印本",
-    "zh/activities.html": "崔鴻竣｜學術活動",
-    "zh/teaching.html": "崔鴻竣｜教學經歷",
-}
-
+PAGE_FILES = [ROOT / p for p in ("index.html", "cv.html", "publications.html", "activities.html", "teaching.html", "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html", "zh/teaching.html")]
 
 
 def load_data() -> dict[str, Any]:
-    return json.loads(DATA_FILE.read_text(encoding="utf-8"))
-
-
-def site_today(data: dict[str, Any], override: str | None = None) -> date:
-    value = override or os.environ.get("SITE_TODAY", "")
-    if value:
-        return date.fromisoformat(value)
-    tz = ZoneInfo(data.get("settings", {}).get("timezone", "Asia/Tokyo"))
-    return datetime.now(tz).date()
+    return migrate_category_data(core.migrate_data(json.loads(DATA_FILE.read_text(encoding="utf-8"))))
 
 
 def esc(value: Any) -> str:
     return html.escape(str(value or ""), quote=True)
 
 
-def inline_value(entry: dict[str, Any], field: str, lang: str) -> str:
-    rich = entry.get(f"{field}_html", {})
-    if isinstance(rich, dict) and rich.get(lang):
-        return str(rich[lang])
-    plain = entry.get(field, {})
-    if isinstance(plain, dict):
-        return esc(plain.get(lang) or "")
-    return esc(plain)
+def rich_html(value: Any) -> str:
+    """Small safe heading/item markup: [i]x[/i], [b]x[/b], and $x$."""
+    text = html.escape(str(value or ""), quote=False)
+    text = re.sub(r"\[i\](.+?)\[/i\]", r"<em>\1</em>", text, flags=re.I | re.S)
+    text = re.sub(r"\[b\](.+?)\[/b\]", r"<strong>\1</strong>", text, flags=re.I | re.S)
+    text = re.sub(r"\$([^$\n]+)\$", r"<em>\1</em>", text)
+    return text
 
 
 def plain_value(entry: dict[str, Any], field: str, lang: str) -> str:
-    plain = entry.get(field, {})
-    if isinstance(plain, dict):
-        return str(plain.get(lang) or "")
-    return str(plain or "")
+    value = entry.get(field)
+    if isinstance(value, dict):
+        return str(value.get(lang) or value.get("en") or value.get("zh") or "")
+    return str(value or "")
 
 
-def date_value(value: str) -> date:
-    return date.fromisoformat(value)
+def inline_value(entry: dict[str, Any], field: str, lang: str) -> str:
+    rich = entry.get(f"{field}_html")
+    if isinstance(rich, dict) and rich.get(lang):
+        return str(rich[lang])
+    return rich_html(plain_value(entry, field, lang))
 
 
 def display_date(value: str) -> str:
-    d = date_value(value)
-    return f"{d.year}/{d.month}/{d.day}"
+    if not value:
+        return ""
+    try:
+        d = date.fromisoformat(value)
+        return f"{d.year}/{d.month}/{d.day}"
+    except ValueError:
+        return value
 
 
 def display_range(entry: dict[str, Any]) -> str:
-    start = str(entry.get("start_date", ""))
+    if entry.get("date_label"):
+        return ""
+    start = str(entry.get("start_date") or "")
     end = str(entry.get("end_date") or start)
     if not start:
-        return str(entry.get("year", ""))
-    if end == start:
+        return str(entry.get("year") or "")
+    if not end or end == start:
         return display_date(start)
     return f"{display_date(start)}–{display_date(end)}"
 
 
-def activity_is_upcoming(entry: dict[str, Any], today: date) -> bool:
-    if not entry.get("show_upcoming"):
-        return False
-    end = str(entry.get("end_date") or entry.get("start_date") or "")
-    return bool(end and date_value(end) >= today)
+def linked_title(entry: dict[str, Any], lang: str, field: str = "title") -> str:
+    title = inline_value(entry, field, lang)
+    url = str(entry.get("url") or "").strip()
+    if url and title:
+        return f'<a href="{esc(url)}" rel="noopener" target="_blank">{title}</a>'
+    return title
 
 
-def link_or_text(content: str, url: str) -> str:
-    if not url:
-        return content
-    return f'<a href="{esc(url)}" rel="noopener" target="_blank">{content}</a>'
+def role_badge(entry: dict[str, Any], lang: str) -> str:
+    role = plain_value(entry, "role", lang).strip()
+    if not role or role.casefold() == "participant" or role == "一般參與者":
+        return ""
+    return f'<span class="activity-role">{rich_html(role)}</span>'
 
 
 def render_activity(entry: dict[str, Any], lang: str) -> str:
-    title = inline_value(entry, "title", lang)
-    heading = link_or_text(title, str(entry.get("url", "")))
-    role = inline_value(entry, "role", lang) if entry.get("type") == "conference" else ""
-    role_badge = f'<span class="activity-role">{role}</span>' if role else ""
-    description = inline_value(entry, "description", lang)
-    slides = str(entry.get("slides_url", ""))
-    links = ""
-    if slides:
+    title = linked_title(entry, lang)
+    badge = role_badge(entry, lang) if entry.get("type") == "conference" else ""
+    slides = ""
+    if entry.get("slides_url"):
         label = "投影片" if lang == "zh" else "Slides"
-        links = (
-            '<div class="pub-links">'
-            f'<a href="{esc(slides)}" rel="noopener" target="_blank">{label}</a>'
-            "</div>"
-        )
-    paragraph = f"<p>{description}</p>" if description else ""
+        slides = f'<a class="activity-link" href="{esc(entry["slides_url"])}" rel="noopener" target="_blank">{label}</a>'
+    desc = inline_value(entry, "description", lang)
     return (
-        f'<article class="timeline-item" data-entry-id="{esc(entry["id"])}">'
-        f"<time>{display_range(entry)}</time><div><h3>{heading}{role_badge}</h3>"
-        f"{paragraph}{links}</div></article>"
+        f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}">'
+        f'<time>{esc(display_range(entry))}</time><div><h3>{title}{badge}</h3>'
+        f'{f"<p>{desc}</p>" if desc else ""}{slides}</div></article>'
     )
 
 
 def render_organization(entry: dict[str, Any], lang: str) -> str:
-    title = link_or_text(inline_value(entry, "title", lang), str(entry.get("url", "")))
-    kind = inline_value(entry, "organization_kind", lang) or ("會議" if lang == "zh" else "Conference")
+    title = linked_title(entry, lang)
+    kind = inline_value(entry, "organization_kind", lang)
     role = inline_value(entry, "role", lang)
-    description = inline_value(entry, "description", lang)
-    meta = "".join(f'<span class="organization-badge">{value}</span>' for value in (kind, role) if value)
-    paragraph = f"<p>{description}</p>" if description else ""
+    meta = "".join(f'<span class="organization-badge">{x}</span>' for x in (kind, role) if x)
+    desc = inline_value(entry, "description", lang)
     return (
-        f'<article class="timeline-item organization-item" data-entry-id="{esc(entry["id"])}">'
-        f'<time>{display_range(entry)}</time><div><div class="organization-meta">{meta}</div>'
-        f'<h3>{title}</h3>{paragraph}</div></article>'
-    )
-
-
-def organization_section(data: dict[str, Any], entries: list[dict[str, Any]], lang: str) -> str:
-    if not entries:
-        return ""
-    label = esc(heading_value(data, "activity_organization", "label", lang))
-    heading = esc(heading_value(data, "activity_organization", "title", lang))
-    rows = join_lines([render_organization(entry, lang) for entry in entries])
-    return (
-        f'<section class="section activity-section organization-section"><div class="container">'
-        f'<p class="section-label" data-heading-key="activity_organization" data-heading-part="label">{label}</p>'
-        f'<h2 data-heading-key="activity_organization" data-heading-part="title">{heading}</h2>'
-        f'<div class="timeline organization-timeline">{rows}</div></div></section>'
+        f'<article class="timeline-item organization-item" data-entry-id="{esc(entry.get("id"))}">'
+        f'<time>{esc(display_range(entry))}</time><div><div class="organization-meta">{meta}</div>'
+        f'<h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</div></article>'
     )
 
 
 def render_honor(entry: dict[str, Any], lang: str) -> str:
-    title = link_or_text(inline_value(entry, "title", lang), str(entry.get("url", "")))
+    title = linked_title(entry, lang)
     org = inline_value(entry, "organization", lang)
-    paragraph = f"<p>{org}</p>" if org else ""
-    return (
-        f'<article class="timeline-item" data-entry-id="{esc(entry["id"])}">'
-        f'<time>{esc(entry.get("year", ""))}</time><div><h3>{title}</h3>{paragraph}</div></article>'
-    )
+    return f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}"><time>{esc(entry.get("year"))}</time><div><h3>{title}</h3>{f"<p>{org}</p>" if org else ""}</div></article>'
 
 
 def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool = False) -> str:
     links_html = "".join(
-        f'<a href="{esc(link.get("url", ""))}" rel="noopener" target="_blank">'
-        f'{esc((link.get("label") or {}).get(lang) or (link.get("label") or {}).get("en") or "Link")}</a>'
-        for link in entry.get("links", [])
-        if link.get("url")
+        f'<a href="{esc(link.get("url", ""))}" rel="noopener" target="_blank">{esc((link.get("label") or {}).get(lang) or (link.get("label") or {}).get("en") or "Link")}</a>'
+        for link in entry.get("links", []) if link.get("url")
     )
     links = f'<div class="pub-links">{links_html}</div>' if links_html else ""
-    arxiv_attr = f' data-arxiv="{esc(entry.get("arxiv", ""))}"' if entry.get("arxiv") else ""
-    if homepage:
-        article_open = '<article class="publication">'
-        title = (entry.get("homepage_title_html", {}) or {}).get(lang) or inline_value(entry, "title", lang)
-        authors = (entry.get("homepage_authors_html", {}) or {}).get(lang) or inline_value(entry, "authors", lang)
-    else:
-        article_open = (
-            f'<article class="publication" data-entry-id="{esc(entry["id"])}"{arxiv_attr} '
-            f'data-date="{esc(entry.get("date", ""))}">'
-        )
-        title = inline_value(entry, "title", lang)
-        authors = inline_value(entry, "authors", lang)
+    title = (entry.get("homepage_title_html", {}) or {}).get(lang) if homepage else ""
+    authors = (entry.get("homepage_authors_html", {}) or {}).get(lang) if homepage else ""
+    title = title or inline_value(entry, "title", lang)
+    authors = authors or inline_value(entry, "authors", lang)
+    venue = inline_value(entry, "venue", lang)
     return (
-        f'{article_open}<div class="pub-year">{esc(entry.get("year", ""))}</div><div>'
-        f'<h3>{title}</h3>'
-        f'<p class="authors">{authors}</p>'
-        f'<p class="venue">{inline_value(entry, "venue", lang)}</p>{links}</div></article>'
+        f'<article class="publication" data-entry-id="{esc(entry.get("id"))}"><div class="pub-year">{esc(entry.get("year"))}</div><div>'
+        f'<h3>{title}</h3><p class="authors">{authors}</p><p class="venue">{venue}</p>{links}</div></article>'
     )
-
-
-def render_publication_li(entry: dict[str, Any], lang: str, homepage: bool = False) -> str:
-    return f"<li>{render_publication_article(entry, lang, homepage=homepage)}</li>"
 
 
 def render_teaching(entry: dict[str, Any], lang: str) -> str:
-    term = esc(plain_value(entry, "term", lang))
-    course = esc(plain_value(entry, "course", lang))
+    term = rich_html(plain_value(entry, "term", lang))
+    course = rich_html(plain_value(entry, "course", lang))
+    role = rich_html(plain_value(entry, "role", lang))
+    return f'<article class="teaching-card" data-entry-id="{esc(entry.get("id"))}"><div class="date">{term}</div><div><h3>{course}</h3>{f"<p class=\"venue\">{role}</p>" if role else ""}</div></article>'
+
+
+def render_interest(entry: dict[str, Any], lang: str) -> str:
+    title = linked_title(entry, lang)
+    desc = rich_html(plain_value(entry, "description", lang))
+    return f'<article class="interest-summary-item" data-entry-id="{esc(entry.get("id"))}"><h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</article>'
+
+
+def render_education(entry: dict[str, Any], lang: str) -> str:
+    when = plain_value(entry, "date_label", lang) or display_range(entry)
+    title = linked_title(entry, lang)
+    org = rich_html(plain_value(entry, "organization", lang))
+    desc = rich_html(plain_value(entry, "description", lang))
+    detail = " · ".join(x for x in (org, desc) if x)
+    return f'<article data-entry-id="{esc(entry.get("id"))}"><time>{esc(when)}</time><div><h3>{title}</h3>{f"<p>{detail}</p>" if detail else ""}</div></article>'
+
+
+def render_generic(entry: dict[str, Any], lang: str) -> str:
+    title = linked_title(entry, lang)
+    desc = rich_html(plain_value(entry, "description", lang))
+    when = plain_value(entry, "date_label", lang) or display_range(entry)
+    return f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}"><time>{esc(when)}</time><div><h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</div></article>'
+
+
+def render_contact(items: list[dict[str, Any]], lang: str) -> str:
+    cards = []
+    for entry in items:
+        title = rich_html(plain_value(entry, "title", lang))
+        value = rich_html(plain_value(entry, "description", lang))
+        url = str(entry.get("url") or "").strip()
+        body = f'<a href="{esc(url)}" rel="noopener">{value}</a>' if url else f'<p>{value}</p>'
+        cards.append(f'<div data-entry-id="{esc(entry.get("id"))}"><span>{title}</span>{body}</div>')
+    return '<div class="contact-grid">' + "".join(cards) + '</div>'
+
+
+def category_items(data: dict[str, Any], category: dict[str, Any], today: date) -> list[dict[str, Any]]:
+    kind = category["kind"]
+    if kind == "featured_publications":
+        limit = int(data.get("settings", {}).get("homepage_publication_limit", 2))
+        return sorted(data.get("publications", []), key=lambda e: (e.get("date", ""), e.get("id", "")), reverse=True)[:limit]
+    if kind == "upcoming":
+        return sorted([
+            e for e in data.get("activities", [])
+            if e.get("show_upcoming") and str(e.get("end_date") or e.get("start_date") or "") >= today.isoformat()
+        ], key=lambda e: (e.get("start_date", ""), e.get("id", "")))
+    return items_for_category(data, category["id"])
+
+
+def category_body(data: dict[str, Any], category: dict[str, Any], lang: str, today: date) -> tuple[str, int]:
+    kind = category["kind"]
+    items = category_items(data, category, today)
+    if kind == "featured_publications":
+        return '<ol class="publication-list">' + "".join(f'<li>{render_publication_article(x, lang, homepage=True)}</li>' for x in items) + '</ol>', len(items)
+    if kind == "upcoming":
+        return '<div class="timeline">' + "".join(render_activity(x, lang) for x in items) + '</div>', len(items)
+    if kind == "contact":
+        return render_contact(items, lang), len(items)
+    if kind == "interest":
+        return '<div class="interest-summary">' + "".join(render_interest(x, lang) for x in items) + '</div>', len(items)
+    if kind == "education":
+        return '<div class="compact-list">' + "".join(render_education(x, lang) for x in items) + '</div>', len(items)
+    if kind == "honor":
+        return '<div class="timeline compact-timeline">' + "".join(render_honor(x, lang) for x in items) + '</div>', len(items)
+    if kind == "publication":
+        return '<ol class="publication-list">' + "".join(f'<li>{render_publication_article(x, lang)}</li>' for x in items) + '</ol>', len(items)
+    if kind in {"visit", "talk", "conference"}:
+        return '<div class="timeline compact-timeline">' + "".join(render_activity(x, lang) for x in items) + '</div>', len(items)
+    if kind == "organization":
+        return '<div class="timeline organization-timeline">' + "".join(render_organization(x, lang) for x in items) + '</div>', len(items)
+    if kind == "teaching":
+        return '<div class="teaching-grid">' + "".join(render_teaching(x, lang) for x in items) + '</div>', len(items)
+    if kind == "personal":
+        return render_contact(items, lang), len(items)
+    return '<div class="timeline">' + "".join(render_generic(x, lang) for x in items) + '</div>', len(items)
+
+
+def render_category(data: dict[str, Any], category: dict[str, Any], lang: str, today: date, index: int) -> str:
+    body, count = category_body(data, category, lang, today)
+    if count == 0 and category["kind"] not in {"contact"}:
+        return ""
+    label = rich_html(category.get("label", {}).get(lang, ""))
+    title = rich_html(category.get("title", {}).get(lang, ""))
+    intro = rich_html(category.get("intro", {}).get(lang, ""))
+    cid = esc(category["id"])
+    soft = " section-soft" if index % 2 == 0 else ""
+    classes = f'section managed-category category-{esc(category["kind"])}{soft}'
+    if category["kind"] == "contact":
+        classes += " contact-section"
     return (
-        f'<article class="teaching-card" data-entry-id="{esc(entry["id"])}">'
-        f'<div class="date">{term}</div><h3>{course}</h3></article>'
+        f'<section class="{classes}" data-category-id="{cid}" id="{cid}"><div class="container">'
+        f'<p class="section-label">{label}</p><h2>{title}</h2>{f"<p class=\"section-intro\">{intro}</p>" if intro else ""}{body}</div></section>'
     )
 
 
-def replace_block(text: str, marker: str, content: str) -> tuple[str, bool]:
-    start = f"<!-- CMS:{marker}:START -->"
-    end = f"<!-- CMS:{marker}:END -->"
-    if start not in text or end not in text:
-        raise RuntimeError(f"Missing CMS marker {marker}")
-    before, rest = text.split(start, 1)
-    old, after = rest.split(end, 1)
-    # Newlines make source readable but have no visual effect.
-    new_inner = "\n" + content.rstrip() + "\n"
-    new_text = before + start + new_inner + end + after
-    return new_text, old != new_inner
+def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
+    page = next(p for p in normalized_pages(data) if p["id"] == page_id)
+    header = page.get("header")
+    if not header:
+        return ""
+    label = rich_html(header["label"][lang])
+    title = rich_html(header["title"][lang])
+    intro = rich_html(header["intro"][lang])
+    download = ""
+    if page_id == "cv":
+        href = "https://hctsui.github.io/files/Hung-Chun-Tsui-CV-zh.pdf" if lang == "zh" else "https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf"
+        text = "下載 PDF 履歷" if lang == "zh" else "Download PDF CV"
+        download = f'<a class="button primary cv-download" href="{href}" rel="noopener" target="_blank">{text}</a>'
+    return f'<section class="page-hero"><div class="container"><p class="section-label">{label}</p><h1 class="page-title">{title}</h1><p class="page-intro">{intro}</p>{download}</div></section>'
 
 
-def update_page_title(text: str, title: str) -> str:
-    updated, count = re.subn(r"<title>.*?</title>", f"<title>{esc(title)}</title>", text, count=1, flags=re.S)
+def extract_home_hero(text: str) -> str:
+    match = re.search(r'(<section class="home-hero".*?</section>)', text, flags=re.S)
+    if not match:
+        raise RuntimeError("Could not find home hero")
+    return match.group(1)
+
+
+def replace_main(text: str, content: str) -> str:
+    updated, count = re.subn(r'<main id="main">.*?</main>', f'<main id="main">{content}</main>', text, count=1, flags=re.S)
     if count != 1:
-        raise RuntimeError("Could not find page title")
+        raise RuntimeError("Could not replace main element")
     return updated
 
 
-def update_managed_headings(text: str, data: dict[str, Any], lang: str) -> str:
-    """Replace elements explicitly marked with data-heading-key/part."""
-    for key, parts in HEADING_DEFAULTS.items():
-        for part in parts:
-            value = esc(heading_value(data, key, part, lang))
-            pattern = re.compile(
-                rf'(<(?P<tag>p|h1|h2)(?P<attrs>[^>]*\bdata-heading-key="{re.escape(key)}"[^>]*\bdata-heading-part="{re.escape(part)}"[^>]*)>)(.*?)(</(?P=tag)>)',
-                re.S,
-            )
-            text = pattern.sub(lambda match: match.group(1) + value + match.group(5), text)
-    return text
+def update_page_title(text: str, title: str) -> str:
+    updated, count = re.subn(r'<title>.*?</title>', f'<title>{esc(title)}</title>', text, count=1, flags=re.S)
+    if count != 1:
+        raise RuntimeError("Could not update title")
+    return updated
 
 
 def update_footer(text: str, lang: str, today: date) -> str:
     formatted = f"{today.year}/{today.month}/{today.day}"
-    if lang == "zh":
-        replacement = f"<p>最後更新：{formatted}</p>"
-        pattern = r"<p>最後更新：[^<]*</p>"
-    else:
-        replacement = f"<p>Last updated: {formatted}</p>"
-        pattern = r"<p>Last updated:[^<]*</p>"
-    updated, count = re.subn(pattern, replacement, text, count=1)
-    if count != 1:
-        raise RuntimeError("Could not find footer update line")
-    return updated
+    pattern = r'<p>最後更新：[^<]*</p>' if lang == "zh" else r'<p>Last updated:[^<]*</p>'
+    replacement = f'<p>最後更新：{formatted}</p>' if lang == "zh" else f'<p>Last updated: {formatted}</p>'
+    return re.sub(pattern, replacement, text, count=1)
 
 
-def join_lines(items: list[str]) -> str:
-    return "\n".join(items)
-
-
-def ordered_ungrouped(data: dict[str, Any], kind: str, entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    order_ids = data.get("settings", {}).get("entry_order", {}).get(kind, [])
-    if isinstance(order_ids, list) and order_ids:
-        rank = {str(entry_id): index for index, entry_id in enumerate(order_ids)}
-        return sorted(entries, key=lambda entry: (rank.get(str(entry.get("id")), 999999), str(entry.get("id", ""))))
-    if kind == "honor":
-        return sorted(entries, key=lambda entry: (-int(entry.get("year", 0)), int(entry.get("order", 999999)), str(entry.get("id", ""))))
-    return sorted(entries, key=lambda entry: (entry.get("start_date", ""), entry.get("id", "")), reverse=True)
+def site_today(data: dict[str, Any], override: str | None = None) -> date:
+    value = override or os.environ.get("SITE_TODAY", "")
+    if value:
+        return date.fromisoformat(value)
+    return datetime.now(ZoneInfo(data.get("settings", {}).get("timezone", "Asia/Tokyo"))).date()
 
 
 def build(today: date, update_date: bool = True) -> list[Path]:
     data = load_data()
-    activities = data.get("activities", [])
-    honors = data.get("honors", [])
-    publications = data.get("publications", [])
-    teaching = data.get("teaching", [])
-
-    upcoming = sorted(
-        [e for e in activities if activity_is_upcoming(e, today)],
-        key=lambda e: (e.get("start_date", ""), e.get("id", "")),
-    )
-    archived = [e for e in activities if not activity_is_upcoming(e, today)]
-    visits = ordered_ungrouped(data, "visit", [e for e in archived if e.get("type") == "visit"])
-    talks = ordered_ungrouped(data, "talk", [e for e in archived if e.get("type") == "talk"])
-    conferences = ordered_ungrouped(data, "conference", [e for e in archived if e.get("type") == "conference"])
-    organization_only = ordered_ungrouped(data, "organization", [e for e in archived if e.get("type") == "organization"])
-    organization_entries = sorted(
-        organization_only + [e for e in conferences if e.get("show_in_organization")],
-        key=lambda e: (e.get("start_date", ""), e.get("id", "")),
-        reverse=True,
-    )
-    honors_sorted = ordered_ungrouped(data, "honor", honors)
-    publications_sorted = sorted(
-        publications,
-        key=lambda e: (e.get("date", ""), int(e.get("order", 999999))),
-    )
-    latest = sorted(
-        publications,
-        key=lambda e: (e.get("date", ""), e.get("id", "")),
-        reverse=True,
-    )[: int(data.get("settings", {}).get("homepage_publication_limit", 2))]
-    teaching_sorted = sorted(teaching, key=lambda e: int(e.get("order", 999999)))
-
-    page_blocks: dict[str, dict[str, str]] = {
-        "index.html": {
-            "HOME_PUBLICATIONS": join_lines([render_publication_li(e, "en", homepage=True) for e in latest]),
-            "UPCOMING": join_lines([render_activity(e, "en") for e in upcoming]),
-        },
-        "zh/index.html": {
-            "HOME_PUBLICATIONS": join_lines([render_publication_li(e, "zh", homepage=True) for e in latest]),
-            "UPCOMING": join_lines([render_activity(e, "zh") for e in upcoming]),
-        },
-        "activities.html": {
-            "VISITS": join_lines([render_activity(e, "en") for e in visits]),
-            "TALKS": join_lines([render_activity(e, "en") for e in talks]),
-            "ORGANIZATION_SECTION": organization_section(data, organization_entries, "en"),
-            "CONFERENCES": join_lines([render_activity(e, "en") for e in conferences]),
-        },
-        "zh/activities.html": {
-            "VISITS": join_lines([render_activity(e, "zh") for e in visits]),
-            "TALKS": join_lines([render_activity(e, "zh") for e in talks]),
-            "ORGANIZATION_SECTION": organization_section(data, organization_entries, "zh"),
-            "CONFERENCES": join_lines([render_activity(e, "zh") for e in conferences]),
-        },
-        "cv.html": {"HONORS": join_lines([render_honor(e, "en") for e in honors_sorted])},
-        "zh/cv.html": {"HONORS": join_lines([render_honor(e, "zh") for e in honors_sorted])},
-        "publications.html": {
-            "PUBLICATIONS": join_lines([render_publication_li(e, "en") for e in publications_sorted])
-        },
-        "zh/publications.html": {
-            "PUBLICATIONS": join_lines([render_publication_li(e, "zh") for e in publications_sorted])
-        },
-        "teaching.html": {"TEACHING": join_lines([render_teaching(e, "en") for e in teaching_sorted])},
-        "zh/teaching.html": {"TEACHING": join_lines([render_teaching(e, "zh") for e in teaching_sorted])},
-    }
-
-    candidates: dict[Path, str] = {}
-    content_changed = False
-    for rel, blocks in page_blocks.items():
-        path = ROOT / rel
-        text = path.read_text(encoding="utf-8")
-        changed_here = False
-        for marker, rendered in blocks.items():
-            text, changed = replace_block(text, marker, rendered)
-            changed_here = changed_here or changed
-        text = update_managed_headings(text, data, "zh" if rel.startswith("zh/") else "en")
-        if rel in PAGE_TITLES:
-            text = update_page_title(text, PAGE_TITLES[rel])
-        candidates[path] = text
-        content_changed = content_changed or changed_here
-
-    # A content change updates the site-wide footer date consistently.
-    if content_changed and update_date:
-        for path in PAGE_FILES:
-            text = candidates.get(path, path.read_text(encoding="utf-8"))
-            lang = "zh" if path.parent.name == "zh" else "en"
-            candidates[path] = update_footer(text, lang, today)
-
-    changed_files: list[Path] = []
-    for path, text in candidates.items():
-        old = path.read_text(encoding="utf-8")
-        if old != text:
-            path.write_text(text, encoding="utf-8")
-            changed_files.append(path)
-    return changed_files
+    pages = {p["id"]: p for p in normalized_pages(data)}
+    changed: list[Path] = []
+    for page_id, page in pages.items():
+        for lang in ("en", "zh"):
+            rel = page["path"][lang]
+            path = ROOT / rel
+            old = path.read_text(encoding="utf-8")
+            categories = categories_for_page(data, page_id)
+            rendered = [render_category(data, c, lang, today, i) for i, c in enumerate(categories)]
+            sections = "".join(x for x in rendered if x)
+            content = (extract_home_hero(old) if page_id == "home" else page_header(data, page_id, lang)) + sections
+            new = replace_main(old, content)
+            page_title = page.get("header", {}).get("title", {}).get(lang) if page.get("header") else ("Hung-Chun Tsui" if lang == "en" else "崔鴻竣")
+            new = update_page_title(new, f"{page_title} | Hung-Chun Tsui" if page_id != "home" else "Hung-Chun Tsui | Mathematics")
+            if update_date:
+                new = update_footer(new, lang, today)
+            if new != old:
+                path.write_text(new, encoding="utf-8")
+                changed.append(path)
+    return changed
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--today", help="Override date using YYYY-MM-DD (for testing)")
+    parser.add_argument("--today")
     parser.add_argument("--no-update-date", action="store_true")
     args = parser.parse_args()
     data = load_data()
-    today = site_today(data, args.today)
-    changed = build(today, update_date=not args.no_update_date)
+    changed = build(site_today(data, args.today), update_date=not args.no_update_date)
     for path in changed:
         print(path.relative_to(ROOT))
 

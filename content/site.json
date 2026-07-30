@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "settings": {
     "timezone": "Asia/Tokyo",
     "homepage_publication_limit": 2,
@@ -84,7 +84,8 @@
       ],
       "visit": [
         "visit-2026-07-02-tohoku-university"
-      ]
+      ],
+      "organization": []
     },
     "manually_ordered_kinds": [],
     "headings": {
@@ -262,7 +263,442 @@
           "zh": "機構"
         }
       }
-    }
+    },
+    "pages": [
+      {
+        "id": "home",
+        "name": {
+          "en": "Home",
+          "zh": "首頁"
+        },
+        "path": {
+          "en": "index.html",
+          "zh": "zh/index.html"
+        },
+        "header": null,
+        "order": 0
+      },
+      {
+        "id": "cv",
+        "name": {
+          "en": "CV",
+          "zh": "履歷"
+        },
+        "path": {
+          "en": "cv.html",
+          "zh": "zh/cv.html"
+        },
+        "header": {
+          "label": {
+            "en": "Academic profile",
+            "zh": "學術資料"
+          },
+          "title": {
+            "en": "Curriculum Vitae",
+            "zh": "履歷"
+          },
+          "intro": {
+            "en": "Education, research interests, and honors.",
+            "zh": "學歷、研究領域與獎項"
+          }
+        },
+        "order": 1
+      },
+      {
+        "id": "publications",
+        "name": {
+          "en": "Publications",
+          "zh": "論文"
+        },
+        "path": {
+          "en": "publications.html",
+          "zh": "zh/publications.html"
+        },
+        "header": {
+          "label": {
+            "en": "Research record",
+            "zh": "研究紀錄"
+          },
+          "title": {
+            "en": "Publications and Preprints",
+            "zh": "論文與預印本"
+          },
+          "intro": {
+            "en": "A complete list of current papers and preprints.",
+            "zh": "論文與預印本的完整列表"
+          }
+        },
+        "order": 2
+      },
+      {
+        "id": "activities",
+        "name": {
+          "en": "Activities",
+          "zh": "學術活動"
+        },
+        "path": {
+          "en": "activities.html",
+          "zh": "zh/activities.html"
+        },
+        "header": {
+          "label": {
+            "en": "Academic record",
+            "zh": "學術紀錄"
+          },
+          "title": {
+            "en": "Activities",
+            "zh": "學術活動"
+          },
+          "intro": {
+            "en": "Academic visits, presentations, conferences and workshops.",
+            "zh": "學術訪問、學術報告、會議與工作坊"
+          }
+        },
+        "order": 3
+      },
+      {
+        "id": "teaching",
+        "name": {
+          "en": "Teaching",
+          "zh": "教學"
+        },
+        "path": {
+          "en": "teaching.html",
+          "zh": "zh/teaching.html"
+        },
+        "header": {
+          "label": {
+            "en": "Teaching record",
+            "zh": "教學紀錄"
+          },
+          "title": {
+            "en": "Teaching Experience",
+            "zh": "教學經歷"
+          },
+          "intro": {
+            "en": "Teaching and course-assistant experience.",
+            "zh": "教學與課程助教經歷"
+          }
+        },
+        "order": 4
+      }
+    ],
+    "categories": [
+      {
+        "id": "home-publications",
+        "page_id": "home",
+        "kind": "featured_publications",
+        "label": {
+          "en": "Recent work",
+          "zh": "近期成果"
+        },
+        "title": {
+          "en": "Selected Publications",
+          "zh": "精選論文"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 0,
+        "show_on_web": true,
+        "show_on_cv": false
+      },
+      {
+        "id": "home-upcoming",
+        "page_id": "home",
+        "kind": "upcoming",
+        "label": {
+          "en": "Calendar",
+          "zh": "行程"
+        },
+        "title": {
+          "en": "Upcoming",
+          "zh": "近期活動"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 1,
+        "show_on_web": true,
+        "show_on_cv": false
+      },
+      {
+        "id": "home-contact",
+        "page_id": "home",
+        "kind": "contact",
+        "label": {
+          "en": "Contact",
+          "zh": "聯絡資訊"
+        },
+        "title": {
+          "en": "Get in touch",
+          "zh": "聯絡"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 2,
+        "show_on_web": true,
+        "show_on_cv": false
+      },
+      {
+        "id": "cv-research",
+        "page_id": "cv",
+        "kind": "interest",
+        "label": {
+          "en": "Fields",
+          "zh": "研究方向"
+        },
+        "title": {
+          "en": "Research Interests",
+          "zh": "研究領域"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 0,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "cv-education",
+        "page_id": "cv",
+        "kind": "education",
+        "label": {
+          "en": "Degrees",
+          "zh": "學位"
+        },
+        "title": {
+          "en": "Education",
+          "zh": "學歷"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 1,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "cv-honors",
+        "page_id": "cv",
+        "kind": "honor",
+        "label": {
+          "en": "Recognition",
+          "zh": "獎助紀錄"
+        },
+        "title": {
+          "en": "Honors and Awards",
+          "zh": "獎項與榮譽"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 2,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "cv-personal",
+        "page_id": "cv",
+        "kind": "personal",
+        "label": {
+          "en": "Details",
+          "zh": "個人資料"
+        },
+        "title": {
+          "en": "Personal Information",
+          "zh": "個人資訊"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 3,
+        "show_on_web": false,
+        "show_on_cv": true
+      },
+      {
+        "id": "publication-journal-articles",
+        "page_id": "publications",
+        "kind": "publication",
+        "label": {
+          "en": "Manuscript type",
+          "zh": "稿件類型"
+        },
+        "title": {
+          "en": "Journal Articles",
+          "zh": "期刊論文"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 0,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "publication-preprints",
+        "page_id": "publications",
+        "kind": "publication",
+        "label": {
+          "en": "Manuscript type",
+          "zh": "稿件類型"
+        },
+        "title": {
+          "en": "Preprints",
+          "zh": "預印本"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 1,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "publication-survey-papers",
+        "page_id": "publications",
+        "kind": "publication",
+        "label": {
+          "en": "Manuscript type",
+          "zh": "稿件類型"
+        },
+        "title": {
+          "en": "Survey Papers",
+          "zh": "綜述論文"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 2,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "activity-visits",
+        "page_id": "activities",
+        "kind": "visit",
+        "label": {
+          "en": "Visit",
+          "zh": "訪問經歷"
+        },
+        "title": {
+          "en": "Academic Visits",
+          "zh": "學術訪問"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 0,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "activity-talks",
+        "page_id": "activities",
+        "kind": "talk",
+        "label": {
+          "en": "Talks",
+          "zh": "演講紀錄"
+        },
+        "title": {
+          "en": "Presentations",
+          "zh": "學術報告"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 1,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "activity-organization",
+        "page_id": "activities",
+        "kind": "organization",
+        "label": {
+          "en": "Organizing Experience",
+          "zh": "籌辦經歷"
+        },
+        "title": {
+          "en": "Organization",
+          "zh": "學術活動籌辦"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 2,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "activity-conferences",
+        "page_id": "activities",
+        "kind": "conference",
+        "label": {
+          "en": "Participation",
+          "zh": "參與紀錄"
+        },
+        "title": {
+          "en": "Conferences and Workshops",
+          "zh": "會議與工作坊"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 3,
+        "show_on_web": true,
+        "show_on_cv": true
+      },
+      {
+        "id": "teaching-national-tsing-hua-university",
+        "page_id": "teaching",
+        "kind": "teaching",
+        "label": {
+          "en": "Institution",
+          "zh": "機構"
+        },
+        "title": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "intro": {
+          "en": "",
+          "zh": ""
+        },
+        "order": 0,
+        "show_on_web": true,
+        "show_on_cv": true
+      }
+    ],
+    "cv_category_order": [
+      "cv-research",
+      "cv-education",
+      "publication-journal-articles",
+      "publication-preprints",
+      "publication-survey-papers",
+      "activity-visits",
+      "activity-talks",
+      "activity-organization",
+      "cv-honors",
+      "activity-conferences",
+      "teaching-national-tsing-hua-university",
+      "cv-personal"
+    ]
   },
   "activities": [
     {
@@ -308,7 +744,9 @@
       "funding_program": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-visits",
+      "order": 0
     },
     {
       "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
@@ -333,7 +771,9 @@
         "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
         "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
       },
-      "slides_url": "https://drive.google.com/file/d/1HmrxcOYRdzcAFKnnCzarS6wfa4d7gSbS/view?usp=sharing"
+      "slides_url": "https://drive.google.com/file/d/1HmrxcOYRdzcAFKnnCzarS6wfa4d7gSbS/view?usp=sharing",
+      "category_id": "activity-talks",
+      "order": 0
     },
     {
       "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
@@ -358,7 +798,9 @@
         "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
         "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "category_id": "activity-talks",
+      "order": 1
     },
     {
       "id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
@@ -383,7 +825,9 @@
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
         "zh": "名古屋—關西青年研究者 zeta 研討會\n, 名古屋大學, 名古屋, 日本"
       },
-      "slides_url": "https://drive.google.com/file/d/1lwDJ5mT_b7K84dxeCCNd5DcY-ORmDCHZ/view?usp=sharing"
+      "slides_url": "https://drive.google.com/file/d/1lwDJ5mT_b7K84dxeCCNd5DcY-ORmDCHZ/view?usp=sharing",
+      "category_id": "activity-talks",
+      "order": 2
     },
     {
       "id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
@@ -408,7 +852,9 @@
         "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
         "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "category_id": "activity-talks",
+      "order": 3
     },
     {
       "id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
@@ -433,7 +879,9 @@
         "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
         "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
       },
-      "slides_url": "https://drive.google.com/file/d/1UAwe7PzgwOy-H2U2m3mVj0RLqfC_8Rar/view?usp=sharing"
+      "slides_url": "https://drive.google.com/file/d/1UAwe7PzgwOy-H2U2m3mVj0RLqfC_8Rar/view?usp=sharing",
+      "category_id": "activity-talks",
+      "order": 4
     },
     {
       "id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
@@ -458,7 +906,9 @@
         "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
         "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "category_id": "activity-talks",
+      "order": 5
     },
     {
       "id": "conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop",
@@ -484,11 +934,12 @@
         "zh": "東北大學, 仙台, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 3
     },
     {
       "id": "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference",
@@ -514,11 +965,12 @@
         "zh": "東北大學, 仙台, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 4
     },
     {
       "id": "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
@@ -548,7 +1000,8 @@
         "en": "Speaker",
         "zh": "講者"
       },
-      "show_in_organization": false
+      "category_id": "activity-conferences",
+      "order": 5
     },
     {
       "id": "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers",
@@ -578,7 +1031,8 @@
         "en": "Speaker",
         "zh": "講者"
       },
-      "show_in_organization": false
+      "category_id": "activity-conferences",
+      "order": 6
     },
     {
       "id": "conference-2026-01-21-the-61st-tms-annual-meeting",
@@ -604,11 +1058,12 @@
         "zh": "國立中正大學, 嘉義, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 7
     },
     {
       "id": "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
@@ -634,11 +1089,12 @@
         "zh": "中央研究院, 臺北, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 8
     },
     {
       "id": "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
@@ -668,7 +1124,8 @@
         "en": "Speaker",
         "zh": "講者"
       },
-      "show_in_organization": false
+      "category_id": "activity-conferences",
+      "order": 9
     },
     {
       "id": "conference-2025-09-01-japan-taiwan-number-theory-conference",
@@ -698,7 +1155,8 @@
         "en": "Speaker",
         "zh": "講者"
       },
-      "show_in_organization": false
+      "category_id": "activity-conferences",
+      "order": 10
     },
     {
       "id": "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
@@ -724,11 +1182,12 @@
         "zh": "國立臺灣大學, 臺北, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 11
     },
     {
       "id": "conference-2025-06-30-iwasawa-2025",
@@ -754,11 +1213,12 @@
         "zh": "國立臺灣大學, 臺北, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 12
     },
     {
       "id": "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
@@ -784,11 +1244,12 @@
         "zh": "國立臺灣大學, 臺北, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 13
     },
     {
       "id": "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w",
@@ -814,11 +1275,12 @@
         "zh": "近畿大學, 大阪, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 14
     },
     {
       "id": "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w",
@@ -844,11 +1306,12 @@
         "zh": "九州大學西新廣場, 福岡, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 15
     },
     {
       "id": "conference-2025-01-14-the-60th-tms-annual-meeting",
@@ -874,11 +1337,12 @@
         "zh": "國立中央大學, 桃園, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 16
     },
     {
       "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
@@ -904,11 +1368,12 @@
         "zh": "中央研究院, 臺北, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 17
     },
     {
       "id": "conference-2024-01-22-the-59th-tms-annual-meeting",
@@ -934,11 +1399,12 @@
         "zh": "國立政治大學, 臺北, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 18
     },
     {
       "id": "conference-2023-01-16-the-58th-tms-annual-meeting",
@@ -964,11 +1430,12 @@
         "zh": "國立清華大學, 新竹, 臺灣"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 19
     },
     {
       "id": "conference-2026-number-theory-summer-school",
@@ -994,11 +1461,12 @@
         "zh": "矢太樓, 長崎, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 2
     },
     {
       "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
@@ -1024,11 +1492,12 @@
         "zh": "名古屋大學, 名古屋, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 1
     },
     {
       "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
@@ -1054,11 +1523,12 @@
         "zh": "名古屋大學, 名古屋, 日本"
       },
       "slides_url": "",
-      "show_in_organization": false,
       "role": {
         "en": "",
         "zh": ""
-      }
+      },
+      "category_id": "activity-conferences",
+      "order": 0
     }
   ],
   "honors": [
@@ -1083,7 +1553,8 @@
       "organization_html": {
         "en": "Japan–Taiwan Exchange Association",
         "zh": "公益財團法人日本台灣交流協會"
-      }
+      },
+      "category_id": "cv-honors"
     },
     {
       "id": "honor-2025-nstc-graduate-research-fellowship",
@@ -1106,7 +1577,8 @@
       "organization_html": {
         "en": "National Science and Technology Council",
         "zh": "國家科學及技術委員會"
-      }
+      },
+      "category_id": "cv-honors"
     },
     {
       "id": "honor-2024-chow-hung-ching-scholarship",
@@ -1129,7 +1601,8 @@
       "organization_html": {
         "en": "Academia Sinica",
         "zh": "中央研究院"
-      }
+      },
+      "category_id": "cv-honors"
     },
     {
       "id": "honor-2024-tms-outstanding-students-prize",
@@ -1152,7 +1625,8 @@
       "organization_html": {
         "en": "Taiwan Mathematical Society",
         "zh": "中華民國數學會"
-      }
+      },
+      "category_id": "cv-honors"
     }
   ],
   "publications": [
@@ -1203,7 +1677,8 @@
           "url": "https://drive.google.com/file/d/1-7W2H3vzHCM4E3asVgfFNbzuP1ojudmO/view?usp=drive_link"
         }
       ],
-      "group_id": "preprints"
+      "group_id": "preprints",
+      "category_id": "publication-preprints"
     },
     {
       "id": "publication-2504.18879-2",
@@ -1252,7 +1727,8 @@
           "url": "https://drive.google.com/file/d/1fzSgTiE4V_rNHtDgoTLtZVMoaWrTHBAx/view?usp=drive_link"
         }
       ],
-      "group_id": "preprints"
+      "group_id": "preprints",
+      "category_id": "publication-preprints"
     },
     {
       "id": "publication-2603.10376-3",
@@ -1309,7 +1785,8 @@
         "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
         "zh": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>"
       },
-      "group_id": "preprints"
+      "group_id": "preprints",
+      "category_id": "publication-preprints"
     },
     {
       "id": "publication-2604.03618-4",
@@ -1366,7 +1843,8 @@
         "en": "<strong>Hung-Chun Tsui</strong>",
         "zh": "<strong>Hung-Chun Tsui</strong>"
       },
-      "group_id": "preprints"
+      "group_id": "preprints",
+      "category_id": "publication-preprints"
     }
   ],
   "teaching": [
@@ -1390,7 +1868,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-2-math2420-algebra-ii",
@@ -1412,7 +1891,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-3-math2870-discrete-mathematics",
@@ -1434,7 +1914,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-4-math3450-cryptography",
@@ -1456,7 +1937,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-5-math1410-linear-algebra-i",
@@ -1478,7 +1960,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-6-math1420-linear-algebra-ii",
@@ -1500,7 +1983,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-7-math3050-complex-analysis",
@@ -1522,7 +2006,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-8-math2010-advanced-calculus-i",
@@ -1544,7 +2029,8 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
-      }
+      },
+      "category_id": "teaching-national-tsing-hua-university"
     },
     {
       "id": "teaching-9-math2020-advanced-calculus-ii",
@@ -1566,6 +2052,215 @@
       "role": {
         "en": "Teaching Assistant",
         "zh": "助教"
+      },
+      "category_id": "teaching-national-tsing-hua-university"
+    }
+  ],
+  "profile_items": [
+    {
+      "id": "interest-function-field-arithmetic",
+      "type": "interest",
+      "category_id": "cv-research",
+      "order": 0,
+      "title": {
+        "en": "Function Field Arithmetic",
+        "zh": "函數體算術"
+      },
+      "description": {
+        "en": "",
+        "zh": ""
+      }
+    },
+    {
+      "id": "interest-positive-characteristic-mzv-mes",
+      "type": "interest",
+      "category_id": "cv-research",
+      "order": 1,
+      "title": {
+        "en": "Multiple Zeta Values and Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵下的多重 zeta 值與多重 Eisenstein 級數"
+      },
+      "description": {
+        "en": "",
+        "zh": ""
+      }
+    },
+    {
+      "id": "education-phd-nthu",
+      "type": "education",
+      "category_id": "cv-education",
+      "order": 0,
+      "start_date": "2025-02-01",
+      "end_date": "",
+      "date_label": {
+        "en": "Feb. 2025–Present",
+        "zh": "2025 年 2 月至今"
+      },
+      "title": {
+        "en": "PhD in Mathematics",
+        "zh": "數學博士班"
+      },
+      "organization": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "description": {
+        "en": "Direct admission",
+        "zh": "逕讀博士"
+      }
+    },
+    {
+      "id": "education-bs-nthu",
+      "type": "education",
+      "category_id": "cv-education",
+      "order": 1,
+      "start_date": "2021-09-01",
+      "end_date": "2024-12-31",
+      "date_label": {
+        "en": "Sep. 2021–Dec. 2024",
+        "zh": "2021 年 9 月至 2024 年 12 月"
+      },
+      "title": {
+        "en": "BS in Mathematics",
+        "zh": "數學學士"
+      },
+      "organization": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "description": {
+        "en": "Graduated with distinction",
+        "zh": "成績優異畢業"
+      }
+    },
+    {
+      "id": "personal-languages",
+      "type": "personal",
+      "category_id": "cv-personal",
+      "order": 0,
+      "title": {
+        "en": "Language",
+        "zh": "語言"
+      },
+      "description": {
+        "en": "Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1)",
+        "zh": "中文（母語） | 英文（CEFR C1） | 日文（CEFR A1）"
+      }
+    },
+    {
+      "id": "personal-address",
+      "type": "personal",
+      "category_id": "cv-personal",
+      "order": 1,
+      "title": {
+        "en": "Address",
+        "zh": "地址"
+      },
+      "description": {
+        "en": "No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+        "zh": "臺灣 300044 新竹市東區光復路二段 101 號"
+      }
+    },
+    {
+      "id": "personal-email",
+      "type": "personal",
+      "category_id": "cv-personal",
+      "order": 2,
+      "title": {
+        "en": "Email",
+        "zh": "電子郵件"
+      },
+      "description": {
+        "en": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
+        "zh": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com"
+      }
+    },
+    {
+      "id": "personal-website",
+      "type": "personal",
+      "category_id": "cv-personal",
+      "order": 3,
+      "title": {
+        "en": "Website",
+        "zh": "網站"
+      },
+      "description": {
+        "en": "https://hctsui.github.io",
+        "zh": "https://hctsui.github.io"
+      },
+      "url": "https://hctsui.github.io"
+    },
+    {
+      "id": "personal-orcid",
+      "type": "personal",
+      "category_id": "cv-personal",
+      "order": 4,
+      "title": {
+        "en": "ORCID",
+        "zh": "ORCID"
+      },
+      "description": {
+        "en": "0009-0009-7445-5634",
+        "zh": "0009-0009-7445-5634"
+      },
+      "url": "https://orcid.org/0009-0009-7445-5634"
+    },
+    {
+      "id": "contact-institutional-email",
+      "type": "contact",
+      "category_id": "home-contact",
+      "order": 0,
+      "title": {
+        "en": "Institutional email",
+        "zh": "學校信箱"
+      },
+      "description": {
+        "en": "hctsui@gapp.nthu.edu.tw",
+        "zh": "hctsui@gapp.nthu.edu.tw"
+      },
+      "url": "mailto:hctsui@gapp.nthu.edu.tw"
+    },
+    {
+      "id": "contact-personal-email",
+      "type": "contact",
+      "category_id": "home-contact",
+      "order": 1,
+      "title": {
+        "en": "Personal email",
+        "zh": "個人信箱"
+      },
+      "description": {
+        "en": "hctsui.math@gmail.com",
+        "zh": "hctsui.math@gmail.com"
+      },
+      "url": "mailto:hctsui.math@gmail.com"
+    },
+    {
+      "id": "contact-affiliation",
+      "type": "contact",
+      "category_id": "home-contact",
+      "order": 2,
+      "title": {
+        "en": "Affiliation",
+        "zh": "所屬單位"
+      },
+      "description": {
+        "en": "Department of Mathematics, National Tsing Hua University, Taiwan",
+        "zh": "臺灣國立清華大學數學系"
+      }
+    },
+    {
+      "id": "contact-address-office",
+      "type": "contact",
+      "category_id": "home-contact",
+      "order": 3,
+      "title": {
+        "en": "Address & office",
+        "zh": "地址與辦公室"
+      },
+      "description": {
+        "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+        "zh": "國立清華大學第三綜合大樓 6 樓 628 室；300044 臺灣新竹市東區光復路二段 101 號"
       }
     }
   ]
