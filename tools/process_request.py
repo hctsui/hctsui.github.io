@@ -130,12 +130,74 @@ class TranslationIndex:
             self.zh_to_en[zh_key] = en
 
     def complete(self, en: str, zh: str) -> tuple[str, str]:
+        """Complete only by exact whole-field dictionary lookup."""
         en, zh = en.strip(), zh.strip()
         if en and not zh:
             zh = self.en_to_zh.get(normalize_lookup(en), "")
         elif zh and not en:
             en = self.zh_to_en.get(normalize_lookup(zh), "")
         return en, zh
+
+
+_TERM_EN_TO_ZH = {
+    "spring": "春",
+    "summer": "夏",
+    "fall": "秋",
+    "autumn": "秋",
+    "winter": "冬",
+}
+_TERM_ZH_TO_EN = {
+    "春": "Spring",
+    "春季": "Spring",
+    "夏": "Summer",
+    "夏季": "Summer",
+    "秋": "Fall",
+    "秋季": "Fall",
+    "冬": "Winter",
+    "冬季": "Winter",
+}
+
+
+def complete_academic_term(en: str, zh: str) -> tuple[str, str]:
+    """Complete recurring semester labels without enumerating every year.
+
+    Supported examples:
+      Fall 2026 / 2026 Fall / Autumn 2026 -> 2026 秋
+      2026 秋 / 2026 秋季 -> Fall 2026
+
+    This rule runs only when Admin dictionary completion is enabled.
+    It does not perform keyword replacement inside longer text.
+    """
+    en, zh = en.strip(), zh.strip()
+
+    if en and not zh:
+        normalized = re.sub(r"\s+", " ", en).strip()
+        match = re.fullmatch(
+            r"(?i)(spring|summer|fall|autumn|winter)\s+([12]\d{3})",
+            normalized,
+        )
+        if not match:
+            match = re.fullmatch(
+                r"(?i)([12]\d{3})\s+(spring|summer|fall|autumn|winter)",
+                normalized,
+            )
+            if match:
+                year, season = match.group(1), match.group(2).casefold()
+            else:
+                year = season = ""
+        else:
+            season, year = match.group(1).casefold(), match.group(2)
+        if year and season:
+            return en, f"{year} {_TERM_EN_TO_ZH[season]}"
+
+    if zh and not en:
+        normalized = re.sub(r"\s+", " ", zh).strip()
+        match = re.fullmatch(r"([12]\d{3})\s*年?\s*(春季?|夏季?|秋季?|冬季?)", normalized)
+        if match:
+            year, season = match.group(1), match.group(2)
+            return f"{_TERM_ZH_TO_EN[season]} {year}", zh
+
+    return en, zh
 
 
 _TRANSLATIONS: TranslationIndex | None = None
@@ -159,9 +221,14 @@ def bilingual_pair(
     en, zh = get(fields, en_label), get(fields, zh_label)
     if dictionary_enabled(fields):
         before = (en, zh)
+        # Academic terms use a small deterministic year+season rule first.
+        # Every other bilingual field uses exact whole-field dictionary lookup only.
+        if name == "學期":
+            en, zh = complete_academic_term(en, zh)
         en, zh = translations().complete(en, zh)
         if before != (en, zh):
-            NOTES.append(f"由 Admin 中英對照表補全{name}。")
+            source_name = "學期格式規則或 Admin 中英對照表" if name == "學期" else "Admin 中英對照表"
+            NOTES.append(f"由{source_name}補全{name}。")
     if require_any and not (en or zh):
         raise ValueError(f"At least one language is required for {name}.")
     return en, zh
