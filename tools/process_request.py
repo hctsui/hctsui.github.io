@@ -629,15 +629,15 @@ def _funding_sentence(organization: str, program: str, lang: str) -> str:
         return ""
     if lang == "en":
         if organization and program:
-            return f"Supported by {organization} through {program}."
+            return f"Supported by {organization} through {program}"
         if organization:
-            return f"Supported by {organization}."
-        return f"Supported through {program}."
+            return f"Supported by {organization}"
+        return f"Supported through {program}"
     if organization and program:
-        return f"本次訪問經費由{organization}透過{program}提供。"
+        return f"本次訪問經費由{organization}透過{program}提供"
     if organization:
-        return f"本次訪問經費由{organization}提供。"
-    return f"本次訪問由{program}補助。"
+        return f"本次訪問經費由{organization}提供"
+    return f"本次訪問由{program}補助"
 
 
 def _compose_visit_description(
@@ -664,7 +664,7 @@ def _funding_part(value: str, lang: str) -> bool:
     value = value.strip()
     if lang == "en":
         return bool(re.match(r"^(?:Supported by .+?(?: through .+?)?|Supported through .+?)\.?$", value, re.I))
-    return bool(re.match(r"^(?:經費由.+?(?:透過.+?)?提供|由.+?補助|本次訪問獲.+?支持)。?$", value))
+    return bool(re.match(r"^(?:(?:本次訪問)?經費由.+?(?:透過.+?)?提供|(?:本次訪問)?由.+?補助|本次訪問獲.+?支持)。?$", value))
 
 
 def _legacy_visit_components(item: dict[str, Any], lang: str) -> tuple[str, str, str]:

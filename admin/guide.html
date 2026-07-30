@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin 完整使用手冊｜崔鴻竣</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #2d2926;
+      background: #f7f3ed;
+      line-height: 1.65;
+      scroll-behavior: smooth;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #7d3e34; }
+    code { padding: .08rem .35rem; border-radius: .35rem; background: #f0e8e1; }
+    .page { width: min(1180px, calc(100% - 28px)); margin: auto; padding: 28px 0 72px; }
+    .topbar { display: flex; justify-content: space-between; gap: 14px; align-items: center; margin-bottom: 18px; }
+    .button { display: inline-flex; align-items: center; padding: 9px 13px; border: 1px solid #c8bbb1; border-radius: 9px; background: #fff; color: #2d2926; font-weight: 750; text-decoration: none; }
+    .eyebrow { color: #8d493d; font-size: .75rem; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.25; }
+    h1 { margin: .3rem 0 .7rem; font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { margin-top: 0; }
+    h3 { margin: 1.6rem 0 .45rem; }
+    .intro { max-width: 780px; color: #695f59; font-size: 1.05rem; }
+    .layout { display: grid; grid-template-columns: minmax(230px, 300px) minmax(0, 1fr); gap: 20px; align-items: start; margin-top: 24px; }
+    .toc, article section, .callout { border: 1px solid #ded3ca; border-radius: 16px; background: #fff; box-shadow: 0 10px 28px #3d2b2310; }
+    .toc { position: sticky; top: 16px; padding: 16px; }
+    .toc strong { display: block; margin-bottom: 7px; }
+    .toc ol { margin: 0; padding-left: 1.25rem; }
+    .toc a { color: #4f4641; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    article { display: grid; gap: 16px; }
+    article section { padding: clamp(18px, 3vw, 30px); }
+    article section > :last-child { margin-bottom: 0; }
+    .callout { padding: 14px 16px; border-left: 5px solid #8d493d; background: #faf5f1; }
+    .success { border-left-color: #247a46; background: #eef8f1; }
+    .warning { border-left-color: #b56b18; background: #fff8e8; }
+    .steps { counter-reset: step; padding: 0; list-style: none; }
+    .steps li { position: relative; padding: 0 0 1rem 2.6rem; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: .05rem; width: 1.8rem; height: 1.8rem; display: grid; place-items: center; border-radius: 50%; background: #2d2926; color: #fff; font-weight: 800; }
+    table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+    th, td { padding: 10px; border-bottom: 1px solid #e8dfd8; text-align: left; vertical-align: top; }
+    th { color: #675b54; font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; }
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li { padding-left: 1.65rem; position: relative; }
+    .checklist li::before { content: "□"; position: absolute; left: 0; font-weight: 800; }
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+<main class="page">
+  <div class="topbar">
+    <div class="eyebrow">網站管理 · 操作手冊</div>
+    <a class="button" href="index.html">返回 Admin</a>
+  </div>
+  <h1>Admin 完整使用手冊</h1>
+  <p class="intro">這份手冊涵蓋新增、編輯、刪除、排序、中英對照、頁面與類別、還原、預覽及 GitHub 送出流程。遇到欄位或流程疑問時，先依對應章節檢查。</p>
+
+  <div class="layout">
+    <nav class="toc" aria-label="本頁目錄">
+      <strong>快速目錄</strong>
+      <ol>
+        <li><a href="#principle">核心原則</a></li>
+        <li><a href="#workflow">標準工作流程</a></li>
+        <li><a href="#records">項目、新增與編輯</a></li>
+        <li><a href="#fields">欄位與自動填寫</a></li>
+        <li><a href="#types">各類型注意事項</a></li>
+        <li><a href="#drafts">草稿與預覽</a></li>
+        <li><a href="#layout">排序、頁面與類別</a></li>
+        <li><a href="#dictionary">中英對照表</a></li>
+        <li><a href="#restore">垃圾桶與還原</a></li>
+        <li><a href="#submit">送出 GitHub</a></li>
+        <li><a href="#cv">網站與 CV 規則</a></li>
+        <li><a href="#troubleshooting">疑難排解</a></li>
+        <li><a href="#checklist">送出前檢查</a></li>
+      </ol>
+    </nav>
+
+    <article>
+      <section id="principle">
+        <h2>1. 核心原則</h2>
+        <div class="callout success"><strong>Admin 內的操作先是本機草稿。</strong>只有建立 GitHub Issue 並由自動流程成功套用後，正式網站資料才會改變。</div>
+        <ul>
+          <li>草稿保存在目前瀏覽器；換裝置、無痕視窗或清除網站資料時不會跟著移動。</li>
+          <li>右側預覽是送出內容的最後檢查點；沒有預覽過的資料不要直接送出。</li>
+          <li>選填欄位留白時，網站與 CV 不會輸出多餘空行、空標籤或替代文字。</li>
+          <li>Organization（籌辦活動）與 Conference（會議紀錄）完全獨立，不會互相複製或連動。</li>
+        </ul>
+      </section>
+
+      <section id="workflow">
+        <h2>2. 標準工作流程</h2>
+        <ol class="steps">
+          <li>在「項目」找到既有資料並按「編輯」，或到「新增」選擇類型。</li>
+          <li>填寫欄位；需要時啟用「中英對照表」與「自動填寫另一語言」。</li>
+          <li>先按「在右側預覽」，檢查中英文、日期、連結、分類與空白欄位。</li>
+          <li>按「加入新增草稿」或「儲存修改草稿」。</li>
+          <li>到「草稿」逐筆檢查；需要時回到編輯器修改或移除單筆草稿。</li>
+          <li>確認右側總預覽後，按「前往 GitHub 送出批次」。</li>
+          <li>確認 GitHub Issue 確實建立且自動流程完成，再回 Admin 按「已建立 GitHub Issue：清空本機草稿」。</li>
+        </ol>
+      </section>
+
+      <section id="records">
+        <h2>3. 項目、新增與編輯</h2>
+        <h3>項目</h3>
+        <p>可用搜尋、項目類型及檢視排序縮小範圍。「網站順序」反映目前正式資料加上本機草稿後的結果；其他排序只影響 Admin 檢視，不會修改網站。</p>
+        <h3>新增</h3>
+        <p>先選類型再填表。日期型項目預設今天；結束日期未填時，系統會使用開始日期。新增的 ID 由類型、日期與名稱自動建立，若重複會加序號。</p>
+        <h3>編輯與刪除</h3>
+        <p>編輯會保留未修改欄位。刪除只會加入刪除草稿，送出前仍可在「草稿」移除。若正式刪除後想恢復，使用「垃圾桶」的「還原」。</p>
+      </section>
+
+      <section id="fields">
+        <h2>4. 欄位、小標註與自動填寫</h2>
+        <table>
+          <thead><tr><th>功能</th><th>行為</th><th>不會做的事</th></tr></thead>
+          <tbody>
+            <tr><td>套用中英對照表</td><td>以整個欄位精確查找另一語言</td><td>不做部分詞、模糊或 AI 翻譯</td></tr>
+            <tr><td>自動填寫另一語言</td><td>離開欄位時補上空白或仍為系統產生的另一側</td><td>不覆蓋已手動修改的內容</td></tr>
+            <tr><td>學期規則</td><td>例如 <code>Fall 2026</code> 與 <code>2026 秋</code> 可互補</td><td>不猜測不符合格式的文字</td></tr>
+            <tr><td>日期</td><td>接受 <code>YYYY-MM-DD</code>，也可用日曆按鈕</td><td>不接受無法判斷的日期文字</td></tr>
+            <tr><td>選填</td><td>留白即不輸出</td><td>不自動補「無」或空標記</td></tr>
+          </tbody>
+        </table>
+        <p>每個表單欄位下方的小標註是該欄位的即時規則；若與本手冊的概述相比更具體，以表單的小標註為準。</p>
+      </section>
+
+      <section id="types">
+        <h2>5. 各項目類型注意事項</h2>
+        <h3>會議／工作坊</h3>
+        <p>「一般參與者」不顯示身分；講者、主辦人、協辦人或自訂身分會在名稱下方另列，避免和長標題擠在同一行。會議資料不會建立籌辦活動。</p>
+        <h3>學術報告</h3>
+        <p>投影片網址為選填。CV 會把 slides 連結放在標題下一行，避免長標題與連結互相擠壓。</p>
+        <h3>學術訪問</h3>
+        <p>城市、國家、說明、資助機構與資助計畫可分開填寫。啟用「自動生成說明」後，資助資料會產生對應中英文；生成結果不加句點。手動說明仍可保留在地點與資助資訊之間。</p>
+        <h3>學術活動籌辦</h3>
+        <p>活動類型與籌辦身分分開設定；這是獨立項目，只出現在所選 Organization 類別。</p>
+        <h3>論文／作品</h3>
+        <ul>
+          <li>「自動判定」會把有 DOI、期刊頁或正式刊登資訊的項目歸入 Journal Articles，否則歸入 Preprints。</li>
+          <li>填 arXiv 編號可自動建立 arXiv 網址；填標準 arXiv 網址也可回填編號。</li>
+          <li>作者編輯器可逐人輸入中英文姓名，並標記本人；系統會產生正確作者順序與本人強調格式。</li>
+          <li>PDF、arXiv、DOI、Journal、Code 連結在 CV 中會另起一行。</li>
+        </ul>
+        <h3>教學</h3>
+        <p>課號與課名分開輸入，儲存時合併。機構決定 Teaching Experience 下方的子標題；新增機構後會自動形成新群組。</p>
+        <h3>研究興趣、學歷、榮譽、一般項目與個人資訊</h3>
+        <p>這些項目依所選類別決定出現位置。學歷可另填顯示日期，例如「2021 年 9 月至 2024 年 12 月」；CV 日期欄固定為單行。</p>
+      </section>
+
+      <section id="drafts">
+        <h2>6. 草稿與預覽</h2>
+        <ul>
+          <li>按草稿的「預覽」可查看單筆修改前後。</li>
+          <li>新增與修改草稿可再次「編輯」；儲存後會更新原草稿，不會重複新增一筆。</li>
+          <li>「移除」只移除該筆草稿；「清空內容草稿」會移除內容、排序與還原草稿，但不等同刪除正式網站資料。</li>
+          <li>右側「技術資料：批次 JSON」供除錯或大型批次貼上使用，平常不需手動修改。</li>
+        </ul>
+      </section>
+
+      <section id="layout">
+        <h2>7. 排序、頁面與類別</h2>
+        <h3>排序</h3>
+        <p>可用日期或名稱快速排序，再用上下箭頭微調。論文保留作品類別、教學保留機構，只在各自群組內排序。另有統一頁面排序可調整頁面內類別、類別內項目及 PDF 履歷類別順序。</p>
+        <h3>頁面與類別</h3>
+        <ul>
+          <li>先用頁面選單切換；下方只顯示所選頁面的頁首與類別，避免管理頁過長。</li>
+          <li>頁面可編輯頁首小字、主標題與說明，中英文都必須完整。</li>
+          <li>類別可編輯所屬頁面、小字、主標題、說明，以及是否顯示於網站或 PDF 履歷。</li>
+          <li>類別移到另一頁時，其項目會跟著移動。</li>
+          <li>刪除含有項目的類別時，必須先選擇同類型的接收類別；沒有相容類別時系統會阻止刪除。</li>
+          <li>Publication 與 Teaching 在 CV 中使用頁面主標題，再依作品類型或機構顯示子標題；空群組不顯示。</li>
+        </ul>
+      </section>
+
+      <section id="dictionary">
+        <h2>8. 中英對照表</h2>
+        <p>對照表用於固定譯名，例如機構、人名、城市、課程與數學術語。它只在「整個欄位」完全相符時補值，避免未經確認就改寫正式名稱。</p>
+        <ul>
+          <li>一個詞條可有多個標籤；選多個標籤時只顯示全部符合的詞條。</li>
+          <li>標籤可新增、改名、合併、刪除及排序；刪除前需確認詞條歸屬。</li>
+          <li>稽核區列出與正式內容不一致的精確匹配，可逐筆或批次套用為草稿。</li>
+          <li>匯入 JSON 會先分析與顯示差異；「套用為草稿」後仍需走一般 GitHub 送出流程。</li>
+          <li>遠端對照表若已更新，舊本機草稿會另存備份，不會自動覆蓋新資料。</li>
+        </ul>
+        <div class="callout warning"><strong>術語慣例：</strong><code>q-shuffle</code> 對應 <code>q-洗牌</code>，<code>v-adic</code> 對應 <code>v-進</code>。數學變數在網站與 CV 會使用斜體／數學格式。</div>
+      </section>
+
+      <section id="restore">
+        <h2>9. 垃圾桶與還原</h2>
+        <p>最近 7 天的新增、修改、刪除、排序與其他支援操作可先預覽，再加入「還原」草稿。還原不是立刻生效，仍要送出 GitHub 批次。</p>
+        <ul>
+          <li>若同一項目在該操作之後又被修改，後端會阻止舊資料覆蓋新資料。</li>
+          <li>過期紀錄不再顯示或允許還原；歷史檔的實體清理由後續批次一併處理。</li>
+          <li>送出前請在右側確認「還原」後的內容，而不是只看操作名稱。</li>
+        </ul>
+      </section>
+
+      <section id="submit">
+        <h2>10. 送出 GitHub</h2>
+        <p>小型批次會直接開啟已預填內容的 GitHub Issue。資料較大時，Admin 會複製壓縮或精簡後的單一文字內容，再開啟批次表單；只需貼入唯一欄位。</p>
+        <ol>
+          <li>檢查右側變更數量、每筆前後內容及錯誤提示。</li>
+          <li>按「前往 GitHub 送出批次」。若瀏覽器阻擋新視窗，允許此站開啟彈出視窗後重試。</li>
+          <li>在 GitHub 建立 Issue，等待自動流程留言完成或出現成功標籤。</li>
+          <li>回 Admin 按「已建立 GitHub Issue：清空本機草稿」。這只清除本機草稿，不代表部署成功。</li>
+          <li>到正式網站與 CV 再檢查一次。</li>
+        </ol>
+      </section>
+
+      <section id="cv">
+        <h2>11. 網站與 CV 顯示規則</h2>
+        <ul>
+          <li>網站依「頁面與類別」設定顯示；首頁保留 Selected Publications／Upcoming 雙欄與所有論文、所有活動連結。</li>
+          <li>CV 的 Publications 主標題固定使用 Publications and Preprints，再顯示 Preprints、Journal Articles、Survey Papers 等非空子群組。</li>
+          <li>CV 的 Teaching 主標題固定使用 Teaching Experience，再依學校或機構顯示非空子群組。</li>
+          <li>會議、報告、訪問與籌辦活動只有在結束日期已過後才進入 CV；當天仍視為進行中。</li>
+          <li>CV 的學歷日期保持單行；教學課名使用較寬主欄；論文與投影片連結另起一行。</li>
+          <li>空類別、空說明與空連結不輸出。</li>
+        </ul>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>12. 疑難排解</h2>
+        <table>
+          <thead><tr><th>狀況</th><th>處理方式</th></tr></thead>
+          <tbody>
+            <tr><td>Admin 顯示「讀取資料失敗」</td><td>重新整理；確認不是直接以本機檔案方式開啟，且網站可讀取 content JSON。</td></tr>
+            <tr><td>另一語言沒有自動填寫</td><td>確認兩個開關已啟用、另一側為空白，且對照表有完全相同的整欄詞條。</td></tr>
+            <tr><td>日期欄變紅</td><td>改用 <code>YYYY-MM-DD</code> 或日曆按鈕；確認結束日期不早於開始日期。</td></tr>
+            <tr><td>找不到類別或機構</td><td>到「頁面與類別」確認類別存在且種類相容；論文／教學也可在表單選「其他／新增」。</td></tr>
+            <tr><td>送出按鈕沒有開啟 GitHub</td><td>允許彈出視窗；大型批次先確認剪貼簿已有資料，再手動開啟批次表單。</td></tr>
+            <tr><td>還原被拒絕</td><td>該項目可能已被後續操作修改；先檢查最新正式資料，不要強行覆蓋。</td></tr>
+            <tr><td>內容在網站有、CV 沒有</td><td>檢查類別是否啟用 PDF 顯示；活動則確認結束日期已過。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="checklist">
+        <h2>13. 送出前完整檢查</h2>
+        <ul class="checklist">
+          <li>中英文名稱、標題、說明與專有名詞正確</li>
+          <li>日期格式正確，結束日期不早於開始日期</li>
+          <li>網址可開啟，arXiv／PDF／slides 指向正確檔案</li>
+          <li>項目類型、頁面、類別、作品類型或教學機構正確</li>
+          <li>Organization 與 Conference 沒有誤建成同一筆</li>
+          <li>選填空白沒有產生多餘內容</li>
+          <li>右側逐筆預覽與總筆數正確</li>
+          <li>GitHub Issue 已建立並由自動流程成功處理</li>
+          <li>正式中英文網站、首頁雙欄、Admin 與兩份 CV 都已檢查</li>
+        </ul>
+      </section>
+    </article>
+  </div>
+</main>
+</body>
+</html>

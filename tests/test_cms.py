@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from build_cv import build_sections, rich_to_latex  # noqa: E402
+from build_cv import build_sections, render_education, render_publication, rich_to_latex  # noqa: E402
 from build_site import render_activity, render_category, render_home_sections  # noqa: E402
 from category_config import (  # noqa: E402
     all_items,
@@ -101,11 +101,11 @@ class PayloadAndVisitTests(unittest.TestCase):
     def test_visit_funding_is_added_to_description(self) -> None:
         self.assertEqual(
             _compose_visit_description("Sendai", "Japan", "Research visit", "NSTC", "Overseas Research Program", "en"),
-            "Sendai, Japan · Research visit · Supported by NSTC through Overseas Research Program.",
+            "Sendai, Japan · Research visit · Supported by NSTC through Overseas Research Program",
         )
         self.assertEqual(
             _compose_visit_description("仙台", "日本", "研究訪問", "國科會", "千里馬計畫", "zh"),
-            "仙台, 日本 · 研究訪問 · 本次訪問經費由國科會透過千里馬計畫提供。",
+            "仙台, 日本 · 研究訪問 · 本次訪問經費由國科會透過千里馬計畫提供",
         )
 
 
@@ -148,7 +148,9 @@ class CategoryArchitectureTests(unittest.TestCase):
         category = next(c for c in data["settings"]["categories"] if c["id"] == "activity-organization")
         self.assertEqual(render_category(data, category, "en", date(2026, 1, 1), 0), "")
         entry = {"id": "c", "type": "conference", "start_date": "2026-01-01", "end_date": "2026-01-01", "title": {"en": "Example", "zh": "範例"}, "role": {"en": "Speaker", "zh": "講者"}}
-        self.assertIn('class="activity-role">Speaker</span>', render_activity(entry, "en"))
+        rendered = render_activity(entry, "en")
+        self.assertIn('<p class="activity-role"><span>Role</span>Speaker</p>', rendered)
+        self.assertNotIn("<h3>Example<span", rendered)
 
     def test_home_keeps_legacy_two_column_overview_and_links(self) -> None:
         data = minimal_site()
@@ -222,6 +224,110 @@ class CvRenderingTests(unittest.TestCase):
         self.assertIn(r"\section{正特徵下的 $t$-模}", sections)
         self.assertIn("函數體算術", sections)
 
+    def test_publication_and_teaching_use_page_heading_then_group_heading(self) -> None:
+        data = minimal_site()
+        data["settings"]["content_groups"]["teaching"].append(
+            {"id": "national-tsing-hua-university", "label": {"en": "National Tsing Hua University", "zh": "國立清華大學"}, "order": 0}
+        )
+        data["settings"]["categories"].append(
+            {
+                "id": "teaching-national-tsing-hua-university",
+                "page_id": "teaching",
+                "kind": "teaching",
+                "label": {"en": "Institution", "zh": "機構"},
+                "title": {"en": "National Tsing Hua University", "zh": "國立清華大學"},
+                "intro": {"en": "", "zh": ""},
+                "order": 0,
+                "show_on_web": True,
+                "show_on_cv": True,
+            }
+        )
+        data["publications"].append(
+            {
+                "id": "publication-example",
+                "type": "publication",
+                "category_id": "publication-preprints",
+                "group_id": "preprints",
+                "order": 0,
+                "date": "2025-01-01",
+                "year": 2025,
+                "title": {"en": "A Long Paper Title", "zh": "很長的論文標題"},
+                "authors": {"en": "Author", "zh": "作者"},
+                "venue": {"en": "Preprint", "zh": "預印本"},
+                "links": [{"label": {"en": "arXiv", "zh": "arXiv"}, "url": "https://arxiv.org/abs/1234.5678"}],
+            }
+        )
+        data["teaching"].append(
+            {
+                "id": "teaching-example",
+                "type": "teaching",
+                "category_id": "teaching-national-tsing-hua-university",
+                "group_id": "national-tsing-hua-university",
+                "order": 0,
+                "course": {"en": "MATH 123456: A Very Long Course Name", "zh": "MATH 123456：很長的課程名稱"},
+                "term": {"en": "Fall 2025", "zh": "2025 秋"},
+                "role": {"en": "Teaching Assistant", "zh": "助教"},
+                "institution": {"en": "National Tsing Hua University", "zh": "國立清華大學"},
+            }
+        )
+        migrate_category_data(data)
+        sections = build_sections(data, "en", date(2026, 1, 1))
+        self.assertIn(r"\section{Publications and Preprints}", sections)
+        self.assertIn(r"\cvgroup{Preprints}", sections)
+        self.assertNotIn(r"\section{Preprints}", sections)
+        self.assertIn(r"\section{Teaching Experience}", sections)
+        self.assertIn(r"\cvgroup{National Tsing Hua University}", sections)
+        self.assertNotIn(r"\section{National Tsing Hua University}", sections)
+
+    def test_upcoming_and_ongoing_activities_are_excluded_until_finished(self) -> None:
+        data = minimal_site()
+        data["activities"] = [
+            {"id": "past", "type": "conference", "category_id": "activity-conferences", "order": 0, "start_date": "2026-06-01", "end_date": "2026-06-02", "title": {"en": "Past Meeting", "zh": "過去會議"}},
+            {"id": "today", "type": "conference", "category_id": "activity-conferences", "order": 1, "start_date": "2026-07-31", "end_date": "2026-07-31", "title": {"en": "Today Meeting", "zh": "今日會議"}},
+            {"id": "future", "type": "conference", "category_id": "activity-conferences", "order": 2, "start_date": "2026-08-01", "end_date": "2026-08-02", "title": {"en": "Future Meeting", "zh": "未來會議"}},
+        ]
+        migrate_category_data(data)
+        sections = build_sections(data, "en", date(2026, 7, 31))
+        self.assertIn("Past Meeting", sections)
+        self.assertNotIn("Today Meeting", sections)
+        self.assertNotIn("Future Meeting", sections)
+
+    def test_cv_links_and_dates_use_dedicated_lines_and_nonbreaking_dates(self) -> None:
+        publication = {
+            "title": {"en": "A Long Title"},
+            "authors": {"en": "Author"},
+            "year": 2026,
+            "links": [{"label": {"en": "PDF"}, "url": "https://example.com/paper.pdf"}],
+        }
+        rendered_publication = render_publication(publication, 1, "en")
+        self.assertIn(r"\textbf{A Long Title}\\{\small\color{secondaryColor}", rendered_publication)
+        education = {
+            "title": {"zh": "數學學士"},
+            "organization": {"zh": "國立清華大學"},
+            "date_label": {"zh": "2021 年 9 月至 2024 年 12 月"},
+        }
+        rendered_education = render_education(education, "zh")
+        self.assertIn(r"{2021 年 9 月至 2024 年 12 月}", rendered_education)
+
+
+class AdminDocumentationTests(unittest.TestCase):
+    def test_admin_links_to_detailed_guide(self) -> None:
+        admin = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
+        guide = (ROOT / "admin" / "guide.html").read_text(encoding="utf-8")
+        self.assertIn('href="guide.html"', admin)
+        for heading in ("標準工作流程", "欄位、小標註與自動填寫", "排序、頁面與類別", "垃圾桶與還原", "疑難排解", "送出前完整檢查"):
+            self.assertIn(heading, guide)
+
+    def test_required_translation_terms_are_canonical(self) -> None:
+        site = json.loads((ROOT / "content" / "site.json").read_text(encoding="utf-8"))
+        translations = json.loads((ROOT / "content" / "translations.json").read_text(encoding="utf-8"))
+        serialized = json.dumps(site, ensure_ascii=False)
+        self.assertNotIn("q-shuffle 關係", serialized)
+        self.assertNotIn("v-adic Gamma", serialized)
+        pairs = {(row["en"], row["zh"]) for row in translations["pairs"]}
+        self.assertIn(("q-shuffle", "q-洗牌"), pairs)
+        self.assertIn(("v-adic", "v-進"), pairs)
+
 
 class BatchOperationTests(unittest.TestCase):
     def test_organization_entry_can_be_added(self) -> None:
@@ -263,13 +369,16 @@ class AdminCompatibilityTests(unittest.TestCase):
         self.assertIn("const baseLoadOrder=loadOrder;", script)
         self.assertIn("if($('#layoutOrderPage')){renderUnifiedOrder();return}", script)
         self.assertIn("setupUnifiedOrderUI();\nif(site)renderAll();", script)
+        self.assertIn('id="layoutManagerPage"', script)
+        self.assertIn("layoutManagerPageId=event.target.value", script)
+        self.assertIn("selectedPage?", script)
 
     def test_legacy_admin_tools_remain_available(self) -> None:
         page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
         for tab in ("catalog", "add", "draft", "order", "trash", "dictionary", "headings"):
             self.assertIn(f'data-tab="{tab}"', page)
         for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
-            self.assertIn(f"'{item_type}'", page)
+            self.assertIn(f'"{item_type}"', page)
         self.assertIn('<script src="tags-v1.js"></script>', page)
         self.assertIn('<script src="layout-v2.js"></script>', page)
 

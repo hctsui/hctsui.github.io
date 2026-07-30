@@ -717,12 +717,12 @@
       },
       "url": "",
       "description": {
-        "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
-        "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association",
+        "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供"
       },
       "description_html": {
-        "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
-        "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association",
+        "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供"
       },
       "slides_url": "",
       "city": {
@@ -734,8 +734,8 @@
         "zh": "日本"
       },
       "visit_description": {
-        "en": "Supported by Japan–Taiwan Exchange Association.",
-        "zh": "本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        "en": "Supported by Japan–Taiwan Exchange Association",
+        "zh": "本次訪問經費由公益財團法人日本台灣交流協會提供"
       },
       "funding_organization": {
         "en": "Japan–Taiwan Exchange Association",
@@ -864,11 +864,11 @@
       "show_upcoming": false,
       "title": {
         "en": "On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵多重 Eisenstein 級數的 q-shuffle 關係"
+        "zh": "正特徵多重 Eisenstein 級數的 q-洗牌關係"
       },
       "title_html": {
         "en": "On <em>q</em>-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵多重 Eisenstein 級數的 q-shuffle 關係"
+        "zh": "正特徵多重 Eisenstein 級數的 <em>q</em>-洗牌關係"
       },
       "url": "",
       "description": {
@@ -891,11 +891,11 @@
       "show_upcoming": false,
       "title": {
         "en": "On the Uniqueness of v -adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
-        "zh": "Gross–Koblitz–Thakur 公式中 v-adic Gamma 函數的唯一性"
+        "zh": "Gross–Koblitz–Thakur 公式中 v-進 Gamma 函數的唯一性"
       },
       "title_html": {
         "en": "On the Uniqueness of <em>v</em>-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
-        "zh": "Gross–Koblitz–Thakur 公式中 v-adic Gamma 函數的唯一性"
+        "zh": "Gross–Koblitz–Thakur 公式中 <em>v</em>-進 Gamma 函數的唯一性"
       },
       "url": "",
       "description": {
@@ -1639,11 +1639,11 @@
       "arxiv": "2504.15697",
       "title": {
         "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-        "zh": "函數體上 Gross–Koblitz 型公式中 v-adic Gamma 函數的唯一性"
+        "zh": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性"
       },
       "title_html": {
         "en": "Uniqueness of <em>v</em>-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-        "zh": "函數體上 Gross–Koblitz 型公式中 v-adic Gamma 函數的唯一性"
+        "zh": "函數體上 Gross–Koblitz 型公式中 <em>v</em>-進 Gamma 函數的唯一性"
       },
       "authors": {
         "en": "Ting-Wei Chang and Hung-Chun Tsui",
@@ -1689,11 +1689,11 @@
       "arxiv": "2504.18879",
       "title": {
         "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係"
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係"
       },
       "title_html": {
         "en": "On <em>q</em>-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係"
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 <em>q</em>-洗牌關係"
       },
       "authors": {
         "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
