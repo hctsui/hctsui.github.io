@@ -1,640 +1,143 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-
-import argparse
-import copy
-import hashlib
-import html
-import json
-import re
+import argparse, copy, hashlib, html, json, re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
-
-ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "content" / "site.json"
-HISTORY = ROOT / "content" / "change-history.json"
-RETENTION_DAYS = 7
-
-SECTIONS = {
-    "conference": "activities",
-    "talk": "activities",
-    "visit": "activities",
-    "honor": "honors",
-    "publication": "publications",
-    "teaching": "teaching",
-}
-
-
-def parse_body(body: str) -> dict[str, Any]:
-    match = re.search(
-        r"### Batch payload / 批次資料\s+(.+)",
-        body,
-        re.S,
-    )
-    raw = (match.group(1) if match else body).strip()
-    fence = re.search(r"```(?:json)?\s*(.*?)```", raw, re.S)
-    return json.loads((fence.group(1) if fence else raw).strip())
-
-
-def utc_now() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-def iso_z(value: datetime) -> str:
-    return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
-
-
-def parse_time(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
-
-
-def canonical(value: Any) -> str:
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    )
-
-
-def digest(value: Any) -> str:
-    return hashlib.sha256(canonical(value).encode("utf-8")).hexdigest()
-
-
-def clean_html(value: Any) -> str:
-    return html.escape(str(value or "").strip(), quote=False)
-
-
-def comparable(item: dict[str, Any] | None) -> dict[str, Any] | None:
-    """Compare content while ignoring display-order bookkeeping."""
-    if item is None:
-        return None
-    result = copy.deepcopy(item)
-    result.pop("order", None)
-    return result
-
-
-def same_object(left: dict[str, Any] | None, right: dict[str, Any] | None) -> bool:
-    return comparable(left) == comparable(right)
-
-
-def normalize(item: dict[str, Any]) -> dict[str, Any]:
-    result = copy.deepcopy(item)
-    kind = result["type"]
-
-    for key in (
-        "title",
-        "description",
-        "organization",
-        "authors",
-        "venue",
-    ):
-        if isinstance(result.get(key), dict):
-            result[f"{key}_html"] = {
-                lang: clean_html(text)
-                for lang, text in result[key].items()
-            }
-
-    if kind == "publication":
-        result["year"] = int(
-            str(result.get("date", ""))[:4]
-            or result.get("year")
-            or 0
-        )
-
-    return result
-
-
-def load_history() -> dict[str, Any]:
-    if not HISTORY.exists():
-        return {
-            "schema_version": 1,
-            "retention_days": RETENTION_DAYS,
-            "operations": [],
-        }
-
-    data = json.loads(HISTORY.read_text(encoding="utf-8"))
-    if data.get("schema_version") != 1:
-        raise ValueError("Unsupported change-history schema.")
-    if not isinstance(data.get("operations"), list):
-        raise ValueError("change-history operations must be an array.")
-    data["retention_days"] = RETENTION_DAYS
-    return data
-
-
-def prune_history(history: dict[str, Any], now: datetime) -> None:
-    kept = []
-    for entry in history.get("operations", []):
-        expires_at = entry.get("expires_at")
-        if not expires_at:
-            continue
-        try:
-            if parse_time(expires_at) > now:
-                kept.append(entry)
-        except ValueError:
-            continue
-    history["operations"] = kept
-
-
-def find_entry(
-    data: dict[str, Any],
-    kind: str,
-    entry_id: str,
-) -> tuple[list[dict[str, Any]], int | None]:
-    section = SECTIONS[kind]
-    items = data.setdefault(section, [])
-    index = next(
-        (i for i, item in enumerate(items) if item.get("id") == entry_id),
-        None,
-    )
-    return items, index
-
-
-def title_snapshot(item: dict[str, Any] | None) -> dict[str, str]:
-    if not item:
-        return {"en": "", "zh": ""}
-
-    for key in ("title", "course"):
-        pair = item.get(key)
-        if isinstance(pair, dict):
-            return {
-                "en": str(pair.get("en") or ""),
-                "zh": str(pair.get("zh") or ""),
-            }
-
-    return {
-        "en": str(item.get("id") or ""),
-        "zh": "",
-    }
-
-
-def make_history_id(issue_number: int, op_index: int) -> str:
-    return f"issue-{issue_number}-op-{op_index}"
-
-
-def ensure_replay_matches(
-    existing: dict[str, Any],
-    request_digest: str,
-) -> None:
-    if existing.get("request_digest") != request_digest:
-        raise ValueError(
-            f"History ID {existing.get('history_id')} already exists "
-            "with different batch content."
-        )
-
-
-def append_history(
-    history: dict[str, Any],
-    *,
-    history_id: str,
-    issue_number: int,
-    applied_at: datetime,
-    request_digest: str,
-    request_action: str,
-    action: str,
-    kind: str,
-    entry_id: str,
-    before: dict[str, Any] | None,
-    after: dict[str, Any] | None,
-    index_before: int | None,
-    index_after: int | None,
-    undo_of: str | None = None,
-) -> dict[str, Any]:
-    entry = {
-        "history_id": history_id,
-        "batch_issue": issue_number,
-        "applied_at": iso_z(applied_at),
-        "expires_at": iso_z(
-            applied_at + timedelta(days=RETENTION_DAYS)
-        ),
-        "request_action": request_action,
-        "action": action,
-        "type": kind,
-        "entry_id": entry_id,
-        "label": title_snapshot(after or before),
-        "before": before,
-        "after": after,
-        "index_before": index_before,
-        "index_after": index_after,
-        "undo_of": undo_of,
-        "reverted_by": None,
-        "request_digest": request_digest,
-    }
-    history["operations"].append(entry)
-    return entry
-
-
-def apply_normal_operation(
-    data: dict[str, Any],
-    history: dict[str, Any],
-    op: dict[str, Any],
-    *,
-    history_id: str,
-    issue_number: int,
-    applied_at: datetime,
-    request_digest: str,
-) -> tuple[str, str]:
-    action = op["op"]
-    kind = op["type"]
-    entry_id = op.get("id") or op.get("after", {}).get("id")
-    if not entry_id:
-        raise ValueError("Operation is missing an entry ID.")
-
-    items, index = find_entry(data, kind, entry_id)
-
-    if action == "delete":
-        if index is None:
-            raise ValueError(f"Delete target not found: {entry_id}")
-        current = copy.deepcopy(items[index])
-        expected = op.get("before")
-        if expected and not same_object(current, expected):
-            raise ValueError(
-                f"Conflict: {entry_id} changed after Admin loaded."
-            )
-        items.pop(index)
-        append_history(
-            history,
-            history_id=history_id,
-            issue_number=issue_number,
-            applied_at=applied_at,
-            request_digest=request_digest,
-            request_action="delete",
-            action="delete",
-            kind=kind,
-            entry_id=entry_id,
-            before=current,
-            after=None,
-            index_before=index,
-            index_after=None,
-        )
-        return action, entry_id
-
-    if action == "update":
-        if index is None:
-            raise ValueError(f"Update target not found: {entry_id}")
-        current = copy.deepcopy(items[index])
-        expected = op.get("before")
-        if expected and not same_object(current, expected):
-            raise ValueError(
-                f"Conflict: {entry_id} changed after Admin loaded."
-            )
-        after = normalize(op["after"])
-        after["id"] = entry_id
-        items[index] = after
-        append_history(
-            history,
-            history_id=history_id,
-            issue_number=issue_number,
-            applied_at=applied_at,
-            request_digest=request_digest,
-            request_action="update",
-            action="update",
-            kind=kind,
-            entry_id=entry_id,
-            before=current,
-            after=copy.deepcopy(after),
-            index_before=index,
-            index_after=index,
-        )
-        return action, entry_id
-
-    if action == "add":
-        after = normalize(op["after"])
-        entry_id = after["id"]
-
-        all_ids = {
-            item.get("id")
-            for section in set(SECTIONS.values())
-            for item in data.get(section, [])
-        }
-        if entry_id in all_ids:
-            base = entry_id
-            suffix = 2
-            while f"{base}-{suffix}" in all_ids:
-                suffix += 1
-            entry_id = f"{base}-{suffix}"
-            after["id"] = entry_id
-
-        items, _ = find_entry(data, kind, entry_id)
-        index_after = len(items)
-        items.append(after)
-        append_history(
-            history,
-            history_id=history_id,
-            issue_number=issue_number,
-            applied_at=applied_at,
-            request_digest=request_digest,
-            request_action="add",
-            action="add",
-            kind=kind,
-            entry_id=entry_id,
-            before=None,
-            after=copy.deepcopy(after),
-            index_before=None,
-            index_after=index_after,
-        )
-        return action, entry_id
-
-    raise ValueError(f"Unknown operation: {action}")
-
-
-def apply_undo_operation(
-    data: dict[str, Any],
-    history: dict[str, Any],
-    op: dict[str, Any],
-    *,
-    history_id: str,
-    issue_number: int,
-    applied_at: datetime,
-    request_digest: str,
-) -> tuple[str, str]:
-    target_id = str(op.get("history_id") or "").strip()
-    if not target_id:
-        raise ValueError("Undo operation is missing history_id.")
-
-    target = next(
-        (
-            entry
-            for entry in history.get("operations", [])
-            if entry.get("history_id") == target_id
-        ),
-        None,
-    )
-    if target is None:
-        raise ValueError(
-            f"Undo target is unavailable or older than seven days: "
-            f"{target_id}"
-        )
-    if target.get("reverted_by"):
-        raise ValueError(
-            f"Operation {target_id} was already undone by "
-            f"{target['reverted_by']}."
-        )
-    if parse_time(target["expires_at"]) <= applied_at:
-        raise ValueError(f"Undo period expired for {target_id}.")
-
-    kind = target["type"]
-    entry_id = target["entry_id"]
-    items, index = find_entry(data, kind, entry_id)
-    original_action = target["action"]
-
-    if original_action == "add":
-        if index is None:
-            raise ValueError(
-                f"Cannot undo add: {entry_id} no longer exists."
-            )
-        current = copy.deepcopy(items[index])
-        if not same_object(current, target.get("after")):
-            raise ValueError(
-                f"Cannot undo add: {entry_id} was modified later."
-            )
-        items.pop(index)
-        new_entry = append_history(
-            history,
-            history_id=history_id,
-            issue_number=issue_number,
-            applied_at=applied_at,
-            request_digest=request_digest,
-            request_action="undo",
-            action="delete",
-            kind=kind,
-            entry_id=entry_id,
-            before=current,
-            after=None,
-            index_before=index,
-            index_after=None,
-            undo_of=target_id,
-        )
-
-    elif original_action == "update":
-        if index is None:
-            raise ValueError(
-                f"Cannot undo update: {entry_id} no longer exists."
-            )
-        current = copy.deepcopy(items[index])
-        if not same_object(current, target.get("after")):
-            raise ValueError(
-                f"Cannot undo update: {entry_id} was modified later."
-            )
-        restored = copy.deepcopy(target.get("before"))
-        if not restored:
-            raise ValueError(
-                f"Cannot undo update: missing previous snapshot for {entry_id}."
-            )
-        items[index] = restored
-        new_entry = append_history(
-            history,
-            history_id=history_id,
-            issue_number=issue_number,
-            applied_at=applied_at,
-            request_digest=request_digest,
-            request_action="undo",
-            action="update",
-            kind=kind,
-            entry_id=entry_id,
-            before=current,
-            after=copy.deepcopy(restored),
-            index_before=index,
-            index_after=index,
-            undo_of=target_id,
-        )
-
-    elif original_action == "delete":
-        if index is not None:
-            raise ValueError(
-                f"Cannot undo delete: ID {entry_id} is already in use."
-            )
-        restored = copy.deepcopy(target.get("before"))
-        if not restored:
-            raise ValueError(
-                f"Cannot undo delete: missing deleted snapshot for {entry_id}."
-            )
-        insert_at = target.get("index_before")
-        if not isinstance(insert_at, int):
-            insert_at = len(items)
-        insert_at = min(max(insert_at, 0), len(items))
-        items.insert(insert_at, restored)
-        new_entry = append_history(
-            history,
-            history_id=history_id,
-            issue_number=issue_number,
-            applied_at=applied_at,
-            request_digest=request_digest,
-            request_action="undo",
-            action="add",
-            kind=kind,
-            entry_id=entry_id,
-            before=None,
-            after=copy.deepcopy(restored),
-            index_before=None,
-            index_after=insert_at,
-            undo_of=target_id,
-        )
-
-    else:
-        raise ValueError(
-            f"Unsupported history action for undo: {original_action}"
-        )
-
-    target["reverted_by"] = new_entry["history_id"]
-    return "undo", entry_id
-
-
-def normalize_groups_and_order(data: dict[str, Any]) -> None:
-    for section in ("honors", "publications", "teaching"):
-        for index, item in enumerate(data.get(section, [])):
-            item["order"] = index
-
-    groups = (
-        data.setdefault("settings", {})
-        .setdefault("content_groups", {})
-    )
-
-    for kind, section in (
-        ("publication", "publications"),
-        ("teaching", "teaching"),
-    ):
-        used = {
-            item.get("group_id")
-            for item in data.get(section, [])
-            if item.get("group_id")
-        }
-        groups[kind] = [
-            group
-            for group in groups.get(kind, [])
-            if group.get("preset") or group.get("id") in used
-        ]
-        known = {group.get("id") for group in groups[kind]}
-
-        for item in data.get(section, []):
-            group_id = item.get("group_id")
-            if not group_id or group_id in known:
-                continue
-
-            label = item.get("group_label")
-            if not label:
-                label = (
-                    item.get("institution")
-                    if kind == "teaching"
-                    else {"en": group_id, "zh": ""}
-                )
-
-            groups[kind].append(
-                {
-                    "id": group_id,
-                    "label": label,
-                    "order": len(groups[kind]),
-                }
-            )
-            known.add(group_id)
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("event")
-    parser.add_argument("--result-file", required=True)
-    args = parser.parse_args()
-
-    event = json.load(open(args.event, encoding="utf-8"))
-    issue = event["issue"]
-    issue_number = int(issue["number"])
-    payload = parse_body(issue["body"])
-    operations = payload.get("operations", [])
-
-    if payload.get("schema_version") not in (1, 2):
-        raise ValueError("Invalid batch payload schema.")
-    if not isinstance(operations, list):
-        raise ValueError("Batch operations must be an array.")
-
-    data = json.load(open(DATA, encoding="utf-8"))
-    history = load_history()
-    applied_at = utc_now()
-    prune_history(history, applied_at)
-
-    existing_history = {
-        entry["history_id"]: entry
-        for entry in history.get("operations", [])
-    }
-
-    counts = {
-        "add": 0,
-        "update": 0,
-        "delete": 0,
-        "undo": 0,
-        "replayed": 0,
-    }
-    entry_ids: list[str] = []
-
-    for op_index, operation in enumerate(operations, start=1):
-        history_id = make_history_id(issue_number, op_index)
-        request_digest = digest(operation)
-
-        if history_id in existing_history:
-            ensure_replay_matches(
-                existing_history[history_id],
-                request_digest,
-            )
-            counts["replayed"] += 1
-            continue
-
-        if operation.get("op") == "undo":
-            action, entry_id = apply_undo_operation(
-                data,
-                history,
-                operation,
-                history_id=history_id,
-                issue_number=issue_number,
-                applied_at=applied_at,
-                request_digest=request_digest,
-            )
-        else:
-            action, entry_id = apply_normal_operation(
-                data,
-                history,
-                operation,
-                history_id=history_id,
-                issue_number=issue_number,
-                applied_at=applied_at,
-                request_digest=request_digest,
-            )
-
-        counts[action] += 1
-        entry_ids.append(entry_id)
-        existing_history[history_id] = history["operations"][-1]
-
-    normalize_groups_and_order(data)
-
-    DATA.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    HISTORY.write_text(
-        json.dumps(history, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
-    summary = (
-        f"批次完成：新增 {counts['add']}、修改 {counts['update']}、"
-        f"刪除 {counts['delete']}、復原 {counts['undo']}"
-    )
-    if counts["replayed"]:
-        summary += f"；略過已套用操作 {counts['replayed']}"
-
-    result = {
-        "action": summary,
-        "entry_id": ", ".join(entry_ids[:8])
-        + ("…" if len(entry_ids) > 8 else ""),
-        "notes": [
-            "每筆操作已寫入七日暫存垃圾桶，可在 Admin 單筆復原。"
-        ],
-        "warnings": [],
-    }
-    Path(args.result_file).write_text(
-        json.dumps(result, ensure_ascii=False),
-        encoding="utf-8",
-    )
-
-
-if __name__ == "__main__":
-    main()
+ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
+SECTIONS={'conference':'activities','talk':'activities','visit':'activities','honor':'honors','publication':'publications','teaching':'teaching'}
+def parse_body(body):
+ m=re.search(r'### Batch payload / 批次資料\s+(.+)',body,re.S);raw=(m.group(1) if m else body).strip();f=re.search(r'```(?:json)?\s*(.*?)```',raw,re.S);return json.loads((f.group(1) if f else raw).strip())
+def now():return datetime.now(timezone.utc)
+def iso(d):return d.astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+def dt(s):return datetime.fromisoformat(s.replace('Z','+00:00'))
+def canon(x):return json.dumps(x,ensure_ascii=False,sort_keys=True,separators=(',',':'))
+def digest(x):return hashlib.sha256(canon(x).encode()).hexdigest()
+def semantic(x):
+ if not isinstance(x,dict):return x
+ return {k:semantic(v) for k,v in x.items() if k!='order' and not k.endswith('_html')}
+def clean(s):return html.escape(str(s or '').strip(),quote=False)
+def normalize_item(x):
+ x=copy.deepcopy(x);t=x['type']
+ for k in ('title','description','organization','authors','venue'):
+  if isinstance(x.get(k),dict):x[k+'_html']={l:clean(v) for l,v in x[k].items()}
+ if t=='publication':x['year']=int(str(x.get('date',''))[:4] or x.get('year') or 0)
+ return x
+def empty_history():return {'schema_version':2,'retention_days':RETENTION,'operations':[]}
+def load_history():
+ if not HISTORY.exists():return empty_history()
+ h=json.load(open(HISTORY,encoding='utf-8'));h.setdefault('operations',[]);h['schema_version']=2;h['retention_days']=RETENTION;return h
+def prune(h,n):h['operations']=[x for x in h['operations'] if x.get('expires_at') and dt(x['expires_at'])>n]
+def label(item):
+ if not item:return {'en':'','zh':''}
+ for k in ('title','course'):
+  if isinstance(item.get(k),dict):return {'en':str(item[k].get('en') or ''),'zh':str(item[k].get('zh') or '')}
+ return {'en':str(item.get('id') or ''),'zh':''}
+def hist_id(issue,i):return f'issue-{issue}-op-{i}'
+def append_history(h,**kw):
+ n=kw.pop('applied_at');e={'history_id':kw.pop('history_id'),'batch_issue':kw.pop('issue_number'),'applied_at':iso(n),'expires_at':iso(n+timedelta(days=RETENTION)),'reverted_by':None,**kw};h['operations'].append(e);return e
+def find(data,t,eid):
+ a=data.setdefault(SECTIONS[t],[]);i=next((i for i,x in enumerate(a) if x.get('id')==eid),None);return a,i
+def capture_order(data,kind):
+ items=[x for x in data.get(SECTIONS[kind],[]) if x.get('type')==kind]
+ if kind not in ('publication','teaching'):
+  stored=data.get('settings',{}).get('entry_order',{}).get(kind,[]);ids={x['id'] for x in items};return {'kind':kind,'entries':[x for x in stored if x in ids]+[x['id'] for x in items if x['id'] not in stored]}
+ groups=copy.deepcopy(data.get('settings',{}).get('content_groups',{}).get(kind,[]));known={g.get('id') for g in groups}
+ for x in items:
+  gid=x.get('group_id') or ('preprints' if kind=='publication' else 'institution')
+  if gid not in known:groups.append({'id':gid,'label':x.get('institution') or x.get('group_label') or {'en':gid,'zh':''},'order':len(groups)});known.add(gid)
+ groups.sort(key=lambda g:g.get('order',999));return {'kind':kind,'groups':[{'id':g['id'],'label':g.get('label',{'en':g['id'],'zh':''}),'preset':bool(g.get('preset')),'entries':[x['id'] for x in sorted(items,key=lambda z:z.get('order',999)) if x.get('group_id')==g['id']]} for g in groups if any(x.get('group_id')==g['id'] for x in items)]}
+def apply_order(data,state):
+ kind=state['kind'];items=[x for x in data.get(SECTIONS[kind],[]) if x.get('type')==kind];ids={x['id'] for x in items}
+ if 'entries' in state:
+  if set(state['entries'])!=ids or len(state['entries'])!=len(ids):raise ValueError(f'Ordering must contain every {kind} entry exactly once.')
+  data.setdefault('settings',{}).setdefault('entry_order',{})[kind]=list(state['entries']);return
+ flat=[eid for g in state.get('groups',[]) for eid in g.get('entries',[])]
+ if set(flat)!=ids or len(flat)!=len(ids):raise ValueError(f'Grouped ordering must contain every {kind} entry exactly once.')
+ data.setdefault('settings',{}).setdefault('content_groups',{})[kind]=[{'id':g['id'],'label':g.get('label',{'en':g['id'],'zh':''}),'order':i,'preset':bool(g.get('preset'))} for i,g in enumerate(state['groups'])]
+ by={x['id']:x for x in items}
+ for g in state['groups']:
+  for i,eid in enumerate(g['entries']):by[eid]['group_id']=g['id'];by[eid]['order']=i
+  if kind=='teaching':
+   for eid in g['entries']:by[eid]['institution']=copy.deepcopy(g.get('label',{}))
+def validate_trans(d):
+ if d.get('schema_version')!=1 or not isinstance(d.get('pairs'),list):raise ValueError('Invalid translations.json structure.')
+ en,zh={},{}
+ for i,p in enumerate(d['pairs'],1):
+  a=' '.join(str(p.get('en') or '').split()).casefold();b=' '.join(str(p.get('zh') or '').split()).casefold()
+  if not a or not b:raise ValueError(f'Translation row {i} is blank.')
+  if a in en and en[a]!=b:raise ValueError(f'English translation conflict at row {i}.')
+  if b in zh and zh[b]!=a:raise ValueError(f'Chinese translation conflict at row {i}.')
+  en[a]=b;zh[b]=a
+def normalize_groups(data):
+ groups=data.setdefault('settings',{}).setdefault('content_groups',{})
+ for kind,sec in (('publication','publications'),('teaching','teaching')):
+  used={x.get('group_id') for x in data.get(sec,[]) if x.get('group_id')};groups[kind]=[g for g in groups.get(kind,[]) if g.get('preset') or g.get('id') in used];known={g.get('id') for g in groups[kind]}
+  for x in data.get(sec,[]):
+   gid=x.get('group_id');
+   if gid and gid not in known:
+    lab=x.pop('group_label',None) or (x.get('institution') if kind=='teaching' else {'en':gid,'zh':''});groups[kind].append({'id':gid,'label':lab,'order':len(groups[kind])});known.add(gid)
+def apply_content(data,h,op,hid,issue,n,rd):
+ action=op['op'];t=op['type'];eid=op.get('id') or op.get('after',{}).get('id');a,i=find(data,t,eid)
+ if action=='add':
+  after=normalize_item(op['after']);eid=after['id'];allids={x.get('id') for s in set(SECTIONS.values()) for x in data.get(s,[])}
+  if eid in allids:
+   b=eid;k=2
+   while f'{b}-{k}' in allids:k+=1
+   eid=f'{b}-{k}';after['id']=eid
+  a,_=find(data,t,eid);idx=len(a);a.append(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='add',action='add',type=t,entry_id=eid,label=label(after),before=None,after=copy.deepcopy(after),index_before=None,index_after=idx,undo_of=None);return 'add',eid
+ if i is None:raise ValueError(f'{action.title()} target not found: {eid}')
+ cur=copy.deepcopy(a[i]);expected=op.get('before')
+ if expected and semantic(cur)!=semantic(expected):raise ValueError(f'Conflict: {eid} changed after Admin loaded.')
+ if action=='delete':a.pop(i);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='delete',action='delete',type=t,entry_id=eid,label=label(cur),before=cur,after=None,index_before=i,index_after=None,undo_of=None);return 'delete',eid
+ after=normalize_item(op['after']);after['id']=eid;a[i]=after;append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='update',action='update',type=t,entry_id=eid,label=label(after),before=cur,after=copy.deepcopy(after),index_before=i,index_after=i,undo_of=None);return 'update',eid
+def apply_special(data,trans,h,op,hid,issue,n,rd):
+ if op['op']=='reorder':
+  before=capture_order(data,op['type']);expected=op.get('before')
+  if expected and before!=expected:raise ValueError(f"Conflict: {op['type']} order changed after Admin loaded.")
+  apply_order(data,op['after']);after=capture_order(data,op['type']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='reorder',action='reorder',type=op['type'],entry_id='order:'+op['type'],label={'en':op['type']+' order','zh':'排序'},before=before,after=after,index_before=None,index_after=None,undo_of=None);return 'reorder','order:'+op['type']
+ before=copy.deepcopy(trans);expected=op.get('before')
+ if expected and before!=expected:raise ValueError('Conflict: translations changed after Admin loaded.')
+ after=copy.deepcopy(op['after']);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照表'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
+def apply_undo(data,trans,h,op,hid,issue,n,rd):
+ tid=op.get('history_id');target=next((x for x in h['operations'] if x.get('history_id')==tid),None)
+ if not target:raise ValueError(f'Undo target unavailable or expired: {tid}')
+ if target.get('reverted_by'):raise ValueError(f'{tid} was already undone.')
+ if dt(target['expires_at'])<=n:raise ValueError(f'Undo expired: {tid}')
+ act=target['action'];t=target['type'];eid=target['entry_id']
+ if act=='reorder':
+  cur=capture_order(data,t)
+  if cur!=target['after']:raise ValueError(f'Cannot undo order: {t} changed later.')
+  apply_order(data,target['before']);after=capture_order(data,t);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='reorder',type=t,entry_id=eid,label=target['label'],before=cur,after=after,index_before=None,index_after=None,undo_of=tid)
+ elif act=='translations':
+  if trans!=target['after']:raise ValueError('Cannot undo translations: dictionary changed later.')
+  before=copy.deepcopy(trans);trans.clear();trans.update(copy.deepcopy(target['before']));new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='translations',type='translations',entry_id='translations',label=target['label'],before=before,after=copy.deepcopy(trans),index_before=None,index_after=None,undo_of=tid)
+ else:
+  a,i=find(data,t,eid)
+  if act=='add':
+   if i is None or semantic(a[i])!=semantic(target['after']):raise ValueError(f'Cannot undo add: {eid} changed later.')
+   cur=copy.deepcopy(a[i]);a.pop(i);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='delete',type=t,entry_id=eid,label=target['label'],before=cur,after=None,index_before=i,index_after=None,undo_of=tid)
+  elif act=='update':
+   if i is None or semantic(a[i])!=semantic(target['after']):raise ValueError(f'Cannot undo update: {eid} changed later.')
+   cur=copy.deepcopy(a[i]);a[i]=copy.deepcopy(target['before']);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='update',type=t,entry_id=eid,label=target['label'],before=cur,after=copy.deepcopy(a[i]),index_before=i,index_after=i,undo_of=tid)
+  elif act=='delete':
+   if i is not None:raise ValueError(f'Cannot undo delete: ID {eid} is in use.')
+   restored=copy.deepcopy(target['before']);idx=min(max(target.get('index_before') or 0,0),len(a));a.insert(idx,restored);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='add',type=t,entry_id=eid,label=target['label'],before=None,after=copy.deepcopy(restored),index_before=None,index_after=idx,undo_of=tid)
+  else:raise ValueError(f'Unsupported undo action: {act}')
+ target['reverted_by']=new['history_id'];return 'undo',eid
+def main():
+ p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
+ if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
+ data=json.load(open(SITE,encoding='utf-8'));trans=json.load(open(TRANS,encoding='utf-8'));h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','replayed')};ids=[]
+ for i,op in enumerate(ops,1):
+  hid=f'issue-{issue}-op-{i}';rd=digest(op)
+  if hid in existing:
+   if existing[hid].get('request_digest')!=rd:raise ValueError(f'{hid} exists with different content.')
+   counts['replayed']+=1;continue
+  if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd)
+  elif op['op'] in ('reorder','translations'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
+  else:act,eid=apply_content(data,h,op,hid,issue,n,rd)
+  counts[act]+=1;ids.append(eid);existing[hid]=h['operations'][-1]
+ normalize_groups(data);validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
+if __name__=='__main__':main()
