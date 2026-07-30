@@ -19,7 +19,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -33,25 +33,31 @@ jobs:
       - name: Verify website and CV automation files
         run: |
           test -f content/site.json
+          test -f content/translations.json
+          test -f tools/process_request.py
           test -f tools/build_site.py
           test -f tools/build_cv.py
-          test -f tools/process_request_v4.py
           test -f tools/render_grouped_sections.py
           test -f tools/build_dynamic_forms.py
           test -f tools/update_cv_links.py
+          test -f tools/validate_translations.py
           test -f tools/validate_site.py
           test -f cv/Hung-Chun-Tsui-CV.template.tex
+          test -f cv/Hung-Chun-Tsui-CV-zh.template.tex
 
-      - name: Rebuild website and LaTeX CV
+      - name: Rebuild website and both LaTeX CVs
         run: |
           python3 tools/build_site.py
           python3 tools/build_cv.py
           python3 tools/render_grouped_sections.py
+          python3 tools/build_dynamic_forms.py
           python3 tools/update_cv_links.py
+          python3 tools/validate_translations.py
           python3 tools/validate_site.py
           test -s cv/Hung-Chun-Tsui-CV.tex
+          test -s cv/Hung-Chun-Tsui-CV-zh.tex
 
-      - name: Compile PDF CV
+      - name: Compile English PDF CV
         uses: xu-cheng/latex-action@v4
         with:
           working_directory: cv
@@ -59,25 +65,48 @@ jobs:
           texlive_version: 2025
           os: debian
 
-      - name: Stage PDF for the website
+      - name: Compile Chinese PDF CV
+        uses: xu-cheng/latex-action@v4
+        with:
+          working_directory: cv
+          root_file: Hung-Chun-Tsui-CV-zh.tex
+          latexmk_use_xelatex: true
+          extra_system_packages: "fonts-noto-cjk"
+          texlive_version: 2025
+          os: debian
+
+      - name: Stage both PDFs for the website
         shell: bash
         run: |
           set -euo pipefail
-          PDF_PATH=""
-          for candidate in "cv/Hung-Chun-Tsui-CV.pdf" "Hung-Chun-Tsui-CV.pdf"; do
-            if [ -s "$candidate" ]; then
-              PDF_PATH="$candidate"
-              break
-            fi
-          done
-          if [ -z "$PDF_PATH" ]; then
-            echo "::error::LaTeX compilation completed, but the PDF could not be found."
+
+          find_pdf() {
+            local target="$1"
+            shift
+            local candidate
+            for candidate in "$@"; do
+              if [ -s "$candidate" ]; then
+                mkdir -p files
+                cp "$candidate" "files/$target"
+                test -s "files/$target"
+                echo "Staged $target from $candidate"
+                return 0
+              fi
+            done
+            echo "::error::Could not find generated PDF for $target"
             find . -maxdepth 3 -type f \( -name '*.pdf' -o -name '*.log' \) -print
-            exit 1
-          fi
-          mkdir -p files
-          cp "$PDF_PATH" files/Hung-Chun-Tsui-CV.pdf
-          test -s files/Hung-Chun-Tsui-CV.pdf
+            return 1
+          }
+
+          find_pdf "Hung-Chun-Tsui-CV.pdf" \
+            "cv/Hung-Chun-Tsui-CV.pdf" \
+            "Hung-Chun-Tsui-CV.pdf"
+
+          find_pdf "Hung-Chun-Tsui-CV-zh.pdf" \
+            "cv/Hung-Chun-Tsui-CV-zh.pdf" \
+            "Hung-Chun-Tsui-CV-zh.pdf"
+
+          ls -lh files/Hung-Chun-Tsui-CV*.pdf
 
       - name: Prepare public website
         run: |

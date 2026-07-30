@@ -4,9 +4,8 @@ on:
   issues:
     types: [opened]
 
-# Only prevent duplicate processing of the same Issue.
-# Different Issues may run together; the push step below safely retries
-# against the newest cms branch instead of dropping queued submissions.
+# Different forms are never discarded. If simultaneous forms race to push,
+# each run reapplies its own Issue to the newest cms branch and retries.
 concurrency:
   group: website-form-${{ github.event.issue.number }}
   cancel-in-progress: false
@@ -15,7 +14,6 @@ permissions:
   actions: write
   contents: write
   issues: write
-  models: read
 
 jobs:
   update-site:
@@ -45,14 +43,10 @@ jobs:
         id: transaction
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          TRANSLATION_MODEL: openai/gpt-4o-mini
         shell: bash
         run: |
           set -euo pipefail
 
-          # Multiple form runs may start at nearly the same time. Each attempt
-          # begins from the newest cms branch. If somebody else pushes first,
-          # this run discards its stale build, reapplies its own Issue, and tries again.
           for attempt in 1 2 3 4 5 6 7 8 9 10; do
             echo "=== Content update attempt ${attempt}/10 ==="
 
@@ -61,7 +55,7 @@ jobs:
             git clean -fd
 
             rm -f /tmp/result.json
-            python3 tools/process_request_v4.py \
+            python3 tools/process_request.py \
               "$GITHUB_EVENT_PATH" \
               --result-file /tmp/result.json
 
@@ -71,15 +65,21 @@ jobs:
             python3 tools/build_dynamic_forms.py
             python3 tools/update_cv_links.py
             python3 tools/build_catalog.py
+            python3 tools/validate_translations.py
             python3 tools/validate_site.py
             test -s cv/Hung-Chun-Tsui-CV.tex
+            test -s cv/Hung-Chun-Tsui-CV-zh.tex
 
             ENTRY_ID="$(python3 -c "import json; print(json.load(open('/tmp/result.json', encoding='utf-8'))['entry_id'])")"
 
             git add content/site.json CONTENT-CATALOG.md \
-              cv/Hung-Chun-Tsui-CV.tex \
+              cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
               index.html cv.html publications.html activities.html teaching.html \
               zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html \
+              .github/ISSUE_TEMPLATE/add-conference.yml \
+              .github/ISSUE_TEMPLATE/add-talk.yml \
+              .github/ISSUE_TEMPLATE/add-visit.yml \
+              .github/ISSUE_TEMPLATE/add-honor.yml \
               .github/ISSUE_TEMPLATE/add-publication.yml \
               .github/ISSUE_TEMPLATE/add-teaching.yml \
               .github/ISSUE_TEMPLATE/edit-entry.yml \
@@ -128,8 +128,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          # This marker lets the cleanup workflow safely close the Issue
-          # even if the final confirm job is interrupted.
           gh label create website-form-applied \
             --repo "${{ github.repository }}" \
             --color "0E8A16" \
@@ -145,8 +143,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          # Deployment is intentionally detached from this form run.
-          # Many submissions can be processed without their Process runs being cancelled.
           gh workflow run deploy-cms-pages.yml \
             --repo "${{ github.repository }}" \
             --ref cms
@@ -168,20 +164,19 @@ jobs:
           import json
           import os
 
-          result = json.loads(
-              base64.b64decode(os.environ["RESULT_B64"]).decode("utf-8")
-          )
+          result = json.loads(base64.b64decode(os.environ["RESULT_B64"]).decode("utf-8"))
           lines = [
               f"完成：{result['action']}。",
               "",
               f"Entry ID: `{result['entry_id']}`",
               "",
-              "資料、網站原始檔與 LaTeX CV 已更新；PDF／GitHub Pages 已加入部署佇列。",
+              "資料、中英文網站與兩份 LaTeX CV 已更新；PDF／GitHub Pages 已加入部署佇列。",
               "",
-              "PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf",
+              "English PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf",
+              "Chinese PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV-zh.pdf",
           ]
           if result.get("notes"):
-              lines += ["", "### 智慧處理", *[f"- {x}" for x in result["notes"]]]
+              lines += ["", "### 對照表補全", *[f"- {x}" for x in result["notes"]]]
           if result.get("warnings"):
               lines += ["", "### 請留意", *[f"- {x}" for x in result["warnings"]]]
           open("/tmp/comment.md", "w", encoding="utf-8").write("\n".join(lines))
