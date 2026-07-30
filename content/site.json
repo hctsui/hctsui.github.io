@@ -105,12 +105,12 @@
       },
       "url": "",
       "description": {
-        "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
-        "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
+        "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+        "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
       },
       "description_html": {
-        "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
-        "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
+        "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+        "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
       },
       "slides_url": "",
       "city": {
@@ -122,9 +122,18 @@
         "zh": "日本"
       },
       "visit_description": {
-        "en": "Supported by the Japan–Taiwan Exchange Association",
-        "zh": "獲日本臺灣交流協會補助"
-      }
+        "en": "",
+        "zh": ""
+      },
+      "funding_organization": {
+        "en": "Japan–Taiwan Exchange Association",
+        "zh": "公益財團法人日本台灣交流協會"
+      },
+      "funding_program": {
+        "en": "",
+        "zh": ""
+      },
+      "description_mode": "auto"
     },
     {
       "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
@@ -794,11 +803,11 @@
       "url": "",
       "organization": {
         "en": "Japan–Taiwan Exchange Association",
-        "zh": "日本臺灣交流協會"
+        "zh": "公益財團法人日本台灣交流協會"
       },
       "organization_html": {
         "en": "Japan–Taiwan Exchange Association",
-        "zh": "日本臺灣交流協會"
+        "zh": "公益財團法人日本台灣交流協會"
       }
     },
     {

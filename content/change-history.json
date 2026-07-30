@@ -15412,6 +15412,173 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-48-op-1",
+      "batch_issue": 48,
+      "applied_at": "2026-07-30T13:32:12.098625Z",
+      "expires_at": "2026-08-06T13:32:12.098625Z",
+      "reverted_by": null,
+      "request_digest": "85e955c3328617574f34aa78e1e17b50e9fbe177994defa47c0c22055782f3b9",
+      "request_action": "update",
+      "action": "update",
+      "type": "visit",
+      "entry_id": "visit-2026-07-02-tohoku-university",
+      "label": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "before": {
+        "id": "visit-2026-07-02-tohoku-university",
+        "type": "visit",
+        "start_date": "2026-07-02",
+        "end_date": "2026-08-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "title_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "description": {
+          "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+          "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
+        },
+        "description_html": {
+          "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
+          "zh": "仙台, 日本 · 獲日本臺灣交流協會補助"
+        },
+        "slides_url": "",
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "visit_description": {
+          "en": "Supported by the Japan–Taiwan Exchange Association",
+          "zh": "獲日本臺灣交流協會補助"
+        }
+      },
+      "after": {
+        "id": "visit-2026-07-02-tohoku-university",
+        "type": "visit",
+        "start_date": "2026-07-02",
+        "end_date": "2026-08-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "title_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "url": "",
+        "description": {
+          "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+          "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "description_html": {
+          "en": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association.",
+          "zh": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供。"
+        },
+        "slides_url": "",
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "visit_description": {
+          "en": "",
+          "zh": ""
+        },
+        "funding_organization": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "公益財團法人日本台灣交流協會"
+        },
+        "funding_program": {
+          "en": "",
+          "zh": ""
+        },
+        "description_mode": "auto"
+      },
+      "index_before": 0,
+      "index_after": 0,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-48-op-2",
+      "batch_issue": 48,
+      "applied_at": "2026-07-30T13:32:12.098625Z",
+      "expires_at": "2026-08-06T13:32:12.098625Z",
+      "reverted_by": null,
+      "request_digest": "d9dcfdcddb2d8a79c5ff6984e3ff485d35e5b1bf3dac44ec5f4df1c43f139f51",
+      "request_action": "update",
+      "action": "update",
+      "type": "honor",
+      "entry_id": "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
+      "label": {
+        "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+        "zh": "臺日青年科研人才交流計畫"
+      },
+      "before": {
+        "id": "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
+        "type": "honor",
+        "year": 2026,
+        "order": 0,
+        "title": {
+          "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+          "zh": "臺日青年科研人才交流計畫"
+        },
+        "title_html": {
+          "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+          "zh": "臺日青年科研人才交流計畫"
+        },
+        "url": "",
+        "organization": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "日本臺灣交流協會"
+        },
+        "organization_html": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "日本臺灣交流協會"
+        }
+      },
+      "after": {
+        "id": "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
+        "type": "honor",
+        "year": 2026,
+        "order": 0,
+        "title": {
+          "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+          "zh": "臺日青年科研人才交流計畫"
+        },
+        "title_html": {
+          "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
+          "zh": "臺日青年科研人才交流計畫"
+        },
+        "url": "",
+        "organization": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "公益財團法人日本台灣交流協會"
+        },
+        "organization_html": {
+          "en": "Japan–Taiwan Exchange Association",
+          "zh": "公益財團法人日本台灣交流協會"
+        }
+      },
+      "index_before": 0,
+      "index_after": 0,
+      "undo_of": null
     }
   ]
 }
