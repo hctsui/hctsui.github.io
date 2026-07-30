@@ -375,23 +375,315 @@
     renderAudit();
   };
 
-  // Make translation history readable even when only tag assignments changed.
+  // Detailed translation and tag diff used by both the current draft preview
+  // and the change-history preview.
+  function translationDiffTagMap(data) {
+    return new Map((Array.isArray(data?.tags) ? data.tags : []).map((item) => [item.id, item]));
+  }
+
+  function translationDiffTagLabel(data, id) {
+    const item = translationDiffTagMap(data).get(id);
+    const zh = String(item?.label?.zh || '').trim();
+    const en = String(item?.label?.en || '').trim();
+    if (zh && en && dictNorm(zh) !== dictNorm(en)) return `${zh} / ${en}`;
+    return zh || en || id;
+  }
+
+  function translationDiffPairKey(pair) {
+    return `${dictNorm(pair?.en)}\u0000${dictNorm(pair?.zh)}`;
+  }
+
+  function translationDiffTagIds(pair) {
+    return [...new Set(Array.isArray(pair?.tags) ? pair.tags : [])].sort();
+  }
+
+  function translationDiffSameTags(left, right) {
+    return JSON.stringify(translationDiffTagIds(left)) === JSON.stringify(translationDiffTagIds(right));
+  }
+
+  function translationDiffData(beforeData, afterData) {
+    const beforePairs = Array.isArray(beforeData?.pairs) ? beforeData.pairs : [];
+    const afterPairs = Array.isArray(afterData?.pairs) ? afterData.pairs : [];
+    const matchedBefore = new Set();
+    const matchedAfter = new Set();
+    const matches = [];
+    const afterByKey = new Map(afterPairs.map((pair, index) => [translationDiffPairKey(pair), index]));
+
+    function addMatch(beforeIndex, afterIndex, reason) {
+      if (matchedBefore.has(beforeIndex) || matchedAfter.has(afterIndex)) return false;
+      matchedBefore.add(beforeIndex);
+      matchedAfter.add(afterIndex);
+      matches.push({ beforeIndex, afterIndex, reason });
+      return true;
+    }
+
+    // First match unchanged text exactly.
+    beforePairs.forEach((pair, beforeIndex) => {
+      const afterIndex = afterByKey.get(translationDiffPairKey(pair));
+      if (afterIndex !== undefined) addMatch(beforeIndex, afterIndex, 'exact');
+    });
+
+    // Then match rows where either English or Chinese stayed the same. This
+    // identifies ordinary one-sided spelling/translation edits.
+    const unmatchedAfterByEn = new Map();
+    const unmatchedAfterByZh = new Map();
+    afterPairs.forEach((pair, afterIndex) => {
+      if (matchedAfter.has(afterIndex)) return;
+      const enKey = dictNorm(pair.en);
+      const zhKey = dictNorm(pair.zh);
+      if (enKey) {
+        const rows = unmatchedAfterByEn.get(enKey) || [];
+        rows.push(afterIndex);
+        unmatchedAfterByEn.set(enKey, rows);
+      }
+      if (zhKey) {
+        const rows = unmatchedAfterByZh.get(zhKey) || [];
+        rows.push(afterIndex);
+        unmatchedAfterByZh.set(zhKey, rows);
+      }
+    });
+    beforePairs.forEach((pair, beforeIndex) => {
+      if (matchedBefore.has(beforeIndex)) return;
+      const candidates = new Set([
+        ...(unmatchedAfterByEn.get(dictNorm(pair.en)) || []),
+        ...(unmatchedAfterByZh.get(dictNorm(pair.zh)) || []),
+      ].filter((afterIndex) => !matchedAfter.has(afterIndex)));
+      if (candidates.size === 1) addMatch(beforeIndex, [...candidates][0], 'one-side');
+    });
+
+    // When the number of remaining rows is equal, preserve row order so that
+    // editing both languages in one row is still shown as a modification.
+    const remainingBefore = beforePairs.map((_, index) => index).filter((index) => !matchedBefore.has(index));
+    const remainingAfter = afterPairs.map((_, index) => index).filter((index) => !matchedAfter.has(index));
+    if (remainingBefore.length && remainingBefore.length === remainingAfter.length) {
+      remainingBefore.forEach((beforeIndex, offset) => {
+        const afterIndex = remainingAfter[offset];
+        if (translationDiffSameTags(beforePairs[beforeIndex], afterPairs[afterIndex])) {
+          addMatch(beforeIndex, afterIndex, 'row-order');
+        }
+      });
+    }
+
+    const textChanges = [];
+    const pairTagChanges = [];
+    for (const match of matches) {
+      const before = beforePairs[match.beforeIndex];
+      const after = afterPairs[match.afterIndex];
+      const textChanged = translationDiffPairKey(before) !== translationDiffPairKey(after);
+      const tagsChanged = !translationDiffSameTags(before, after);
+      if (textChanged) textChanges.push({ ...match, before, after, tagsChanged });
+      else if (tagsChanged) pairTagChanges.push({ ...match, before, after });
+    }
+
+    const removedPairs = beforePairs
+      .map((pair, index) => ({ pair, index }))
+      .filter(({ index }) => !matchedBefore.has(index));
+    const addedPairs = afterPairs
+      .map((pair, index) => ({ pair, index }))
+      .filter(({ index }) => !matchedAfter.has(index));
+
+    const beforeTags = Array.isArray(beforeData?.tags) ? beforeData.tags : [];
+    const afterTags = Array.isArray(afterData?.tags) ? afterData.tags : [];
+    const beforeTagMap = new Map(beforeTags.map((item) => [item.id, item]));
+    const afterTagMap = new Map(afterTags.map((item) => [item.id, item]));
+    const addedTags = afterTags.filter((item) => !beforeTagMap.has(item.id));
+    const removedTags = beforeTags.filter((item) => !afterTagMap.has(item.id));
+    const renamedTags = afterTags
+      .filter((item) => beforeTagMap.has(item.id))
+      .filter((item) => {
+        const before = beforeTagMap.get(item.id);
+        return String(before?.label?.en || '') !== String(item?.label?.en || '')
+          || String(before?.label?.zh || '') !== String(item?.label?.zh || '');
+      })
+      .map((after) => ({ before: beforeTagMap.get(after.id), after }));
+    const commonBeforeOrder = beforeTags.map((item) => item.id).filter((id) => afterTagMap.has(id));
+    const commonAfterOrder = afterTags.map((item) => item.id).filter((id) => beforeTagMap.has(id));
+    const tagOrderChanged = JSON.stringify(commonBeforeOrder) !== JSON.stringify(commonAfterOrder);
+
+    return {
+      beforePairs,
+      afterPairs,
+      beforeTags,
+      afterTags,
+      textChanges,
+      pairTagChanges,
+      removedPairs,
+      addedPairs,
+      addedTags,
+      removedTags,
+      renamedTags,
+      tagOrderChanged,
+      commonBeforeOrder,
+      commonAfterOrder,
+    };
+  }
+
+  function translationDiffTagChips(data, pair) {
+    const ids = Array.isArray(pair?.tags) ? pair.tags : [];
+    return ids.length
+      ? `<div class="translation-diff-chips">${ids.map((id) => `<span class="tag-pill">${esc(translationDiffTagLabel(data, id))}</span>`).join('')}</div>`
+      : '<span class="muted">沒有標籤</span>';
+  }
+
+  function translationDiffPairSide(data, pair, label, otherPair = null) {
+    const enChanged = otherPair && String(pair?.en || '') !== String(otherPair?.en || '');
+    const zhChanged = otherPair && String(pair?.zh || '') !== String(otherPair?.zh || '');
+    const tagsChanged = otherPair && !translationDiffSameTags(pair, otherPair);
+    return `<div class="translation-diff-side">
+      <div class="translation-diff-side-title">${esc(label)}</div>
+      <div class="translation-diff-field ${enChanged ? 'changed' : ''}"><strong>英文</strong><span>${esc(pair?.en || '—')}</span></div>
+      <div class="translation-diff-field ${zhChanged ? 'changed' : ''}"><strong>中文</strong><span>${esc(pair?.zh || '—')}</span></div>
+      <div class="translation-diff-field ${tagsChanged ? 'changed' : ''}"><strong>標籤</strong>${translationDiffTagChips(data, pair)}</div>
+    </div>`;
+  }
+
+  function translationDiffPairComparison(beforeData, afterData, beforePair, afterPair, titleText) {
+    return `<div class="translation-diff-item">
+      <div class="translation-diff-item-title">${esc(titleText)}</div>
+      <div class="translation-diff-grid">
+        ${translationDiffPairSide(beforeData, beforePair, '修改前', afterPair)}
+        ${translationDiffPairSide(afterData, afterPair, '修改後', beforePair)}
+      </div>
+    </div>`;
+  }
+
+  function translationDiffSinglePair(data, pair, state) {
+    return `<div class="translation-diff-item ${state === '新增' ? 'is-added' : 'is-removed'}">
+      <div class="translation-diff-item-title">${esc(state)}</div>
+      ${translationDiffPairSide(data, pair, state)}
+    </div>`;
+  }
+
+  function translationDiffSection(titleText, itemsHtml, count, open = true) {
+    if (!count) return '';
+    return `<details class="translation-diff-section" ${open ? 'open' : ''}>
+      <summary><strong>${esc(titleText)}</strong><span class="tag">${count}</span></summary>
+      <div class="translation-diff-list">${itemsHtml}</div>
+    </details>`;
+  }
+
+  function translationDiffTagDefinition(data, item, state) {
+    const zh = String(item?.label?.zh || '');
+    const en = String(item?.label?.en || '');
+    return `<div class="translation-diff-item ${state === '新增' ? 'is-added' : state === '刪除' ? 'is-removed' : ''}">
+      <div class="translation-diff-item-title">${esc(state)} · <code>${esc(item?.id || '')}</code></div>
+      <div class="translation-diff-field"><strong>中文</strong><span>${esc(zh || '—')}</span></div>
+      <div class="translation-diff-field"><strong>英文</strong><span>${esc(en || '—')}</span></div>
+    </div>`;
+  }
+
+  function translationDetailedDiffHtml(beforeData, afterData) {
+    const diff = translationDiffData(beforeData || {}, afterData || {});
+    const totalChanges = diff.textChanges.length + diff.pairTagChanges.length
+      + diff.removedPairs.length + diff.addedPairs.length + diff.addedTags.length
+      + diff.removedTags.length + diff.renamedTags.length + (diff.tagOrderChanged ? 1 : 0);
+    const summary = `<div class="order-diff-summary">
+      <strong>中英對照表與標籤變更</strong>
+      <span class="tag">詞條 ${diff.beforePairs.length} → ${diff.afterPairs.length}</span>
+      <span class="tag">標籤 ${diff.beforeTags.length} → ${diff.afterTags.length}</span>
+      <span class="tag">共 ${totalChanges} 類／筆變更</span>
+    </div>`;
+    if (!totalChanges) return `<div class="preview-card">${summary}<p class="muted">修改前後內容完全相同。</p></div>`;
+
+    const textChangeHtml = diff.textChanges.map((item, index) => translationDiffPairComparison(
+      beforeData, afterData, item.before, item.after, `詞條內容修改 ${index + 1}`,
+    )).join('');
+    const pairTagChangeHtml = diff.pairTagChanges.map((item, index) => translationDiffPairComparison(
+      beforeData, afterData, item.before, item.after, `詞條標籤修改 ${index + 1}`,
+    )).join('');
+    const addedPairHtml = diff.addedPairs.map(({ pair }) => translationDiffSinglePair(afterData, pair, '新增')).join('');
+    const removedPairHtml = diff.removedPairs.map(({ pair }) => translationDiffSinglePair(beforeData, pair, '刪除')).join('');
+    const addedTagHtml = diff.addedTags.map((item) => translationDiffTagDefinition(afterData, item, '新增')).join('');
+    const removedTagHtml = diff.removedTags.map((item) => translationDiffTagDefinition(beforeData, item, '刪除')).join('');
+    const renamedTagHtml = diff.renamedTags.map(({ before, after }) => `<div class="translation-diff-item">
+      <div class="translation-diff-item-title">標籤名稱修改 · <code>${esc(after.id)}</code></div>
+      <div class="translation-diff-grid">
+        ${translationDiffTagDefinition(beforeData, before, '修改前')}
+        ${translationDiffTagDefinition(afterData, after, '修改後')}
+      </div>
+    </div>`).join('');
+    const tagOrderHtml = diff.tagOrderChanged ? `<div class="translation-diff-item">
+      <div class="translation-diff-item-title">標籤顯示順序修改</div>
+      <div class="translation-diff-grid">
+        <div class="translation-diff-side"><div class="translation-diff-side-title">修改前</div><ol class="translation-diff-order">${diff.commonBeforeOrder.map((id) => `<li>${esc(translationDiffTagLabel(beforeData, id))} <code>${esc(id)}</code></li>`).join('')}</ol></div>
+        <div class="translation-diff-side"><div class="translation-diff-side-title">修改後</div><ol class="translation-diff-order">${diff.commonAfterOrder.map((id) => `<li>${esc(translationDiffTagLabel(afterData, id))} <code>${esc(id)}</code></li>`).join('')}</ol></div>
+      </div>
+    </div>` : '';
+
+    const openAll = totalChanges <= 30;
+    return `<div class="preview-card translation-diff-preview">${summary}
+      ${translationDiffSection('詞條文字修改', textChangeHtml, diff.textChanges.length, openAll)}
+      ${translationDiffSection('詞條標籤修改', pairTagChangeHtml, diff.pairTagChanges.length, openAll)}
+      ${translationDiffSection('新增詞條', addedPairHtml, diff.addedPairs.length, openAll)}
+      ${translationDiffSection('刪除詞條', removedPairHtml, diff.removedPairs.length, openAll)}
+      ${translationDiffSection('新增標籤', addedTagHtml, diff.addedTags.length, openAll)}
+      ${translationDiffSection('刪除標籤', removedTagHtml, diff.removedTags.length, openAll)}
+      ${translationDiffSection('標籤名稱修改', renamedTagHtml, diff.renamedTags.length, openAll)}
+      ${translationDiffSection('標籤順序修改', tagOrderHtml, diff.tagOrderChanged ? 1 : 0, openAll)}
+    </div>`;
+  }
+
+  function translationDiffSummaryText(beforeData, afterData) {
+    const diff = translationDiffData(beforeData || {}, afterData || {});
+    const parts = [];
+    if (diff.textChanges.length) parts.push(`文字修改 ${diff.textChanges.length}`);
+    if (diff.pairTagChanges.length) parts.push(`詞條標籤修改 ${diff.pairTagChanges.length}`);
+    if (diff.addedPairs.length) parts.push(`新增詞條 ${diff.addedPairs.length}`);
+    if (diff.removedPairs.length) parts.push(`刪除詞條 ${diff.removedPairs.length}`);
+    if (diff.addedTags.length) parts.push(`新增標籤 ${diff.addedTags.length}`);
+    if (diff.removedTags.length) parts.push(`刪除標籤 ${diff.removedTags.length}`);
+    if (diff.renamedTags.length) parts.push(`標籤改名 ${diff.renamedTags.length}`);
+    if (diff.tagOrderChanged) parts.push('標籤順序修改');
+    return parts.join('、') || '內容相同';
+  }
+
+  function installTranslationDiffStyles() {
+    if (document.getElementById('translationDetailedDiffStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'translationDetailedDiffStyles';
+    style.textContent = `
+      .translation-diff-preview{display:grid;gap:10px}
+      .translation-diff-section{border:1px solid #dfd3ca;border-radius:10px;background:#fff;overflow:hidden}
+      .translation-diff-section>summary{display:flex;gap:8px;align-items:center;cursor:pointer;padding:10px 12px;background:#f8f3ef}
+      .translation-diff-list{display:grid;gap:10px;padding:10px;max-height:620px;overflow:auto}
+      .translation-diff-item{border:1px solid #e3d8cf;border-radius:10px;padding:10px;background:#fcfaf8}
+      .translation-diff-item.is-added{box-shadow:inset 4px 0 #247a46}
+      .translation-diff-item.is-removed{box-shadow:inset 4px 0 #a1342b}
+      .translation-diff-item-title{font-weight:800;margin-bottom:8px;overflow-wrap:anywhere}
+      .translation-diff-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+      .translation-diff-side{border:1px solid #e7ddd5;border-radius:9px;padding:9px;background:#fff;min-width:0}
+      .translation-diff-side-title{font-size:.75rem;font-weight:800;color:#6e625a;margin-bottom:6px}
+      .translation-diff-field{display:grid;grid-template-columns:54px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1px solid #f0e8e2;min-width:0}
+      .translation-diff-field:first-of-type{border-top:0}
+      .translation-diff-field.changed{background:#fff7dc;margin:0 -5px;padding:5px;border-radius:6px}
+      .translation-diff-field strong{font-size:.75rem;color:#6e625a}
+      .translation-diff-field span{overflow-wrap:anywhere;min-width:0}
+      .translation-diff-chips{display:flex;gap:4px;flex-wrap:wrap}
+      .translation-diff-order{margin:0;padding-left:22px;display:grid;gap:4px}
+      .translation-diff-item code,.translation-diff-order code{font-size:.72rem;color:#766c65}
+      @media(max-width:700px){.translation-diff-grid{grid-template-columns:1fr}}
+    `;
+    document.head.append(style);
+  }
+
+  installTranslationDiffStyles();
+
   translationHistoryPreviewHtml = function translationTagHistoryPreview(h) {
-    const before = h?.before?.pairs || [];
-    const after = h?.after?.pairs || [];
-    const key = (pair) => `${dictNorm(pair.en)}\u0000${dictNorm(pair.zh)}`;
-    const beforeMap = new Map(before.map((pair) => [key(pair), pair]));
-    const afterMap = new Map(after.map((pair) => [key(pair), pair]));
-    const removed = [...beforeMap].filter(([pairKey]) => !afterMap.has(pairKey)).map(([, pair]) => pair);
-    const added = [...afterMap].filter(([pairKey]) => !beforeMap.has(pairKey)).map(([, pair]) => pair);
-    const changed = [...afterMap]
-      .filter(([pairKey, pair]) => beforeMap.has(pairKey)
-        && JSON.stringify(beforeMap.get(pairKey).tags || []) !== JSON.stringify(pair.tags || []))
-      .map(([, pair]) => pair);
-    const rows = (items, empty) => items.length
-      ? `<div class="order-diff-list">${items.slice(0, 40).map((pair) => `<div class="order-diff-row changed"><span class="order-diff-name">${esc(pair.en)} ↔ ${esc(pair.zh)}</span>${(pair.tags || []).length ? `<span class="muted">${(pair.tags || []).map(tagLabel).map(esc).join(' · ')}</span>` : ''}</div>`).join('')}${items.length > 40 ? `<div class="muted">另有 ${items.length - 40} 組未展開</div>` : ''}</div>`
-      : `<p class="muted">${empty}</p>`;
-    return `<div class="preview-card"><div class="order-diff-summary"><strong>中英對照表變更</strong><span class="tag">${before.length} → ${after.length} 組</span><span class="tag">標籤 ${(h?.before?.tags || []).length} → ${(h?.after?.tags || []).length}</span></div><div class="preview-columns"><div><h4>移除／修改前</h4>${rows(removed, '沒有移除的對照')}</div><div><h4>新增／標籤異動後</h4>${rows([...added, ...changed], '沒有新增或標籤異動')}</div></div></div>`;
+    return translationDetailedDiffHtml(h?.before || {}, h?.after || {});
+  };
+
+  // The legacy draft preview only showed pair counts. Keep the rest of its
+  // rendering intact, then replace the translation operation with the full diff.
+  const renderPreviewWithoutDetailedTranslationDiff = renderPreview;
+  renderPreview = function renderPreviewWithDetailedTranslationDiff(refreshDictionary = true) {
+    renderPreviewWithoutDetailedTranslationDiff(refreshDictionary);
+    const operation = payload().operations.find((item) => item.op === 'translations');
+    if (!operation) return;
+    const details = [...$('#preview').querySelectorAll('details')].find((item) => (
+      item.querySelector('summary strong')?.textContent.trim() === '中英對照表'
+    ));
+    if (!details) return;
+    details.innerHTML = `<summary><strong>中英對照表與標籤</strong>：${esc(translationDiffSummaryText(operation.before, operation.after))}</summary>${translationDetailedDiffHtml(operation.before, operation.after)}`;
   };
 
   // Replace the legacy category handlers with the tag UI handlers.
