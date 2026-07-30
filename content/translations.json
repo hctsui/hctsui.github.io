@@ -4,8 +4,8 @@
     {
       "id": "institution",
       "label": {
-        "en": "Institution / School",
-        "zh": "機構／學校"
+        "en": "Institution",
+        "zh": "機構"
       }
     },
     {
@@ -32,8 +32,8 @@
     {
       "id": "role",
       "label": {
-        "en": "Role / Identity",
-        "zh": "角色／身分"
+        "en": "Role",
+        "zh": "身分"
       }
     },
     {
@@ -2561,7 +2561,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2570,7 +2569,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2579,7 +2577,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2588,7 +2585,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2597,7 +2593,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2606,7 +2601,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2615,7 +2609,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2624,7 +2617,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2633,7 +2625,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2642,7 +2633,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2651,7 +2641,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2660,7 +2649,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2669,7 +2657,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2678,7 +2665,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2687,7 +2673,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2696,7 +2681,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2705,7 +2689,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2714,7 +2697,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2723,7 +2705,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2732,7 +2713,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2741,7 +2721,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2750,7 +2729,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2759,7 +2737,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2768,7 +2745,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2777,7 +2753,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2786,7 +2761,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2795,7 +2769,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2804,7 +2777,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2813,7 +2785,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2822,7 +2793,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "taiwan"
       ],
@@ -2831,7 +2801,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2840,7 +2809,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2849,7 +2817,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2858,7 +2825,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2867,7 +2833,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2876,7 +2841,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2885,7 +2849,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2894,7 +2857,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2903,7 +2865,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2912,7 +2873,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2921,7 +2881,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2930,7 +2889,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2939,7 +2897,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2948,7 +2905,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2957,7 +2913,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2966,7 +2921,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2975,7 +2929,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2984,7 +2937,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -2993,7 +2945,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3002,7 +2953,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3011,7 +2961,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3020,7 +2969,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3029,7 +2977,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3038,7 +2985,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3047,7 +2993,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3056,7 +3001,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3065,7 +3009,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3074,7 +3017,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3083,7 +3025,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3092,7 +3033,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "japan"
       ],
@@ -3101,7 +3041,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3110,7 +3049,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3119,7 +3057,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3128,7 +3065,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3137,7 +3073,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3146,7 +3081,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3155,7 +3089,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3164,7 +3097,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3173,7 +3105,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3182,7 +3113,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3191,7 +3121,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3200,7 +3129,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3209,7 +3137,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3218,7 +3145,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3227,7 +3153,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3236,7 +3161,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3245,7 +3169,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3254,7 +3177,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3263,7 +3185,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3272,7 +3193,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3281,7 +3201,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3290,7 +3209,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3299,7 +3217,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3308,7 +3225,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3317,7 +3233,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3326,7 +3241,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3335,7 +3249,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3344,7 +3257,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3353,7 +3265,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3362,7 +3273,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3371,7 +3281,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3380,7 +3289,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3389,7 +3297,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3398,7 +3305,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3407,7 +3313,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3416,7 +3321,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3425,7 +3329,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3434,7 +3337,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3443,7 +3345,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3452,7 +3353,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3461,7 +3361,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3470,7 +3369,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3479,7 +3377,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3488,7 +3385,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3497,7 +3393,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3506,7 +3401,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3515,7 +3409,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3524,7 +3417,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3533,7 +3425,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3542,7 +3433,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3551,7 +3441,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3560,7 +3449,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3569,7 +3457,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3578,7 +3465,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3587,7 +3473,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3596,7 +3481,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3605,7 +3489,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3614,7 +3497,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3623,7 +3505,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3632,7 +3513,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3641,7 +3521,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3650,7 +3529,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3659,7 +3537,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3668,7 +3545,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3677,7 +3553,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3686,7 +3561,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3695,7 +3569,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3704,7 +3577,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3713,7 +3585,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3722,7 +3593,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3731,7 +3601,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3740,7 +3609,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3749,7 +3617,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3758,7 +3625,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3767,7 +3633,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3776,7 +3641,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3785,7 +3649,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3794,7 +3657,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3803,7 +3665,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3812,7 +3673,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3821,7 +3681,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3830,7 +3689,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3839,7 +3697,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3848,7 +3705,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3857,7 +3713,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3866,7 +3721,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3875,7 +3729,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3884,7 +3737,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3893,7 +3745,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3902,7 +3753,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3911,7 +3761,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3920,7 +3769,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3929,7 +3777,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3938,7 +3785,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3947,7 +3793,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3956,7 +3801,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3965,7 +3809,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3974,7 +3817,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3983,7 +3825,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
@@ -3992,7 +3833,6 @@
     },
     {
       "tags": [
-        "institution",
         "university",
         "united_states"
       ],
