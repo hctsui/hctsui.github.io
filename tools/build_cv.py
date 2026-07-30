@@ -81,16 +81,16 @@ def pair(entry: dict[str, Any], field: str, lang: str) -> str:
 
 
 def display_date(value: str, lang: str) -> str:
+    # Keep dates identical in the English and Chinese CVs.
     d = date.fromisoformat(value)
-    return f"{d.year}/{d.month}/{d.day}" if lang == "en" else f"{d.year} 年 {d.month} 月 {d.day} 日"
+    return f"{d.year}/{d.month}/{d.day}"
 
 
 def display_range(entry: dict[str, Any], lang: str) -> str:
     start = str(entry.get("start_date", "")); end = str(entry.get("end_date") or start)
     if not start: return latex_escape(entry.get("year", ""))
     if end == start: return display_date(start, lang)
-    sep = " -- " if lang == "en" else "至"
-    return f"{display_date(start, lang)}{sep}{display_date(end, lang)}"
+    return f"{display_date(start, lang)} -- {display_date(end, lang)}"
 
 
 def activity_is_upcoming(entry: dict[str, Any], today: date) -> bool:
@@ -209,7 +209,7 @@ def ordered_ungrouped(data: dict[str, Any], kind: str, entries: list[dict[str, A
 
 
 def updated_text(today: date, lang: str) -> str:
-    if lang=="zh": return f"{today.year} 年 {today.month} 月 {today.day} 日"
+    # Use the same Last updated date format in both CVs.
     months=["January","February","March","April","May","June","July","August","September","October","November","December"]
     return f"{months[today.month-1]} {today.day}, {today.year}"
 
