@@ -52,7 +52,7 @@ body:
     attributes: {label: "Country (Chinese) / 國家中文 [選填・可由對照表補全]"}
   - type: input
     id: funding-en
-    attributes: {label: "Funding note (English) / 補助說明英文 [選填]"}
+    attributes: {label: "Description (English) / 說明英文 [選填]"}
   - type: input
     id: funding-zh
-    attributes: {label: "Funding note (Chinese) / 補助說明中文 [選填・可由對照表補全]"}
+    attributes: {label: "Description (Chinese) / 說明中文 [選填・可由對照表補全]"}
