@@ -35,12 +35,16 @@ Admin 可新增 Conference、Talk、Visit、Honor、Publication、Teaching，也
 
 1. 可直接新增、修改、刪除及搜尋對照。
 2. 修改會立即保存在目前瀏覽器的本機草稿，不會每列送一次 Issue。
-3. 完成多筆修改後，按「複製 JSON 並開啟 GitHub 編輯器」。
-4. 在 GitHub 編輯器全選 `content/translations.json` 原內容、貼上、commit。
+3. 對照表修改會與其他內容草稿一起出現在右側預覽。
+4. 按「前往 GitHub 送出批次」後建立一張 Issue；大型批次會自動複製精簡 JSON，貼入單欄表單即可。
+5. GitHub Action 成功寫入後，Issue 會出現 `website-form-applied` 標籤與完成訊息，並由同一個 workflow 的後續 deployment job 建立網站與 PDF。確認完成後，再回 Admin 手動清除本機草稿。
+
+若遠端對照表在本機草稿期間已更新，Admin 不會自動套用舊草稿，以避免覆蓋他人的新資料。
 
 程式會拒絕：
 
 - 任一側空白的資料列。
+- 完全重複的對照列（包含 Unicode NFKC 正規化後的重複）。
 - 同一英文對應多個中文。
 - 同一中文對應多個英文。
 
@@ -69,7 +73,9 @@ Conference、Talk、Visit 可選擇先顯示在 Upcoming。結束日期過後，
 
 - `content/site.json`：網站與 CV 的內容資料庫
 - `content/translations.json`：唯一的中英對照資料庫
-- `tools/process_request.py`：表單處理及精確補全
+- `tools/process_request.py`：單筆表單處理及精確補全
+- `tools/process_batch_request.py`：Admin 批次交易、衝突檢查與七日還原
+- `tools/translation_validation.py`：單筆、批次與最終驗證共用的對照表規則
 - `tools/build_site.py`：網站生成
 - `tools/build_cv.py`：英文及中文 LaTeX CV 生成
 - `cv/Hung-Chun-Tsui-CV.template.tex`：英文 CV 模板

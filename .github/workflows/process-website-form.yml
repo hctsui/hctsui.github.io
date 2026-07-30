@@ -11,7 +11,6 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  actions: write
   contents: write
   issues: write
 
@@ -56,6 +55,7 @@ jobs:
             git clean -fd
 
             rm -f /tmp/result.json
+            python3 -m unittest discover -s tests
             python3 tools/process_request.py \
               "$GITHUB_EVENT_PATH" \
               --result-file /tmp/result.json
@@ -139,14 +139,17 @@ jobs:
             --repo "${{ github.repository }}" \
             --add-label website-form-applied
 
-      - name: Queue one website deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          gh workflow run deploy-cms-pages.yml \
-            --repo "${{ github.repository }}" \
-            --ref cms
+
+
+  deploy-site:
+    if: needs.update-site.result == 'success'
+    needs: update-site
+    permissions:
+      actions: read
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-cms-pages.yml
 
   confirm:
     needs: update-site
@@ -171,7 +174,7 @@ jobs:
               "",
               f"Entry ID: `{result['entry_id']}`",
               "",
-              "資料、中英文網站與兩份 LaTeX CV 已更新；PDF／GitHub Pages 已加入部署佇列。",
+              "資料、中英文網站與兩份 LaTeX CV 原始檔已更新；後續 deployment job 將建立 PDF／GitHub Pages。",
               "",
               "English PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf",
               "Chinese PDF CV: https://hctsui.github.io/files/Hung-Chun-Tsui-CV-zh.pdf",

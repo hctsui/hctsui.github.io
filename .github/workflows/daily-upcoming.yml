@@ -13,8 +13,6 @@ concurrency:
 permissions:
   actions: read
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   update-upcoming:
@@ -32,6 +30,7 @@ jobs:
 
       - name: Rebuild using today's date
         run: |
+          python3 -m unittest discover -s tests
           python3 tools/build_site.py
           python3 tools/build_cv.py
           python3 tools/render_grouped_sections.py
@@ -86,4 +85,9 @@ jobs:
   deploy-site:
     if: needs.update-upcoming.outputs.changed == 'true'
     needs: update-upcoming
+    permissions:
+      actions: read
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/deploy-cms-pages.yml

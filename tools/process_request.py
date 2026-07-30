@@ -12,10 +12,11 @@ import hashlib
 import html
 import json
 import re
-import unicodedata
 from datetime import date
 from pathlib import Path
 from typing import Any
+
+from translation_validation import normalize_translation, validate_translation_data
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -100,8 +101,7 @@ def dictionary_enabled(fields: dict[str, str]) -> bool:
 
 
 def normalize_lookup(value: str) -> str:
-    text = unicodedata.normalize("NFKC", strip_markup(value))
-    return re.sub(r"\s+", " ", text).strip().casefold()
+    return normalize_translation(value)
 
 
 class TranslationIndex:
@@ -109,9 +109,7 @@ class TranslationIndex:
         raw = {"pairs": []}
         if TRANSLATIONS_FILE.exists():
             raw = json.loads(TRANSLATIONS_FILE.read_text(encoding="utf-8"))
-        pairs = raw.get("pairs", [])
-        if not isinstance(pairs, list):
-            raise ValueError("content/translations.json: pairs must be an array.")
+        pairs = validate_translation_data(raw)
         self.en_to_zh: dict[str, str] = {}
         self.zh_to_en: dict[str, str] = {}
         for row in pairs:

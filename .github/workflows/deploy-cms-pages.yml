@@ -47,6 +47,7 @@ jobs:
 
       - name: Rebuild website and both LaTeX CVs
         run: |
+          python3 -m unittest discover -s tests
           python3 tools/build_site.py
           python3 tools/build_cv.py
           python3 tools/render_grouped_sections.py

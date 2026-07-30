@@ -1080,3 +1080,18 @@ html body[data-page="activities"] .page-hero{
     ) !important;
   border-bottom:1px solid var(--line);
 }
+
+/* Accessibility and motion preferences. */
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

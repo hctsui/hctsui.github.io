@@ -4,6 +4,7 @@ import argparse, copy, hashlib, html, json, re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+from translation_validation import validate_translation_data
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','honor':'honors','publication':'publications','teaching':'teaching'}
 def parse_body(body):
@@ -110,14 +111,7 @@ def rebase_order(current,desired):
   result.append({'id':gid,'label':copy.deepcopy(meta.get('label',{'en':gid,'zh':''})),'preset':bool(meta.get('preset')),'entries':entries})
  return {'kind':kind,'groups':result}
 def validate_trans(d):
- if d.get('schema_version')!=1 or not isinstance(d.get('pairs'),list):raise ValueError('Invalid translations.json structure.')
- en,zh={},{}
- for i,p in enumerate(d['pairs'],1):
-  a=' '.join(str(p.get('en') or '').split()).casefold();b=' '.join(str(p.get('zh') or '').split()).casefold()
-  if not a or not b:raise ValueError(f'Translation row {i} is blank.')
-  if a in en and en[a]!=b:raise ValueError(f'English translation conflict at row {i}.')
-  if b in zh and zh[b]!=a:raise ValueError(f'Chinese translation conflict at row {i}.')
-  en[a]=b;zh[b]=a
+ validate_translation_data(d)
 def normalize_groups(data):
  groups=data.setdefault('settings',{}).setdefault('content_groups',{})
  for kind,sec in (('publication','publications'),('teaching','teaching')):
@@ -130,10 +124,7 @@ def apply_content(data,h,op,hid,issue,n,rd):
  action=op['op'];t=op['type'];eid=op.get('id') or op.get('after',{}).get('id');a,i=find(data,t,eid)
  if action=='add':
   after=normalize_item(op['after']);eid=after['id'];allids={x.get('id') for s in set(SECTIONS.values()) for x in data.get(s,[])}
-  if eid in allids:
-   b=eid;k=2
-   while f'{b}-{k}' in allids:k+=1
-   eid=f'{b}-{k}';after['id']=eid
+  if eid in allids:raise ValueError(f'Add target ID already exists: {eid}. Reload Admin and submit again.')
   a,_=find(data,t,eid);idx=len(a);a.append(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='add',action='add',type=t,entry_id=eid,label=label(after),before=None,after=copy.deepcopy(after),index_before=None,index_after=idx,undo_of=None);return 'add',eid
  if i is None:raise ValueError(f'{action.title()} target not found: {eid}')
  cur=copy.deepcopy(a[i]);expected=op.get('before')
@@ -179,12 +170,31 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
    restored=copy.deepcopy(target['before']);idx=min(max(target.get('index_before') or 0,0),len(a));a.insert(idx,restored);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='add',type=t,entry_id=eid,label=target['label'],before=None,after=copy.deepcopy(restored),index_before=None,index_after=idx,undo_of=tid)
   else:raise ValueError(f'Unsupported undo action: {act}')
  target['reverted_by']=new['history_id'];return 'undo',eid
+def validate_operation(op):
+ if not isinstance(op,dict):raise ValueError('Every batch operation must be an object.')
+ action=op.get('op')
+ if action not in {'add','update','delete','undo','reorder','translations'}:raise ValueError(f'Unsupported batch operation: {action}')
+ if action=='undo':
+  if not str(op.get('history_id') or '').strip():raise ValueError('Undo operation is missing history_id.')
+  return
+ if action=='translations':
+  if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Translations operation requires before and after objects.')
+  validate_translation_data(op['after']);return
+ t=op.get('type')
+ if t not in SECTIONS:raise ValueError(f'Unsupported content type: {t}')
+ if action=='reorder':
+  if not isinstance(op.get('after'),dict) or op['after'].get('kind')!=t:raise ValueError(f'Reorder operation for {t} has an invalid state.')
+  return
+ if action in {'add','update'}:
+  after=op.get('after')
+  if not isinstance(after,dict) or after.get('type')!=t or not str(after.get('id') or '').strip():raise ValueError(f'{action.title()} operation for {t} has invalid after data.')
+ if action in {'update','delete'} and not str(op.get('id') or op.get('after',{}).get('id') or '').strip():raise ValueError(f'{action.title()} operation is missing an ID.')
 def main():
  p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
  if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
  data=json.load(open(SITE,encoding='utf-8'));trans=json.load(open(TRANS,encoding='utf-8'));h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','replayed')};ids=[]
  for i,op in enumerate(ops,1):
-  hid=f'issue-{issue}-op-{i}';rd=digest(op)
+  validate_operation(op);hid=f'issue-{issue}-op-{i}';rd=digest(op)
   if hid in existing:
    if existing[hid].get('request_digest')!=rd:raise ValueError(f'{hid} exists with different content.')
    counts['replayed']+=1;continue

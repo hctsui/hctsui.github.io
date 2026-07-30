@@ -1,33 +1,52 @@
 name: Process website batch
+
 on:
   issues:
     types: [opened]
+
 concurrency:
   group: website-batch-${{ github.event.issue.number }}
   cancel-in-progress: false
+
 permissions:
-  actions: write
   contents: write
   issues: write
+
 jobs:
   update-site:
     if: "startsWith(github.event.issue.title, '[Website: Batch]') && github.event.issue.author_association == 'OWNER'"
     runs-on: ubuntu-latest
     timeout-minutes: 25
+
     steps:
-      - uses: actions/checkout@v6
-        with: {ref: cms, fetch-depth: 0}
-      - run: |
+      - name: Check out cms branch
+        uses: actions/checkout@v6
+        with:
+          ref: cms
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Apply batch safely
+        shell: bash
         run: |
           set -euo pipefail
+
           for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            echo "=== Batch update attempt ${attempt}/10 ==="
             git fetch origin cms
             git reset --hard origin/cms
             git clean -fd
-            python3 tools/process_batch_request.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
+            rm -f /tmp/result.json /tmp/final-result.json
+
+            python3 -m unittest discover -s tests
+
+            python3 tools/process_batch_request.py \
+              "$GITHUB_EVENT_PATH" \
+              --result-file /tmp/result.json
             python3 tools/build_site.py
             python3 tools/build_cv.py
             python3 tools/render_grouped_sections.py
@@ -36,18 +55,87 @@ jobs:
             python3 tools/build_catalog.py
             python3 tools/validate_translations.py
             python3 tools/validate_site.py
-            git add content/site.json content/translations.json content/change-history.json CONTENT-CATALOG.md cv/*.tex index.html cv.html publications.html activities.html teaching.html zh .github/ISSUE_TEMPLATE
-            git commit -m "Apply website batch from issue #${{ github.event.issue.number }}" || true
-            if git push origin HEAD:cms; then exit 0; fi
-            sleep $((attempt*2))
+
+            git add content/site.json content/translations.json content/change-history.json \
+              CONTENT-CATALOG.md cv/*.tex \
+              index.html cv.html publications.html activities.html teaching.html \
+              zh .github/ISSUE_TEMPLATE
+
+            if git diff --cached --quiet; then
+              echo "No file change was required; treating this Issue as already applied."
+              cp /tmp/result.json /tmp/final-result.json
+              exit 0
+            fi
+
+            git commit -m "Apply website batch from issue #${{ github.event.issue.number }}"
+            if git push origin HEAD:cms; then
+              cp /tmp/result.json /tmp/final-result.json
+              echo "Batch update pushed successfully."
+              exit 0
+            fi
+
+            echo "::warning::Another update reached cms first. Reapplying this batch to the latest data."
+            sleep $((attempt * 2))
           done
+
+          echo "::error::Could not update cms after 10 retries."
           exit 1
-      - name: Deploy
-        env: {GH_TOKEN: "${{ github.token }}"}
-        run: gh workflow run deploy-cms-pages.yml --repo "${{ github.repository }}" --ref cms
-      - name: Confirm and close
-        env: {GH_TOKEN: "${{ github.token }}"}
+
+      - name: Mark batch as applied
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          BODY="$(python3 -c "import json;print(json.load(open('/tmp/result.json'))['action'])")"
-          gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --body "完成：${BODY}。網站與中英文 CV 已加入部署佇列。"
-          gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}"
+          gh label create website-form-applied \
+            --repo "${{ github.repository }}" \
+            --color "0E8A16" \
+            --description "Website data was successfully written" \
+            2>/dev/null || true
+
+          gh issue edit "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --add-label website-form-applied \
+            || echo "::warning::資料已寫入，但無法加上 website-form-applied 標籤。"
+
+      - name: Confirm and close
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          BODY="$(python3 -c "import json; print(json.load(open('/tmp/final-result.json', encoding='utf-8'))['action'])")"
+
+          gh issue comment "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --body "完成：${BODY}。資料與中英文 CV 原始檔已更新；後續 deployment job 將建立網站與 PDF。" \
+            || echo "::warning::資料已寫入，但無法留下完成訊息。"
+
+          gh issue close "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            || echo "::warning::資料已寫入，但無法自動關閉 Issue。"
+
+
+  deploy-site:
+    if: needs.update-site.result == 'success'
+    needs: update-site
+    permissions:
+      actions: read
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-cms-pages.yml
+
+  explain-failure:
+    if: always() && needs.update-site.result == 'failure'
+    needs: update-site
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Explain failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST \
+            "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="自動更新失敗，Issue 暫時不會關閉。請查看本次 Actions 的第一個紅色步驟；本機 Admin 草稿請先保留。" \
+            >/dev/null || echo "::warning::無法在 Issue 留下失敗訊息。"
