@@ -1,349 +1,1706 @@
 {
   "schema_version": 1,
+  "description": "Exact whole-field bilingual dictionary. No keyword, substring, fuzzy, or AI translation.",
   "pairs": [
-    {
-      "en": "2025 Taipei Conference on Arithmetic Geometry",
-      "zh": "2025 臺北算術幾何會議"
-    },
     {
       "en": "Academia Sinica",
       "zh": "中央研究院"
     },
     {
-      "en": "Academia Sinica, Taipei, Taiwan",
-      "zh": "中央研究院, 臺北, 臺灣"
+      "en": "Aichi Prefecture",
+      "zh": "愛知縣"
     },
     {
-      "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
-      "zh": "正特徵多重 Eisenstein 級數的代數結構"
+      "en": "Akita",
+      "zh": "秋田"
     },
     {
-      "en": "Chow Hung-Ching Scholarship",
-      "zh": "周鴻經獎學金"
+      "en": "Akita Prefecture",
+      "zh": "秋田縣"
     },
     {
-      "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
-      "zh": "正特徵多重 zeta 值的導子"
+      "en": "Alabama",
+      "zh": "阿拉巴馬州"
     },
     {
-      "en": "Fall 2023",
-      "zh": "2023 秋"
+      "en": "Alaska",
+      "zh": "阿拉斯加州"
     },
     {
-      "en": "Fall 2024",
-      "zh": "2024 秋"
+      "en": "Albuquerque",
+      "zh": "阿布奎基"
     },
     {
-      "en": "Fall 2025",
-      "zh": "2025 秋"
+      "en": "Ann Arbor",
+      "zh": "安娜堡"
     },
     {
-      "en": "Fall 2026",
-      "zh": "2026 秋"
+      "en": "Aomori",
+      "zh": "青森"
     },
     {
-      "en": "Hung-Chun Tsui",
-      "zh": "崔鴻竣"
+      "en": "Aomori Prefecture",
+      "zh": "青森縣"
     },
     {
-      "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic",
-      "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+      "en": "Aoyama Gakuin University",
+      "zh": "青山學院大學"
     },
     {
-      "en": "Iwasawa 2025",
-      "zh": "Iwasawa 2025 國際會議"
+      "en": "Arizona",
+      "zh": "亞利桑那州"
     },
     {
-      "en": "Iwasawa Theory Taipei Summer School",
-      "zh": "Iwasawa 理論臺北暑期學校"
+      "en": "Arizona State University",
+      "zh": "亞利桑那州立大學"
     },
     {
-      "en": "Japan-Taiwan Number Theory Conference",
-      "zh": "日臺數論會議"
+      "en": "Arkansas",
+      "zh": "阿肯色州"
     },
     {
-      "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
-      "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+      "en": "Atlanta",
+      "zh": "亞特蘭大"
     },
     {
-      "en": "Japan–Taiwan Exchange Association",
-      "zh": "日本台灣交流協會"
+      "en": "Austin",
+      "zh": "奧斯汀"
     },
     {
-      "en": "Journal Articles",
-      "zh": "期刊論文"
+      "en": "Baltimore",
+      "zh": "巴爾的摩"
     },
     {
-      "en": "Kindai University, Osaka, Japan",
-      "zh": "近畿大學, 大阪, 日本"
+      "en": "Berkeley",
+      "zh": "柏克萊"
     },
     {
-      "en": "Kyoto University, Kyoto, Japan",
-      "zh": "京都大學, 京都, 日本"
+      "en": "Boston",
+      "zh": "波士頓"
     },
     {
-      "en": "Kyukamura Shikanoshima, Fukuoka, Japan",
-      "zh": "休暇村志賀島, 福岡, 日本"
+      "en": "Boston University",
+      "zh": "波士頓大學"
     },
     {
-      "en": "Kyushu University Nishijin Plaza, Fukuoka, Japan",
-      "zh": "九州大學西新廣場, 福岡, 日本"
+      "en": "Brown University",
+      "zh": "布朗大學"
     },
     {
-      "en": "Lecturer",
-      "zh": "講師"
+      "en": "California",
+      "zh": "加利福尼亞州"
     },
     {
-      "en": "MATH1410 Linear Algebra I",
-      "zh": "MATH1410 線性代數（一）"
+      "en": "California Institute of Technology",
+      "zh": "加州理工學院"
     },
     {
-      "en": "MATH1420 Linear Algebra II",
-      "zh": "MATH1420 線性代數（二）"
+      "en": "Cambridge",
+      "zh": "劍橋"
     },
     {
-      "en": "MATH2010 Advanced Calculus I",
-      "zh": "MATH2010 高等微積分（一）"
+      "en": "Carnegie Mellon University",
+      "zh": "卡內基美隆大學"
     },
     {
-      "en": "MATH2020 Advanced Calculus II",
-      "zh": "MATH2020 高等微積分（二）"
+      "en": "Case Western Reserve University",
+      "zh": "凱斯西儲大學"
     },
     {
-      "en": "MATH2410 Algebra I",
-      "zh": "MATH2410 代數（一）"
+      "en": "Chang Gung University",
+      "zh": "長庚大學"
     },
     {
-      "en": "MATH2420 Algebra II",
-      "zh": "MATH2420 代數（二）"
+      "en": "Changhua",
+      "zh": "彰化"
     },
     {
-      "en": "MATH2870 Discrete Mathematics",
-      "zh": "MATH2870 離散數學"
+      "en": "Changhua County",
+      "zh": "彰化縣"
     },
     {
-      "en": "MATH3050 Complex Analysis",
-      "zh": "MATH3050 複變數函數論"
+      "en": "Charlotte",
+      "zh": "夏洛特"
     },
     {
-      "en": "MATH3450 Cryptography",
-      "zh": "MATH3450 密碼學"
+      "en": "Chiayi",
+      "zh": "嘉義"
     },
     {
-      "en": "MATH9999 Test Course",
-      "zh": "MATH9999 測試課程"
+      "en": "Chiayi City",
+      "zh": "嘉義市"
     },
     {
-      "en": "Nagoya University, Nagoya, Japan",
-      "zh": "名古屋大學, 名古屋, 日本"
+      "en": "Chiayi County",
+      "zh": "嘉義縣"
     },
     {
-      "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
-      "zh": "名古屋—關西青年研究者 zeta 研討會"
+      "en": "Chiba",
+      "zh": "千葉"
     },
     {
-      "en": "National Central University, Taoyuan, Taiwan",
-      "zh": "國立中央大學, 桃園, 臺灣"
+      "en": "Chiba Prefecture",
+      "zh": "千葉縣"
     },
     {
-      "en": "National Cheng Kung University, Tainan, Taiwan",
-      "zh": "國立成功大學, 臺南, 臺灣"
+      "en": "Chiba University",
+      "zh": "千葉大學"
     },
     {
-      "en": "National Chengchi University, Taipei, Taiwan",
-      "zh": "國立政治大學, 臺北, 臺灣"
+      "en": "Chicago",
+      "zh": "芝加哥"
     },
     {
-      "en": "National Chung Cheng University, Chiayi, Taiwan",
-      "zh": "國立中正大學, 嘉義, 臺灣"
+      "en": "China Medical University",
+      "zh": "中國醫藥大學"
     },
     {
-      "en": "National Science and Technology Council",
-      "zh": "國家科學及技術委員會"
+      "en": "Chung Yuan Christian University",
+      "zh": "中原大學"
     },
     {
-      "en": "National Taiwan University, Taipei, Taiwan",
-      "zh": "國立臺灣大學, 臺北, 臺灣"
+      "en": "Chuo University",
+      "zh": "中央大學"
     },
     {
-      "en": "National Tsing Hua University, Hsinchu, Taiwan",
-      "zh": "國立清華大學, 新竹, 臺灣"
+      "en": "Cincinnati",
+      "zh": "辛辛那提"
     },
     {
-      "en": "NSTC Graduate Research Fellowship",
-      "zh": "國科會博士生研究獎學金"
+      "en": "Cleveland",
+      "zh": "克里夫蘭"
     },
     {
-      "en": "NTHU",
+      "en": "College Station",
+      "zh": "大學城"
+    },
+    {
+      "en": "Colorado",
+      "zh": "科羅拉多州"
+    },
+    {
+      "en": "Columbia University",
+      "zh": "哥倫比亞大學"
+    },
+    {
+      "en": "Columbus",
+      "zh": "哥倫布"
+    },
+    {
+      "en": "Connecticut",
+      "zh": "康乃狄克州"
+    },
+    {
+      "en": "Cornell University",
+      "zh": "康乃爾大學"
+    },
+    {
+      "en": "Dallas",
+      "zh": "達拉斯"
+    },
+    {
+      "en": "Dartmouth College",
+      "zh": "達特茅斯學院"
+    },
+    {
+      "en": "Delaware",
+      "zh": "德拉瓦州"
+    },
+    {
+      "en": "Denver",
+      "zh": "丹佛"
+    },
+    {
+      "en": "Detroit",
+      "zh": "底特律"
+    },
+    {
+      "en": "District of Columbia",
+      "zh": "哥倫比亞特區"
+    },
+    {
+      "en": "Doshisha University",
+      "zh": "同志社大學"
+    },
+    {
+      "en": "Douliu",
+      "zh": "斗六"
+    },
+    {
+      "en": "Duke University",
+      "zh": "杜克大學"
+    },
+    {
+      "en": "Durham",
+      "zh": "德罕"
+    },
+    {
+      "en": "Ehime Prefecture",
+      "zh": "愛媛縣"
+    },
+    {
+      "en": "Ehime University",
+      "zh": "愛媛大學"
+    },
+    {
+      "en": "Emory University",
+      "zh": "艾默里大學"
+    },
+    {
+      "en": "Feng Chia University",
+      "zh": "逢甲大學"
+    },
+    {
+      "en": "Florida",
+      "zh": "佛羅里達州"
+    },
+    {
+      "en": "Florida State University",
+      "zh": "佛羅里達州立大學"
+    },
+    {
+      "en": "Fort Worth",
+      "zh": "沃斯堡"
+    },
+    {
+      "en": "Fresno",
+      "zh": "佛雷斯諾"
+    },
+    {
+      "en": "Fu Jen Catholic University",
+      "zh": "輔仁大學"
+    },
+    {
+      "en": "Fukui",
+      "zh": "福井"
+    },
+    {
+      "en": "Fukui Prefecture",
+      "zh": "福井縣"
+    },
+    {
+      "en": "Fukuoka",
+      "zh": "福岡"
+    },
+    {
+      "en": "Fukuoka Prefecture",
+      "zh": "福岡縣"
+    },
+    {
+      "en": "Fukushima",
+      "zh": "福島"
+    },
+    {
+      "en": "Fukushima Prefecture",
+      "zh": "福島縣"
+    },
+    {
+      "en": "Fukuyama",
+      "zh": "福山"
+    },
+    {
+      "en": "Gakushuin University",
+      "zh": "學習院大學"
+    },
+    {
+      "en": "Georgetown University",
+      "zh": "喬治城大學"
+    },
+    {
+      "en": "Georgia",
+      "zh": "喬治亞州"
+    },
+    {
+      "en": "Georgia Institute of Technology",
+      "zh": "喬治亞理工學院"
+    },
+    {
+      "en": "Gifu",
+      "zh": "岐阜"
+    },
+    {
+      "en": "Gifu Prefecture",
+      "zh": "岐阜縣"
+    },
+    {
+      "en": "Gifu University",
+      "zh": "岐阜大學"
+    },
+    {
+      "en": "Gunma Prefecture",
+      "zh": "群馬縣"
+    },
+    {
+      "en": "Gunma University",
+      "zh": "群馬大學"
+    },
+    {
+      "en": "Hakodate",
+      "zh": "函館"
+    },
+    {
+      "en": "Hamamatsu",
+      "zh": "濱松"
+    },
+    {
+      "en": "Harvard University",
+      "zh": "哈佛大學"
+    },
+    {
+      "en": "Hawaii",
+      "zh": "夏威夷州"
+    },
+    {
+      "en": "Himeji",
+      "zh": "姬路"
+    },
+    {
+      "en": "Hiroshima",
+      "zh": "廣島"
+    },
+    {
+      "en": "Hiroshima Prefecture",
+      "zh": "廣島縣"
+    },
+    {
+      "en": "Hiroshima University",
+      "zh": "廣島大學"
+    },
+    {
+      "en": "Hitotsubashi University",
+      "zh": "一橋大學"
+    },
+    {
+      "en": "Hokkaido",
+      "zh": "北海道"
+    },
+    {
+      "en": "Hokkaido University",
+      "zh": "北海道大學"
+    },
+    {
+      "en": "Honolulu",
+      "zh": "檀香山"
+    },
+    {
+      "en": "Hosei University",
+      "zh": "法政大學"
+    },
+    {
+      "en": "Houston",
+      "zh": "休士頓"
+    },
+    {
+      "en": "Hsinchu",
+      "zh": "新竹"
+    },
+    {
+      "en": "Hsinchu City",
+      "zh": "新竹市"
+    },
+    {
+      "en": "Hsinchu County",
+      "zh": "新竹縣"
+    },
+    {
+      "en": "Hualien",
+      "zh": "花蓮"
+    },
+    {
+      "en": "Hualien County",
+      "zh": "花蓮縣"
+    },
+    {
+      "en": "Hyogo Prefecture",
+      "zh": "兵庫縣"
+    },
+    {
+      "en": "Ibaraki Prefecture",
+      "zh": "茨城縣"
+    },
+    {
+      "en": "Idaho",
+      "zh": "愛達荷州"
+    },
+    {
+      "en": "Illinois",
+      "zh": "伊利諾州"
+    },
+    {
+      "en": "Indiana",
+      "zh": "印第安納州"
+    },
+    {
+      "en": "Indiana University Bloomington",
+      "zh": "印第安納大學布魯明頓分校"
+    },
+    {
+      "en": "Indianapolis",
+      "zh": "印第安納波利斯"
+    },
+    {
+      "en": "Institute of Science Tokyo",
+      "zh": "東京科學大學"
+    },
+    {
+      "en": "International Christian University",
+      "zh": "國際基督教大學"
+    },
+    {
+      "en": "Iowa",
+      "zh": "愛荷華州"
+    },
+    {
+      "en": "Iowa State University",
+      "zh": "愛荷華州立大學"
+    },
+    {
+      "en": "Ishikawa Prefecture",
+      "zh": "石川縣"
+    },
+    {
+      "en": "Ithaca",
+      "zh": "伊薩卡"
+    },
+    {
+      "en": "Iwate Prefecture",
+      "zh": "岩手縣"
+    },
+    {
+      "en": "Jacksonville",
+      "zh": "傑克遜維爾"
+    },
+    {
+      "en": "Japan",
+      "zh": "日本"
+    },
+    {
+      "en": "Japan Advanced Institute of Science and Technology",
+      "zh": "北陸先端科學技術大學院大學"
+    },
+    {
+      "en": "Johns Hopkins University",
+      "zh": "約翰霍普金斯大學"
+    },
+    {
+      "en": "Kagawa Prefecture",
+      "zh": "香川縣"
+    },
+    {
+      "en": "Kagoshima",
+      "zh": "鹿兒島"
+    },
+    {
+      "en": "Kagoshima Prefecture",
+      "zh": "鹿兒島縣"
+    },
+    {
+      "en": "Kagoshima University",
+      "zh": "鹿兒島大學"
+    },
+    {
+      "en": "Kanagawa Prefecture",
+      "zh": "神奈川縣"
+    },
+    {
+      "en": "Kanazawa",
+      "zh": "金澤"
+    },
+    {
+      "en": "Kanazawa University",
+      "zh": "金澤大學"
+    },
+    {
+      "en": "Kansai University",
+      "zh": "關西大學"
+    },
+    {
+      "en": "Kansas",
+      "zh": "堪薩斯州"
+    },
+    {
+      "en": "Kansas City",
+      "zh": "堪薩斯城"
+    },
+    {
+      "en": "Kaohsiung",
+      "zh": "高雄"
+    },
+    {
+      "en": "Kaohsiung City",
+      "zh": "高雄市"
+    },
+    {
+      "en": "Kaohsiung Medical University",
+      "zh": "高雄醫學大學"
+    },
+    {
+      "en": "Kawasaki",
+      "zh": "川崎"
+    },
+    {
+      "en": "Keelung",
+      "zh": "基隆"
+    },
+    {
+      "en": "Keelung City",
+      "zh": "基隆市"
+    },
+    {
+      "en": "Keio University",
+      "zh": "慶應義塾大學"
+    },
+    {
+      "en": "Kentucky",
+      "zh": "肯塔基州"
+    },
+    {
+      "en": "Kinki University",
+      "zh": "近畿大學"
+    },
+    {
+      "en": "Kinmen",
+      "zh": "金門"
+    },
+    {
+      "en": "Kinmen County",
+      "zh": "金門縣"
+    },
+    {
+      "en": "Kitakyushu",
+      "zh": "北九州"
+    },
+    {
+      "en": "Kobe",
+      "zh": "神戶"
+    },
+    {
+      "en": "Kobe University",
+      "zh": "神戶大學"
+    },
+    {
+      "en": "Kochi",
+      "zh": "高知"
+    },
+    {
+      "en": "Kochi Prefecture",
+      "zh": "高知縣"
+    },
+    {
+      "en": "Kofu",
+      "zh": "甲府"
+    },
+    {
+      "en": "Kumamoto",
+      "zh": "熊本"
+    },
+    {
+      "en": "Kumamoto Prefecture",
+      "zh": "熊本縣"
+    },
+    {
+      "en": "Kumamoto University",
+      "zh": "熊本大學"
+    },
+    {
+      "en": "Kwansei Gakuin University",
+      "zh": "關西學院大學"
+    },
+    {
+      "en": "Kyoto",
+      "zh": "京都"
+    },
+    {
+      "en": "Kyoto Prefecture",
+      "zh": "京都府"
+    },
+    {
+      "en": "Kyoto University",
+      "zh": "京都大學"
+    },
+    {
+      "en": "Kyushu University",
+      "zh": "九州大學"
+    },
+    {
+      "en": "Las Vegas",
+      "zh": "拉斯維加斯"
+    },
+    {
+      "en": "Lienchiang County",
+      "zh": "連江縣"
+    },
+    {
+      "en": "Los Angeles",
+      "zh": "洛杉磯"
+    },
+    {
+      "en": "Louisiana",
+      "zh": "路易斯安那州"
+    },
+    {
+      "en": "Louisiana State University",
+      "zh": "路易斯安那州立大學"
+    },
+    {
+      "en": "Madison",
+      "zh": "麥迪遜"
+    },
+    {
+      "en": "Maebashi",
+      "zh": "前橋"
+    },
+    {
+      "en": "Magong",
+      "zh": "馬公"
+    },
+    {
+      "en": "Maine",
+      "zh": "緬因州"
+    },
+    {
+      "en": "Maryland",
+      "zh": "馬里蘭州"
+    },
+    {
+      "en": "Massachusetts",
+      "zh": "麻薩諸塞州"
+    },
+    {
+      "en": "Massachusetts Institute of Technology",
+      "zh": "麻省理工學院"
+    },
+    {
+      "en": "Matsue",
+      "zh": "松江"
+    },
+    {
+      "en": "Matsumoto",
+      "zh": "松本"
+    },
+    {
+      "en": "Matsuyama",
+      "zh": "松山"
+    },
+    {
+      "en": "Meiji University",
+      "zh": "明治大學"
+    },
+    {
+      "en": "Miami",
+      "zh": "邁阿密"
+    },
+    {
+      "en": "Miaoli",
+      "zh": "苗栗"
+    },
+    {
+      "en": "Miaoli County",
+      "zh": "苗栗縣"
+    },
+    {
+      "en": "Michigan",
+      "zh": "密西根州"
+    },
+    {
+      "en": "Michigan State University",
+      "zh": "密西根州立大學"
+    },
+    {
+      "en": "Mie Prefecture",
+      "zh": "三重縣"
+    },
+    {
+      "en": "Mie University",
+      "zh": "三重大學"
+    },
+    {
+      "en": "Milwaukee",
+      "zh": "密爾瓦基"
+    },
+    {
+      "en": "Minneapolis",
+      "zh": "明尼阿波利斯"
+    },
+    {
+      "en": "Minnesota",
+      "zh": "明尼蘇達州"
+    },
+    {
+      "en": "Mississippi",
+      "zh": "密西西比州"
+    },
+    {
+      "en": "Missouri",
+      "zh": "密蘇里州"
+    },
+    {
+      "en": "Mito",
+      "zh": "水戶"
+    },
+    {
+      "en": "Miyagi Prefecture",
+      "zh": "宮城縣"
+    },
+    {
+      "en": "Miyazaki",
+      "zh": "宮崎"
+    },
+    {
+      "en": "Miyazaki Prefecture",
+      "zh": "宮崎縣"
+    },
+    {
+      "en": "Montana",
+      "zh": "蒙大拿州"
+    },
+    {
+      "en": "Morioka",
+      "zh": "盛岡"
+    },
+    {
+      "en": "Nagano",
+      "zh": "長野"
+    },
+    {
+      "en": "Nagano Prefecture",
+      "zh": "長野縣"
+    },
+    {
+      "en": "Nagasaki",
+      "zh": "長崎"
+    },
+    {
+      "en": "Nagasaki Prefecture",
+      "zh": "長崎縣"
+    },
+    {
+      "en": "Nagasaki University",
+      "zh": "長崎大學"
+    },
+    {
+      "en": "Nagoya",
+      "zh": "名古屋"
+    },
+    {
+      "en": "Nagoya University",
+      "zh": "名古屋大學"
+    },
+    {
+      "en": "Naha",
+      "zh": "那霸"
+    },
+    {
+      "en": "Nantou",
+      "zh": "南投"
+    },
+    {
+      "en": "Nantou County",
+      "zh": "南投縣"
+    },
+    {
+      "en": "Nara",
+      "zh": "奈良"
+    },
+    {
+      "en": "Nara Institute of Science and Technology",
+      "zh": "奈良先端科學技術大學院大學"
+    },
+    {
+      "en": "Nara Prefecture",
+      "zh": "奈良縣"
+    },
+    {
+      "en": "Nashville",
+      "zh": "納許維爾"
+    },
+    {
+      "en": "National Central University",
+      "zh": "國立中央大學"
+    },
+    {
+      "en": "National Cheng Kung University",
+      "zh": "國立成功大學"
+    },
+    {
+      "en": "National Chengchi University",
+      "zh": "國立政治大學"
+    },
+    {
+      "en": "National Chi Nan University",
+      "zh": "國立暨南國際大學"
+    },
+    {
+      "en": "National Chiayi University",
+      "zh": "國立嘉義大學"
+    },
+    {
+      "en": "National Chung Cheng University",
+      "zh": "國立中正大學"
+    },
+    {
+      "en": "National Chung Hsing University",
+      "zh": "國立中興大學"
+    },
+    {
+      "en": "National Dong Hwa University",
+      "zh": "國立東華大學"
+    },
+    {
+      "en": "National Kaohsiung University of Science and Technology",
+      "zh": "國立高雄科技大學"
+    },
+    {
+      "en": "National Pingtung University",
+      "zh": "國立屏東大學"
+    },
+    {
+      "en": "National Sun Yat-sen University",
+      "zh": "國立中山大學"
+    },
+    {
+      "en": "National Taichung University of Education",
+      "zh": "國立臺中教育大學"
+    },
+    {
+      "en": "National Taipei University",
+      "zh": "國立臺北大學"
+    },
+    {
+      "en": "National Taipei University of Education",
+      "zh": "國立臺北教育大學"
+    },
+    {
+      "en": "National Taipei University of Technology",
+      "zh": "國立臺北科技大學"
+    },
+    {
+      "en": "National Taiwan Normal University",
+      "zh": "國立臺灣師範大學"
+    },
+    {
+      "en": "National Taiwan Ocean University",
+      "zh": "國立臺灣海洋大學"
+    },
+    {
+      "en": "National Taiwan University",
+      "zh": "國立臺灣大學"
+    },
+    {
+      "en": "National Taiwan University of Arts",
+      "zh": "國立臺灣藝術大學"
+    },
+    {
+      "en": "National Taiwan University of Science and Technology",
+      "zh": "國立臺灣科技大學"
+    },
+    {
+      "en": "National Tsing Hua University",
       "zh": "國立清華大學"
     },
     {
-      "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
-      "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+      "en": "National University of Kaohsiung",
+      "zh": "國立高雄大學"
     },
     {
-      "en": "On Finite Multiple Harmonic u -series over Function Field",
-      "zh": "函數體上的有限多重調和 u-級數"
+      "en": "National Yang Ming Chiao Tung University",
+      "zh": "國立陽明交通大學"
     },
     {
-      "en": "On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-      "zh": "正特徵多重 Eisenstein 級數的 q-shuffle 關係"
+      "en": "Nebraska",
+      "zh": "內布拉斯加州"
     },
     {
-      "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-      "zh": "正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係"
+      "en": "Nevada",
+      "zh": "內華達州"
     },
     {
-      "en": "On the Uniqueness of v -adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
-      "zh": "Gross–Koblitz–Thakur 公式中 v-adic Gamma 函數的唯一性"
+      "en": "New Hampshire",
+      "zh": "新罕布夏州"
     },
     {
-      "en": "On u -analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
-      "zh": "多重 zeta 值的 u-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+      "en": "New Haven",
+      "zh": "紐哈芬"
     },
     {
-      "en": "On u -Multiple Zeta Values in Positive Characteristic",
-      "zh": "正特徵的 u-多重 zeta 值"
+      "en": "New Jersey",
+      "zh": "紐澤西州"
     },
     {
-      "en": "Preprints",
-      "zh": "預印本"
+      "en": "New Mexico",
+      "zh": "新墨西哥州"
     },
     {
-      "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
-      "zh": "正特徵多重 Eisenstein 級數的近期發展"
+      "en": "New Orleans",
+      "zh": "紐奧良"
     },
     {
-      "en": "Sendai, Japan · Supported by the Japan–Taiwan Exchange Association",
-      "zh": "仙台, 日本 · 獲日本台灣交流協會補助"
+      "en": "New Taipei",
+      "zh": "新北"
     },
     {
-      "en": "Spring 2024",
-      "zh": "2024 春"
+      "en": "New Taipei City",
+      "zh": "新北市"
     },
     {
-      "en": "Spring 2025",
-      "zh": "2025 春"
+      "en": "New York City",
+      "zh": "紐約市"
     },
     {
-      "en": "Spring 2026",
-      "zh": "2026 春"
+      "en": "New York State",
+      "zh": "紐約州"
     },
     {
-      "en": "Submitted",
-      "zh": "投稿中"
+      "en": "New York University",
+      "zh": "紐約大學"
     },
     {
-      "en": "Survey Papers",
-      "zh": "綜述論文"
+      "en": "Nihon University",
+      "zh": "日本大學"
     },
     {
-      "en": "Taiwan Mathematical Society",
-      "zh": "中華民國數學會"
+      "en": "Niigata",
+      "zh": "新潟"
     },
     {
-      "en": "Taiwan–Japan Young Scientific Talent Exchange Program",
-      "zh": "臺日青年科研人才交流計畫"
+      "en": "Niigata Prefecture",
+      "zh": "新潟縣"
     },
     {
-      "en": "Teaching Assistant",
-      "zh": "助教"
+      "en": "Niigata University",
+      "zh": "新潟大學"
     },
     {
-      "en": "The 11th East Asia Number Theory Conference",
-      "zh": "第 11 屆東亞數論會議"
+      "en": "North Carolina",
+      "zh": "北卡羅來納州"
     },
     {
-      "en": "The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1",
-      "zh": "第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第一週"
+      "en": "North Carolina State University",
+      "zh": "北卡羅來納州立大學"
     },
     {
-      "en": "The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2",
-      "zh": "第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第二週"
+      "en": "North Dakota",
+      "zh": "北達科他州"
     },
     {
-      "en": "The 25th Sendai–Hiroshima Number Theory Conference",
-      "zh": "第 25 屆仙台—廣島數論會議"
+      "en": "Northwestern University",
+      "zh": "西北大學"
     },
     {
-      "en": "The 33rd Number Theory Summer School: Arithmetic of Function Fields",
-      "zh": "第 33 屆數論暑期學校：函數體的算術"
+      "en": "Ochanomizu University",
+      "zh": "御茶水女子大學"
     },
     {
-      "en": "The 58th TMS Annual Meeting",
-      "zh": "中華民國數學會第 58 屆年會"
+      "en": "Ohio",
+      "zh": "俄亥俄州"
     },
     {
-      "en": "The 59th TMS Annual Meeting",
-      "zh": "中華民國數學會第 59 屆年會"
+      "en": "Ohio State University",
+      "zh": "俄亥俄州立大學"
     },
     {
-      "en": "The 60th TMS Annual Meeting",
-      "zh": "中華民國數學會第 60 屆年會"
+      "en": "Oita",
+      "zh": "大分"
     },
     {
-      "en": "The 61st TMS Annual Meeting",
-      "zh": "中華民國數學會第 61 屆年會"
+      "en": "Oita Prefecture",
+      "zh": "大分縣"
     },
     {
-      "en": "The 72nd Kansai Multiple Zeta Workshop",
-      "zh": "第 72 回關西多重 zeta 值研討會"
+      "en": "Okayama",
+      "zh": "岡山"
     },
     {
-      "en": "The 73rd Kansai Multiple Zeta Workshop",
-      "zh": "第 73 回關西多重 zeta 值研討會"
+      "en": "Okayama Prefecture",
+      "zh": "岡山縣"
     },
     {
-      "en": "Ting-Wei Chang and Hung-Chun Tsui",
-      "zh": "張庭瑋, 崔鴻竣"
+      "en": "Okayama University",
+      "zh": "岡山大學"
     },
     {
-      "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
-      "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
+      "en": "Okinawa Prefecture",
+      "zh": "沖繩縣"
     },
     {
-      "en": "TMS Outstanding Students Prize",
-      "zh": "中技社數學傑出大學生獎"
+      "en": "Oklahoma",
+      "zh": "奧克拉荷馬州"
+    },
+    {
+      "en": "Oregon",
+      "zh": "奧勒岡州"
+    },
+    {
+      "en": "Oregon State University",
+      "zh": "奧勒岡州立大學"
+    },
+    {
+      "en": "Osaka",
+      "zh": "大阪"
+    },
+    {
+      "en": "Osaka Prefecture",
+      "zh": "大阪府"
+    },
+    {
+      "en": "Otsu",
+      "zh": "大津"
+    },
+    {
+      "en": "Palo Alto",
+      "zh": "帕羅奧圖"
+    },
+    {
+      "en": "Penghu County",
+      "zh": "澎湖縣"
+    },
+    {
+      "en": "Pennsylvania",
+      "zh": "賓夕法尼亞州"
+    },
+    {
+      "en": "Pennsylvania State University",
+      "zh": "賓夕法尼亞州立大學"
+    },
+    {
+      "en": "Philadelphia",
+      "zh": "費城"
+    },
+    {
+      "en": "Phoenix",
+      "zh": "鳳凰城"
+    },
+    {
+      "en": "Pingtung",
+      "zh": "屏東"
+    },
+    {
+      "en": "Pingtung County",
+      "zh": "屏東縣"
+    },
+    {
+      "en": "Pittsburgh",
+      "zh": "匹茲堡"
+    },
+    {
+      "en": "Portland",
+      "zh": "波特蘭"
+    },
+    {
+      "en": "Princeton",
+      "zh": "普林斯頓"
+    },
+    {
+      "en": "Princeton University",
+      "zh": "普林斯頓大學"
+    },
+    {
+      "en": "Providence University",
+      "zh": "靜宜大學"
+    },
+    {
+      "en": "Purdue University",
+      "zh": "普渡大學"
+    },
+    {
+      "en": "Raleigh",
+      "zh": "洛利"
+    },
+    {
+      "en": "Rhode Island",
+      "zh": "羅德島州"
+    },
+    {
+      "en": "Rice University",
+      "zh": "萊斯大學"
+    },
+    {
+      "en": "Rikkyo University",
+      "zh": "立教大學"
+    },
+    {
+      "en": "Ritsumeikan University",
+      "zh": "立命館大學"
+    },
+    {
+      "en": "Rutgers University",
+      "zh": "羅格斯大學"
+    },
+    {
+      "en": "Sacramento",
+      "zh": "沙加緬度"
+    },
+    {
+      "en": "Saga",
+      "zh": "佐賀"
+    },
+    {
+      "en": "Saga Prefecture",
+      "zh": "佐賀縣"
+    },
+    {
+      "en": "Sagamihara",
+      "zh": "相模原"
+    },
+    {
+      "en": "Saitama",
+      "zh": "埼玉"
+    },
+    {
+      "en": "Saitama Prefecture",
+      "zh": "埼玉縣"
+    },
+    {
+      "en": "Saitama University",
+      "zh": "埼玉大學"
+    },
+    {
+      "en": "Sakai",
+      "zh": "堺"
+    },
+    {
+      "en": "Salt Lake City",
+      "zh": "鹽湖城"
+    },
+    {
+      "en": "San Antonio",
+      "zh": "聖安東尼奧"
+    },
+    {
+      "en": "San Diego",
+      "zh": "聖地牙哥"
+    },
+    {
+      "en": "San Jose",
+      "zh": "聖荷西"
+    },
+    {
+      "en": "Sapporo",
+      "zh": "札幌"
+    },
+    {
+      "en": "Seattle",
+      "zh": "西雅圖"
+    },
+    {
+      "en": "Sendai",
+      "zh": "仙台"
+    },
+    {
+      "en": "Shiga Prefecture",
+      "zh": "滋賀縣"
+    },
+    {
+      "en": "Shimane Prefecture",
+      "zh": "島根縣"
+    },
+    {
+      "en": "Shimonoseki",
+      "zh": "下關"
+    },
+    {
+      "en": "Shinshu University",
+      "zh": "信州大學"
+    },
+    {
+      "en": "Shizuoka",
+      "zh": "靜岡"
+    },
+    {
+      "en": "Shizuoka Prefecture",
+      "zh": "靜岡縣"
+    },
+    {
+      "en": "Shizuoka University",
+      "zh": "靜岡大學"
+    },
+    {
+      "en": "Soochow University",
+      "zh": "東吳大學"
+    },
+    {
+      "en": "Sophia University",
+      "zh": "上智大學"
+    },
+    {
+      "en": "South Carolina",
+      "zh": "南卡羅來納州"
+    },
+    {
+      "en": "South Dakota",
+      "zh": "南達科他州"
+    },
+    {
+      "en": "St. Louis",
+      "zh": "聖路易"
+    },
+    {
+      "en": "Stanford University",
+      "zh": "史丹佛大學"
+    },
+    {
+      "en": "Stony Brook University",
+      "zh": "石溪大學"
+    },
+    {
+      "en": "Taichung",
+      "zh": "臺中"
+    },
+    {
+      "en": "Taichung City",
+      "zh": "臺中市"
+    },
+    {
+      "en": "Tainan",
+      "zh": "臺南"
+    },
+    {
+      "en": "Tainan City",
+      "zh": "臺南市"
+    },
+    {
+      "en": "Taipei",
+      "zh": "臺北"
+    },
+    {
+      "en": "Taipei City",
+      "zh": "臺北市"
+    },
+    {
+      "en": "Taipei Medical University",
+      "zh": "臺北醫學大學"
+    },
+    {
+      "en": "Taipei National University of the Arts",
+      "zh": "國立臺北藝術大學"
+    },
+    {
+      "en": "Taitung",
+      "zh": "臺東"
+    },
+    {
+      "en": "Taitung County",
+      "zh": "臺東縣"
+    },
+    {
+      "en": "Taiwan",
+      "zh": "臺灣"
+    },
+    {
+      "en": "Takamatsu",
+      "zh": "高松"
+    },
+    {
+      "en": "Takasaki",
+      "zh": "高崎"
+    },
+    {
+      "en": "Tamkang University",
+      "zh": "淡江大學"
+    },
+    {
+      "en": "Taoyuan",
+      "zh": "桃園"
+    },
+    {
+      "en": "Taoyuan City",
+      "zh": "桃園市"
+    },
+    {
+      "en": "Tennessee",
+      "zh": "田納西州"
+    },
+    {
+      "en": "Texas",
+      "zh": "德克薩斯州"
+    },
+    {
+      "en": "Texas A&M University",
+      "zh": "德州農工大學"
+    },
+    {
+      "en": "The University of Osaka",
+      "zh": "大阪大學"
+    },
+    {
+      "en": "The University of Tokyo",
+      "zh": "東京大學"
+    },
+    {
+      "en": "Tochigi Prefecture",
+      "zh": "栃木縣"
     },
     {
       "en": "Tohoku University",
       "zh": "東北大學"
     },
     {
-      "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
-      "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+      "en": "Tokushima",
+      "zh": "德島"
     },
     {
-      "en": "Tohoku University, Sendai, Japan",
-      "zh": "東北大學, 仙台, 日本"
+      "en": "Tokushima Prefecture",
+      "zh": "德島縣"
     },
     {
-      "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-      "zh": "函數體上 Gross–Koblitz 型公式中 v-adic Gamma 函數的唯一性"
+      "en": "Tokushima University",
+      "zh": "德島大學"
     },
     {
-      "en": "Various Aspects of Multiple Zeta Values",
-      "zh": "多重 zeta 值的各種面向"
+      "en": "Tokyo",
+      "zh": "東京都"
     },
     {
-      "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
-      "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+      "en": "Tokyo Metropolitan University",
+      "zh": "東京都立大學"
     },
     {
-      "en": "Workshop on Arithmetic of Function Fields",
-      "zh": "函數體算術工作坊"
+      "en": "Tokyo University of Agriculture and Technology",
+      "zh": "東京農工大學"
     },
     {
-      "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
-      "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+      "en": "Tokyo University of Science",
+      "zh": "東京理科大學"
     },
     {
-      "en": "Yataro, Nagasaki, Japan",
-      "zh": "矢太樓, 長崎, 日本"
+      "en": "Tottori",
+      "zh": "鳥取"
     },
     {
-      "en": "​The 2nd Multiple Eisenstein Series Research Meeting",
-      "zh": "第二屆多重 Eisenstein 級數研究會"
+      "en": "Tottori Prefecture",
+      "zh": "鳥取縣"
+    },
+    {
+      "en": "Toyama",
+      "zh": "富山"
+    },
+    {
+      "en": "Toyama Prefecture",
+      "zh": "富山縣"
+    },
+    {
+      "en": "Toyota",
+      "zh": "豐田"
+    },
+    {
+      "en": "Tsu",
+      "zh": "津"
+    },
+    {
+      "en": "Tsukuba",
+      "zh": "筑波"
+    },
+    {
+      "en": "Tucson",
+      "zh": "土桑"
+    },
+    {
+      "en": "Tufts University",
+      "zh": "塔夫茨大學"
+    },
+    {
+      "en": "Tunghai University",
+      "zh": "東海大學"
+    },
+    {
+      "en": "United States",
+      "zh": "美國"
+    },
+    {
+      "en": "University at Buffalo",
+      "zh": "紐約州立大學水牛城分校"
+    },
+    {
+      "en": "University of Alabama",
+      "zh": "阿拉巴馬大學"
+    },
+    {
+      "en": "University of Arizona",
+      "zh": "亞利桑那大學"
+    },
+    {
+      "en": "University of California, Berkeley",
+      "zh": "加州大學柏克萊分校"
+    },
+    {
+      "en": "University of California, Davis",
+      "zh": "加州大學戴維斯分校"
+    },
+    {
+      "en": "University of California, Irvine",
+      "zh": "加州大學爾灣分校"
+    },
+    {
+      "en": "University of California, Los Angeles",
+      "zh": "加州大學洛杉磯分校"
+    },
+    {
+      "en": "University of California, Merced",
+      "zh": "加州大學美熹德分校"
+    },
+    {
+      "en": "University of California, Riverside",
+      "zh": "加州大學河濱分校"
+    },
+    {
+      "en": "University of California, San Diego",
+      "zh": "加州大學聖地牙哥分校"
+    },
+    {
+      "en": "University of California, Santa Barbara",
+      "zh": "加州大學聖塔芭芭拉分校"
+    },
+    {
+      "en": "University of California, Santa Cruz",
+      "zh": "加州大學聖塔克魯茲分校"
+    },
+    {
+      "en": "University of Chicago",
+      "zh": "芝加哥大學"
+    },
+    {
+      "en": "University of Colorado Boulder",
+      "zh": "科羅拉多大學波德分校"
+    },
+    {
+      "en": "University of Connecticut",
+      "zh": "康乃狄克大學"
+    },
+    {
+      "en": "University of Florida",
+      "zh": "佛羅里達大學"
+    },
+    {
+      "en": "University of Georgia",
+      "zh": "喬治亞大學"
+    },
+    {
+      "en": "University of Hawaii at Manoa",
+      "zh": "夏威夷大學馬諾阿分校"
+    },
+    {
+      "en": "University of Illinois Urbana-Champaign",
+      "zh": "伊利諾大學厄巴納－香檳分校"
+    },
+    {
+      "en": "University of Iowa",
+      "zh": "愛荷華大學"
+    },
+    {
+      "en": "University of Kansas",
+      "zh": "堪薩斯大學"
+    },
+    {
+      "en": "University of Maryland, College Park",
+      "zh": "馬里蘭大學學院市分校"
+    },
+    {
+      "en": "University of Massachusetts Amherst",
+      "zh": "麻薩諸塞大學阿默斯特分校"
+    },
+    {
+      "en": "University of Miami",
+      "zh": "邁阿密大學"
+    },
+    {
+      "en": "University of Michigan",
+      "zh": "密西根大學"
+    },
+    {
+      "en": "University of Minnesota Twin Cities",
+      "zh": "明尼蘇達大學雙城分校"
+    },
+    {
+      "en": "University of Missouri",
+      "zh": "密蘇里大學"
+    },
+    {
+      "en": "University of Nebraska–Lincoln",
+      "zh": "內布拉斯加大學林肯分校"
+    },
+    {
+      "en": "University of New Mexico",
+      "zh": "新墨西哥大學"
+    },
+    {
+      "en": "University of North Carolina at Chapel Hill",
+      "zh": "北卡羅來納大學教堂山分校"
+    },
+    {
+      "en": "University of Notre Dame",
+      "zh": "聖母大學"
+    },
+    {
+      "en": "University of Oklahoma",
+      "zh": "奧克拉荷馬大學"
+    },
+    {
+      "en": "University of Oregon",
+      "zh": "奧勒岡大學"
+    },
+    {
+      "en": "University of Pennsylvania",
+      "zh": "賓夕法尼亞大學"
+    },
+    {
+      "en": "University of Pittsburgh",
+      "zh": "匹茲堡大學"
+    },
+    {
+      "en": "University of Rochester",
+      "zh": "羅徹斯特大學"
+    },
+    {
+      "en": "University of Southern California",
+      "zh": "南加州大學"
+    },
+    {
+      "en": "University of Tennessee, Knoxville",
+      "zh": "田納西大學諾克斯維爾分校"
+    },
+    {
+      "en": "University of Texas at Austin",
+      "zh": "德州大學奧斯汀分校"
+    },
+    {
+      "en": "University of the Ryukyus",
+      "zh": "琉球大學"
+    },
+    {
+      "en": "University of Tsukuba",
+      "zh": "筑波大學"
+    },
+    {
+      "en": "University of Utah",
+      "zh": "猶他大學"
+    },
+    {
+      "en": "University of Virginia",
+      "zh": "維吉尼亞大學"
+    },
+    {
+      "en": "University of Washington",
+      "zh": "華盛頓大學"
+    },
+    {
+      "en": "University of Wisconsin–Madison",
+      "zh": "威斯康辛大學麥迪遜分校"
+    },
+    {
+      "en": "Utah",
+      "zh": "猶他州"
+    },
+    {
+      "en": "Utsunomiya",
+      "zh": "宇都宮"
+    },
+    {
+      "en": "Vanderbilt University",
+      "zh": "范德堡大學"
+    },
+    {
+      "en": "Vermont",
+      "zh": "佛蒙特州"
+    },
+    {
+      "en": "Virginia",
+      "zh": "維吉尼亞州"
+    },
+    {
+      "en": "Virginia Tech",
+      "zh": "維吉尼亞理工大學"
+    },
+    {
+      "en": "Wakayama",
+      "zh": "和歌山"
+    },
+    {
+      "en": "Wakayama Prefecture",
+      "zh": "和歌山縣"
+    },
+    {
+      "en": "Waseda University",
+      "zh": "早稻田大學"
+    },
+    {
+      "en": "Washington State",
+      "zh": "華盛頓州"
+    },
+    {
+      "en": "Washington University in St. Louis",
+      "zh": "聖路易華盛頓大學"
+    },
+    {
+      "en": "Washington, D.C.",
+      "zh": "華盛頓哥倫比亞特區"
+    },
+    {
+      "en": "West Virginia",
+      "zh": "西維吉尼亞州"
+    },
+    {
+      "en": "Wisconsin",
+      "zh": "威斯康辛州"
+    },
+    {
+      "en": "Wyoming",
+      "zh": "懷俄明州"
+    },
+    {
+      "en": "Yale University",
+      "zh": "耶魯大學"
+    },
+    {
+      "en": "Yamagata",
+      "zh": "山形"
+    },
+    {
+      "en": "Yamagata Prefecture",
+      "zh": "山形縣"
+    },
+    {
+      "en": "Yamaguchi",
+      "zh": "山口"
+    },
+    {
+      "en": "Yamaguchi Prefecture",
+      "zh": "山口縣"
+    },
+    {
+      "en": "Yamaguchi University",
+      "zh": "山口大學"
+    },
+    {
+      "en": "Yamanashi Prefecture",
+      "zh": "山梨縣"
+    },
+    {
+      "en": "Yilan",
+      "zh": "宜蘭"
+    },
+    {
+      "en": "Yilan County",
+      "zh": "宜蘭縣"
+    },
+    {
+      "en": "Yokohama",
+      "zh": "橫濱"
+    },
+    {
+      "en": "Yokohama National University",
+      "zh": "橫濱國立大學"
+    },
+    {
+      "en": "Yuan Ze University",
+      "zh": "元智大學"
+    },
+    {
+      "en": "Yunlin County",
+      "zh": "雲林縣"
+    },
+    {
+      "en": "Zhubei",
+      "zh": "竹北"
     }
   ]
 }
