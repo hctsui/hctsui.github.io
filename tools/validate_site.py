@@ -126,6 +126,51 @@ for page_id, files in page_files.items():
             if has_items and count != 1:
                 errors.append(f"{rel}: category {category_id} should appear exactly once")
 
+home_categories = categories_for_page(data, "home")
+home_kinds = {category["kind"] for category in home_categories}
+home_contract = {
+    "index.html": {
+        "title": "<title>Hung-Chun Tsui | Mathematics</title>",
+        "publications": 'href="publications.html">All publications →</a>',
+        "activities": 'href="activities.html">All activities →</a>',
+    },
+    "zh/index.html": {
+        "title": "<title>崔鴻竣｜數學</title>",
+        "publications": 'href="publications.html">所有論文 →</a>',
+        "activities": 'href="activities.html">所有活動 →</a>',
+    },
+}
+for rel, labels in home_contract.items():
+    text = (ROOT / rel).read_text(encoding="utf-8")
+    required_fragments = [labels["title"]]
+    if home_kinds & {"featured_publications", "upcoming"}:
+        required_fragments.append('class="container home-overview-grid')
+    if "featured_publications" in home_kinds:
+        required_fragments.extend(
+            (
+                'data-category-id="home-publications"',
+                'id="latest-publications"',
+                labels["publications"],
+            )
+        )
+    if "upcoming" in home_kinds:
+        required_fragments.extend(
+            (
+                'data-category-id="home-upcoming"',
+                labels["activities"],
+            )
+        )
+    if "contact" in home_kinds:
+        required_fragments.extend(
+            (
+                'data-category-id="home-contact" id="contact"',
+                'class="container split"',
+            )
+        )
+    for fragment in required_fragments:
+        if fragment not in text:
+            errors.append(f"{rel}: missing legacy homepage contract {fragment!r}")
+
 if errors:
     raise SystemExit("\n".join(errors))
 print(f"Validated {len(ids)} entries, {len(data['settings']['categories'])} categories, and {sum(len(v) for v in page_files.values())} pages.")

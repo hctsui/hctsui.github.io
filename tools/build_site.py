@@ -238,6 +238,116 @@ def render_category(data: dict[str, Any], category: dict[str, Any], lang: str, t
     )
 
 
+def render_home_overview_panel(
+    data: dict[str, Any],
+    category: dict[str, Any],
+    lang: str,
+    today: date,
+) -> str:
+    """Render the two legacy homepage columns from managed category data."""
+    items = category_items(data, category, today)
+    label = rich_html(category.get("label", {}).get(lang, ""))
+    title = rich_html(category.get("title", {}).get(lang, ""))
+    intro = rich_html(category.get("intro", {}).get(lang, ""))
+    cid = esc(category["id"])
+    intro_html = f'<p class="section-intro">{intro}</p>' if intro else ""
+    if category["kind"] == "featured_publications":
+        entries = "".join(f"<li>{render_publication_article(item, lang, homepage=True)}</li>" for item in items)
+        link_text = "所有論文 →" if lang == "zh" else "All publications →"
+        return (
+            f'<div class="home-publications managed-category category-featured_publications" '
+            f'data-category-id="{cid}" id="{cid}"><div class="home-section-head"><div>'
+            f'<p class="section-label">{label}</p><h2>{title}</h2></div>'
+            f'<a class="text-link" href="publications.html">{link_text}</a></div>{intro_html}'
+            f'<ol class="publication-list" id="latest-publications">\n'
+            f'<!-- CMS:HOME_PUBLICATIONS:START -->\n{entries}\n'
+            f'<!-- CMS:HOME_PUBLICATIONS:END -->\n</ol></div>'
+        )
+    entries = "".join(render_activity(item, lang) for item in items)
+    link_text = "所有活動 →" if lang == "zh" else "All activities →"
+    return (
+        f'<aside class="home-upcoming managed-category category-upcoming" '
+        f'data-category-id="{cid}" id="{cid}"><p class="section-label">{label}</p>'
+        f'<h2>{title}</h2>{intro_html}<div class="timeline">\n'
+        f'<!-- CMS:UPCOMING:START -->\n{entries}\n'
+        f'<!-- CMS:UPCOMING:END -->\n</div>'
+        f'<a class="text-link" href="activities.html">{link_text}</a></aside>'
+    )
+
+
+def render_home_contact(
+    data: dict[str, Any],
+    category: dict[str, Any],
+    lang: str,
+    today: date,
+) -> str:
+    """Keep the original split contact layout and its public #contact anchor."""
+    items = category_items(data, category, today)
+    label = rich_html(category.get("label", {}).get(lang, ""))
+    title = rich_html(category.get("title", {}).get(lang, ""))
+    intro = rich_html(category.get("intro", {}).get(lang, ""))
+    cid = esc(category["id"])
+    intro_html = f'<p class="section-intro">{intro}</p>' if intro else ""
+    return (
+        f'<section class="section managed-category category-contact contact-section" '
+        f'data-category-id="{cid}" id="contact"><div class="container split"><div>'
+        f'<p class="section-label">{label}</p><h2>{title}</h2>{intro_html}</div>'
+        f'{render_contact(items, lang)}</div></section>'
+    )
+
+
+def render_home_sections(
+    data: dict[str, Any],
+    categories: list[dict[str, Any]],
+    lang: str,
+    today: date,
+) -> str:
+    """Restore the legacy homepage composition while retaining managed categories."""
+    overview_categories = [
+        category
+        for category in categories
+        if category["kind"] in {"featured_publications", "upcoming"}
+    ]
+    overview_panels = [
+        panel
+        for category in sorted(
+            overview_categories,
+            key=lambda c: 0 if c["kind"] == "featured_publications" else 1,
+        )
+        if (panel := render_home_overview_panel(data, category, lang, today))
+    ]
+    overview = ""
+    if overview_panels:
+        single = " home-overview-single" if len(overview_panels) == 1 else ""
+        overview = (
+            f'<section class="home-overview"><div class="container home-overview-grid{single}">'
+            f'{"".join(overview_panels)}</div></section>'
+        )
+
+    first_overview_index = min(
+        (index for index, category in enumerate(categories) if category in overview_categories),
+        default=0,
+    )
+    rendered: list[str] = []
+    section_index = 0
+    for index, category in enumerate(categories):
+        if index == first_overview_index and overview:
+            rendered.append(overview)
+            section_index += 1
+        if category in overview_categories:
+            continue
+        if category["kind"] == "contact":
+            rendered.append(render_home_contact(data, category, lang, today))
+        else:
+            section = render_category(data, category, lang, today, section_index)
+            if section:
+                rendered.append(section)
+        section_index += 1
+    if overview and first_overview_index >= len(categories):
+        rendered.append(overview)
+    return "".join(rendered)
+
+
 def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
     page = next(p for p in normalized_pages(data) if p["id"] == page_id)
     header = page.get("header")
@@ -299,12 +409,20 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             path = ROOT / rel
             old = path.read_text(encoding="utf-8")
             categories = categories_for_page(data, page_id)
-            rendered = [render_category(data, c, lang, today, i) for i, c in enumerate(categories)]
-            sections = "".join(x for x in rendered if x)
-            content = (extract_home_hero(old) if page_id == "home" else page_header(data, page_id, lang)) + sections
+            if page_id == "home":
+                sections = render_home_sections(data, categories, lang, today)
+                content = extract_home_hero(old) + sections
+            else:
+                rendered = [render_category(data, c, lang, today, i) for i, c in enumerate(categories)]
+                sections = "".join(x for x in rendered if x)
+                content = page_header(data, page_id, lang) + sections
             new = replace_main(old, content)
             page_title = page.get("header", {}).get("title", {}).get(lang) if page.get("header") else ("Hung-Chun Tsui" if lang == "en" else "崔鴻竣")
-            new = update_page_title(new, f"{page_title} | Hung-Chun Tsui" if page_id != "home" else "Hung-Chun Tsui | Mathematics")
+            if page_id == "home":
+                document_title = "Hung-Chun Tsui | Mathematics" if lang == "en" else "崔鴻竣｜數學"
+            else:
+                document_title = f"{page_title} | Hung-Chun Tsui"
+            new = update_page_title(new, document_title)
             if update_date:
                 new = update_footer(new, lang, today)
             if new != old:
