@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, copy, hashlib, html, json, re
+import argparse, base64, copy, gzip, hashlib, html, json, re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
-from translation_validation import validate_translation_data
+from translation_validation import normalize_translation_tags, validate_translation_data
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','honor':'honors','publication':'publications','teaching':'teaching'}
 def parse_body(body):
- m=re.search(r'### Batch payload / 批次資料\s+(.+)',body,re.S);raw=(m.group(1) if m else body).strip();f=re.search(r'```(?:json)?\s*(.*?)```',raw,re.S);return json.loads((f.group(1) if f else raw).strip())
+ m=re.search(r'### Batch payload / 批次資料\s+(.+)',body,re.S);raw=(m.group(1) if m else body).strip();f=re.search(r'```(?:json)?\s*(.*?)```',raw,re.S);text=(f.group(1) if f else raw).strip()
+ if text.startswith('gzip-base64:'):
+  try:text=gzip.decompress(base64.b64decode(text.split(':',1)[1])).decode('utf-8')
+  except Exception as exc:raise ValueError('Invalid compressed batch payload.') from exc
+ return json.loads(text)
 def now():return datetime.now(timezone.utc)
 def iso(d):return d.astimezone(timezone.utc).isoformat().replace('+00:00','Z')
 def dt(s):return datetime.fromisoformat(s.replace('Z','+00:00'))
@@ -141,7 +145,7 @@ def apply_special(data,trans,h,op,hid,issue,n,rd):
   apply_order(data,requested);after=capture_order(data,op['type']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='reorder',action='reorder',type=op['type'],entry_id='order:'+op['type'],label={'en':op['type']+' order','zh':'排序'},before=before,after=after,index_before=None,index_after=None,undo_of=None);return 'reorder','order:'+op['type']
  before=copy.deepcopy(trans);expected=op.get('before')
  if expected and before!=expected:raise ValueError('Conflict: translations changed after Admin loaded.')
- after=copy.deepcopy(op['after']);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照表'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
+ after=copy.deepcopy(op['after']);normalize_translation_tags(after);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照表'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
 def apply_undo(data,trans,h,op,hid,issue,n,rd):
  tid=op.get('history_id');target=next((x for x in h['operations'] if x.get('history_id')==tid),None)
  if not target:raise ValueError(f'Undo target unavailable or expired: {tid}')
@@ -192,7 +196,7 @@ def validate_operation(op):
 def main():
  p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
  if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
- data=json.load(open(SITE,encoding='utf-8'));trans=json.load(open(TRANS,encoding='utf-8'));h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','replayed')};ids=[]
+ data=json.load(open(SITE,encoding='utf-8'));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','replayed')};ids=[]
  for i,op in enumerate(ops,1):
   validate_operation(op);hid=f'issue-{issue}-op-{i}';rd=digest(op)
   if hid in existing:

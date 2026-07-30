@@ -73,11 +73,47 @@ def _validate_tag_definitions(data: dict[str, Any], errors: list[str]) -> set[st
     return ids
 
 
+
+
+def normalize_translation_tags(data: Any) -> None:
+    """Ensure schema-2 rows always have a valid fallback tag.
+
+    Rows without tags are assigned the ``other`` tag when it exists, otherwise
+    the first defined tag. If ``other`` appears together with a more specific
+    tag, it is removed because it is only a fallback category.
+    """
+    if not isinstance(data, dict) or data.get("schema_version") != 2:
+        return
+    definitions = data.get("tags")
+    pairs = data.get("pairs")
+    if not isinstance(definitions, list) or not isinstance(pairs, list):
+        return
+    valid = [str(item.get("id") or "").strip() for item in definitions if isinstance(item, dict)]
+    valid = [tag for tag in valid if tag]
+    valid_set = set(valid)
+    fallback = "other" if "other" in valid_set else (valid[0] if valid else "")
+    for row in pairs:
+        if not isinstance(row, dict):
+            continue
+        tags = row.get("tags") if isinstance(row.get("tags"), list) else []
+        clean: list[str] = []
+        for value in tags:
+            tag = str(value or "").strip()
+            if tag and tag not in clean:
+                clean.append(tag)
+        if len(clean) > 1 and "other" in clean:
+            clean = [tag for tag in clean if tag != "other"]
+        if not clean and fallback:
+            clean = [fallback]
+        row["tags"] = clean
+
+
 def validate_translation_data(data: Any) -> list[dict[str, Any]]:
     if not isinstance(data, dict):
         raise ValueError("content/translations.json must contain a JSON object.")
 
     schema_version = data.get("schema_version")
+    normalize_translation_tags(data)
     if schema_version not in {1, 2}:
         raise ValueError("content/translations.json: schema_version must be 1 or 2.")
 

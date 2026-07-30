@@ -20,12 +20,25 @@
   };
 
   const tagDefinitions = () => Array.isArray(translations?.tags) ? translations.tags : [];
+  const fallbackTagId = () => tagDefinitions().find((item) => item.id === 'other')?.id || tagDefinitions()[0]?.id || '';
+  function normalizePairTags(pair) {
+    if (!pair || typeof pair !== 'object') return;
+    const valid = new Set(tagDefinitions().map((item) => item.id));
+    let tags = [...new Set((Array.isArray(pair.tags) ? pair.tags : []).filter((id) => valid.has(id)))];
+    if (tags.length > 1 && tags.includes('other')) tags = tags.filter((id) => id !== 'other');
+    if (!tags.length && fallbackTagId()) tags = [fallbackTagId()];
+    pair.tags = tags;
+  }
+  function normalizeAllPairTags() {
+    for (const pair of translations.pairs || []) normalizePairTags(pair);
+  }
   const tagMap = () => new Map(tagDefinitions().map((item) => [item.id, item]));
   const tagLabel = (id) => {
     const item = tagMap().get(id);
     return item?.label?.zh || item?.label?.en || id;
   };
   const orderedTags = (pair) => {
+    normalizePairTags(pair);
     const selected = new Set(Array.isArray(pair?.tags) ? pair.tags : []);
     return tagDefinitions().map((item) => item.id).filter((id) => selected.has(id));
   };
@@ -60,6 +73,7 @@
   };
 
   validateDictionary = function validateTaggedDictionary() {
+    normalizeAllPairTags();
     const errors = [];
     const tagIds = new Set();
     const tagEn = new Set();
@@ -174,7 +188,7 @@
   const AUDIT_FIELDS = {
     conference: [['title', '名稱'], ['venue', '場地／機構'], ['city', '城市'], ['country', '國家']],
     talk: [['title', '題目'], ['event', '活動／研討會'], ['venue', '機構／場地'], ['city', '城市'], ['country', '國家']],
-    visit: [['title', '訪問機構'], ['city', '城市'], ['country', '國家'], ['visit_description', '說明']],
+    visit: [['title', '訪問機構'], ['city', '城市'], ['country', '國家'], ['visit_description', '其他說明'], ['funding', 'Funding（機構或計畫）']],
     honor: [['title', '名稱'], ['organization', '頒發機構']],
     publication: [['title', '題目'], ['venue', '期刊／狀態']],
     teaching: [['term', '學期'], ['institution', '機構'], ['role', '角色／身分']],
@@ -463,6 +477,7 @@
       for (const pair of translations.pairs || []) {
         if ((pair.tags || []).includes(source)) {
           pair.tags = [...new Set(pair.tags.map((id) => id === source ? target : id))];
+          normalizePairTags(pair);
         }
       }
       translations.tags = translations.tags.filter((item) => item.id !== source);
@@ -502,9 +517,17 @@
     const id = event.target.dataset.pairTag;
     if (Number.isInteger(index) && id && translations.pairs[index]) {
       const tags = new Set(translations.pairs[index].tags || []);
-      if (event.target.checked) tags.add(id);
-      else tags.delete(id);
+      if (event.target.checked) {
+        if (id === 'other') {
+          tags.clear();
+          tags.add('other');
+        } else {
+          tags.delete('other');
+          tags.add(id);
+        }
+      } else tags.delete(id);
       translations.pairs[index].tags = [...tags];
+      normalizePairTags(translations.pairs[index]);
       saveDictionaryLocal();
     }
     renderDictionary();
@@ -553,4 +576,62 @@
       renderDictionary();
     }
   };
+
+  async function encodeBatchForGitHub(batch) {
+    const jsonText = JSON.stringify(batch);
+    if (jsonText.length < 48000) return { text: jsonText, compressed: false, rawLength: jsonText.length };
+    if (typeof CompressionStream !== 'function') {
+      throw new Error('目前瀏覽器不支援大型批次壓縮；請改用最新版 Chrome、Edge 或 Safari。');
+    }
+    const source = new Blob([jsonText]).stream();
+    const compressed = source.pipeThrough(new CompressionStream('gzip'));
+    const bytes = new Uint8Array(await new Response(compressed).arrayBuffer());
+    let binary = '';
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+    const text = `gzip-base64:${btoa(binary)}`;
+    if (text.length > 64000) {
+      throw new Error(`壓縮後仍有 ${text.length.toLocaleString()} 字元，超過 GitHub 欄位限制。請把內容分成兩次送出。`);
+    }
+    return { text, compressed: true, rawLength: jsonText.length };
+  }
+
+  async function copyBatchPayload() {
+    try {
+      const encoded = await encodeBatchForGitHub(payload());
+      const ok = await copyText(encoded.text);
+      if (ok && encoded.compressed) flash(`已複製壓縮批次（${encoded.rawLength.toLocaleString()} → ${encoded.text.length.toLocaleString()} 字元）`);
+    } catch (error) {
+      flash(error.message || String(error));
+    }
+  }
+
+  async function submitBatchWithCompression() {
+    const errors = validateDictionary();
+    const batch = payload();
+    if (errors.length) return flash('請先修正中英對照表衝突');
+    if (!batch.operations.length) return flash('尚無變更');
+    const raw = JSON.stringify(batch);
+    const body = `### Batch payload / 批次資料\n\n\`\`\`json\n${raw}\n\`\`\``;
+    const url = `${REPO}/issues/new?title=${encodeURIComponent(`[Website: Batch] ${new Date().toLocaleString('zh-TW')}`)}&body=${encodeURIComponent(body)}`;
+    if (batch.operations.length <= 3 && url.length < 5500) return openIssue(url);
+    try {
+      const encoded = await encodeBatchForGitHub(batch);
+      if (!await copyText(encoded.text)) return;
+      if (openIssue(`${REPO}/issues/new?template=batch-changes.yml`)) {
+        flash(encoded.compressed
+          ? `批次已壓縮至 ${encoded.text.length.toLocaleString()} 字元；請貼入唯一欄位`
+          : '批次較大：已複製 JSON，請貼入唯一欄位');
+      }
+    } catch (error) {
+      flash(error.message || String(error));
+    }
+  }
+
+  normalizeAllPairTags();
+  $('#copyPayload').onclick = copyBatchPayload;
+  $('#submitBatch').onclick = submitBatchWithCompression;
+
 })();

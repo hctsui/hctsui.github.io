@@ -36,7 +36,7 @@ Admin 可新增 Conference、Talk、Visit、Honor、Publication、Teaching，也
 1. 可直接新增、修改、刪除及搜尋對照。
 2. 修改會立即保存在目前瀏覽器的本機草稿，不會每列送一次 Issue。
 3. 對照表修改會與其他內容草稿一起出現在右側預覽。
-4. 按「前往 GitHub 送出批次」後建立一張 Issue；大型批次會自動複製精簡 JSON，貼入單欄表單即可。
+4. 按「前往 GitHub 送出批次」後建立一張 Issue；大型批次會自動 gzip 壓縮，貼入單欄表單即可；後端會自動解壓，不會碰到 GitHub 單一欄位 65,536 字元限制。
 5. GitHub Action 成功寫入後，Issue 會出現 `website-form-applied` 標籤與完成訊息，並由同一個 workflow 的後續 deployment job 建立網站與 PDF。確認完成後，再回 Admin 手動清除本機草稿。
 
 若遠端對照表在本機草稿期間已更新，Admin 不會自動套用舊草稿，以避免覆蓋他人的新資料。
@@ -80,3 +80,8 @@ Conference、Talk、Visit 可選擇先顯示在 Upcoming。結束日期過後，
 - `tools/build_cv.py`：英文及中文 LaTeX CV 生成
 - `cv/Hung-Chun-Tsui-CV.template.tex`：英文 CV 模板
 - `cv/Hung-Chun-Tsui-CV-zh.template.tex`：中文 CV 模板
+
+
+## 學術訪問 Funding
+
+Admin 的學術訪問表單可另外填寫 Funding（機構或計畫）。儲存時會自動將英文整理為 `Supported by …`，中文整理為「本次訪問獲……支持。」並附加到說明中。

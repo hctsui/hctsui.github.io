@@ -197,12 +197,22 @@ body:
   - type: input
     id: country-zh
     attributes: {{label: Country (Chinese) / 國家中文 [選填・可由對照表補全]}}
+  - type: textarea
+    id: description-en
+    attributes: {{label: Description (English) / 說明英文 [選填]}}
+  - type: textarea
+    id: description-zh
+    attributes: {{label: Description (Chinese) / 說明中文 [選填・可由對照表補全]}}
   - type: input
     id: funding-en
-    attributes: {{label: Description (English) / 說明英文 [選填]}}
+    attributes:
+      label: Funding institution or program (English) / 補助機構或計畫英文 [選填]
+      description: 填寫後會自動在說明末尾加入「Supported by …」。
   - type: input
     id: funding-zh
-    attributes: {{label: Description (Chinese) / 說明中文 [選填・可由對照表補全]}}
+    attributes:
+      label: Funding institution or program (Chinese) / 補助機構或計畫中文 [選填・可由對照表補全]
+      description: 填寫後會自動在說明末尾加入「本次訪問獲……支持。」
 '''
 
 
@@ -500,22 +510,32 @@ def category_edit_forms(data: dict[str, Any]) -> dict[str, str]:
 
     visit_details = """  - type: input
     id: visit-city-en
-    attributes: {label: "New city (English) / 新城市英文 [選填]"}
+    attributes: {label: New city (English) / 新城市英文 [選填]}
   - type: input
     id: visit-city-zh
-    attributes: {label: "New city (Chinese) / 新城市中文 [選填・可由對照表補全]"}
+    attributes: {label: New city (Chinese) / 新城市中文 [選填・可由對照表補全]}
   - type: input
     id: visit-country-en
-    attributes: {label: "New country (English) / 新國家英文 [選填]"}
+    attributes: {label: New country (English) / 新國家英文 [選填]}
   - type: input
     id: visit-country-zh
-    attributes: {label: "New country (Chinese) / 新國家中文 [選填・可由對照表補全]"}
+    attributes: {label: New country (Chinese) / 新國家中文 [選填・可由對照表補全]}
   - type: textarea
     id: visit-description-en
-    attributes: {label: "New description (English) / 新說明英文 [選填]"}
+    attributes: {label: New description (English) / 新說明英文 [選填]}
   - type: textarea
     id: visit-description-zh
-    attributes: {label: "New description (Chinese) / 新說明中文 [選填・可由對照表補全]"}
+    attributes: {label: New description (Chinese) / 新說明中文 [選填・可由對照表補全]}
+  - type: input
+    id: visit-funding-en
+    attributes:
+      label: New funding institution or program (English) / 新補助機構或計畫英文 [選填]
+      description: 填寫後會自動加入 Supported by …
+  - type: input
+    id: visit-funding-zh
+    attributes:
+      label: New funding institution or program (Chinese) / 新補助機構或計畫中文 [選填・可由對照表補全]
+      description: 填寫後會自動加入本次訪問獲……支持。
 """
 
     def named(name: str, description: str, body: str) -> str:
