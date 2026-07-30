@@ -11,9 +11,7 @@ permissions:
   issues: write
 jobs:
   update-site:
-    if: >-
-      startsWith(github.event.issue.title, '[Website: Batch]') &&
-      github.event.issue.author_association == 'OWNER'
+    if: "startsWith(github.event.issue.title, '[Website: Batch]') && github.event.issue.author_association == 'OWNER'"
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -38,7 +36,7 @@ jobs:
             python3 tools/build_catalog.py
             python3 tools/validate_translations.py
             python3 tools/validate_site.py
-            git add content/site.json content/change-history.json CONTENT-CATALOG.md cv/*.tex index.html cv.html publications.html activities.html teaching.html zh .github/ISSUE_TEMPLATE
+            git add content/site.json content/translations.json content/change-history.json CONTENT-CATALOG.md cv/*.tex index.html cv.html publications.html activities.html teaching.html zh .github/ISSUE_TEMPLATE
             git commit -m "Apply website batch from issue #${{ github.event.issue.number }}" || true
             if git push origin HEAD:cms; then exit 0; fi
             sleep $((attempt*2))
