@@ -1,15 +1,15 @@
 name: Edit teaching entry / 編輯教學經驗
-description: Only show teaching institution, role, term, and course fields.
+description: Only teaching fields are shown.
 title: "[Website: Edit] "
 body:
   - type: markdown
     attributes:
-      value: 從 `/admin/` 複製 Entry ID。空白欄位代表維持原值；在文字欄輸入 `[CLEAR]` 可清除該欄。
+      value: 從 `/admin/` 複製 Entry ID。空白欄位代表維持原值；若只填其中一種語言，另一種只有在對照表命中時才更新。要清除既有的某個語言欄位，請在該欄輸入 `[CLEAR]`。
   - type: dropdown
     id: bilingual-mode
     attributes:
       label: Bilingual completion / 雙語欄位補全 [必填]
-      description: 只有選擇使用對照表時，才會用完整欄位的一對一對照補全。
+      description: 對照表只做完整字串的一對一比對；不使用 AI、相似名稱、舊網站內容或模糊推測。
       options:
         - "Keep blanks / 空白保持空白"
         - "Use Admin dictionary / 使用 Admin 中英對照表補全"
@@ -38,6 +38,8 @@ body:
       options:
         - "Keep unchanged / 維持不變"
         - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
+        - "Tohoku University / 東北大學 [tohoku-university]"
+        - "Texas A&M University / 德州農工大學 [texas-a-m-university]"
         - "Other / 其他（建立新機構大標題）"
       default: 0
   - type: input

@@ -25,6 +25,7 @@ body:
         - "Journal Articles / 期刊論文 [journal-articles]"
         - "Preprints / 預印本 [preprints]"
         - "Survey Papers / 綜述論文 [survey-papers]"
+        - "ZZ Test Papers / 測試論文 [zz-test-papers]"
         - "Other / 其他（建立新大標題）"
       default: 0
     validations: {required: true}

@@ -21,6 +21,8 @@ body:
       label: Institution section / 機構大標題 [必填]
       options:
         - "National Tsing Hua University / 國立清華大學 [national-tsing-hua-university]"
+        - "Tohoku University / 東北大學 [tohoku-university]"
+        - "Texas A&M University / 德州農工大學 [texas-a-m-university]"
         - "Other / 其他（建立新機構大標題）"
       default: 0
     validations: {required: true}
