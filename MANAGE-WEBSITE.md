@@ -1,88 +1,76 @@
-# 網站內容管理說明
+# 網站與雙語 CV 管理說明
 
-這一版不需要在電腦上執行程式，也不需要使用 Terminal、Git、GitHub Desktop 或 Personal Access Token。
-
-## 第一次安裝後只要設定一次
-
-1. 把這個資料夾的全部內容上傳到 `hctsui/hctsui.github.io` repository。
-2. 到 GitHub repository 的 **Settings → General → Features**，確認 **Issues** 已開啟。
-3. 到 **Settings → Actions → General → Workflow permissions**，選擇 **Read and write permissions**，再按 Save。
-4. 確認 `.github` 資料夾也有上傳；它在 macOS Finder 中可能是隱藏資料夾。
-
-## 平常新增資料
-
-開啟：
+日常入口：
 
 > https://hctsui.github.io/admin/
 
-選擇：
+## 新增、編輯、刪除與排序
 
-- 新增會議／工作坊
-- 新增學術報告
-- 新增學術訪問
-- 新增獎項／榮譽
-- 新增論文／預印本
-- 新增教學課程
+Admin 可新增 Conference、Talk、Visit、Honor、Publication、Teaching，也可搜尋、編輯、刪除及持久化排序。
 
-填完後按 **Submit new issue**。GitHub Actions 完成後，該 Issue 會自動留下完成訊息並關閉；中英文網頁會同步更新。
+- Publication 依作品類型分組；PDF CV 在每個大標題內重新從 `[1]` 編號。
+- Teaching 依機構分組。
+- 自訂群組會加入後續表單；刪除最後一筆後，空的自訂群組會自動移除。
+- Conference、Talk、Visit、Honor、Publication、Teaching 六類皆可排序。
 
-## Upcoming 的規則
+## 雙語欄位補全
 
-Conference、Talk、Academic visit 的表單都有：
+每張含雙語欄位的表單都有：
 
-> Show on Upcoming? / 是否先顯示於 Upcoming
+- `Keep blanks / 空白保持空白`：預設。沒有填的另一種語言保持空白。
+- `Use Admin dictionary / 使用 Admin 中英對照表補全`：只查 `content/translations.json` 的完整一對一對照。
 
-選擇 **Yes / 是** 時：
+補全規則：
 
-1. 活動結束以前，只顯示在首頁 Upcoming。
-2. 每天的自動流程會檢查結束日期。
-3. 結束日期過後，自動從 Upcoming 移除。
-4. 同一筆資料自動加入 Activities 的對應區域：
-   - Conference → Conferences and Workshops
-   - Talk → Presentations
-   - Academic visit → Academic visit
-5. 英文版、中文版、排序與 Last updated 日期同步更新。
+- 英文有值、中文空白：英文在對照表完全命中時才填中文。
+- 中文有值、英文空白：中文在對照表完全命中時才填英文。
+- 找不到：保持空白。
+- 不使用 AI、模糊比對、同系列活動名稱、舊網站內容或其他推測。
 
-選擇 **No / 否** 時，資料會直接放入對應的正式列表。
+新增資料時，主要題目或名稱只要求至少一種語言。編輯既有資料時，空白欄位代表「維持原值」；要清除某個既有語言欄位，請輸入 `[CLEAR]`。
 
-## 編輯或刪除
+## 編輯中英對照資料庫
 
-1. 在 `/admin/` 下方搜尋項目。
-2. 按「複製」取得 Entry ID。
-3. 選「編輯既有項目」或「刪除既有項目」。
-4. 貼上 Entry ID 並送出。
+在 Admin 的「中英對照資料庫」中：
 
-也可以在 repository 裡查看 `CONTENT-CATALOG.md`。
+1. 可直接新增、修改、刪除及搜尋對照。
+2. 修改會立即保存在目前瀏覽器的本機草稿，不會每列送一次 Issue。
+3. 完成多筆修改後，按「複製 JSON 並開啟 GitHub 編輯器」。
+4. 在 GitHub 編輯器全選 `content/translations.json` 原內容、貼上、commit。
 
-## 日期格式
+程式會拒絕：
 
-日期一律填：
+- 任一側空白的資料列。
+- 同一英文對應多個中文。
+- 同一中文對應多個英文。
 
-```text
-YYYY-MM-DD
-```
+## 英文與中文 PDF CV
 
-例如：
+同一份 `content/site.json` 會產生：
 
-```text
-2026-08-24
-```
+- 英文 CV：`https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf`
+- 中文 CV：`https://hctsui.github.io/files/Hung-Chun-Tsui-CV-zh.pdf`
 
-## 題目的斜體
+英文 CV 頁面下載英文版，中文 CV 頁面下載中文版。中文 CV 使用 XeLaTeX、ctex 與 Noto CJK 繁體中文字型編譯。
 
-一般情況直接輸入文字即可。論文或演講題目需要斜體時，可以使用：
+## Upcoming
+
+Conference、Talk、Visit 可選擇先顯示在 Upcoming。結束日期過後，每日 workflow 會重新生成網站與兩份 CV。
+
+## 日期與斜體
+
+日期使用 `YYYY-MM-DD`。題目中需要斜體時可寫：
 
 ```text
 [i]u[/i]-Multiple Zeta Values
 ```
 
-網站會顯示成斜體的 *u*。除此之外的 HTML 不會被接受，以避免破壞版面。
+## 主要檔案
 
-## 哪些檔案控制內容
-
-- `content/site.json`：唯一的內容資料庫
-- `tools/build_site.py`：按照既有 HTML 結構輸出內容
-- `.github/ISSUE_TEMPLATE/`：你在 GitHub 看到的填表頁
-- `.github/workflows/`：處理表單及 Upcoming 過期的自動流程
-
-HTML 中只有 `<!-- CMS:... -->` 標記之間會由程式更新。其他文字、導覽列、版面、CSS、照片與 JavaScript 都不會被程式碰到。
+- `content/site.json`：網站與 CV 的內容資料庫
+- `content/translations.json`：唯一的中英對照資料庫
+- `tools/process_request.py`：表單處理及精確補全
+- `tools/build_site.py`：網站生成
+- `tools/build_cv.py`：英文及中文 LaTeX CV 生成
+- `cv/Hung-Chun-Tsui-CV.template.tex`：英文 CV 模板
+- `cv/Hung-Chun-Tsui-CV-zh.template.tex`：中文 CV 模板
