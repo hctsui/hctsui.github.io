@@ -5277,6 +5277,76 @@
       "index_before": null,
       "index_after": 4,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-44-op-1",
+      "batch_issue": 44,
+      "applied_at": "2026-07-30T09:04:21.946315Z",
+      "expires_at": "2026-08-06T09:04:21.946315Z",
+      "reverted_by": null,
+      "request_digest": "052cfaafbcd8791fc73a918204658df6f270b4d77f0ed62c2dbb7809bcd74c9e",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "publication",
+      "entry_id": "publication-2026-07-30-entry",
+      "label": {
+        "en": "test",
+        "zh": "測試"
+      },
+      "before": {
+        "type": "publication",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-07-30",
+        "title": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "venue": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv": "2504.15697",
+        "arxiv_url": "https://arxiv.org/abs/2504.15697",
+        "pdf_url": "",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "authors": {
+          "en": "test1, Hung-Chun Tsui, and test",
+          "zh": "test1, 崔鴻竣, 測試"
+        },
+        "group_id": "preprints",
+        "year": 2026,
+        "links": [
+          {
+            "label": {
+              "en": "arXiv",
+              "zh": "arXiv"
+            },
+            "url": "https://arxiv.org/abs/2504.15697"
+          }
+        ],
+        "title_html": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "authors_html": {
+          "en": "test1, Hung-Chun Tsui, and test",
+          "zh": "test1, 崔鴻竣, 測試"
+        },
+        "venue_html": {
+          "en": "",
+          "zh": ""
+        },
+        "id": "publication-2026-07-30-entry"
+      },
+      "after": null,
+      "index_before": 4,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }

@@ -1083,56 +1083,6 @@
         "zh": "<strong>Hung-Chun Tsui</strong>"
       },
       "group_id": "preprints"
-    },
-    {
-      "type": "publication",
-      "group_label": {
-        "en": "",
-        "zh": ""
-      },
-      "date": "2026-07-30",
-      "title": {
-        "en": "test",
-        "zh": "測試"
-      },
-      "venue": {
-        "en": "",
-        "zh": ""
-      },
-      "arxiv": "2504.15697",
-      "arxiv_url": "https://arxiv.org/abs/2504.15697",
-      "pdf_url": "",
-      "doi_url": "",
-      "journal_url": "",
-      "code_url": "",
-      "authors": {
-        "en": "test1, Hung-Chun Tsui, and test",
-        "zh": "test1, 崔鴻竣, 測試"
-      },
-      "group_id": "preprints",
-      "year": 2026,
-      "links": [
-        {
-          "label": {
-            "en": "arXiv",
-            "zh": "arXiv"
-          },
-          "url": "https://arxiv.org/abs/2504.15697"
-        }
-      ],
-      "title_html": {
-        "en": "test",
-        "zh": "測試"
-      },
-      "authors_html": {
-        "en": "test1, Hung-Chun Tsui, and test",
-        "zh": "test1, 崔鴻竣, 測試"
-      },
-      "venue_html": {
-        "en": "",
-        "zh": ""
-      },
-      "id": "publication-2026-07-30-entry"
     }
   ],
   "teaching": [
