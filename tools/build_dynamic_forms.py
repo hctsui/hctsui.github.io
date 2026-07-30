@@ -203,16 +203,25 @@ body:
   - type: textarea
     id: description-zh
     attributes: {{label: Description (Chinese) / 說明中文 [選填・可由對照表補全]}}
-  - type: input
-    id: funding-en
+  - type: markdown
     attributes:
-      label: Funding institution or program (English) / 補助機構或計畫英文 [選填]
-      description: 填寫後會自動在說明末尾加入「Supported by …」。
+      value: |
+        資助機構與資助計畫皆為選填，可只填一項或兩項都填。系統會自動產生正式說明：
+        - 只有機構：Supported by 機構。／本次訪問經費由機構提供。
+        - 只有計畫：Supported through 計畫。／本次訪問由計畫補助。
+        - 兩者都有：Supported by 機構 through 計畫。／本次訪問經費由機構透過計畫提供。
   - type: input
-    id: funding-zh
-    attributes:
-      label: Funding institution or program (Chinese) / 補助機構或計畫中文 [選填・可由對照表補全]
-      description: 填寫後會自動在說明末尾加入「本次訪問獲……支持。」
+    id: funding-organization-en
+    attributes: {{label: Funding organization (English) / 資助機構英文 [選填]}}
+  - type: input
+    id: funding-organization-zh
+    attributes: {{label: Funding organization (Chinese) / 資助機構中文 [選填・可由對照表補全]}}
+  - type: input
+    id: funding-program-en
+    attributes: {{label: Funding program (English) / 資助計畫英文 [選填]}}
+  - type: input
+    id: funding-program-zh
+    attributes: {{label: Funding program (Chinese) / 資助計畫中文 [選填・可由對照表補全]}}
 '''
 
 
@@ -526,16 +535,21 @@ def category_edit_forms(data: dict[str, Any]) -> dict[str, str]:
   - type: textarea
     id: visit-description-zh
     attributes: {label: New description (Chinese) / 新說明中文 [選填・可由對照表補全]}
-  - type: input
-    id: visit-funding-en
+  - type: markdown
     attributes:
-      label: New funding institution or program (English) / 新補助機構或計畫英文 [選填]
-      description: 填寫後會自動加入 Supported by …
+      value: 資助機構與資助計畫可只改其中一項；輸入 [clear] 可清除既有值。
   - type: input
-    id: visit-funding-zh
-    attributes:
-      label: New funding institution or program (Chinese) / 新補助機構或計畫中文 [選填・可由對照表補全]
-      description: 填寫後會自動加入本次訪問獲……支持。
+    id: visit-funding-organization-en
+    attributes: {label: New funding organization (English) / 新資助機構英文 [選填]}
+  - type: input
+    id: visit-funding-organization-zh
+    attributes: {label: New funding organization (Chinese) / 新資助機構中文 [選填・可由對照表補全]}
+  - type: input
+    id: visit-funding-program-en
+    attributes: {label: New funding program (English) / 新資助計畫英文 [選填]}
+  - type: input
+    id: visit-funding-program-zh
+    attributes: {label: New funding program (Chinese) / 新資助計畫中文 [選填・可由對照表補全]}
 """
 
     def named(name: str, description: str, body: str) -> str:

@@ -84,4 +84,4 @@ Conference、Talk、Visit 可選擇先顯示在 Upcoming。結束日期過後，
 
 ## 學術訪問 Funding
 
-Admin 的學術訪問表單可另外填寫 Funding（機構或計畫）。儲存時會自動將英文整理為 `Supported by …`，中文整理為「本次訪問獲……支持。」並附加到說明中。
+Admin 的學術訪問表單可另外填寫 資助機構與資助計畫。儲存時會自動將英文整理為 `Supported by …`，中文整理為「本次訪問獲……支持。」並附加到說明中。

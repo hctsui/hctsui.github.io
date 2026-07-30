@@ -89,12 +89,20 @@ class PayloadAndVisitTests(unittest.TestCase):
 
     def test_visit_funding_is_added_to_description(self) -> None:
         self.assertEqual(
-            _compose_visit_description("Sendai", "Japan", "Research visit", "NSTC", "en"),
-            "Sendai, Japan · Research visit · Supported by NSTC.",
+            _compose_visit_description("Sendai", "Japan", "Research visit", "NSTC", "Overseas Research Program", "en"),
+            "Sendai, Japan · Research visit · Supported by NSTC through Overseas Research Program.",
         )
         self.assertEqual(
-            _compose_visit_description("仙台", "日本", "研究訪問", "國科會", "zh"),
-            "仙台, 日本 · 研究訪問 · 本次訪問獲國科會支持。",
+            _compose_visit_description("仙台", "日本", "研究訪問", "國科會", "千里馬計畫", "zh"),
+            "仙台, 日本 · 研究訪問 · 本次訪問經費由國科會透過千里馬計畫提供。",
+        )
+        self.assertEqual(
+            _compose_visit_description("Sendai", "Japan", "", "", "Overseas Research Program", "en"),
+            "Sendai, Japan · Supported through Overseas Research Program.",
+        )
+        self.assertEqual(
+            _compose_visit_description("仙台", "日本", "", "", "千里馬計畫", "zh"),
+            "仙台, 日本 · 本次訪問由千里馬計畫補助。",
         )
 
 

@@ -579,39 +579,73 @@ def _visit_description_fields(f: dict[str, str]) -> tuple[str, str]:
     return en.strip(), zh.strip()
 
 
-def _visit_funding_fields(f: dict[str, str]) -> tuple[str, str]:
-    """Read the supporting institution or programme for a visit."""
-    en = get(f, "Funding institution or program (English) / 補助機構或計畫英文")
-    zh = get(f, "Funding institution or program (Chinese) / 補助機構或計畫中文")
-    # Compatibility with a short-lived legacy label.
-    if not en:
-        en = get(f, "Funding note (English) / 補助說明英文")
-    if not zh:
-        zh = get(f, "Funding note (Chinese) / 補助說明中文")
+def _visit_funding_fields(f: dict[str, str]) -> tuple[str, str, str, str]:
+    """Read optional funding organization and program, with legacy compatibility."""
+    org_en = get(f, "Funding organization (English) / 資助機構英文")
+    org_zh = get(f, "Funding organization (Chinese) / 資助機構中文")
+    program_en = get(f, "Funding program (English) / 資助計畫英文")
+    program_zh = get(f, "Funding program (Chinese) / 資助計畫中文")
+
+    # Compatibility with the former single funding field.
+    legacy_en = get(f, "Funding institution or program (English) / 補助機構或計畫英文") or get(f, "Funding note (English) / 補助說明英文")
+    legacy_zh = get(f, "Funding institution or program (Chinese) / 補助機構或計畫中文") or get(f, "Funding note (Chinese) / 補助說明中文")
+    if not org_en and not program_en:
+        org_en = legacy_en
+    if not org_zh and not program_zh:
+        org_zh = legacy_zh
+
     if dictionary_enabled(f):
-        before = (en, zh)
-        en, zh = translations().complete(en, zh)
-        if before != (en, zh):
-            NOTES.append("由 Admin 中英對照表補全學術訪問補助資訊。")
-    return en.strip(), zh.strip()
+        before = (org_en, org_zh, program_en, program_zh)
+        org_en, org_zh = translations().complete(org_en, org_zh)
+        program_en, program_zh = translations().complete(program_en, program_zh)
+        if before != (org_en, org_zh, program_en, program_zh):
+            NOTES.append("由 Admin 中英對照表補全學術訪問資助資訊。")
+    return org_en.strip(), org_zh.strip(), program_en.strip(), program_zh.strip()
 
 
-def _funding_sentence(value: str, lang: str) -> str:
-    value = value.strip().rstrip("。.! ")
-    if not value:
+def _funding_sentence(organization: str, program: str, lang: str) -> str:
+    organization = organization.strip().rstrip("。.! ")
+    program = program.strip().rstrip("。.! ")
+    if not organization and not program:
         return ""
-    return f"Supported by {value}." if lang == "en" else f"本次訪問獲{value}支持。"
+    if lang == "en":
+        if organization and program:
+            return f"Supported by {organization} through {program}."
+        if organization:
+            return f"Supported by {organization}."
+        return f"Supported through {program}."
+    if organization and program:
+        return f"本次訪問經費由{organization}透過{program}提供。"
+    if organization:
+        return f"本次訪問經費由{organization}提供。"
+    return f"本次訪問由{program}補助。"
 
 
 def _compose_visit_description(
     city: str,
     country: str,
     description: str,
-    funding: str = "",
+    funding_organization: str = "",
+    funding_program: str = "",
     lang: str = "en",
 ) -> str:
-    parts = [value for value in (location(city, country), description, _funding_sentence(funding, lang)) if value]
+    parts = [
+        value
+        for value in (
+            location(city, country),
+            description,
+            _funding_sentence(funding_organization, funding_program, lang),
+        )
+        if value
+    ]
     return " · ".join(parts)
+
+
+def _funding_part(value: str, lang: str) -> bool:
+    value = value.strip()
+    if lang == "en":
+        return bool(re.match(r"^(?:Supported by .+?(?: through .+?)?|Supported through .+?)\.?$", value, re.I))
+    return bool(re.match(r"^(?:經費由.+?(?:透過.+?)?提供|由.+?補助|本次訪問獲.+?支持)。?$", value))
 
 
 def _legacy_visit_components(item: dict[str, Any], lang: str) -> tuple[str, str, str]:
@@ -626,8 +660,7 @@ def _legacy_visit_components(item: dict[str, Any], lang: str) -> tuple[str, str,
         return "", "", ""
     parts = combined.split(" · ")
     location_part = parts[0]
-    note_parts = [part for part in parts[1:] if not re.match(r"^(?:Supported by |本次訪問獲).*(?:支持。|\.)$", part)]
-    note = " · ".join(note_parts)
+    note = " · ".join(part for part in parts[1:] if not _funding_part(part, lang))
     if ", " in location_part:
         city, country = location_part.split(", ", 1)
     else:
@@ -650,10 +683,10 @@ def add_visit(data: dict[str, Any], f: dict[str, str]) -> str:
     city_en, city_zh = bilingual_pair(f, "City (English) / 城市英文", "City (Chinese) / 城市中文", name="城市")
     country_en, country_zh = bilingual_pair(f, "Country (English) / 國家英文", "Country (Chinese) / 國家中文", name="國家")
     desc_en, desc_zh = _visit_description_fields(f)
-    funding_en, funding_zh = _visit_funding_fields(f)
+    funding_org_en, funding_org_zh, funding_program_en, funding_program_zh = _visit_funding_fields(f)
     ensure_not_duplicate(data, "visit", start, inst_en, inst_zh)
-    combined_en = _compose_visit_description(city_en, country_en, desc_en, funding_en, "en")
-    combined_zh = _compose_visit_description(city_zh, country_zh, desc_zh, funding_zh, "zh")
+    combined_en = _compose_visit_description(city_en, country_en, desc_en, funding_org_en, funding_program_en, "en")
+    combined_zh = _compose_visit_description(city_zh, country_zh, desc_zh, funding_org_zh, funding_program_zh, "zh")
     anchor = inst_en or inst_zh
     entry = {
         "id": unique_id(data, "visit", start, anchor), "type": "visit", "start_date": start, "end_date": end,
@@ -664,7 +697,8 @@ def add_visit(data: dict[str, Any], f: dict[str, str]) -> str:
         "city": {"en": city_en, "zh": city_zh},
         "country": {"en": country_en, "zh": country_zh},
         "visit_description": {"en": desc_en, "zh": desc_zh},
-        "funding": {"en": funding_en, "zh": funding_zh},
+        "funding_organization": {"en": funding_org_en, "zh": funding_org_zh},
+        "funding_program": {"en": funding_program_en, "zh": funding_program_zh},
         "description": {"en": combined_en, "zh": combined_zh},
         "description_html": {"en": limited_markup(combined_en), "zh": limited_markup(combined_zh)},
         "slides_url": "",
@@ -872,18 +906,25 @@ def edit_entry(data: dict[str, Any], f: dict[str, str]) -> str:
         country_zh_raw = get(f, "New country (Chinese) / 新國家中文")
         note_en_raw = get(f, "New description (English) / 新說明英文")
         note_zh_raw = get(f, "New description (Chinese) / 新說明中文")
-        funding_en_raw = get(f, "New funding institution or program (English) / 新補助機構或計畫英文")
-        funding_zh_raw = get(f, "New funding institution or program (Chinese) / 新補助機構或計畫中文")
-        old_funding_en = str((item.get("funding") or {}).get("en") or "").strip()
-        old_funding_zh = str((item.get("funding") or {}).get("zh") or "").strip()
+        funding_org_en_raw = get(f, "New funding organization (English) / 新資助機構英文")
+        funding_org_zh_raw = get(f, "New funding organization (Chinese) / 新資助機構中文")
+        funding_program_en_raw = get(f, "New funding program (English) / 新資助計畫英文")
+        funding_program_zh_raw = get(f, "New funding program (Chinese) / 新資助計畫中文")
+        legacy_funding = item.get("funding") or {}
+        old_funding_org_en = str((item.get("funding_organization") or {}).get("en") or legacy_funding.get("en") or "").strip()
+        old_funding_org_zh = str((item.get("funding_organization") or {}).get("zh") or legacy_funding.get("zh") or "").strip()
+        old_funding_program_en = str((item.get("funding_program") or {}).get("en") or "").strip()
+        old_funding_program_zh = str((item.get("funding_program") or {}).get("zh") or "").strip()
         city_en = _edit_value(city_en_raw, old_city_en)
         city_zh = _edit_value(city_zh_raw, old_city_zh)
         country_en = _edit_value(country_en_raw, old_country_en)
         country_zh = _edit_value(country_zh_raw, old_country_zh)
         note_en = _edit_value(note_en_raw, old_note_en)
         note_zh = _edit_value(note_zh_raw, old_note_zh)
-        funding_en = _edit_value(funding_en_raw, old_funding_en)
-        funding_zh = _edit_value(funding_zh_raw, old_funding_zh)
+        funding_org_en = _edit_value(funding_org_en_raw, old_funding_org_en)
+        funding_org_zh = _edit_value(funding_org_zh_raw, old_funding_org_zh)
+        funding_program_en = _edit_value(funding_program_en_raw, old_funding_program_en)
+        funding_program_zh = _edit_value(funding_program_zh_raw, old_funding_program_zh)
         if dictionary_enabled(f):
             if city_en_raw or city_zh_raw:
                 city_en, city_zh = translations().complete(city_en, city_zh)
@@ -891,14 +932,18 @@ def edit_entry(data: dict[str, Any], f: dict[str, str]) -> str:
                 country_en, country_zh = translations().complete(country_en, country_zh)
             if note_en_raw or note_zh_raw:
                 note_en, note_zh = translations().complete(note_en, note_zh)
-            if funding_en_raw or funding_zh_raw:
-                funding_en, funding_zh = translations().complete(funding_en, funding_zh)
-        combined_en = _compose_visit_description(city_en, country_en, note_en, funding_en, "en")
-        combined_zh = _compose_visit_description(city_zh, country_zh, note_zh, funding_zh, "zh")
+            if funding_org_en_raw or funding_org_zh_raw:
+                funding_org_en, funding_org_zh = translations().complete(funding_org_en, funding_org_zh)
+            if funding_program_en_raw or funding_program_zh_raw:
+                funding_program_en, funding_program_zh = translations().complete(funding_program_en, funding_program_zh)
+        combined_en = _compose_visit_description(city_en, country_en, note_en, funding_org_en, funding_program_en, "en")
+        combined_zh = _compose_visit_description(city_zh, country_zh, note_zh, funding_org_zh, funding_program_zh, "zh")
         item["city"] = {"en": city_en, "zh": city_zh}
         item["country"] = {"en": country_en, "zh": country_zh}
         item["visit_description"] = {"en": note_en, "zh": note_zh}
-        item["funding"] = {"en": funding_en, "zh": funding_zh}
+        item["funding_organization"] = {"en": funding_org_en, "zh": funding_org_zh}
+        item["funding_program"] = {"en": funding_program_en, "zh": funding_program_zh}
+        item.pop("funding", None)
         item["description"] = {"en": combined_en, "zh": combined_zh}
         item["description_html"] = {"en": limited_markup(combined_en), "zh": limited_markup(combined_zh)}
     elif kind == "honor":

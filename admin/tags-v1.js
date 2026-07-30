@@ -188,7 +188,7 @@
   const AUDIT_FIELDS = {
     conference: [['title', '名稱'], ['venue', '場地／機構'], ['city', '城市'], ['country', '國家']],
     talk: [['title', '題目'], ['event', '活動／研討會'], ['venue', '機構／場地'], ['city', '城市'], ['country', '國家']],
-    visit: [['title', '訪問機構'], ['city', '城市'], ['country', '國家'], ['visit_description', '其他說明'], ['funding', 'Funding（機構或計畫）']],
+    visit: [['title', '訪問機構'], ['city', '城市'], ['country', '國家'], ['visit_description', '其他說明'], ['funding_organization', '資助機構'], ['funding_program', '資助計畫']],
     honor: [['title', '名稱'], ['organization', '頒發機構']],
     publication: [['title', '題目'], ['venue', '期刊／狀態']],
     teaching: [['term', '學期'], ['institution', '機構'], ['role', '角色／身分']],
