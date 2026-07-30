@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 
 import process_request as core
 from category_config import categories_for_page, items_for_category, migrate_category_data, normalized_pages
+from homepage_config import homepage_activities, homepage_publications
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -183,13 +184,9 @@ def render_contact(items: list[dict[str, Any]], lang: str) -> str:
 def category_items(data: dict[str, Any], category: dict[str, Any], today: date) -> list[dict[str, Any]]:
     kind = category["kind"]
     if kind == "featured_publications":
-        limit = int(data.get("settings", {}).get("homepage_publication_limit", 2))
-        return sorted(data.get("publications", []), key=lambda e: (e.get("date", ""), e.get("id", "")), reverse=True)[:limit]
+        return homepage_publications(data)
     if kind == "upcoming":
-        return sorted([
-            e for e in data.get("activities", [])
-            if e.get("show_upcoming") and str(e.get("end_date") or e.get("start_date") or "") >= today.isoformat()
-        ], key=lambda e: (e.get("start_date", ""), e.get("id", "")))
+        return homepage_activities(data, today)
     return items_for_category(data, category["id"])
 
 

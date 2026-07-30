@@ -7,6 +7,7 @@ from typing import Any
 from translation_validation import normalize_translation_tags, validate_translation_data
 from heading_config import normalized_headings, validate_headings
 from category_config import migrate_category_data, validate_category_data, all_items
+from homepage_config import apply_homepage_config, normalized_homepage_config, validate_homepage_config
 from process_request import strip_invisible_chars
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
@@ -230,6 +231,10 @@ def layout_expected_matches(current,expected):
   if int(left.get('order',999999))!=int(right.get('order',999999)):return False
  return True
 def apply_special(data,trans,h,op,hid,issue,n,rd):
+ if op['op']=='homepage':
+  before=normalized_homepage_config(data);expected=op.get('before')
+  if expected and before!=normalized_homepage_config(data,expected):raise ValueError('Conflict: homepage settings changed after Admin loaded.')
+  after=apply_homepage_config(data,copy.deepcopy(op['after']));append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='homepage',action='homepage',type='homepage',entry_id='homepage',label={'en':'Homepage selections','zh':'首頁精選'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'homepage','homepage'
  if op['op']=='layout':
   before=layout_bundle(data);expected=op.get('before')
   if expected and not layout_expected_matches(before,expected):raise ValueError('Conflict: page/category layout changed after Admin loaded.')
@@ -254,7 +259,11 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
  if target.get('reverted_by'):raise ValueError(f'{tid} was already undone.')
  if dt(target['expires_at'])<=n:raise ValueError(f'Undo expired: {tid}')
  act=target['action'];t=target['type'];eid=target['entry_id']
- if act=='layout':
+ if act=='homepage':
+  cur=normalized_homepage_config(data)
+  if cur!=normalized_homepage_config(data,target['after']):raise ValueError('Cannot undo homepage settings: settings changed later.')
+  restored=apply_homepage_config(data,target['before']);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='homepage',type='homepage',entry_id='homepage',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
+ elif act=='layout':
   cur=layout_bundle(data)
   if cur!=normalized_layout_bundle(data,target['after']):raise ValueError('Cannot undo layout: layout changed later.')
   restored=apply_layout_bundle(data,target['before']);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='layout',type='layout',entry_id='layout',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
@@ -287,7 +296,7 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
 def validate_operation(op):
  if not isinstance(op,dict):raise ValueError('Every batch operation must be an object.')
  action=op.get('op')
- if action not in {'add','update','delete','undo','reorder','translations','headings','layout'}:raise ValueError(f'Unsupported batch operation: {action}')
+ if action not in {'add','update','delete','undo','reorder','translations','headings','layout','homepage'}:raise ValueError(f'Unsupported batch operation: {action}')
  if action=='undo':
   if not str(op.get('history_id') or '').strip():raise ValueError('Undo operation is missing history_id.')
   return
@@ -296,6 +305,9 @@ def validate_operation(op):
   validate_translation_data(op['after']);return
  if action=='layout':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Layout operation requires before and after objects.')
+  return
+ if action=='homepage':
+  if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Homepage operation requires before and after objects.')
   return
  if action=='headings':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Headings operation requires before and after objects.')
@@ -313,16 +325,16 @@ def validate_operation(op):
 def main():
  p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
  if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
- data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','headings','layout','replayed')};ids=[]
+ data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','headings','layout','homepage','replayed')};ids=[]
  for i,op in enumerate(ops,1):
   validate_operation(op);hid=f'issue-{issue}-op-{i}';rd=digest(op)
   if hid in existing:
    if existing[hid].get('request_digest')!=rd:raise ValueError(f'{hid} exists with different content.')
    counts['replayed']+=1;continue
   if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd)
-  elif op['op'] in ('reorder','translations','headings','layout'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
+  elif op['op'] in ('reorder','translations','headings','layout','homepage'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
   else:act,eid=apply_content(data,h,op,hid,issue,n,rd)
   counts[act]+=1;ids.append(eid);existing[hid]=h['operations'][-1]
- normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);h=strip_invisible_chars(h);validate_category_data(data);validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
- summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','headings','layout') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
+ normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);h=strip_invisible_chars(h);validate_category_data(data);validate_homepage_config(data,normalized_homepage_config(data));validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','headings','layout','homepage') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
 if __name__=='__main__':main()
