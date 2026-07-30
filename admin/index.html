@@ -61,10 +61,10 @@
 <button class="small-button primary-action" id="addTranslation" type="button">新增一組對照</button>
 <button class="small-button" id="reloadTranslations" type="button">放棄草稿並重新載入</button>
 <button class="small-button" id="downloadTranslations" type="button">下載 JSON 備份</button>
-<button class="small-button primary-action" id="publishTranslations" type="button">下載 JSON 並開啟上傳頁</button>
+<button class="small-button primary-action" id="publishTranslations" type="button">複製 JSON 並開啟 GitHub 編輯器</button>
 </div>
 <div class="table-wrap"><table class="translation-table"><thead><tr><th>English</th><th>中文</th><th>操作</th></tr></thead><tbody id="translationRows"></tbody></table></div>
-<p class="note"><strong>保存方式：</strong>每次編輯會即時保存於這台裝置的瀏覽器。完成後按「下載 JSON 並開啟上傳頁」，在 GitHub 頁面全選原內容、貼上並 commit；不需要建立 Issue，也不會逐列等待 Action。</p>
+<p class="note"><strong>保存方式：</strong>每次編輯會即時保存於這台裝置的瀏覽器。完成後按「複製 JSON 並開啟 GitHub 編輯器」，在 GitHub 頁面全選原內容、貼上並 commit；不需要建立 Issue，也不會逐列等待 Action。</p>
 </section>
 <p class="note"><strong>排序方式：</strong>先選擇 Conference、Talk、Visit、Honor、Publication 或 Teaching 其中一類，再按「開始網站排序」。Publication 與 Teaching 可調整大標題及項目；其他類別可調整所有項目。儲存後貼到自動開啟的表單，網站與 CV 會使用同一順序。</p>
 </main>
@@ -120,9 +120,8 @@ translationRows.addEventListener('input',e=>{const input=e.target.closest('input
 translationRows.addEventListener('click',e=>{const b=e.target.closest('button[data-action="translation-remove"]');if(!b)return;translationData.pairs.splice(Number(b.dataset.id),1);renderTranslations()});
 translationSearch.addEventListener('input',renderTranslations);addTranslation.addEventListener('click',()=>{translationData.pairs.unshift({en:'',zh:''});renderTranslations();translationRows.querySelector('input')?.focus()});
 reloadTranslations.addEventListener('click',()=>{if(!publishedTranslationData)return;translationData=normalizeTranslationData(publishedTranslationData);localStorage.removeItem(translationDraftKey);renderTranslations();showFlash('已重新載入網站上的已發布對照表')});
-function downloadTranslationFile(){const blob=new Blob([translationJSON()],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='translations.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-downloadTranslations.addEventListener('click',()=>{try{downloadTranslationFile();showFlash('已下載 translations.json')}catch(err){showFlash(err.message)}});
-publishTranslations.addEventListener('click',()=>{try{downloadTranslationFile();showFlash('已下載 translations.json；請在新分頁拖入檔案並 commit。');window.open(repo+'/upload/cms/content','_blank','noopener')}catch(err){showFlash(err.message)}});
+downloadTranslations.addEventListener('click',()=>{try{const blob=new Blob([translationJSON()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='translations.json';a.click();URL.revokeObjectURL(a.href)}catch(err){showFlash(err.message)}});
+publishTranslations.addEventListener('click',async()=>{try{const text=translationJSON();await copyText(text);showFlash('完整 JSON 已複製；請在 GitHub 編輯器全選、貼上並 commit。');window.open(repo+'/edit/cms/content/translations.json','_blank','noopener')}catch(err){showFlash(err.message)}});
 fetch('../content/translations.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(data=>{publishedTranslationData=normalizeTranslationData(data);const draft=localStorage.getItem(translationDraftKey);translationData=draft?normalizeTranslationData(JSON.parse(draft)):normalizeTranslationData(data);renderTranslations()}).catch(err=>{translationStatus.textContent='讀取對照表失敗。';console.error(err)});
 
 </script>
