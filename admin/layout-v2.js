@@ -11,7 +11,7 @@ const CATEGORY_KIND_LABELS={
 };
 const DIRECT_CATEGORY_KINDS=new Set(['contact','interest','education','honor','publication','visit','talk','organization','conference','teaching','personal','generic']);
 const ITEM_KIND={conference:'conference',talk:'talk',visit:'visit',organization:'organization',honor:'honor',publication:'publication',teaching:'teaching',interest:'interest',education:'education',generic:'generic',contact:'contact',personal:'personal'};
-let layoutBase=null,layoutDraft=null,layoutNotice='',layoutReady=false,layoutPreviewSuppressed=false;
+let layoutBase=null,layoutDraft=null,layoutNotice='',layoutReady=false,layoutPreviewSuppressed=false,layoutManagerPageId='';
 
 function layoutPair(value){return{en:String(value?.en||''),zh:String(value?.zh||'')}}
 function layoutItems(data){return allRecords(data||{}).filter(x=>x&&x.id)}
@@ -145,11 +145,15 @@ function pageEditorHtml(page){
 }
 function renderLayoutManager(){
   initLayoutState();const box=$('#layoutManager');if(!box)return;
-  const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}">${esc(pageName(p.id))}</option>`).join('');
+  if(!layoutDraft.pages.some(p=>p.id===layoutManagerPageId))layoutManagerPageId=layoutDraft.pages[0]?.id||'';
+  const selectedPage=layoutDraft.pages.find(p=>p.id===layoutManagerPageId);
+  const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}" ${p.id===layoutManagerPageId?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
   const kindOptions=Object.entries(CATEGORY_KIND_LABELS).map(([id,label])=>`<option value="${esc(id)}">${esc(label)}</option>`).join('');
   box.innerHTML=`<div class="notice"><strong>類別就是網站的大標題。</strong><p>所有項目都必須放在某個類別中。類別移到另一頁時，裡面的項目會一起移動；網站與 PDF 履歷共用同一套類別名稱。</p>${layoutNotice?`<p>${esc(layoutNotice)}</p>`:''}</div>
+  <div class="toolbar layout-page-filter"><div class="field"><label>選擇頁面</label><select id="layoutManagerPage">${pageOptions}</select></div><p class="field-hint">下方只顯示所選頁面的頁首與類別。</p></div>
   <details class="layout-tool" open><summary><strong>新增類別</strong></summary><div class="layout-tool-body"><div class="pair-grid"><div class="field"><label>中文大標題</label><input id="newCategoryZh"></div><div class="field"><label>英文大標題</label><input id="newCategoryEn"></div></div><div class="pair-grid"><div class="field"><label>所在頁面</label><select id="newCategoryPage">${pageOptions}</select></div><div class="field"><label>項目類型</label><select id="newCategoryKind">${kindOptions}</select></div></div><button class="button primary" id="addCategoryButton">新增類別</button></div></details>
-  ${layoutDraft.pages.map(page=>`<details class="layout-page-card" open><summary><strong>${esc(pageName(page.id))}</strong><span class="tag">${layoutDraft.categories.filter(c=>c.page_id===page.id).length} 個類別</span></summary><div class="layout-tool-body"><h3>頁首設定</h3>${pageEditorHtml(page)}<h3>此頁類別</h3>${layoutDraft.categories.filter(c=>c.page_id===page.id).sort((a,b)=>a.order-b.order).map(categoryEditorHtml).join('')||'<p class="muted">此頁尚無類別。</p>'}</div></details>`).join('')}`;
+  ${selectedPage?`<details class="layout-page-card" open><summary><strong>${esc(pageName(selectedPage.id))}</strong><span class="tag">${layoutDraft.categories.filter(c=>c.page_id===selectedPage.id).length} 個類別</span></summary><div class="layout-tool-body"><h3>頁首設定</h3>${pageEditorHtml(selectedPage)}<h3>此頁類別</h3>${layoutDraft.categories.filter(c=>c.page_id===selectedPage.id).sort((a,b)=>a.order-b.order).map(categoryEditorHtml).join('')||'<p class="muted">此頁尚無類別。</p>'}</div></details>`:'<p class="muted">目前沒有可管理的頁面。</p>'}`;
+  box.querySelector('#layoutManagerPage').onchange=event=>{layoutManagerPageId=event.target.value;renderLayoutManager()};
   box.querySelector('#addCategoryButton').onclick=addCategoryFromManager;
   box.onclick=layoutManagerClick;
 }
@@ -160,6 +164,7 @@ function addCategoryFromManager(){
   const id=uniqueCategoryId(en||zh),same=layoutDraft.categories.filter(c=>c.page_id===page_id);
   layoutDraft.categories.push({id,page_id,kind,label:{en,zh},title:{en,zh},intro:{en:'',zh:''},order:same.length,show_on_web:true,show_on_cv:!['featured_publications','upcoming','contact'].includes(kind)});
   if(layoutDraft.categories.at(-1).show_on_cv)layoutDraft.cv_category_order.push(id);
+  layoutManagerPageId=page_id;
   saveLayoutDraft('已新增類別草稿')
 }
 function setCategoryFromEditor(id,root){const category=layoutDraft.categories.find(c=>c.id===id);if(!category)return;const values=readNestedFields(root,'data-category-field');if(!values.label?.en?.trim()||!values.label?.zh?.trim()||!values.title?.en?.trim()||!values.title?.zh?.trim())return flash('類別的小字與大標題，中英文都不能留白');const oldPage=category.page_id;Object.assign(category,values);category.label=layoutPair(values.label);category.title=layoutPair(values.title);category.intro=layoutPair(values.intro);category.show_on_web=!!values.show_on_web;category.show_on_cv=!!values.show_on_cv;if(oldPage!==category.page_id)category.order=layoutDraft.categories.filter(c=>c.page_id===category.page_id&&c.id!==id).length;layoutDraft=normalizeLayoutBundle(layoutDraft);saveLayoutDraft('已儲存類別設定')}
@@ -191,7 +196,7 @@ function moveCategory(id,delta){const page=$('#layoutOrderPage').value;if(page==
 function moveItem(id,delta){const state=layoutDraft.assignments[id];if(!state)return;const ids=categoryItemIds(state.category_id),i=ids.indexOf(id);if(!moveInArray(ids,i,delta))return;ids.forEach((iid,n)=>layoutDraft.assignments[iid].order=n);saveLayoutDraft('已調整項目順序')}
 function recordSortValue(item){return String(item?.start_date||item?.date||item?.year||item?.term?.en||item?.term?.zh||'')}
 function sortCategory(id,mode){const map=new Map(layoutItems(effectiveSite()).map(x=>[String(x.id),x])),ids=categoryItemIds(id);ids.sort((a,b)=>{const x=map.get(a),y=map.get(b);if(mode==='title')return itemName(x).localeCompare(itemName(y),'zh-Hant');const result=recordSortValue(x).localeCompare(recordSortValue(y));return(mode==='newest'?-result:result)||itemName(x).localeCompare(itemName(y),'zh-Hant')});ids.forEach((iid,n)=>layoutDraft.assignments[iid].order=n);saveLayoutDraft('已套用類別內快速排序')}
-function unifiedOrderClick(event){const button=event.target.closest('button');if(!button)return;if(button.dataset.categoryUp)moveCategory(button.dataset.categoryUp,-1);else if(button.dataset.categoryDown)moveCategory(button.dataset.categoryDown,1);else if(button.dataset.itemUp)moveItem(button.dataset.itemUp,-1);else if(button.dataset.itemDown)moveItem(button.dataset.itemDown,1);else if(button.dataset.sortCategory)sortCategory(button.dataset.sortCategory,button.dataset.sortMode);else if(button.dataset.editCategoryJump){switchTab('headings');setTimeout(()=>document.querySelector(`[data-category-editor="${CSS.escape(button.dataset.editCategoryJump)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),50)}}
+function unifiedOrderClick(event){const button=event.target.closest('button');if(!button)return;if(button.dataset.categoryUp)moveCategory(button.dataset.categoryUp,-1);else if(button.dataset.categoryDown)moveCategory(button.dataset.categoryDown,1);else if(button.dataset.itemUp)moveItem(button.dataset.itemUp,-1);else if(button.dataset.itemDown)moveItem(button.dataset.itemDown,1);else if(button.dataset.sortCategory)sortCategory(button.dataset.sortCategory,button.dataset.sortMode);else if(button.dataset.editCategoryJump){const category=layoutDraft.categories.find(c=>c.id===button.dataset.editCategoryJump);if(category)layoutManagerPageId=category.page_id;renderLayoutManager();switchTab('headings');setTimeout(()=>document.querySelector(`[data-category-editor="${CSS.escape(button.dataset.editCategoryJump)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),50)}}
 function unifiedOrderChange(event){const select=event.target.closest('[data-move-item]');if(!select||!select.value)return;const id=select.dataset.moveItem,target=select.value,state=layoutDraft.assignments[id];if(!state)return;state.category_id=target;state.order=categoryItemIds(target).length;saveLayoutDraft('已將項目移到另一類別')}
 
 function layoutDiffSummary(before,after){
