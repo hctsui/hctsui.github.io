@@ -111,7 +111,19 @@
         "en": "Supported by the Japan–Taiwan Exchange Association",
         "zh": "獲日本臺灣交流協會補助"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "city": {
+        "en": "Supported by the Japan–Taiwan Exchange Association",
+        "zh": "獲日本臺灣交流協會補助"
+      },
+      "country": {
+        "en": "",
+        "zh": ""
+      },
+      "visit_description": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
