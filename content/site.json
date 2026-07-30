@@ -86,7 +86,183 @@
         "visit-2026-07-02-tohoku-university"
       ]
     },
-    "manually_ordered_kinds": []
+    "manually_ordered_kinds": [],
+    "headings": {
+      "home_publications": {
+        "label": {
+          "en": "Recent work",
+          "zh": "近期成果"
+        },
+        "title": {
+          "en": "Selected Publications",
+          "zh": "精選論文"
+        }
+      },
+      "home_upcoming": {
+        "label": {
+          "en": "Calendar",
+          "zh": "行程"
+        },
+        "title": {
+          "en": "Upcoming",
+          "zh": "近期活動"
+        }
+      },
+      "home_contact": {
+        "label": {
+          "en": "Contact",
+          "zh": "聯絡資訊"
+        },
+        "title": {
+          "en": "Get in touch",
+          "zh": "聯絡"
+        }
+      },
+      "cv_page": {
+        "label": {
+          "en": "Academic profile",
+          "zh": "學術資料"
+        },
+        "title": {
+          "en": "Curriculum Vitae",
+          "zh": "履歷"
+        },
+        "intro": {
+          "en": "Education, research interests, and honors.",
+          "zh": "學歷、研究領域與獎項"
+        }
+      },
+      "cv_research": {
+        "label": {
+          "en": "Fields",
+          "zh": "研究方向"
+        },
+        "title": {
+          "en": "Research Interests",
+          "zh": "研究領域"
+        }
+      },
+      "cv_education": {
+        "label": {
+          "en": "Degrees",
+          "zh": "學位"
+        },
+        "title": {
+          "en": "Education",
+          "zh": "學歷"
+        }
+      },
+      "cv_honors": {
+        "label": {
+          "en": "Recognition",
+          "zh": "獎助紀錄"
+        },
+        "title": {
+          "en": "Honors and Awards",
+          "zh": "獎項與榮譽"
+        }
+      },
+      "cv_personal": {
+        "title": {
+          "en": "Personal Information",
+          "zh": "個人資訊"
+        }
+      },
+      "publications_page": {
+        "label": {
+          "en": "Research record",
+          "zh": "研究紀錄"
+        },
+        "title": {
+          "en": "Publications and Preprints",
+          "zh": "論文與預印本"
+        },
+        "intro": {
+          "en": "A complete list of current papers and preprints.",
+          "zh": "論文與預印本的完整列表"
+        }
+      },
+      "publication_groups": {
+        "label": {
+          "en": "Manuscript type",
+          "zh": "稿件類型"
+        }
+      },
+      "activities_page": {
+        "label": {
+          "en": "Academic record",
+          "zh": "學術紀錄"
+        },
+        "title": {
+          "en": "Activities",
+          "zh": "學術活動"
+        },
+        "intro": {
+          "en": "Academic visits, presentations, conferences and workshops.",
+          "zh": "學術訪問、學術報告、會議與工作坊"
+        }
+      },
+      "activity_visit": {
+        "label": {
+          "en": "Visit",
+          "zh": "訪問經歷"
+        },
+        "title": {
+          "en": "Academic Visits",
+          "zh": "學術訪問"
+        }
+      },
+      "activity_talk": {
+        "label": {
+          "en": "Talks",
+          "zh": "演講紀錄"
+        },
+        "title": {
+          "en": "Presentations",
+          "zh": "學術報告"
+        }
+      },
+      "activity_organization": {
+        "label": {
+          "en": "Organizing Experience",
+          "zh": "籌辦經歷"
+        },
+        "title": {
+          "en": "Organization",
+          "zh": "學術活動籌辦"
+        }
+      },
+      "activity_conference": {
+        "label": {
+          "en": "Participation",
+          "zh": "參與紀錄"
+        },
+        "title": {
+          "en": "Conferences and Workshops",
+          "zh": "會議與工作坊"
+        }
+      },
+      "teaching_page": {
+        "label": {
+          "en": "Teaching record",
+          "zh": "教學紀錄"
+        },
+        "title": {
+          "en": "Teaching Experience",
+          "zh": "教學經歷"
+        },
+        "intro": {
+          "en": "Teaching and course-assistant experience.",
+          "zh": "教學與課程助教經歷"
+        }
+      },
+      "teaching_groups": {
+        "label": {
+          "en": "Institution",
+          "zh": "機構"
+        }
+      }
+    }
   },
   "activities": [
     {
@@ -307,7 +483,12 @@
         "en": "Tohoku University, Sendai, Japan",
         "zh": "東北大學, 仙台, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference",
@@ -332,7 +513,12 @@
         "en": "Tohoku University, Sendai, Japan",
         "zh": "東北大學, 仙台, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
@@ -357,7 +543,12 @@
         "en": "National Cheng Kung University, Tainan, Taiwan",
         "zh": "國立成功大學, 臺南, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "role": {
+        "en": "Speaker",
+        "zh": "講者"
+      },
+      "show_in_organization": false
     },
     {
       "id": "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers",
@@ -382,7 +573,12 @@
         "en": "Nagoya University, Nagoya, Japan",
         "zh": "名古屋大學, 名古屋, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "role": {
+        "en": "Speaker",
+        "zh": "講者"
+      },
+      "show_in_organization": false
     },
     {
       "id": "conference-2026-01-21-the-61st-tms-annual-meeting",
@@ -407,7 +603,12 @@
         "en": "National Chung Cheng University, Chiayi, Taiwan",
         "zh": "國立中正大學, 嘉義, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
@@ -432,7 +633,12 @@
         "en": "Academia Sinica, Taipei, Taiwan",
         "zh": "中央研究院, 臺北, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
@@ -457,7 +663,12 @@
         "en": "Kyoto University, Kyoto, Japan",
         "zh": "京都大學, 京都, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "role": {
+        "en": "Speaker",
+        "zh": "講者"
+      },
+      "show_in_organization": false
     },
     {
       "id": "conference-2025-09-01-japan-taiwan-number-theory-conference",
@@ -482,7 +693,12 @@
         "en": "Kyukamura Shikanoshima, Fukuoka, Japan",
         "zh": "休暇村志賀島, 福岡, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "role": {
+        "en": "Speaker",
+        "zh": "講者"
+      },
+      "show_in_organization": false
     },
     {
       "id": "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
@@ -507,7 +723,12 @@
         "en": "National Taiwan University, Taipei, Taiwan",
         "zh": "國立臺灣大學, 臺北, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-06-30-iwasawa-2025",
@@ -532,7 +753,12 @@
         "en": "National Taiwan University, Taipei, Taiwan",
         "zh": "國立臺灣大學, 臺北, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
@@ -557,7 +783,12 @@
         "en": "National Taiwan University, Taipei, Taiwan",
         "zh": "國立臺灣大學, 臺北, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w",
@@ -582,7 +813,12 @@
         "en": "Kindai University, Osaka, Japan",
         "zh": "近畿大學, 大阪, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w",
@@ -607,7 +843,12 @@
         "en": "Kyushu University Nishijin Plaza, Fukuoka, Japan",
         "zh": "九州大學西新廣場, 福岡, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-01-14-the-60th-tms-annual-meeting",
@@ -632,7 +873,12 @@
         "en": "National Central University, Taoyuan, Taiwan",
         "zh": "國立中央大學, 桃園, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
@@ -657,7 +903,12 @@
         "en": "Academia Sinica, Taipei, Taiwan",
         "zh": "中央研究院, 臺北, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2024-01-22-the-59th-tms-annual-meeting",
@@ -682,7 +933,12 @@
         "en": "National Chengchi University, Taipei, Taiwan",
         "zh": "國立政治大學, 臺北, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2023-01-16-the-58th-tms-annual-meeting",
@@ -707,7 +963,12 @@
         "en": "National Tsing Hua University, Hsinchu, Taiwan",
         "zh": "國立清華大學, 新竹, 臺灣"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2026-number-theory-summer-school",
@@ -732,7 +993,12 @@
         "en": "Yataro, Nagasaki, Japan",
         "zh": "矢太樓, 長崎, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
@@ -757,7 +1023,12 @@
         "en": "Nagoya University, Nagoya, Japan",
         "zh": "名古屋大學, 名古屋, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
@@ -782,7 +1053,12 @@
         "en": "Nagoya University, Nagoya, Japan",
         "zh": "名古屋大學, 名古屋, 日本"
       },
-      "slides_url": ""
+      "slides_url": "",
+      "show_in_organization": false,
+      "role": {
+        "en": "",
+        "zh": ""
+      }
     }
   ],
   "honors": [

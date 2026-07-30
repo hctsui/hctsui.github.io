@@ -35,7 +35,7 @@ ROLE_FIXED = {
     "lecturer": {"en": "Lecturer", "zh": "講師"},
 }
 GROUPED_KINDS = {"publication", "teaching"}
-UNGROUPED_KINDS = {"conference", "talk", "visit", "honor"}
+UNGROUPED_KINDS = {"conference", "talk", "visit", "organization", "honor"}
 SORTABLE_KINDS = GROUPED_KINDS | UNGROUPED_KINDS
 
 
@@ -321,14 +321,14 @@ def group_label(group: dict[str, Any], lang: str = "en") -> str:
     return str(label.get(lang) or "") if isinstance(label, dict) else str(label or "")
 
 
-def ensure_group(data: dict[str, Any], kind: str, label: dict[str, str], *, group_id: str | None = None, preset: bool = False) -> dict[str, Any]:
+def ensure_group(data: dict[str, Any], kind: str, label: dict[str, str], *, group_id: str | None = None, preset: bool = False, update_label: bool = True) -> dict[str, Any]:
     wanted_id = group_id or slugify(label.get("en") or label.get("zh") or "group")
     groups = content_groups(data, kind)
     for group in groups:
         if group.get("id") == wanted_id:
             group.setdefault("label", {})
             for lang in ("en", "zh"):
-                if label.get(lang):
+                if update_label and label.get(lang):
                     group["label"][lang] = label[lang]
                 else:
                     group["label"].setdefault(lang, "")
@@ -359,7 +359,7 @@ def normalize_orders(data: dict[str, Any], kind: str) -> None:
 
 
 def entries_of_kind(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
-    if kind in {"conference", "talk", "visit"}:
+    if kind in {"conference", "talk", "visit", "organization"}:
         return [x for x in data.get("activities", []) if x.get("type") == kind]
     return list(data.get({"honor": "honors", "publication": "publications", "teaching": "teaching"}[kind], []))
 
@@ -419,8 +419,8 @@ def publication_group_id(entry: dict[str, Any]) -> str:
 
 def migrate_data(data: dict[str, Any]) -> dict[str, Any]:
     for preset in PRESET_PUBLICATION_GROUPS:
-        ensure_group(data, "publication", dict(preset["label"]), group_id=preset["id"], preset=True)
-    nthu = ensure_group(data, "teaching", DEFAULT_INSTITUTION, group_id="national-tsing-hua-university")
+        ensure_group(data, "publication", dict(preset["label"]), group_id=preset["id"], preset=True, update_label=False)
+    nthu = ensure_group(data, "teaching", DEFAULT_INSTITUTION, group_id="national-tsing-hua-university", update_label=False)
     for entry in data.get("publications", []):
         if not find_group(data, "publication", str(entry.get("group_id") or "")):
             entry["group_id"] = publication_group_id(entry)
@@ -431,7 +431,7 @@ def migrate_data(data: dict[str, Any]) -> dict[str, Any]:
         if str(institution.get("en") or "").casefold() == "nthu":
             institution = dict(DEFAULT_INSTITUTION)
         gid = str(entry.get("group_id") or slugify(str(institution.get("en") or institution.get("zh") or "institution")))
-        group = ensure_group(data, "teaching", {"en": str(institution.get("en") or ""), "zh": str(institution.get("zh") or "")}, group_id=gid)
+        group = ensure_group(data, "teaching", {"en": str(institution.get("en") or ""), "zh": str(institution.get("zh") or "")}, group_id=gid, update_label=False)
         entry["group_id"] = group["id"]
         entry["institution"] = dict(group["label"])
         entry.setdefault("role", {"en": "Teaching Assistant", "zh": "助教"})
@@ -884,7 +884,7 @@ def edit_entry(data: dict[str, Any], f: dict[str, str]) -> str:
             item["date"], item["year"] = start, int(start[:4])
         else:
             item["start_date"] = start
-    if end and kind in {"conference", "talk", "visit"}:
+    if end and kind in {"conference", "talk", "visit", "organization"}:
         item["end_date"] = iso(end, "New end date")
     if year and kind == "honor":
         if not re.fullmatch(r"\d{4}", year):
@@ -895,7 +895,7 @@ def edit_entry(data: dict[str, Any], f: dict[str, str]) -> str:
 
     desc_en_label = "New English description/organization/term / 新英文說明、單位或學期"
     desc_zh_label = "New Chinese description/organization/term / 新中文說明、單位或學期"
-    if kind in {"conference", "talk"}:
+    if kind in {"conference", "talk", "organization"}:
         update_pair_from_edit(item, "description", "description_html", f, desc_en_label, desc_zh_label)
     elif kind == "visit":
         old_city_en, old_country_en, old_note_en = _legacy_visit_components(item, "en")
@@ -961,7 +961,7 @@ def edit_entry(data: dict[str, Any], f: dict[str, str]) -> str:
         elif kind == "publication":
             upsert_link(item, "PDF", auxiliary)
 
-    if kind in {"conference", "talk", "visit"}:
+    if kind in {"conference", "talk", "visit", "organization"}:
         upcoming = get(f, "Upcoming setting / Upcoming 設定")
         if upcoming.startswith(("Yes", "是")):
             item["show_upcoming"] = True

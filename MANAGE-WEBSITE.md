@@ -6,12 +6,37 @@
 
 ## 新增、編輯、刪除與排序
 
-Admin 可新增 Conference、Talk、Visit、Honor、Publication、Teaching，也可搜尋、編輯、刪除及持久化排序。
+Admin 可新增 Conference、Talk、Visit、Organization、Honor、Publication、Teaching，也可搜尋、編輯、刪除及持久化排序。
 
 - Publication 依作品類型分組；PDF CV 在每個大標題內重新從 `[1]` 編號。
 - Teaching 依機構分組。
 - 自訂群組會加入後續表單；刪除最後一筆後，空的自訂群組會自動移除。
-- Conference、Talk、Visit、Honor、Publication、Teaching 六類皆可排序。
+- Conference、Talk、Visit、Organization、Honor、Publication、Teaching 七類皆可排序。
+
+
+## Conference 身分與 Organization
+
+Conference and Workshops 表單可選擇身分：
+
+- `Participant`：預設，不在網站與 CV 額外顯示標籤。
+- `Speaker`、`Organizer`、`Co-organizer`：會在該會議旁顯示中英文身分。
+- `Other`：可自行輸入中英文身分。
+
+勾選「同時列入 Organization」後，同一筆會議仍保留在 Conferences and Workshops，並另外出現在 `Organization / 學術活動籌辦`；資料只保存一份。Seminar、讀書會等不屬於 Conference and Workshops 的籌辦經歷，請使用獨立的 Organization 類型新增。
+
+Organization 區塊同時套用到英文網站、中文網站、英文 PDF CV 與中文 PDF CV。沒有任何項目時，整段標題與內容都不會顯示。
+
+## 全站標題管理
+
+Admin 的「標題管理」分頁集中管理：
+
+- 首頁的 Selected Publications、Upcoming、Contact。
+- CV 網頁的頁首、Research Interests、Education、Honors and Awards，以及 PDF CV 的 Personal Information。
+- Publications 頁首、分類左上小字，以及 Preprints、Journal Articles 等動態分類大標題。
+- Activities 頁首與 Academic Visits、Presentations、Organization、Conferences and Workshops。
+- Teaching 頁首、機構左上小字，以及各教學機構的大標題。
+
+所有欄位都有英文與中文版本。與 PDF CV 共用的標題會同步更新兩份 LaTeX CV；Publication 分類與 Teaching 機構名稱也會同步出現在網站與 CV。修改只先保存為 Admin 本機草稿，會顯示逐欄修改前後預覽，最後才與其他草稿一起送出 GitHub Issue。預設值完全沿用目前網站文字。
 
 ## 雙語欄位補全
 

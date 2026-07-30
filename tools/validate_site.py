@@ -7,13 +7,15 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
+from heading_config import normalized_headings, validate_headings
+
 ROOT = Path(__file__).resolve().parents[1]
 data = json.loads((ROOT / "content/site.json").read_text(encoding="utf-8"))
 errors: list[str] = []
 ids: list[str] = []
 
 SECTION_TYPES = {
-    "activities": {"conference", "talk", "visit"},
+    "activities": {"conference", "talk", "visit", "organization"},
     "honors": {"honor"},
     "publications": {"publication"},
     "teaching": {"teaching"},
@@ -69,7 +71,7 @@ for section, allowed_types in SECTION_TYPES.items():
         if not has_any_language(item.get(field, {})):
             errors.append(f"{eid}: {field} must contain at least one language")
 
-        if kind in {"conference", "talk", "visit"}:
+        if kind in {"conference", "talk", "visit", "organization"}:
             try:
                 start = date.fromisoformat(item["start_date"])
                 end = date.fromisoformat(item.get("end_date") or item["start_date"])
@@ -79,6 +81,13 @@ for section, allowed_types in SECTION_TYPES.items():
                 errors.append(f"{eid}: invalid activity date")
             if "show_upcoming" in item and not isinstance(item["show_upcoming"], bool):
                 errors.append(f"{eid}: show_upcoming must be boolean")
+            if kind == "conference" and "show_in_organization" in item and not isinstance(item["show_in_organization"], bool):
+                errors.append(f"{eid}: show_in_organization must be boolean")
+            if kind == "organization":
+                if not has_any_language(item.get("organization_kind", {})):
+                    errors.append(f"{eid}: organization_kind must contain at least one language")
+                if not has_any_language(item.get("role", {})):
+                    errors.append(f"{eid}: role must contain at least one language")
 
         if kind == "publication":
             try:
@@ -110,6 +119,10 @@ settings = data.get("settings", {})
 if not isinstance(settings, dict):
     errors.append("settings must be an object")
     settings = {}
+try:
+    validate_headings(normalized_headings(settings.get("headings", {})))
+except ValueError as exc:
+    errors.append(str(exc))
 
 entry_order = settings.get("entry_order", {})
 if not isinstance(entry_order, dict):
@@ -149,8 +162,8 @@ for kind in ("publication", "teaching"):
 markers = {
     "index.html": ["HOME_PUBLICATIONS", "UPCOMING"],
     "zh/index.html": ["HOME_PUBLICATIONS", "UPCOMING"],
-    "activities.html": ["VISITS", "TALKS", "CONFERENCES"],
-    "zh/activities.html": ["VISITS", "TALKS", "CONFERENCES"],
+    "activities.html": ["VISITS", "TALKS", "ORGANIZATION_SECTION", "CONFERENCES"],
+    "zh/activities.html": ["VISITS", "TALKS", "ORGANIZATION_SECTION", "CONFERENCES"],
     "cv.html": ["HONORS"],
     "zh/cv.html": ["HONORS"],
     "publications.html": ["PUBLICATIONS"],

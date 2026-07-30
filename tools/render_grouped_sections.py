@@ -10,6 +10,7 @@ from typing import Any
 
 import build_site
 import process_request as groups
+from heading_config import heading_value
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -57,12 +58,12 @@ def publication_web(data: dict[str, Any], lang: str) -> str:
             continue
         used += 1
         label = groups.group_label(group, lang)
-        section_label = "稿件類型" if lang == "zh" else "Manuscript type"
+        section_label = heading_value(data, "publication_groups", "label", lang)
         rows = "\n".join(build_site.render_publication_li(entry, lang) for entry in entries)
         heading = f'<h2>{esc(label)}</h2>' if label else ""
         sections.append(
             f'<section class="teaching-group" data-group-id="{esc(group.get("id"))}">'
-            f'<p class="section-label">{esc(section_label)}</p>'
+            f'<p class="section-label" data-heading-key="publication_groups" data-heading-part="label">{esc(section_label)}</p>'
             f'{heading}'
             f'<ol class="publication-list">{rows}</ol>'
             f'</section>'
@@ -96,7 +97,7 @@ def teaching_web(data: dict[str, Any], lang: str) -> str:
         heading_html = f'<h2>{esc(heading)}</h2>' if heading else ""
         sections.append(
             f'<section class="teaching-group" data-group-id="{esc(group.get("id"))}">'
-            f'<p class="section-label">{"機構" if lang == "zh" else "Institution"}</p>'
+            f'<p class="section-label" data-heading-key="teaching_groups" data-heading-part="label">{esc(heading_value(data, "teaching_groups", "label", lang))}</p>'
             f'{heading_html}'
             f'<div class="teaching-grid">{"".join(cards)}</div>'
             f'</section>'

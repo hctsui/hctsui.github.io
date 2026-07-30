@@ -186,7 +186,8 @@
   }
 
   const AUDIT_FIELDS = {
-    conference: [['title', '名稱'], ['venue', '場地／機構'], ['city', '城市'], ['country', '國家']],
+    conference: [['title', '名稱'], ['role', '會議身分'], ['venue', '場地／機構'], ['city', '城市'], ['country', '國家']],
+    organization: [['title', '活動名稱'], ['organization_kind', '活動類型'], ['role', '籌辦身分'], ['venue', '機構／場地'], ['city', '城市'], ['country', '國家']],
     talk: [['title', '題目'], ['event', '活動／研討會'], ['venue', '機構／場地'], ['city', '城市'], ['country', '國家']],
     visit: [['title', '訪問機構'], ['city', '城市'], ['country', '國家'], ['visit_description', '其他說明'], ['funding_organization', '資助機構'], ['funding_program', '資助計畫']],
     honor: [['title', '名稱'], ['organization', '頒發機構']],
@@ -269,7 +270,7 @@
   }
 
   function finalizeAuditedRecord(record) {
-    if (['conference', 'talk', 'visit'].includes(record.type)) {
+    if (['conference', 'talk', 'visit', 'organization'].includes(record.type)) {
       record.description = composeDescription(record.type, record);
       record.description_html = htmlPair(record.description);
       record.title_html = htmlPair(record.title);

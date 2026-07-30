@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 import process_request as core
+from heading_config import heading_value
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -105,14 +106,44 @@ def linked_bold(title: str, url: str) -> str:
 
 
 def render_activity(entry: dict[str, Any], lang: str, *, kind: str) -> str:
-    title = field_rich(entry, "title", lang); url = str(entry.get("url", "")).strip(); description = field_rich(entry, "description", lang)
+    title = field_rich(entry, "title", lang)
+    url = str(entry.get("url", "")).strip()
+    description = field_rich(entry, "description", lang)
     title_line = linked_bold(title, url)
     if kind == "talk" and entry.get("slides_url"):
         label = "投影片" if lang == "zh" else "slides"
         title_line += r" {\color{secondaryColor}[" + rf"\hrefWithoutArrow{{{latex_url(entry['slides_url'])}}}{{{label}}}" + "]}"
+    if kind == "conference":
+        role = field_rich(entry, "role", lang)
+        if role:
+            title_line += r" \quad {\color{secondaryColor}\textit{" + role + "}}"
     body = title_line
-    if description: body += r"\\" + description
+    if description:
+        body += r"\\" + description
     return rf"\begin{{conf}}{{{display_range(entry, lang)}}}" + "\n" + body + "\n" + r"\end{conf}"
+
+
+def render_organization(entry: dict[str, Any], lang: str) -> str:
+    title = field_rich(entry, "title", lang)
+    url = str(entry.get("url", "")).strip()
+    description = field_rich(entry, "description", lang)
+    kind = field_rich(entry, "organization_kind", lang)
+    role = field_rich(entry, "role", lang)
+    meta = " · ".join(value for value in (kind, role) if value)
+    body = linked_bold(title, url)
+    if meta:
+        body += r"\\" + rf"\textit{{{meta}}}"
+    if description:
+        body += r"\\" + description
+    return rf"\begin{{conf}}{{{display_range(entry, lang)}}}" + "\n" + body + "\n" + r"\end{conf}"
+
+
+def cv_organization_section(data: dict[str, Any], entries: list[dict[str, Any]], lang: str) -> str:
+    if not entries:
+        return ""
+    heading = latex_escape(heading_value(data, "activity_organization", "title", lang))
+    rows = "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_organization(entry, lang) for entry in entries)
+    return rf"\section{{{heading}}}" + "\n" + rows + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 
 
 def publication_links(entry: dict[str, Any], lang: str) -> str:
@@ -221,16 +252,36 @@ def build_language(data: dict[str, Any], today: date, lang: str) -> Path:
     visits=ordered_ungrouped(data,"visit",[x for x in archived if x.get("type")=="visit"])
     talks=ordered_ungrouped(data,"talk",[x for x in archived if x.get("type")=="talk"])
     conferences=ordered_ungrouped(data,"conference",[x for x in archived if x.get("type")=="conference"])
+    organization_only=ordered_ungrouped(data,"organization",[x for x in archived if x.get("type")=="organization"])
+    organization_entries=sorted(
+        organization_only+[x for x in conferences if x.get("show_in_organization")],
+        key=lambda x:(x.get("start_date",""),x.get("id","")),
+        reverse=True,
+    )
     honors=ordered_ungrouped(data,"honor",list(data.get("honors",[])))
     blocks={
         "PUBLICATIONS":cv_publications(data,lang),
         "VISITS":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(x,lang,kind="visit") for x in visits),
         "TALKS":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(x,lang,kind="talk") for x in talks),
+        "ORGANIZATION_SECTION":cv_organization_section(data,organization_entries,lang),
         "HONORS":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_honor(x,lang) for x in honors),
         "CONFERENCES":"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(render_activity(x,lang,kind="conference") for x in conferences),
         "TEACHING":cv_teaching(data,lang),
     }
     text=TEMPLATES[lang].read_text(encoding="utf-8").replace("__CV_LAST_UPDATED__",updated_text(today,lang))
+    heading_tokens={
+        "__CV_RESEARCH__":heading_value(data,"cv_research","title",lang),
+        "__CV_EDUCATION__":heading_value(data,"cv_education","title",lang),
+        "__CV_PUBLICATIONS__":heading_value(data,"publications_page","title",lang),
+        "__CV_VISITS__":heading_value(data,"activity_visit","title",lang),
+        "__CV_TALKS__":heading_value(data,"activity_talk","title",lang),
+        "__CV_HONORS__":heading_value(data,"cv_honors","title",lang),
+        "__CV_CONFERENCES__":heading_value(data,"activity_conference","title",lang),
+        "__CV_TEACHING__":heading_value(data,"teaching_page","title",lang),
+        "__CV_PERSONAL__":heading_value(data,"cv_personal","title",lang),
+    }
+    for token,value in heading_tokens.items():
+        text=text.replace(token,latex_escape(value))
     for marker,content in blocks.items(): text=replace_block(text,marker,content)
     OUTPUTS[lang].write_text(text,encoding="utf-8")
     return OUTPUTS[lang]

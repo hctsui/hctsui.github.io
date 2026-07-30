@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from heading_config import HEADING_DEFAULTS, heading_value
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
 PAGE_FILES = [
@@ -115,6 +117,8 @@ def link_or_text(content: str, url: str) -> str:
 def render_activity(entry: dict[str, Any], lang: str) -> str:
     title = inline_value(entry, "title", lang)
     heading = link_or_text(title, str(entry.get("url", "")))
+    role = inline_value(entry, "role", lang) if entry.get("type") == "conference" else ""
+    role_badge = f'<span class="activity-role">{role}</span>' if role else ""
     description = inline_value(entry, "description", lang)
     slides = str(entry.get("slides_url", ""))
     links = ""
@@ -128,8 +132,36 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
     paragraph = f"<p>{description}</p>" if description else ""
     return (
         f'<article class="timeline-item" data-entry-id="{esc(entry["id"])}">'
-        f"<time>{display_range(entry)}</time><div><h3>{heading}</h3>"
+        f"<time>{display_range(entry)}</time><div><h3>{heading}{role_badge}</h3>"
         f"{paragraph}{links}</div></article>"
+    )
+
+
+def render_organization(entry: dict[str, Any], lang: str) -> str:
+    title = link_or_text(inline_value(entry, "title", lang), str(entry.get("url", "")))
+    kind = inline_value(entry, "organization_kind", lang) or ("會議" if lang == "zh" else "Conference")
+    role = inline_value(entry, "role", lang)
+    description = inline_value(entry, "description", lang)
+    meta = "".join(f'<span class="organization-badge">{value}</span>' for value in (kind, role) if value)
+    paragraph = f"<p>{description}</p>" if description else ""
+    return (
+        f'<article class="timeline-item organization-item" data-entry-id="{esc(entry["id"])}">'
+        f'<time>{display_range(entry)}</time><div><div class="organization-meta">{meta}</div>'
+        f'<h3>{title}</h3>{paragraph}</div></article>'
+    )
+
+
+def organization_section(data: dict[str, Any], entries: list[dict[str, Any]], lang: str) -> str:
+    if not entries:
+        return ""
+    label = esc(heading_value(data, "activity_organization", "label", lang))
+    heading = esc(heading_value(data, "activity_organization", "title", lang))
+    rows = join_lines([render_organization(entry, lang) for entry in entries])
+    return (
+        f'<section class="section activity-section organization-section"><div class="container">'
+        f'<p class="section-label" data-heading-key="activity_organization" data-heading-part="label">{label}</p>'
+        f'<h2 data-heading-key="activity_organization" data-heading-part="title">{heading}</h2>'
+        f'<div class="timeline organization-timeline">{rows}</div></div></section>'
     )
 
 
@@ -204,6 +236,19 @@ def update_page_title(text: str, title: str) -> str:
     return updated
 
 
+def update_managed_headings(text: str, data: dict[str, Any], lang: str) -> str:
+    """Replace elements explicitly marked with data-heading-key/part."""
+    for key, parts in HEADING_DEFAULTS.items():
+        for part in parts:
+            value = esc(heading_value(data, key, part, lang))
+            pattern = re.compile(
+                rf'(<(?P<tag>p|h1|h2)(?P<attrs>[^>]*\bdata-heading-key="{re.escape(key)}"[^>]*\bdata-heading-part="{re.escape(part)}"[^>]*)>)(.*?)(</(?P=tag)>)',
+                re.S,
+            )
+            text = pattern.sub(lambda match: match.group(1) + value + match.group(5), text)
+    return text
+
+
 def update_footer(text: str, lang: str, today: date) -> str:
     formatted = f"{today.year}/{today.month}/{today.day}"
     if lang == "zh":
@@ -247,6 +292,12 @@ def build(today: date, update_date: bool = True) -> list[Path]:
     visits = ordered_ungrouped(data, "visit", [e for e in archived if e.get("type") == "visit"])
     talks = ordered_ungrouped(data, "talk", [e for e in archived if e.get("type") == "talk"])
     conferences = ordered_ungrouped(data, "conference", [e for e in archived if e.get("type") == "conference"])
+    organization_only = ordered_ungrouped(data, "organization", [e for e in archived if e.get("type") == "organization"])
+    organization_entries = sorted(
+        organization_only + [e for e in conferences if e.get("show_in_organization")],
+        key=lambda e: (e.get("start_date", ""), e.get("id", "")),
+        reverse=True,
+    )
     honors_sorted = ordered_ungrouped(data, "honor", honors)
     publications_sorted = sorted(
         publications,
@@ -271,11 +322,13 @@ def build(today: date, update_date: bool = True) -> list[Path]:
         "activities.html": {
             "VISITS": join_lines([render_activity(e, "en") for e in visits]),
             "TALKS": join_lines([render_activity(e, "en") for e in talks]),
+            "ORGANIZATION_SECTION": organization_section(data, organization_entries, "en"),
             "CONFERENCES": join_lines([render_activity(e, "en") for e in conferences]),
         },
         "zh/activities.html": {
             "VISITS": join_lines([render_activity(e, "zh") for e in visits]),
             "TALKS": join_lines([render_activity(e, "zh") for e in talks]),
+            "ORGANIZATION_SECTION": organization_section(data, organization_entries, "zh"),
             "CONFERENCES": join_lines([render_activity(e, "zh") for e in conferences]),
         },
         "cv.html": {"HONORS": join_lines([render_honor(e, "en") for e in honors_sorted])},
@@ -299,6 +352,7 @@ def build(today: date, update_date: bool = True) -> list[Path]:
         for marker, rendered in blocks.items():
             text, changed = replace_block(text, marker, rendered)
             changed_here = changed_here or changed
+        text = update_managed_headings(text, data, "zh" if rel.startswith("zh/") else "en")
         if rel in PAGE_TITLES:
             text = update_page_title(text, PAGE_TITLES[rel])
         candidates[path] = text
