@@ -85,7 +85,8 @@ def role_badge(entry: dict[str, Any], lang: str) -> str:
     role = plain_value(entry, "role", lang).strip()
     if not role or role.casefold() == "participant" or role == "一般參與者":
         return ""
-    return f'<span class="activity-role">{rich_html(role)}</span>'
+    label = "身分" if lang == "zh" else "Role"
+    return f'<p class="activity-role"><span>{label}</span>{rich_html(role)}</p>'
 
 
 def render_activity(entry: dict[str, Any], lang: str) -> str:
@@ -98,7 +99,7 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
     desc = inline_value(entry, "description", lang)
     return (
         f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}">'
-        f'<time>{esc(display_range(entry))}</time><div><h3>{title}{badge}</h3>'
+        f'<time>{esc(display_range(entry))}</time><div><h3>{title}</h3>{badge}'
         f'{f"<p>{desc}</p>" if desc else ""}{slides}</div></article>'
     )
 

@@ -13,7 +13,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import process_request as core
-from category_config import category_map, items_for_category, migrate_category_data, normalized_cv_order
+from category_config import category_map, items_for_category, migrate_category_data, normalized_cv_order, normalized_pages
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -133,15 +133,23 @@ def linked_bold(title: str, url: str) -> str:
 def render_activity(entry: dict[str, Any], lang: str) -> str:
     title = field_rich(entry, "title", lang)
     title_line = linked_bold(title, str(entry.get("url") or "").strip())
+    detail_lines: list[str] = []
     if entry.get("type") == "talk" and entry.get("slides_url"):
         label = "投影片" if lang == "zh" else "slides"
-        title_line += r" {\color{secondaryColor}[" + rf"\hrefWithoutArrow{{{latex_url(entry['slides_url'])}}}{{{label}}}" + "]}"
+        detail_lines.append(
+            r"{\small\color{secondaryColor}["
+            + rf"\hrefWithoutArrow{{{latex_url(entry['slides_url'])}}}{{{label}}}"
+            + "]}"
+        )
     if entry.get("type") == "conference":
         role = field_rich(entry, "role", lang)
         if role and role.casefold() != "participant" and role != "一般參與者":
-            title_line += r" \quad {\color{secondaryColor}\textit{" + role + "}}"
+            role_label = "身分" if lang == "zh" else "Role"
+            detail_lines.append(rf"\cvmeta{{{role_label}: {role}}}")
     description = field_rich(entry, "description", lang)
-    body = title_line + (r"\\" + description if description else "")
+    if description:
+        detail_lines.append(description)
+    body = title_line + "".join(r"\\" + line for line in detail_lines)
     return rf"\begin{{conf}}{{{display_range(entry, lang)}}}" + "\n" + body + "\n" + r"\end{conf}"
 
 
@@ -167,7 +175,7 @@ def publication_links(entry: dict[str, Any], lang: str) -> str:
         canonical = str(labels.get("en") or "Link")
         display = str(labels.get(lang) or {"PDF": "pdf", "Journal": "journal", "Code": "code"}.get(canonical, canonical))
         rendered.append(rf"\hrefWithoutArrow{{{latex_url(link['url'])}}}{{{latex_escape(display)}}}")
-    return r" {\color{secondaryColor}[" + "|".join(rendered) + "]}" if rendered else ""
+    return r"{\small\color{secondaryColor}[" + " | ".join(rendered) + "]}" if rendered else ""
 
 
 def render_publication(entry: dict[str, Any], number: int, lang: str) -> str:
@@ -176,7 +184,15 @@ def render_publication(entry: dict[str, Any], number: int, lang: str) -> str:
     venue = pair(entry, "venue", lang).strip()
     year = str(entry.get("year") or "")
     status = (rf"\textit{{{rich_to_latex(venue)}}}, {latex_escape(year)}." if venue else latex_escape(year) + ".")
-    return rf"\begin{{pub}}{{{authors}}}" + "\n" + rf"{{[{number}]}} \textbf{{{title}}}{publication_links(entry, lang)} \\" + "\n" + status + "\n" + r"\end{pub}"
+    lines = [rf"{{[{number}]}} \textbf{{{title}}}"]
+    links = publication_links(entry, lang)
+    if links:
+        lines.append(links)
+    if authors:
+        lines.append(authors)
+    if status.strip("."):
+        lines.append(status)
+    return r"\begin{pub}" + "\n" + r"\\".join(lines) + "\n" + r"\end{pub}"
 
 
 def render_honor(entry: dict[str, Any], lang: str) -> str:
@@ -198,7 +214,7 @@ def render_education(entry: dict[str, Any], lang: str) -> str:
     title = field_rich(entry, "title", lang)
     org = field_rich(entry, "organization", lang)
     desc = field_rich(entry, "description", lang)
-    body = rf"\textbf{{{org}}}" if org else ""
+    body = org
     if desc:
         body += r" \\" + "\n" + rf"{{\small ({desc})}}"
     return rf"\begin{{edu}}{{\textbf{{{title}}}}}{{{display_range(entry, lang)}}}" + "\n    " + body + "\n" + r"\end{edu}"
@@ -232,15 +248,38 @@ def render_generic(entry: dict[str, Any], lang: str) -> str:
     return rf"\begin{{conf}}{{{display_range(entry, lang)}}}" + "\n" + body + "\n" + r"\end{conf}"
 
 
-def render_category(data: dict[str, Any], category: dict[str, Any], lang: str) -> str:
-    items = items_for_category(data, category["id"])
+def activity_finished(entry: dict[str, Any], today: date) -> bool:
+    """CV activity rows appear only after their final calendar day has passed."""
+    if entry.get("type") not in {"visit", "talk", "conference", "organization"}:
+        return True
+    value = str(entry.get("end_date") or entry.get("start_date") or "").strip()
+    if not value:
+        return True
+    try:
+        return date.fromisoformat(value) < today
+    except ValueError:
+        return True
+
+
+def cv_items_for_category(data: dict[str, Any], category: dict[str, Any], today: date) -> list[dict[str, Any]]:
+    return [item for item in items_for_category(data, category["id"]) if activity_finished(item, today)]
+
+
+def render_category_rows(
+    data: dict[str, Any],
+    category: dict[str, Any],
+    lang: str,
+    today: date,
+    publication_start: int = 1,
+) -> tuple[list[str], int]:
+    items = cv_items_for_category(data, category, today)
     if not items:
-        return ""
+        return [], publication_start
     kind = category["kind"]
-    title = rich_to_latex(category.get("title", {}).get(lang, ""), auto_math=lang == "zh")
     rows: list[str] = []
     if kind == "publication":
-        rows = [render_publication(item, i, lang) for i, item in enumerate(items, 1)]
+        rows = [render_publication(item, i, lang) for i, item in enumerate(items, publication_start)]
+        publication_start += len(rows)
     elif kind in {"visit", "talk", "conference"}:
         rows = [render_activity(item, lang) for item in items]
     elif kind == "organization":
@@ -257,19 +296,78 @@ def render_category(data: dict[str, Any], category: dict[str, Any], lang: str) -
         rows = [render_personal(items, lang)]
     else:
         rows = [render_generic(item, lang) for item in items]
+    return rows, publication_start
+
+
+def render_category(
+    data: dict[str, Any],
+    category: dict[str, Any],
+    lang: str,
+    today: date | None = None,
+) -> str:
+    today = today or site_today(data)
+    rows, _ = render_category_rows(data, category, lang, today)
     if not rows:
         return ""
+    title = rich_to_latex(category.get("title", {}).get(lang, ""), auto_math=lang == "zh")
     return rf"\section{{{title}}}" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(rows)
 
 
-def build_sections(data: dict[str, Any], lang: str) -> str:
-    cmap = category_map(data)
-    chunks = []
-    for cid in normalized_cv_order(data):
-        category = cmap.get(cid)
-        if not category or not category.get("show_on_cv"):
+def page_heading(data: dict[str, Any], page_id: str, lang: str) -> str:
+    page = next((item for item in normalized_pages(data) if item["id"] == page_id), None)
+    value = page.get("header", {}).get("title", {}).get(lang, "") if page else ""
+    return rich_to_latex(value, auto_math=lang == "zh")
+
+
+def render_grouped_categories(
+    data: dict[str, Any],
+    categories: list[dict[str, Any]],
+    lang: str,
+    today: date,
+) -> str:
+    if not categories:
+        return ""
+    page_id = str(categories[0].get("page_id") or "")
+    section_title = page_heading(data, page_id, lang)
+    groups: list[str] = []
+    publication_number = 1
+    for category in categories:
+        rows, publication_number = render_category_rows(
+            data,
+            category,
+            lang,
+            today,
+            publication_number,
+        )
+        if not rows:
             continue
-        rendered = render_category(data, category, lang)
+        title = rich_to_latex(category.get("title", {}).get(lang, ""), auto_math=lang == "zh")
+        groups.append(rf"\cvgroup{{{title}}}" + "\n" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(rows))
+    if not groups:
+        return ""
+    return rf"\section{{{section_title}}}" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" + "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(groups)
+
+
+def build_sections(data: dict[str, Any], lang: str, today: date | None = None) -> str:
+    today = today or site_today(data)
+    cmap = category_map(data)
+    ordered = [
+        cmap[cid]
+        for cid in normalized_cv_order(data)
+        if cid in cmap and cmap[cid].get("show_on_cv")
+    ]
+    chunks = []
+    consumed: set[str] = set()
+    for category in ordered:
+        if category["id"] in consumed:
+            continue
+        if category["kind"] in {"publication", "teaching"}:
+            grouped = [item for item in ordered if item["kind"] == category["kind"]]
+            consumed.update(item["id"] for item in grouped)
+            rendered = render_grouped_categories(data, grouped, lang, today)
+        else:
+            consumed.add(category["id"])
+            rendered = render_category(data, category, lang, today)
         if rendered:
             chunks.append(rendered)
     return "\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n".join(chunks)
@@ -292,7 +390,7 @@ def build(lang: str, today: date) -> Path:
     template = TEMPLATES[lang]
     ensure_template_placeholder(template)
     text = template.read_text(encoding="utf-8")
-    text = text.replace("__CV_SECTIONS__", build_sections(data, lang))
+    text = text.replace("__CV_SECTIONS__", build_sections(data, lang, today))
     text = text.replace("__CV_LAST_UPDATED__", f"{today.year}/{today.month}/{today.day}")
     OUTPUTS[lang].write_text(str(core.strip_invisible_chars(text)), encoding="utf-8")
     return OUTPUTS[lang]
