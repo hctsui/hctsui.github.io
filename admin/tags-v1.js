@@ -922,6 +922,370 @@
     }
   }
 
+  // Import/export translation words and tags as a local draft. Nothing is
+  // written to GitHub until the ordinary batch submission is confirmed.
+  let translationImportCandidate = null;
+  let translationImportFilename = '';
+
+  function installTranslationImportStyles() {
+    if (document.getElementById('translationImportStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'translationImportStyles';
+    style.textContent = `
+      .translation-import-panel{border:1px solid #cfc1b7;border-radius:13px;padding:13px;background:#f8f3ef;margin:12px 0}
+      .translation-import-panel h3{margin:0 0 5px}
+      .translation-import-grid{display:grid;grid-template-columns:minmax(220px,1.4fr) minmax(210px,1fr);gap:10px;align-items:end}
+      .translation-import-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:9px}
+      .translation-import-file{padding:8px;border:1px dashed #bcaea4;border-radius:9px;background:#fff;width:100%}
+      .translation-import-preview{margin-top:11px}
+      .translation-import-preview:empty{display:none}
+      .translation-import-format{font:11px ui-monospace,monospace;background:#fff;border:1px solid #ded3ca;border-radius:8px;padding:8px;white-space:pre-wrap;word-break:break-word;margin-top:8px}
+      @media(max-width:700px){.translation-import-grid{grid-template-columns:1fr}}
+    `;
+    document.head.append(style);
+  }
+
+  function cleanImportLabel(item) {
+    const label = item?.label && typeof item.label === 'object' ? item.label : item || {};
+    return {
+      en: String(label.en || '').trim(),
+      zh: String(label.zh || '').trim(),
+    };
+  }
+
+  function importTagId(value, fallbackLabel = '') {
+    const raw = String(value || '').trim().toLowerCase();
+    const cleaned = raw.replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
+    if (/^[a-z0-9][a-z0-9_-]*$/.test(cleaned)) return cleaned;
+    const fromLabel = norm(fallbackLabel).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return fromLabel || `tag-${Date.now().toString(36)}`;
+  }
+
+  function uniqueImportTagId(base, used) {
+    let id = base;
+    let suffix = 2;
+    while (used.has(id)) id = `${base}-${suffix++}`;
+    used.add(id);
+    return id;
+  }
+
+  function normalizeImportPayload(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('匯入檔最外層必須是 JSON 物件。');
+    const format = String(raw.format || '').trim();
+    if (format && format !== 'hctsui-translation-import-v1') {
+      throw new Error(`不支援的匯入格式：${format}`);
+    }
+    const tags = Array.isArray(raw.tags) ? raw.tags : [];
+    const pairs = Array.isArray(raw.pairs) ? raw.pairs : [];
+    if (!tags.length && !pairs.length && !Array.isArray(raw.remove_pairs) && !Array.isArray(raw.remove_tags)) {
+      throw new Error('檔案中找不到 tags、pairs、remove_pairs 或 remove_tags。');
+    }
+    return {
+      format: format || (raw.schema_version === 2 ? 'translations-schema-v2' : 'hctsui-translation-import-v1'),
+      schema_version: 2,
+      tags,
+      pairs,
+      remove_pairs: Array.isArray(raw.remove_pairs) ? raw.remove_pairs : [],
+      remove_tags: Array.isArray(raw.remove_tags) ? raw.remove_tags : [],
+      tag_order: Array.isArray(raw.tag_order) ? raw.tag_order : [],
+      note: String(raw.note || '').trim(),
+    };
+  }
+
+  function pairMatchIndex(pairs, spec) {
+    const match = spec?.match && typeof spec.match === 'object' ? spec.match : spec || {};
+    const enKey = dictNorm(match.en || match.match_en || '');
+    const zhKey = dictNorm(match.zh || match.match_zh || '');
+    const enMatches = enKey ? pairs.map((pair, index) => dictNorm(pair.en) === enKey ? index : -1).filter((index) => index >= 0) : [];
+    const zhMatches = zhKey ? pairs.map((pair, index) => dictNorm(pair.zh) === zhKey ? index : -1).filter((index) => index >= 0) : [];
+    if (enMatches.length > 1 || zhMatches.length > 1) throw new Error('現有對照表有重複詞條，無法安全判定匯入目標。');
+    if (enMatches.length && zhMatches.length && enMatches[0] !== zhMatches[0]) {
+      throw new Error(`匯入詞條的英文與中文分別命中不同現有詞條：${match.en || ''} ↔ ${match.zh || ''}`);
+    }
+    return enMatches[0] ?? zhMatches[0] ?? -1;
+  }
+
+  function resolveImportedTags(candidate, importedTags, warnings) {
+    const used = new Set(candidate.tags.map((item) => item.id));
+    const idMap = new Map();
+    for (const rawTag of importedTags) {
+      const label = cleanImportLabel(rawTag);
+      const requestedId = importTagId(rawTag?.id, label.en);
+      let existing = candidate.tags.find((item) => item.id === requestedId);
+      if (!existing && (label.en || label.zh)) {
+        const both = candidate.tags.filter((item) => (
+          (!label.en || dictNorm(item.label?.en) === dictNorm(label.en))
+          && (!label.zh || dictNorm(item.label?.zh) === dictNorm(label.zh))
+        ));
+        if (both.length === 1) existing = both[0];
+      }
+      if (existing) {
+        idMap.set(String(rawTag?.id || requestedId), existing.id);
+        if (label.en) existing.label.en = label.en;
+        if (label.zh) existing.label.zh = label.zh;
+      } else {
+        const id = uniqueImportTagId(requestedId, used);
+        candidate.tags.push({ id, label });
+        idMap.set(String(rawTag?.id || requestedId), id);
+        if (id !== requestedId) warnings.push(`標籤 ID「${requestedId}」已存在，匯入時改為「${id}」。`);
+      }
+    }
+    for (const item of candidate.tags) idMap.set(item.id, item.id);
+    return idMap;
+  }
+
+  function mapImportTagIds(ids, idMap, candidate, warnings) {
+    const valid = new Set(candidate.tags.map((item) => item.id));
+    const result = [];
+    for (const raw of Array.isArray(ids) ? ids : []) {
+      const source = String(raw || '').trim();
+      const mapped = idMap.get(source) || source;
+      if (!valid.has(mapped)) {
+        warnings.push(`詞條參照不存在的標籤「${source}」，已忽略。`);
+        continue;
+      }
+      if (!result.includes(mapped)) result.push(mapped);
+    }
+    return result;
+  }
+
+  function removeImportedPairs(candidate, rows) {
+    for (const row of rows) {
+      const index = pairMatchIndex(candidate.pairs, row);
+      if (index >= 0) candidate.pairs.splice(index, 1);
+    }
+  }
+
+  function removeImportedTags(candidate, rows, idMap, warnings) {
+    for (const row of rows) {
+      const sourceRaw = typeof row === 'string' ? row : row?.id;
+      const targetRaw = typeof row === 'object' ? row?.merge_into : '';
+      const source = idMap.get(String(sourceRaw || '')) || String(sourceRaw || '');
+      const target = idMap.get(String(targetRaw || '')) || String(targetRaw || '');
+      if (!candidate.tags.some((item) => item.id === source)) {
+        warnings.push(`要刪除的標籤「${sourceRaw || ''}」不存在，已略過。`);
+        continue;
+      }
+      if (target && !candidate.tags.some((item) => item.id === target)) {
+        throw new Error(`標籤「${sourceRaw}」指定的合併目標「${targetRaw}」不存在。`);
+      }
+      for (const pair of candidate.pairs) {
+        const next = [];
+        for (const id of pair.tags || []) {
+          if (id === source) {
+            if (target && !next.includes(target)) next.push(target);
+          } else if (!next.includes(id)) next.push(id);
+        }
+        pair.tags = next;
+      }
+      candidate.tags = candidate.tags.filter((item) => item.id !== source);
+    }
+  }
+
+  function applyImportedTagOrder(candidate, order, idMap) {
+    if (!order.length) return;
+    const mapped = order.map((id) => idMap.get(String(id)) || String(id));
+    const rank = new Map(mapped.map((id, index) => [id, index]));
+    candidate.tags.sort((left, right) => {
+      const a = rank.has(left.id) ? rank.get(left.id) : Number.MAX_SAFE_INTEGER;
+      const b = rank.has(right.id) ? rank.get(right.id) : Number.MAX_SAFE_INTEGER;
+      return a - b;
+    });
+  }
+
+  function buildTranslationImportCandidate(raw, mode = 'merge') {
+    const input = normalizeImportPayload(raw);
+    const warnings = [];
+    if (mode === 'replace') {
+      if (!input.tags.length) throw new Error('完整取代模式必須包含完整 tags 陣列。');
+      const candidate = { schema_version: 2, tags: [], pairs: [] };
+      const idMap = resolveImportedTags(candidate, input.tags, warnings);
+      for (const row of input.pairs) {
+        const en = String(row?.en || '').trim();
+        const zh = String(row?.zh || '').trim();
+        const tags = mapImportTagIds(row?.tags, idMap, candidate, warnings);
+        candidate.pairs.push({ en, zh, tags });
+      }
+      applyImportedTagOrder(candidate, input.tag_order, idMap);
+      return { candidate, warnings, input };
+    }
+
+    const candidate = clone(translations);
+    candidate.schema_version = 2;
+    candidate.tags = Array.isArray(candidate.tags) ? candidate.tags : [];
+    candidate.pairs = Array.isArray(candidate.pairs) ? candidate.pairs : [];
+    const idMap = resolveImportedTags(candidate, input.tags, warnings);
+    removeImportedPairs(candidate, input.remove_pairs);
+
+    for (const row of input.pairs) {
+      const en = String(row?.en || '').trim();
+      const zh = String(row?.zh || '').trim();
+      const lookup = row?.match && typeof row.match === 'object' ? row.match : { en, zh };
+      const index = pairMatchIndex(candidate.pairs, lookup);
+      const importedTagIds = mapImportTagIds(row?.tags, idMap, candidate, warnings);
+      if (index >= 0) {
+        const current = candidate.pairs[index];
+        if (en) current.en = en;
+        if (zh) current.zh = zh;
+        const tagMode = String(row?.tag_mode || 'merge').toLowerCase();
+        current.tags = tagMode === 'replace'
+          ? importedTagIds
+          : [...new Set([...(current.tags || []), ...importedTagIds])];
+      } else {
+        candidate.pairs.push({ en, zh, tags: importedTagIds });
+      }
+    }
+
+    removeImportedTags(candidate, input.remove_tags, idMap, warnings);
+    applyImportedTagOrder(candidate, input.tag_order, idMap);
+    return { candidate, warnings, input };
+  }
+
+  function validateTranslationImportCandidate(candidate) {
+    const previous = translations;
+    try {
+      translations = clone(candidate);
+      const errors = validateDictionary();
+      return { candidate: clone(translations), errors };
+    } finally {
+      translations = previous;
+    }
+  }
+
+  function translationImportStatusHtml(kind, titleText, messages = []) {
+    const className = kind === 'error' ? 'notice error' : kind === 'success' ? 'notice success' : 'notice';
+    const list = messages.length ? `<ul>${messages.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : '';
+    return `<div class="${className}"><strong>${esc(titleText)}</strong>${list}</div>`;
+  }
+
+  function resetTranslationImportPanel(clearFile = true) {
+    translationImportCandidate = null;
+    translationImportFilename = '';
+    $('#applyTranslationImport').disabled = true;
+    $('#translationImportPreview').innerHTML = '';
+    $('#translationImportStatus').innerHTML = '';
+    if (clearFile) $('#translationImportFile').value = '';
+  }
+
+  async function analyzeTranslationImport() {
+    const file = $('#translationImportFile').files?.[0];
+    if (!file) return flash('請先選擇 JSON 檔案');
+    resetTranslationImportPanel(false);
+    translationImportFilename = file.name;
+    try {
+      const raw = JSON.parse(await file.text());
+      const mode = $('#translationImportMode').value;
+      const built = buildTranslationImportCandidate(raw, mode);
+      const checked = validateTranslationImportCandidate(built.candidate);
+      if (checked.errors.length) {
+        $('#translationImportStatus').innerHTML = translationImportStatusHtml(
+          'error',
+          `無法匯入 ${file.name}：驗證失敗`,
+          checked.errors.slice(0, 30),
+        );
+        return;
+      }
+      translationImportCandidate = checked.candidate;
+      const diff = translationDiffData(translations, translationImportCandidate);
+      const changeCount = diff.textChanges.length + diff.pairTagChanges.length + diff.addedPairs.length
+        + diff.removedPairs.length + diff.addedTags.length + diff.removedTags.length
+        + diff.renamedTags.length + (diff.tagOrderChanged ? 1 : 0);
+      $('#translationImportStatus').innerHTML = translationImportStatusHtml(
+        changeCount ? 'success' : '',
+        changeCount
+          ? `已讀取 ${file.name}；確認下方差異後，可套用為本機草稿。`
+          : `已讀取 ${file.name}，但和目前草稿沒有差異。`,
+        built.warnings,
+      );
+      $('#translationImportPreview').innerHTML = translationDetailedDiffHtml(translations, translationImportCandidate);
+      $('#applyTranslationImport').disabled = !changeCount;
+    } catch (error) {
+      $('#translationImportStatus').innerHTML = translationImportStatusHtml('error', error.message || String(error));
+    }
+  }
+
+  function applyTranslationImportDraft() {
+    if (!translationImportCandidate) return flash('請先讀取並預覽匯入檔');
+    translations = clone(translationImportCandidate);
+    normalizeAllPairTags();
+    saveDictionaryLocal();
+    tagSelectedFilters.clear();
+    renderAll();
+    switchTab('dictionary');
+    const name = translationImportFilename;
+    resetTranslationImportPanel();
+    flash(`已將 ${name || '匯入檔'} 套用為本機草稿；尚未送到 GitHub`);
+  }
+
+  function downloadTranslationJson(filename, value) {
+    const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  function translationImportTemplate() {
+    return {
+      format: 'hctsui-translation-import-v1',
+      note: '此檔案在 Admin 選擇「合併」後，只會產生本機草稿。',
+      tags: [
+        { id: 'research-program', label: { en: 'Research Program', zh: '研究計畫' } },
+      ],
+      pairs: [
+        { en: 'Example Program', zh: '範例計畫', tags: ['research-program'], tag_mode: 'merge' },
+        { match: { en: 'Old spelling' }, en: 'New spelling', zh: '新譯名', tags: ['other'], tag_mode: 'replace' },
+      ],
+      remove_pairs: [
+        { en: 'Term to remove' },
+      ],
+      remove_tags: [
+        { id: 'old-tag', merge_into: 'other' },
+      ],
+      tag_order: ['institution', 'university', 'research-program', 'other'],
+    };
+  }
+
+  function installTranslationImportHandlers() {
+    installTranslationImportStyles();
+    $('#toggleTranslationImport').onclick = () => {
+      $('#translationImportPanel').hidden = !$('#translationImportPanel').hidden;
+    };
+    $('#analyzeTranslationImport').onclick = analyzeTranslationImport;
+    $('#applyTranslationImport').onclick = applyTranslationImportDraft;
+    $('#clearTranslationImport').onclick = () => resetTranslationImportPanel();
+    $('#translationImportFile').onchange = () => {
+      translationImportCandidate = null;
+      $('#applyTranslationImport').disabled = true;
+      $('#translationImportPreview').innerHTML = '';
+      const file = $('#translationImportFile').files?.[0];
+      $('#translationImportStatus').innerHTML = file
+        ? translationImportStatusHtml('', `已選擇 ${file.name}；按「讀取並預覽」後才會解析。`)
+        : '';
+    };
+    $('#translationImportMode').onchange = () => {
+      if ($('#translationImportFile').files?.[0]) analyzeTranslationImport();
+    };
+    $('#exportTranslationDraft').onclick = () => downloadTranslationJson('translations-draft.json', translations);
+    $('#downloadTranslationImportTemplate').onclick = () => downloadTranslationJson(
+      'translation-import-template.json', translationImportTemplate(),
+    );
+  }
+
+  // Exposed only for lightweight automated tests and for diagnosing malformed
+  // import files in the browser console.
+  window.__hctsuiTranslationImport = {
+    buildCandidate: buildTranslationImportCandidate,
+    validateCandidate: validateTranslationImportCandidate,
+    template: translationImportTemplate,
+  };
+
+  installTranslationImportHandlers();
+
   normalizeAllPairTags();
   $('#copyPayload').onclick = copyBatchPayload;
   $('#submitBatch').onclick = submitBatchWithCompression;

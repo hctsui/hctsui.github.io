@@ -41,6 +41,18 @@ Admin 可新增 Conference、Talk、Visit、Honor、Publication、Teaching，也
 
 若遠端對照表在本機草稿期間已更新，Admin 不會自動套用舊草稿，以避免覆蓋他人的新資料。
 
+### 匯入字詞與標籤檔案
+
+在同一分頁按「匯入／匯出」：
+
+1. 選擇 JSON 檔案。
+2. 選擇「安全合併」或「完整取代」。
+3. 按「讀取並預覽」；Admin 會先驗證資料並顯示新增、刪除、改名、文字修改、標籤修改與排序差異。
+4. 確認後按「套用為草稿」。這一步只更新目前瀏覽器的本機草稿，不會直接修改 GitHub。
+5. 最後仍透過一般批次預覽與 GitHub Issue 送出。
+
+「匯出目前草稿」可下載完整 schema v2 JSON；可把這個檔案交給其他工具修改後再匯入。Admin 也提供可直接下載的 compact import 範例，支援 `match`、`remove_pairs`、`remove_tags`、`tag_order` 與每筆詞條的 `tag_mode`。
+
 程式會拒絕：
 
 - 任一側空白的資料列。
