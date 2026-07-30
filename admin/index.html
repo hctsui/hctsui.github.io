@@ -28,7 +28,20 @@
 </div>
 <h2>編輯或刪除</h2>
 <div class="actions">
-<a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=edit-entry.yml">編輯既有項目</a>
+<div class="button secondary" style="cursor:default">
+  <strong>依類別編輯既有項目</strong>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <select id="editCategory" aria-label="選擇編輯類別" style="flex:1;min-width:150px;padding:9px;border:1px solid #cfc4bb;border-radius:9px;background:#fff;font:inherit">
+      <option value="conference">會議／工作坊</option>
+      <option value="talk">學術報告</option>
+      <option value="visit">學術訪問</option>
+      <option value="honor">獎項／榮譽</option>
+      <option value="publication">論文／作品</option>
+      <option value="teaching">教學課程</option>
+    </select>
+    <button class="small-button primary-action" id="openEditForm" type="button">開啟編輯表單</button>
+  </div>
+</div>
 <a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/issues/new?template=remove-entry.yml">刪除既有項目</a>
 <a class="button secondary" target="_blank" rel="noopener" href="https://github.com/hctsui/hctsui.github.io/blob/cms/MANAGE-WEBSITE.md">查看完整說明</a>
 </div>
@@ -75,6 +88,8 @@ const rows=document.querySelector('#rows'),statusEl=document.querySelector('#sta
 const startOrder=document.querySelector('#startOrder'),saveOrder=document.querySelector('#saveOrder'),cancelOrder=document.querySelector('#cancelOrder'),orderHelp=document.querySelector('#orderHelp');
 let records=[],dataStore={},groups={publication:[],teaching:[]},entryOrders={},ordering=false,orderState=null;
 const labels={conference:'會議',talk:'演講',visit:'訪問',honor:'獎項',publication:'論文',teaching:'教學'};
+const editTemplates={conference:'edit-conference.yml',talk:'edit-talk.yml',visit:'edit-visit.yml',honor:'edit-honor.yml',publication:'edit-publication.yml',teaching:'edit-teaching.yml'};
+const editCategory=document.querySelector('#editCategory'),openEditForm=document.querySelector('#openEditForm');
 const typeRank={conference:0,talk:1,visit:2,honor:3,publication:4,teaching:5};
 function bilingual(obj){return obj?.zh||obj?.en||''}function allBilingual(obj){return [obj?.zh,obj?.en].filter(Boolean).join(' ')}
 function slug(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'group'}
@@ -104,7 +119,8 @@ function endOrdering(){ordering=false;orderState=null;search.disabled=false;cate
 async function saveOrdering(){const payload=JSON.stringify(orderState,null,2);await copyText(payload);showFlash('排序 JSON 已複製；新分頁開啟後貼到「排序資料」欄位並送出。');window.open(repo+'/issues/new?template=reorder-entries.yml','_blank','noopener')}
 fetch('../content/site.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(data=>{dataStore=normalizeData(data);records=[...(data.activities||[]),...(data.honors||[]),...(data.publications||[]),...(data.teaching||[])].map((x,i)=>({...x,_index:i}));sort.value=localStorage.getItem('admin-sort')||'manual';category.value=localStorage.getItem('admin-category')||'all';render()}).catch(err=>{statusEl.textContent='讀取失敗。請從正式 GitHub Pages 網址開啟這個管理頁。';console.error(err)});
 search.addEventListener('input',render);category.addEventListener('change',()=>{localStorage.setItem('admin-category',category.value);render()});sort.addEventListener('change',()=>{localStorage.setItem('admin-sort',sort.value);render()});startOrder.addEventListener('click',beginOrdering);cancelOrder.addEventListener('click',endOrdering);saveOrder.addEventListener('click',saveOrdering);
-rows.addEventListener('click',async e=>{const b=e.target.closest('button[data-action]');if(!b)return;const action=b.dataset.action,id=b.dataset.id;if(ordering){if(action.startsWith('group-')){const i=orderState.groups.findIndex(g=>g.id===id);move(orderState.groups,i,action.endsWith('up')?-1:1)}else if(action.startsWith('item-')){if(Array.isArray(orderState.entries)){const i=orderState.entries.indexOf(id);move(orderState.entries,i,action.endsWith('up')?-1:1)}else{const g=orderState.groups.find(x=>x.entries.includes(id)),i=g.entries.indexOf(id);move(g.entries,i,action.endsWith('up')?-1:1)}}render();return}await copyText(id);if(action==='edit'){showFlash('已複製 Entry ID，正在開啟編輯表單');window.open(repo+'/issues/new?template=edit-entry.yml','_blank','noopener');return}if(action==='remove'){showFlash('已複製 Entry ID，正在開啟刪除表單');window.open(repo+'/issues/new?template=remove-entry.yml','_blank','noopener');return}const old=b.textContent;b.textContent='已複製';showFlash('Entry ID 已複製');setTimeout(()=>b.textContent=old,1200)});
+openEditForm.addEventListener('click',()=>window.open(repo+'/issues/new?template='+(editTemplates[editCategory.value]||'edit-entry.yml'),'_blank','noopener'));
+rows.addEventListener('click',async e=>{const b=e.target.closest('button[data-action]');if(!b)return;const action=b.dataset.action,id=b.dataset.id;if(ordering){if(action.startsWith('group-')){const i=orderState.groups.findIndex(g=>g.id===id);move(orderState.groups,i,action.endsWith('up')?-1:1)}else if(action.startsWith('item-')){if(Array.isArray(orderState.entries)){const i=orderState.entries.indexOf(id);move(orderState.entries,i,action.endsWith('up')?-1:1)}else{const g=orderState.groups.find(x=>x.entries.includes(id)),i=g.entries.indexOf(id);move(g.entries,i,action.endsWith('up')?-1:1)}}render();return}await copyText(id);if(action==='edit'){const item=records.find(x=>x.id===id),template=editTemplates[item?.type]||'edit-entry.yml';showFlash(`已複製 Entry ID，正在開啟${labels[item?.type]||''}編輯表單`);window.open(repo+'/issues/new?template='+template,'_blank','noopener');return}if(action==='remove'){showFlash('已複製 Entry ID，正在開啟刪除表單');window.open(repo+'/issues/new?template=remove-entry.yml','_blank','noopener');return}const old=b.textContent;b.textContent='已複製';showFlash('Entry ID 已複製');setTimeout(()=>b.textContent=old,1200)});
 
 const translationRows=document.querySelector('#translationRows'),translationStatus=document.querySelector('#translationStatus'),translationSearch=document.querySelector('#translationSearch');
 const addTranslation=document.querySelector('#addTranslation'),reloadTranslations=document.querySelector('#reloadTranslations'),downloadTranslations=document.querySelector('#downloadTranslations'),publishTranslations=document.querySelector('#publishTranslations');
