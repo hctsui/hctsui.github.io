@@ -16,9 +16,6 @@ def digest(x):return hashlib.sha256(canon(x).encode()).hexdigest()
 def semantic(x):
  if isinstance(x,list):return [semantic(v) for v in x]
  if not isinstance(x,dict):return x
- # Ignore fields that are generated or consumed after an item is saved.
- # `group_label` is a form-only helper: normalize_groups() moves it into
- # settings.content_groups and removes it from the stored item.
  ignored={'order','group_label'}
  return {k:semantic(v) for k,v in x.items() if k not in ignored and not k.endswith('_html')}
 def clean(s):return html.escape(str(s or '').strip(),quote=False)
@@ -65,6 +62,53 @@ def apply_order(data,state):
   for i,eid in enumerate(g['entries']):by[eid]['group_id']=g['id'];by[eid]['order']=i
   if kind=='teaching':
    for eid in g['entries']:by[eid]['institution']=copy.deepcopy(g.get('label',{}))
+def merge_sequence(current,desired):
+ # Reorder the IDs mentioned by the Admin while preserving unknown/new IDs
+ # in their current slots. This safely rebases stale ordering drafts.
+ current=list(current);desired=list(desired);curset=set(current)
+ if len(desired)!=len(set(desired)):raise ValueError('Ordering contains duplicate entry IDs.')
+ missing=[x for x in desired if x not in curset]
+ if missing:raise ValueError('Ordering refers to missing entries: '+', '.join(missing[:5]))
+ wanted=set(desired);slots=[i for i,x in enumerate(current) if x in wanted]
+ result=list(current)
+ for i,x in zip(slots,desired):result[i]=x
+ return result
+
+def rebase_order(current,desired):
+ kind=current['kind']
+ if 'entries' in current:
+  return {'kind':kind,'entries':merge_sequence(current.get('entries',[]),desired.get('entries',[]))}
+ current_groups=current.get('groups',[]);desired_groups=desired.get('groups',[])
+ cur_entries=[eid for g in current_groups for eid in g.get('entries',[])]
+ desired_entries=[eid for g in desired_groups for eid in g.get('entries',[])]
+ if len(desired_entries)!=len(set(desired_entries)):raise ValueError('Grouped ordering contains duplicate entry IDs.')
+ missing=[eid for eid in desired_entries if eid not in set(cur_entries)]
+ if missing:raise ValueError('Grouped ordering refers to missing entries: '+', '.join(missing[:5]))
+ cur_group_by_entry={eid:g['id'] for g in current_groups for eid in g.get('entries',[])}
+ desired_group_by_entry={eid:g['id'] for g in desired_groups for eid in g.get('entries',[])}
+ cur_meta={g['id']:g for g in current_groups};desired_meta={g['id']:g for g in desired_groups}
+ # Groups explicitly mentioned by the draft follow the desired order. Groups
+ # that appeared later are retained afterwards in their current order.
+ active_desired=[]
+ for g in desired_groups:
+  if any(eid in set(cur_entries) for eid in g.get('entries',[])) and g['id'] not in active_desired:active_desired.append(g['id'])
+ extra=[g['id'] for g in current_groups if g['id'] not in active_desired]
+ group_ids=active_desired+extra
+ assigned={gid:[] for gid in group_ids}
+ for eid in cur_entries:
+  gid=desired_group_by_entry.get(eid,cur_group_by_entry[eid])
+  if gid not in assigned:
+   assigned[gid]=[];group_ids.append(gid)
+  assigned[gid].append(eid)
+ result=[]
+ for gid in group_ids:
+  base=assigned.get(gid,[])
+  wanted=[eid for eid in desired_meta.get(gid,{}).get('entries',[]) if eid in set(base)]
+  entries=merge_sequence(base,wanted) if wanted else base
+  if not entries:continue
+  meta=desired_meta.get(gid) or cur_meta.get(gid) or {'id':gid,'label':{'en':gid,'zh':''}}
+  result.append({'id':gid,'label':copy.deepcopy(meta.get('label',{'en':gid,'zh':''})),'preset':bool(meta.get('preset')),'entries':entries})
+ return {'kind':kind,'groups':result}
 def validate_trans(d):
  if d.get('schema_version')!=1 or not isinstance(d.get('pairs'),list):raise ValueError('Invalid translations.json structure.')
  en,zh={},{}
@@ -98,9 +142,12 @@ def apply_content(data,h,op,hid,issue,n,rd):
  after=normalize_item(op['after']);after['id']=eid;a[i]=after;append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='update',action='update',type=t,entry_id=eid,label=label(after),before=cur,after=copy.deepcopy(after),index_before=i,index_after=i,undo_of=None);return 'update',eid
 def apply_special(data,trans,h,op,hid,issue,n,rd):
  if op['op']=='reorder':
-  before=capture_order(data,op['type']);expected=op.get('before')
-  if expected and before!=expected:raise ValueError(f"Conflict: {op['type']} order changed after Admin loaded.")
-  apply_order(data,op['after']);after=capture_order(data,op['type']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='reorder',action='reorder',type=op['type'],entry_id='order:'+op['type'],label={'en':op['type']+' order','zh':'排序'},before=before,after=after,index_before=None,index_after=None,undo_of=None);return 'reorder','order:'+op['type']
+  before=capture_order(data,op['type'])
+  # Ordering is safely rebased onto the current database. This handles items
+  # added/deleted earlier in the same batch and stale Admin tabs without
+  # dropping entries that were created later.
+  requested=rebase_order(before,op['after'])
+  apply_order(data,requested);after=capture_order(data,op['type']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='reorder',action='reorder',type=op['type'],entry_id='order:'+op['type'],label={'en':op['type']+' order','zh':'排序'},before=before,after=after,index_before=None,index_after=None,undo_of=None);return 'reorder','order:'+op['type']
  before=copy.deepcopy(trans);expected=op.get('before')
  if expected and before!=expected:raise ValueError('Conflict: translations changed after Admin loaded.')
  after=copy.deepcopy(op['after']);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照表'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
@@ -112,8 +159,10 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
  act=target['action'];t=target['type'];eid=target['entry_id']
  if act=='reorder':
   cur=capture_order(data,t)
-  if cur!=target['after']:raise ValueError(f'Cannot undo order: {t} changed later.')
-  apply_order(data,target['before']);after=capture_order(data,t);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='reorder',type=t,entry_id=eid,label=target['label'],before=cur,after=after,index_before=None,index_after=None,undo_of=tid)
+  # Restore the old relative order while retaining entries/groups that were
+  # added after the original ordering operation.
+  restored=rebase_order(cur,target['before'])
+  apply_order(data,restored);after=capture_order(data,t);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='reorder',type=t,entry_id=eid,label=target['label'],before=cur,after=after,index_before=None,index_after=None,undo_of=tid)
  elif act=='translations':
   if trans!=target['after']:raise ValueError('Cannot undo translations: dictionary changed later.')
   before=copy.deepcopy(trans);trans.clear();trans.update(copy.deepcopy(target['before']));new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='translations',type='translations',entry_id='translations',label=target['label'],before=before,after=copy.deepcopy(trans),index_before=None,index_after=None,undo_of=tid)
