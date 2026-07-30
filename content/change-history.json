@@ -4869,6 +4869,184 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-41-op-1",
+      "batch_issue": 41,
+      "applied_at": "2026-07-30T07:22:09.898748Z",
+      "expires_at": "2026-08-06T07:22:09.898748Z",
+      "reverted_by": null,
+      "request_digest": "e76044483df9d5c770040ec06f7bf3d04f33505da6e046b0df398f520efd88e2",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "conference",
+      "entry_id": "conference-2099-01-30-a",
+      "label": {
+        "en": "ZZTEST Conference A",
+        "zh": "測試會議 A"
+      },
+      "before": {
+        "type": "conference",
+        "start_date": "2099-01-30",
+        "end_date": "2099-07-30",
+        "title": {
+          "en": "ZZTEST Conference A",
+          "zh": "測試會議 A"
+        },
+        "venue": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "city": {
+          "en": "Osaka",
+          "zh": "大阪"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "url": "",
+        "show_upcoming": true,
+        "description": {
+          "en": "Tohoku University, Osaka, Japan",
+          "zh": "東北大學, 大阪, 日本"
+        },
+        "description_html": {
+          "en": "Tohoku University, Osaka, Japan",
+          "zh": "東北大學, 大阪, 日本"
+        },
+        "title_html": {
+          "en": "ZZTEST Conference A",
+          "zh": "測試會議 A"
+        },
+        "id": "conference-2099-01-30-a",
+        "venue_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        }
+      },
+      "after": null,
+      "index_before": 27,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-41-op-2",
+      "batch_issue": 41,
+      "applied_at": "2026-07-30T07:22:09.898748Z",
+      "expires_at": "2026-08-06T07:22:09.898748Z",
+      "reverted_by": null,
+      "request_digest": "3a880930c87b40896210b84e05a7d579c64101334bc361c7bef9127db6508c26",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "visit",
+      "entry_id": "visit-2026-07-15-test",
+      "label": {
+        "en": "test",
+        "zh": "test"
+      },
+      "before": {
+        "type": "visit",
+        "start_date": "2026-07-15",
+        "end_date": "2026-07-31",
+        "title": {
+          "en": "test",
+          "zh": "test"
+        },
+        "city": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "country": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "visit_description": {
+          "en": "",
+          "zh": ""
+        },
+        "url": "",
+        "show_upcoming": false,
+        "description": {
+          "en": "test, test",
+          "zh": "測試, 測試"
+        },
+        "description_html": {
+          "en": "test, test",
+          "zh": "測試, 測試"
+        },
+        "title_html": {
+          "en": "test",
+          "zh": "test"
+        },
+        "id": "visit-2026-07-15-test"
+      },
+      "after": null,
+      "index_before": 27,
+      "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-41-op-3",
+      "batch_issue": 41,
+      "applied_at": "2026-07-30T07:22:09.898748Z",
+      "expires_at": "2026-08-06T07:22:09.898748Z",
+      "reverted_by": null,
+      "request_digest": "d97ca87d02961da1f9ac6e0f295499cdd8617184238b4390a5d8d554ff1ff355",
+      "request_action": "delete",
+      "action": "delete",
+      "type": "publication",
+      "entry_id": "publication-2026-07-30-entry",
+      "label": {
+        "en": "test",
+        "zh": "測試"
+      },
+      "before": {
+        "type": "publication",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-07-30",
+        "title": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "authors": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "venue": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "arxiv": "",
+        "arxiv_url": "",
+        "pdf_url": "",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "group_id": "preprints",
+        "year": 2026,
+        "links": [],
+        "title_html": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "authors_html": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "venue_html": {
+          "en": "test",
+          "zh": "測試"
+        },
+        "id": "publication-2026-07-30-entry"
+      },
+      "after": null,
+      "index_before": 4,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }

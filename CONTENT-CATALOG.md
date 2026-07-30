@@ -6,12 +6,10 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| 2099-01-30 – 2099-07-30 | ZZTEST Conference A | 測試會議 A | `conference-2099-01-30-a` |
 | 2026-11-08 – 2026-11-08 | ​The 2nd Multiple Eisenstein Series Research Meeting | 第二屆多重 Eisenstein 級數研究會 | `conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6` |
 | 2026-11-07 – 2026-11-07 | The 73rd Kansai Multiple Zeta Workshop | 第 73 回關西多重 zeta 值研討會 | `conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4` |
 | 2026-08-24 – 2026-08-28 | The 33rd Number Theory Summer School: Arithmetic of Function Fields | 第 33 屆數論暑期學校：函數體的算術 | `conference-2026-number-theory-summer-school` |
 | 2026-07-17 – 2026-07-17 | The 72nd Kansai Multiple Zeta Workshop | 第 72 回關西多重 zeta 值研討會 | `conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop` |
-| 2026-07-15 – 2026-07-31 | test | test | `visit-2026-07-15-test` |
 | 2026-07-07 – 2026-07-10 | The 25th Sendai–Hiroshima Number Theory Conference | 第 25 屆仙台—廣島數論會議 | `conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference` |
 | 2026-07-06 – 2026-07-06 | Recent Developments on Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的近期發展 | `talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p` |
 | 2026-07-02 – 2026-08-30 | Tohoku University | 東北大學 | `visit-2026-07-02-tohoku-university` |
@@ -49,7 +47,6 @@
 
 | Date / Year | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| 2026-07-30 | test | 測試 | `publication-2026-07-30-entry` |
 | 2026-04-05 | On u -Multiple Zeta Values in Positive Characteristic | 正特徵的 u-多重 zeta 值 | `publication-2604.03618-4` |
 | 2026-03-11 | Algebra Structures of Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的代數結構 | `publication-2603.10376-3` |
 | 2025-04-26 | On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic | 正特徵任意秩多重 Eisenstein 級數的 q-shuffle 關係 | `publication-2504.18879-2` |
