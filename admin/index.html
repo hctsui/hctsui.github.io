@@ -732,7 +732,8 @@
             ><button class="tab" data-tab="order">排序</button
             ><button class="tab" data-tab="trash">垃圾桶</button
             ><button class="tab" data-tab="dictionary">中英對照</button
-            ><button class="tab" data-tab="headings">頁面與類別</button>
+            ><button class="tab" data-tab="headings">頁面與類別</button
+            ><button class="tab" data-tab="homepage">首頁精選</button>
           </div>
           <div id="catalogTab">
             <div class="toolbar">
@@ -921,6 +922,7 @@
             <div id="dictionaryRows" class="scroll"></div>
           </div>
           <div id="headingsTab" hidden><div id="layoutManager"></div></div>
+          <div id="homepageTab" hidden><div id="homepageManager"></div></div>
         </section>
         <section class="panel">
           <h2>預覽與送出</h2>
@@ -978,6 +980,7 @@
         personal: "個人資訊",
         headings: "頁面與類別",
         layout: "頁面與類別",
+        homepage: "首頁精選",
       };
       const ACTION_LABEL = {
         add: "新增",
@@ -987,6 +990,7 @@
         reorder: "排序",
         translations: "中英對照表",
         layout: "頁面與類別",
+        homepage: "首頁精選",
       };
       const SECTION = {
         conference: "activities",
@@ -1523,7 +1527,6 @@
           ["city", "城市", "pair"],
           ["country", "國家", "pair"],
           ["url", "活動連結", "url"],
-          ["show_upcoming", "顯示於首頁「即將舉行」", "checkbox"],
         ],
         organization: [
           ["start_date", "開始日期", "date"],
@@ -1533,7 +1536,6 @@
           ["city", "城市", "pair"],
           ["country", "國家", "pair"],
           ["url", "活動連結", "url"],
-          ["show_upcoming", "顯示於首頁「即將舉行」", "checkbox"],
         ],
         talk: [
           ["start_date", "演講日期", "date"],
@@ -1545,7 +1547,6 @@
           ["country", "國家", "pair"],
           ["url", "活動連結", "url"],
           ["slides_url", "投影片連結", "url"],
-          ["show_upcoming", "顯示於首頁「即將舉行」", "checkbox"],
         ],
         visit: [
           ["start_date", "開始日期", "date"],
@@ -1557,7 +1558,6 @@
           ["funding_organization", "資助機構", "pair"],
           ["funding_program", "資助計畫", "pair"],
           ["url", "機構／訪問連結", "url"],
-          ["show_upcoming", "顯示於首頁「即將舉行」", "checkbox"],
         ],
         honor: [
           ["year", "年份", "number"],
@@ -2002,7 +2002,7 @@
               Object.entries(CONFERENCE_ROLES).find(
                 ([, v]) => v.en === roleEn,
               )?.[0] || (!roleEn ? "participant" : "other");
-          html += `<div class="field"><label>會議中的身分</label><select id="conferenceRole"><option value="participant" ${roleKey === "participant" ? "selected" : ""}>一般參與者（不顯示標記）</option><option value="speaker" ${roleKey === "speaker" ? "selected" : ""}>講者</option><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select><p class="field-hint">一般參與者不顯示身分；其他身分會在會議名稱下方另列。</p></div><div id="conferenceRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂會議身分", roleKey === "other" ? s.role : {})}</div>`;
+          html += `<div class="field"><label>會議中的身分</label><select id="conferenceRole"><option value="participant" ${roleKey === "participant" ? "selected" : ""}>一般參與者（不顯示標記）</option><option value="speaker" ${roleKey === "speaker" ? "selected" : ""}>講者</option><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select><p class="field-hint">一般參與者不顯示身分；其他身分會沿用 CV 原本的名稱後方樣式。首頁顯示請到「首頁精選」設定。</p></div><div id="conferenceRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂會議身分", roleKey === "other" ? s.role : {})}</div>`;
         }
         if (type === "organization") {
           let kindEn = s.organization_kind?.en || "Seminar",
@@ -3456,6 +3456,7 @@
           "trash",
           "dictionary",
           "headings",
+          "homepage",
         ])
           $(`#${n}Tab`).hidden = n !== name;
       }
@@ -3752,5 +3753,6 @@
     </script>
     <script src="tags-v1.js"></script>
     <script src="layout-v2.js"></script>
+    <script src="homepage-v1.js"></script>
   </body>
 </html>
