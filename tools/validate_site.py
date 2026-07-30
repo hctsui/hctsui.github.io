@@ -8,6 +8,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from category_config import all_items, categories_for_page, migrate_category_data, validate_category_data
+from homepage_config import validate_homepage_config
 
 ROOT = Path(__file__).resolve().parents[1]
 data = migrate_category_data(json.loads((ROOT / "content/site.json").read_text(encoding="utf-8")))
@@ -96,6 +97,10 @@ for section, allowed_types in SECTION_TYPES.items():
 
 try:
     validate_category_data(data)
+except ValueError as exc:
+    errors.append(str(exc))
+try:
+    validate_homepage_config(data, data.get("settings", {}).get("homepage"))
 except ValueError as exc:
     errors.append(str(exc))
 

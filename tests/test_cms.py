@@ -23,12 +23,18 @@ from category_config import (  # noqa: E402
 from process_batch_request import (  # noqa: E402
     apply_content,
     apply_special,
+    apply_undo,
     empty_history,
     layout_bundle,
     parse_body,
     rebase_order,
 )
 from process_request import _compose_visit_description, strip_invisible_chars  # noqa: E402
+from homepage_config import (  # noqa: E402
+    homepage_activities,
+    homepage_publications,
+    normalized_homepage_config,
+)
 from translation_validation import validate_translation_data  # noqa: E402
 
 
@@ -110,6 +116,52 @@ class PayloadAndVisitTests(unittest.TestCase):
 
 
 class CategoryArchitectureTests(unittest.TestCase):
+    def test_homepage_publications_support_latest_oldest_and_manual_order(self) -> None:
+        data = minimal_site()
+        data["publications"] = [
+            {"id": "old", "type": "publication", "date": "2024-01-01"},
+            {"id": "middle", "type": "publication", "date": "2025-01-01"},
+            {"id": "new", "type": "publication", "date": "2026-01-01"},
+        ]
+        data["settings"]["homepage"] = {
+            "publications": {"mode": "latest", "limit": 2, "selected_ids": []},
+            "activities": {"mode": "manual", "limit": 1, "selected_ids": []},
+        }
+        self.assertEqual([item["id"] for item in homepage_publications(data)], ["new", "middle"])
+        data["settings"]["homepage"]["publications"].update(mode="oldest", limit=1)
+        self.assertEqual([item["id"] for item in homepage_publications(data)], ["old"])
+        data["settings"]["homepage"]["publications"].update(
+            mode="manual", selected_ids=["middle", "new"]
+        )
+        self.assertEqual([item["id"] for item in homepage_publications(data)], ["middle", "new"])
+
+    def test_homepage_activities_support_manual_order_and_hide_finished_items(self) -> None:
+        data = minimal_site()
+        data["activities"] = [
+            {"id": "past", "type": "conference", "start_date": "2026-01-01", "end_date": "2026-01-02"},
+            {"id": "near", "type": "conference", "start_date": "2026-08-01", "end_date": "2026-08-01"},
+            {"id": "far", "type": "conference", "start_date": "2026-12-01", "end_date": "2026-12-02"},
+        ]
+        data["settings"]["homepage"] = {
+            "publications": {"mode": "latest", "limit": 2, "selected_ids": []},
+            "activities": {
+                "mode": "manual",
+                "limit": 3,
+                "selected_ids": ["far", "past", "near"],
+            },
+        }
+        self.assertEqual(
+            [item["id"] for item in homepage_activities(data, date(2026, 7, 31))],
+            ["far", "near"],
+        )
+        data["settings"]["homepage"]["activities"].update(
+            mode="soonest", limit=1
+        )
+        self.assertEqual(
+            [item["id"] for item in homepage_activities(data, date(2026, 7, 31))],
+            ["near"],
+        )
+
     def test_every_item_has_a_category_including_profile_items(self) -> None:
         data = minimal_site()
         validate_category_data(data)
@@ -300,7 +352,8 @@ class CvRenderingTests(unittest.TestCase):
             "links": [{"label": {"en": "PDF"}, "url": "https://example.com/paper.pdf"}],
         }
         rendered_publication = render_publication(publication, 1, "en")
-        self.assertIn(r"\textbf{A Long Title}\\{\small\color{secondaryColor}", rendered_publication)
+        self.assertIn(r"{(1)} \textbf{A Long Title}\\{\small\color{secondaryColor}", rendered_publication)
+        self.assertIn(r"\begin{pub}{Author}", rendered_publication)
         education = {
             "title": {"zh": "數學學士"},
             "organization": {"zh": "國立清華大學"},
@@ -330,6 +383,46 @@ class AdminDocumentationTests(unittest.TestCase):
 
 
 class BatchOperationTests(unittest.TestCase):
+    def test_homepage_operation_is_saved_to_history(self) -> None:
+        data = minimal_site()
+        data["publications"] = [
+            {"id": "paper-1", "type": "publication", "date": "2026-01-01"}
+        ]
+        before = normalized_homepage_config(data)
+        after = copy.deepcopy(before)
+        after["publications"] = {
+            "mode": "manual",
+            "limit": 1,
+            "selected_ids": ["paper-1"],
+        }
+        history = empty_history()
+        action, entry_id = apply_special(
+            data,
+            {"schema_version": 2, "tags": [], "pairs": []},
+            history,
+            {"op": "homepage", "before": before, "after": after},
+            "issue-1-op-1",
+            1,
+            datetime.now(timezone.utc),
+            "digest",
+        )
+        self.assertEqual((action, entry_id), ("homepage", "homepage"))
+        self.assertEqual(data["settings"]["homepage"]["publications"]["selected_ids"], ["paper-1"])
+        self.assertEqual(history["operations"][-1]["action"], "homepage")
+        undo_action, undo_id = apply_undo(
+            data,
+            {"schema_version": 2, "tags": [], "pairs": []},
+            history,
+            {"op": "undo", "history_id": "issue-1-op-1"},
+            "issue-2-op-1",
+            2,
+            datetime.now(timezone.utc),
+            "undo-digest",
+        )
+        self.assertEqual((undo_action, undo_id), ("undo", "homepage"))
+        self.assertEqual(normalized_homepage_config(data), before)
+        self.assertEqual(history["operations"][0]["reverted_by"], "issue-2-op-1")
+
     def test_organization_entry_can_be_added(self) -> None:
         data = minimal_site()
         after = {"id": "organization-1", "type": "organization", "category_id": "activity-organization", "order": 0, "start_date": "2026-01-01", "end_date": "2026-01-01", "title": {"en": "Number Theory Seminar", "zh": "數論研討會"}, "organization_kind": {"en": "Seminar", "zh": "研討會"}, "role": {"en": "Organizer", "zh": "主辦人"}}
@@ -375,12 +468,18 @@ class AdminCompatibilityTests(unittest.TestCase):
 
     def test_legacy_admin_tools_remain_available(self) -> None:
         page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
-        for tab in ("catalog", "add", "draft", "order", "trash", "dictionary", "headings"):
+        for tab in ("catalog", "add", "draft", "order", "trash", "dictionary", "headings", "homepage"):
             self.assertIn(f'data-tab="{tab}"', page)
         for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
             self.assertIn(f'"{item_type}"', page)
         self.assertIn('<script src="tags-v1.js"></script>', page)
         self.assertIn('<script src="layout-v2.js"></script>', page)
+        self.assertIn('<script src="homepage-v1.js"></script>', page)
+        homepage = (ROOT / "admin" / "homepage-v1.js").read_text(encoding="utf-8")
+        for mode in ("latest", "oldest", "manual", "soonest", "farthest"):
+            self.assertIn(f"'{mode}'", homepage)
+        self.assertIn("data-home-up", homepage)
+        self.assertIn("HOMEPAGE_DRAFT_KEY", homepage)
 
 
 if __name__ == "__main__":

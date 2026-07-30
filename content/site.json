@@ -3,6 +3,22 @@
   "settings": {
     "timezone": "Asia/Tokyo",
     "homepage_publication_limit": 2,
+    "homepage": {
+      "publications": {
+        "mode": "latest",
+        "limit": 2,
+        "selected_ids": []
+      },
+      "activities": {
+        "mode": "manual",
+        "limit": 3,
+        "selected_ids": [
+          "conference-2026-number-theory-summer-school",
+          "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+          "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+        ]
+      }
+    },
     "content_groups": {
       "publication": [
         {

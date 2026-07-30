@@ -144,8 +144,7 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
     if entry.get("type") == "conference":
         role = field_rich(entry, "role", lang)
         if role and role.casefold() != "participant" and role != "一般參與者":
-            role_label = "身分" if lang == "zh" else "Role"
-            detail_lines.append(rf"\cvmeta{{{role_label}: {role}}}")
+            title_line += r" \quad {\color{secondaryColor}\textit{" + role + "}}"
     description = field_rich(entry, "description", lang)
     if description:
         detail_lines.append(description)
@@ -184,15 +183,13 @@ def render_publication(entry: dict[str, Any], number: int, lang: str) -> str:
     venue = pair(entry, "venue", lang).strip()
     year = str(entry.get("year") or "")
     status = (rf"\textit{{{rich_to_latex(venue)}}}, {latex_escape(year)}." if venue else latex_escape(year) + ".")
-    lines = [rf"{{[{number}]}} \textbf{{{title}}}"]
+    lines = [rf"{{({number})}} \textbf{{{title}}}"]
     links = publication_links(entry, lang)
     if links:
         lines.append(links)
-    if authors:
-        lines.append(authors)
     if status.strip("."):
         lines.append(status)
-    return r"\begin{pub}" + "\n" + r"\\".join(lines) + "\n" + r"\end{pub}"
+    return rf"\begin{{pub}}{{{authors}}}" + "\n" + r"\\".join(lines) + "\n" + r"\end{pub}"
 
 
 def render_honor(entry: dict[str, Any], lang: str) -> str:
@@ -214,7 +211,7 @@ def render_education(entry: dict[str, Any], lang: str) -> str:
     title = field_rich(entry, "title", lang)
     org = field_rich(entry, "organization", lang)
     desc = field_rich(entry, "description", lang)
-    body = org
+    body = rf"\textbf{{{org}}}" if org else ""
     if desc:
         body += r" \\" + "\n" + rf"{{\small ({desc})}}"
     return rf"\begin{{edu}}{{\textbf{{{title}}}}}{{{display_range(entry, lang)}}}" + "\n    " + body + "\n" + r"\end{edu}"
