@@ -1,0 +1,55 @@
+name: Process website batch
+on:
+  issues:
+    types: [opened]
+concurrency:
+  group: website-batch-${{ github.event.issue.number }}
+  cancel-in-progress: false
+permissions:
+  actions: write
+  contents: write
+  issues: write
+jobs:
+  update-site:
+    if: >-
+      startsWith(github.event.issue.title, '[Website: Batch]') &&
+      github.event.issue.author_association == 'OWNER'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: cms, fetch-depth: 0}
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Apply batch safely
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            git fetch origin cms
+            git reset --hard origin/cms
+            git clean -fd
+            python3 tools/process_batch_request.py "$GITHUB_EVENT_PATH" --result-file /tmp/result.json
+            python3 tools/build_site.py
+            python3 tools/build_cv.py
+            python3 tools/render_grouped_sections.py
+            python3 tools/build_dynamic_forms.py
+            python3 tools/update_cv_links.py
+            python3 tools/build_catalog.py
+            python3 tools/validate_translations.py
+            python3 tools/validate_site.py
+            git add content/site.json CONTENT-CATALOG.md cv/*.tex index.html cv.html publications.html activities.html teaching.html zh .github/ISSUE_TEMPLATE
+            git commit -m "Apply website batch from issue #${{ github.event.issue.number }}" || true
+            if git push origin HEAD:cms; then exit 0; fi
+            sleep $((attempt*2))
+          done
+          exit 1
+      - name: Deploy
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: gh workflow run deploy-cms-pages.yml --repo "${{ github.repository }}" --ref cms
+      - name: Confirm and close
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          BODY="$(python3 -c "import json;print(json.load(open('/tmp/result.json'))['action'])")"
+          gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --body "完成：${BODY}。網站與中英文 CV 已加入部署佇列。"
+          gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}"

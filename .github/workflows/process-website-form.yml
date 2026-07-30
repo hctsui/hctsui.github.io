@@ -19,6 +19,7 @@ jobs:
   update-site:
     if: >-
       startsWith(github.event.issue.title, '[Website:') &&
+      !startsWith(github.event.issue.title, '[Website: Batch]') &&
       github.event.issue.author_association == 'OWNER'
     runs-on: ubuntu-latest
     timeout-minutes: 20
