@@ -174,6 +174,11 @@ function setupUnifiedOrderUI(){
   const selector=tab.querySelector('#layoutOrderPage');selector.onchange=renderUnifiedOrder;tab.querySelector('#reloadLayoutOrder').onclick=()=>{syncLayoutAssignments();renderUnifiedOrder();flash('已依目前草稿重新整理')};tab.querySelector('#layoutOrderEditor').onclick=unifiedOrderClick;tab.querySelector('#layoutOrderEditor').onchange=unifiedOrderChange;
   fillOrderPageSelector();renderUnifiedOrder();
 }
+const baseLoadOrder=loadOrder;
+loadOrder=function(){
+  if($('#layoutOrderPage')){renderUnifiedOrder();return}
+  return baseLoadOrder()
+};
 function fillOrderPageSelector(){if(!site)return;initLayoutState();const select=$('#layoutOrderPage');if(!select||!layoutDraft)return;const old=select.value;select.innerHTML=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}">${esc(pageName(p.id))}</option>`).join('')+'<option value="__cv__">PDF 履歷</option>';if([...select.options].some(o=>o.value===old))select.value=old}
 function categoryItemIds(categoryId){return Object.entries(layoutDraft.assignments).filter(([,s])=>s.category_id===categoryId).sort((a,b)=>a[1].order-b[1].order||a[0].localeCompare(b[0])).map(([id])=>id)}
 function orderCategoryCard(category,index,total,map,cvMode=false){
@@ -234,3 +239,4 @@ function installLayoutCss(){const style=document.createElement('style');style.te
 `;document.head.append(style)}
 installLayoutCss();
 setupUnifiedOrderUI();
+if(site)renderAll();
