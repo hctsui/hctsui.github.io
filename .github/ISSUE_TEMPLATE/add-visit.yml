@@ -60,9 +60,9 @@ body:
     attributes:
       value: |
         資助機構與資助計畫皆為選填，可只填一項或兩項都填。系統會自動產生正式說明：
-        - 只有機構：Supported by 機構。／本次訪問經費由機構提供。
-        - 只有計畫：Supported through 計畫。／本次訪問由計畫補助。
-        - 兩者都有：Supported by 機構 through 計畫。／本次訪問經費由機構透過計畫提供。
+        - 只有機構：Supported by 機構／本次訪問經費由機構提供
+        - 只有計畫：Supported through 計畫／本次訪問由計畫補助
+        - 兩者都有：Supported by 機構 through 計畫／本次訪問經費由機構透過計畫提供
   - type: input
     id: funding-organization-en
     attributes: {label: "Funding organization (English) / 資助機構英文 [選填]"}
