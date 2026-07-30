@@ -1,0 +1,12 @@
+name: Batch website changes / 批次網站變更
+description: Paste one batch exported by the Admin page.
+title: "[Website: Batch] "
+body:
+  - type: textarea
+    id: payload
+    attributes:
+      label: Batch payload / 批次資料
+      description: Paste the JSON copied by Admin.
+      render: json
+    validations:
+      required: true
