@@ -39,6 +39,23 @@ GROUPED_KINDS = {"publication", "teaching"}
 UNGROUPED_KINDS = {"conference", "talk", "visit", "organization", "honor"}
 SORTABLE_KINDS = GROUPED_KINDS | UNGROUPED_KINDS
 
+# Formatting characters such as U+200B can be introduced when text is copied
+# from websites or PDFs. They are invisible in the Admin but can make pdfLaTeX
+# fail with “Unicode character ... not set up for use with LaTeX.”
+INVISIBLE_FORMAT_CHARS = "\u200b\u2060\ufeff\u00ad"
+INVISIBLE_TRANSLATION = str.maketrans("", "", INVISIBLE_FORMAT_CHARS)
+
+
+def strip_invisible_chars(value: Any) -> Any:
+    """Recursively remove unsafe invisible formatting characters."""
+    if isinstance(value, str):
+        return value.translate(INVISIBLE_TRANSLATION)
+    if isinstance(value, list):
+        return [strip_invisible_chars(item) for item in value]
+    if isinstance(value, dict):
+        return {key: strip_invisible_chars(item) for key, item in value.items()}
+    return value
+
 
 def load_data() -> dict[str, Any]:
     data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
@@ -46,7 +63,8 @@ def load_data() -> dict[str, Any]:
 
 
 def save_data(data: dict[str, Any]) -> None:
-    DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    cleaned = strip_invisible_chars(data)
+    DATA_FILE.write_text(json.dumps(cleaned, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def normalize_label(label: str) -> str:

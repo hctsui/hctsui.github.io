@@ -7,6 +7,7 @@ from typing import Any
 from translation_validation import normalize_translation_tags, validate_translation_data
 from heading_config import normalized_headings, validate_headings
 from category_config import migrate_category_data, validate_category_data, all_items
+from process_request import strip_invisible_chars
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
 def parse_body(body):
@@ -322,6 +323,6 @@ def main():
   elif op['op'] in ('reorder','translations','headings','layout'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
   else:act,eid=apply_content(data,h,op,hid,issue,n,rd)
   counts[act]+=1;ids.append(eid);existing[hid]=h['operations'][-1]
- normalize_groups(data);data=migrate_category_data(data);validate_category_data(data);validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);h=strip_invisible_chars(h);validate_category_data(data);validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
  summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','headings','layout') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
 if __name__=='__main__':main()

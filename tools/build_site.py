@@ -25,12 +25,12 @@ def load_data() -> dict[str, Any]:
 
 
 def esc(value: Any) -> str:
-    return html.escape(str(value or ""), quote=True)
+    return html.escape(str(core.strip_invisible_chars(str(value or ""))), quote=True)
 
 
 def rich_html(value: Any) -> str:
     """Small safe heading/item markup: [i]x[/i], [b]x[/b], and $x$."""
-    text = html.escape(str(value or ""), quote=False)
+    text = html.escape(str(core.strip_invisible_chars(str(value or ""))), quote=False)
     text = re.sub(r"\[i\](.+?)\[/i\]", r"<em>\1</em>", text, flags=re.I | re.S)
     text = re.sub(r"\[b\](.+?)\[/b\]", r"<strong>\1</strong>", text, flags=re.I | re.S)
     text = re.sub(r"\$([^$\n]+)\$", r"<em>\1</em>", text)
@@ -40,8 +40,8 @@ def rich_html(value: Any) -> str:
 def plain_value(entry: dict[str, Any], field: str, lang: str) -> str:
     value = entry.get(field)
     if isinstance(value, dict):
-        return str(value.get(lang) or value.get("en") or value.get("zh") or "")
-    return str(value or "")
+        return str(core.strip_invisible_chars(str(value.get(lang) or value.get("en") or value.get("zh") or "")))
+    return str(core.strip_invisible_chars(str(value or "")))
 
 
 def inline_value(entry: dict[str, Any], field: str, lang: str) -> str:

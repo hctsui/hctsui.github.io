@@ -34,12 +34,12 @@ def site_today(data: dict[str, Any], override: str | None = None) -> date:
 
 
 def latex_escape(value: Any) -> str:
-    text = html_lib.unescape(str(value or "")).replace("\u00a0", " ").replace("–", "--").replace("—", "---").replace("−", "-")
+    text = core.strip_invisible_chars(html_lib.unescape(str(value or ""))).replace("\u00a0", " ").replace("–", "--").replace("—", "---").replace("−", "-")
     return "".join(LATEX_ESCAPES.get(ch, ch) for ch in text)
 
 
 def latex_url(value: Any) -> str:
-    return str(value or "").strip().replace("%", r"\%").replace("#", r"\#").replace("&", r"\&")
+    return str(core.strip_invisible_chars(str(value or ""))).strip().replace("%", r"\%").replace("#", r"\#").replace("&", r"\&")
 
 
 def rich_to_latex(value: Any, *, author: bool = False, auto_math: bool = False) -> str:
@@ -48,7 +48,7 @@ def rich_to_latex(value: Any, *, author: bool = False, auto_math: bool = False) 
     Supported authoring forms: <em>x</em>, [i]x[/i], and $x$.
     This fixes category headings in the Chinese CV being escaped out of math mode.
     """
-    source = html_lib.unescape(str(value or "")).replace("<br>", " ").replace("<br/>", " ").replace("<br />", " ")
+    source = str(core.strip_invisible_chars(html_lib.unescape(str(value or "")))).replace("<br>", " ").replace("<br/>", " ").replace("<br />", " ")
     tokens: dict[str, str] = {}
 
     def token(content: str) -> str:
@@ -294,7 +294,7 @@ def build(lang: str, today: date) -> Path:
     text = template.read_text(encoding="utf-8")
     text = text.replace("__CV_SECTIONS__", build_sections(data, lang))
     text = text.replace("__CV_LAST_UPDATED__", f"{today.year}/{today.month}/{today.day}")
-    OUTPUTS[lang].write_text(text, encoding="utf-8")
+    OUTPUTS[lang].write_text(str(core.strip_invisible_chars(text)), encoding="utf-8")
     return OUTPUTS[lang]
 
 

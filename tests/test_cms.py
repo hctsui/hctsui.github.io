@@ -28,7 +28,7 @@ from process_batch_request import (  # noqa: E402
     parse_body,
     rebase_order,
 )
-from process_request import _compose_visit_description  # noqa: E402
+from process_request import _compose_visit_description, strip_invisible_chars  # noqa: E402
 from translation_validation import validate_translation_data  # noqa: E402
 
 
@@ -85,6 +85,14 @@ class TranslationValidationTests(unittest.TestCase):
 
 
 class PayloadAndVisitTests(unittest.TestCase):
+    def test_invisible_formatting_characters_are_removed(self) -> None:
+        dirty = {"title": {"en": "\u200bMeeting\u2060", "zh": "會議\ufeff"}, "items": ["soft\u00adhyphen"]}
+        self.assertEqual(
+            strip_invisible_chars(dirty),
+            {"title": {"en": "Meeting", "zh": "會議"}, "items": ["softhyphen"]},
+        )
+        self.assertNotIn("\u200b", rich_to_latex("\u200bThe Meeting"))
+
     def test_compressed_payload_is_decoded(self) -> None:
         payload = {"schema_version": 2, "operations": [{"op": "undo", "history_id": "x"}]}
         encoded = base64.b64encode(gzip.compress(json.dumps(payload).encode())).decode()
