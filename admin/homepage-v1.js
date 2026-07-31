@@ -1,3 +1,43 @@
+/* Admin shell bootstrap: this must execute before the compatibility layer below. */
+(function installAdminShellImmediately(){
+  const iconSvg='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSLntrLnq5nnrqHnkIYiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjEwIiB5MT0iNiIgeDI9IjU0IiB5Mj0iNTgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iI2E4NWE0NyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2MzMxMmQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSI1OCIgaGVpZ2h0PSI1OCIgcng9IjE2IiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxyZWN0IHg9IjEyIiB5PSIxMSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQyIiByeD0iMTEiIGZpbGw9IiNmZmZhZjYiLz4KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9IiM3ZjQwMzYiIHN0cm9rZS13aWR0aD0iMy4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiPgogICAgPHBhdGggZD0iTTIwIDIzaDI0Ii8+CiAgICA8cGF0aCBkPSJNMjAgMzJoMjQiLz4KICAgIDxwYXRoIGQ9Ik0yMCA0MWgyNCIvPgogIDwvZz4KICA8ZyBmaWxsPSIjN2Y0MDM2IiBzdHJva2U9IiNmZmZhZjYiIHN0cm9rZS13aWR0aD0iMiI+CiAgICA8Y2lyY2xlIGN4PSIyOCIgY3k9IjIzIiByPSI0Ii8+CiAgICA8Y2lyY2xlIGN4PSIzOSIgY3k9IjMyIiByPSI0Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNSIgY3k9IjQxIiByPSI0Ii8+CiAgPC9nPgo8L3N2Zz4K';
+  const iconFile='admin-icon-v13.svg?v=13';
+  function installHead(){
+    const head=document.head;
+    if(!head)return;
+    let icon=head.querySelector('link[data-admin-favicon]');
+    if(!icon){icon=document.createElement('link');icon.rel='icon';icon.type='image/svg+xml';icon.sizes='any';icon.dataset.adminFavicon='';head.prepend(icon)}
+    icon.href=iconSvg;
+    let shortcut=head.querySelector('link[data-admin-shortcut-icon]');
+    if(!shortcut){shortcut=document.createElement('link');shortcut.rel='shortcut icon';shortcut.type='image/svg+xml';shortcut.dataset.adminShortcutIcon='';head.append(shortcut)}
+    shortcut.href=iconSvg;
+    let theme=head.querySelector('meta[name="theme-color"]');
+    if(!theme){theme=document.createElement('meta');theme.name='theme-color';head.append(theme)}
+    theme.content='#8d493d';
+  }
+  function installBody(){
+    const heading=document.querySelector('main.wrap > h1, main.wrap h1');
+    if(heading&&!heading.closest('.admin-title-row')){
+      const row=document.createElement('div');row.className='admin-title-row';
+      const image=document.createElement('img');image.className='admin-brand-icon';image.src=iconFile;image.alt='';image.width=46;image.height=46;image.onerror=()=>{image.onerror=null;image.src=iconSvg};
+      heading.before(row);row.append(image,heading);
+    }
+    let actions=document.querySelector('.header-actions');
+    if(!actions){
+      const lead=document.querySelector('main.wrap .lead');
+      if(lead){actions=document.createElement('div');actions.className='header-actions';lead.after(actions)}
+    }
+    if(actions&&!actions.querySelector('[data-return-site]')){
+      const link=document.createElement('a');link.className='button';link.href='../index.html';link.dataset.returnSite='';link.textContent='返回網站';
+      const guide=[...actions.querySelectorAll('a')].find(a=>a.getAttribute('href')==='guide.html'||a.textContent.includes('完整使用手冊'));
+      guide?guide.after(link):actions.append(link);
+    }
+  }
+  installHead();
+  const install=()=>{installHead();installBody()};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+
 'use strict';
 
 /* Homepage selections, general-content style editor, and Admin compatibility
@@ -491,37 +531,6 @@ categoryFormHtml=function(category){
 };
 
 
-function installAdminIdentityRuntime(){
-  const iconHref='admin-icon.svg?v=12';
-  let icon=document.head.querySelector('link[data-admin-favicon]');
-  if(!icon){icon=document.createElement('link');icon.rel='icon';icon.type='image/svg+xml';icon.sizes='any';icon.dataset.adminFavicon='';document.head.append(icon)}
-  icon.href=iconHref;
-  let shortcut=document.head.querySelector('link[data-admin-shortcut-icon]');
-  if(!shortcut){shortcut=document.createElement('link');shortcut.rel='shortcut icon';shortcut.type='image/svg+xml';shortcut.dataset.adminShortcutIcon='';document.head.append(shortcut)}
-  shortcut.href=iconHref;
-  let theme=document.head.querySelector('meta[name="theme-color"]');
-  if(!theme){theme=document.createElement('meta');theme.name='theme-color';document.head.append(theme)}
-  theme.content='#8d493d';
-
-  const heading=document.querySelector('main.wrap > h1, main.wrap h1');
-  if(heading&&!heading.closest('.admin-title-row')){
-    const row=document.createElement('div');row.className='admin-title-row';
-    const image=document.createElement('img');image.className='admin-brand-icon';image.src=iconHref;image.alt='';image.width=46;image.height=46;
-    heading.before(row);row.append(image,heading);
-  }
-
-  let actions=document.querySelector('.header-actions');
-  if(!actions){
-    const lead=document.querySelector('main.wrap .lead');
-    if(lead){actions=document.createElement('div');actions.className='header-actions';lead.after(actions)}
-  }
-  if(actions&&!actions.querySelector('[data-return-site]')){
-    const link=document.createElement('a');link.className='button';link.href='../index.html';link.dataset.returnSite='';link.textContent='返回網站';
-    const guide=[...actions.querySelectorAll('a')].find(a=>a.getAttribute('href')==='guide.html'||a.textContent.includes('完整使用手冊'));
-    guide?guide.after(link):actions.append(link);
-  }
-}
-
 function installClearAllDraftHandler(){
   const button=$('#clearDraft');if(!button)return;
   button.onclick=()=>{if(!confirm('清空所有內容、排序、首頁精選與還原草稿？'))return;draft=[];clearHomepageDraft(false);initLayoutState();layoutDraft=clone(layoutBase);localStorage.removeItem(LAYOUT_DRAFT_KEY);localStorage.removeItem(GENERAL_LAYOUT_LINK_KEY);saveLocal()};
@@ -542,7 +551,6 @@ function installHomepageAndStyleCss(){const style=document.createElement('style'
 @media(max-width:700px){.layout-order-item{grid-template-columns:1fr}.layout-order-item-actions{justify-content:flex-end;overflow-x:auto;padding-bottom:2px}.move-category-select{min-width:170px}.activity-four-choices{grid-template-columns:1fr!important}.homepage-selected-row{align-items:flex-start;flex-direction:column}.homepage-selected-row .actions{width:100%}.homepage-choice{grid-template-columns:auto 1fr}.homepage-choice small{grid-column:2}.general-style-grid{grid-template-columns:1fr}.unified-preview-columns{grid-template-columns:1fr}.unified-preview-field,.unified-preview-move{grid-template-columns:1fr}.unified-preview-field>div,.unified-preview-move>div{grid-template-columns:1fr}.preview-arrow{transform:rotate(90deg);justify-self:start}}
 `;document.head.append(style)}
 installHomepageAndStyleCss();
-installAdminIdentityRuntime();
 configureAddTypeMenu();
 bindModernRecordControls();
 installClearAllDraftHandler();

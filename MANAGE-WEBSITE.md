@@ -132,19 +132,6 @@
 
 ## Admin 導覽與管理圖示
 
-Admin 頁首使用 `admin/admin-icon.svg` 作為分頁 favicon 與標題圖示。「開啟完整使用手冊」右側提供「返回網站」按鈕，可直接回到網站首頁。一般內容的顯示風格可直接點選卡片；六張卡片，卡片區仍可用左側箭頭收合。
+Admin 頁首使用專用管理圖示作為分頁 favicon 與標題圖示。「開啟完整使用手冊」右側提供「返回網站」按鈕，可直接回到網站首頁。一般內容的顯示風格可直接點選卡片；六張卡片，卡片區仍可用左側箭頭收合。
 
-### 更新包版本檢查
-
-執行 `python3 apply-update.py` 時，第一行應顯示 `更新腳本版本：v11`。若沒有出現，代表 repository 根目錄仍是舊的更新腳本，請重新覆蓋 `apply-update.py` 後再執行測試。
-
-
-## v12 直接套用方式
-
-這一版不再依賴 `apply-update.py` 才能看到效果。更新包直接包含：
-
-- `admin/homepage-v1.js`：頁面載入時建立 favicon、管理標題圖示與「返回網站」按鈕。
-- `admin/admin-icon.svg`：管理頁圖示；JavaScript 使用 `?v=12` 避免瀏覽器沿用舊快取。
-- `cv/Hung-Chun-Tsui-CV.template.tex` 與 `cv/Hung-Chun-Tsui-CV-zh.template.tex`：直接定義可見的淡色子標題橫線。
-
-把 ZIP 內容直接覆蓋到 repository 根目錄即可。CV 建置會由模板重新產生 TeX 與 PDF；不需要手動執行補丁腳本。
+目前 Admin 外框會在 `admin/homepage-v1.js` 載入時優先建立；即使後續管理功能發生錯誤，favicon、標題圖示與「返回網站」仍會先出現。
