@@ -232,7 +232,14 @@ body[data-page="cv"]{
 .social-links,
 .pub-links,
 .item-links{
+  display:flex;
+  flex-wrap:wrap;
   gap:.65rem;
+}
+.item-links{
+  margin-top:.8rem;
+  font-weight:700;
+  font-size:.92rem;
 }
 #latest-publications.is-loading{
   opacity:.55;
