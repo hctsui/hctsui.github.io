@@ -13,12 +13,12 @@ const DIRECT_CATEGORY_KINDS=new Set(['contact','interest','education','honor','p
 const GENERAL_CATEGORY_KINDS=new Set(['contact','interest','education','honor','personal','generic']);
 const GENERAL_FORMAT_ORDER=['generic','education','interest','contact','personal','honor'];
 const GENERAL_FORMAT_LABELS={
-  generic:'一般項目',
-  education:'學歷時間軸',
-  interest:'研究興趣清單',
-  contact:'聯絡卡片',
-  personal:'個人資訊列表',
-  honor:'榮譽時間軸'
+  generic:'標準時間軸',
+  education:'雙欄紀錄',
+  interest:'標題清單',
+  contact:'資訊卡片',
+  personal:'標籤列表',
+  honor:'精簡時間軸'
 };
 const ITEM_KIND={conference:'conference',talk:'talk',visit:'visit',organization:'organization',honor:'honor',publication:'publication',teaching:'teaching',interest:'interest',education:'education',generic:'generic',contact:'contact',personal:'personal'};
 let layoutBase=null,layoutDraft=null,layoutReady=false,layoutPreviewSuppressed=false,layoutManagerPageId='';
@@ -135,7 +135,7 @@ openEditor=function(type,record,options={}){
   const optionsBox=root.querySelector('.form-options');(optionsBox||root.firstChild)?.after(block);
   if(type==='generic'&&!record){
     const formatBlock=document.createElement('div');formatBlock.className='field general-format-field';
-    formatBlock.innerHTML=`<label>內容格式</label><select id="generalContentFormat"><option value="">請選擇內容格式…</option>${GENERAL_FORMAT_ORDER.map(kind=>`<option value="${esc(kind)}">${esc(GENERAL_FORMAT_LABELS[kind])}</option>`).join('')}</select><p class="field-hint">格式會決定網站排版；選擇後，「所屬類別」只顯示可安全使用的類別。</p>`;
+    formatBlock.innerHTML=`<label>顯示風格</label><select id="generalContentFormat"><option value="">請選擇顯示風格…</option>${GENERAL_FORMAT_ORDER.map(kind=>`<option value="${esc(kind)}">${esc(GENERAL_FORMAT_LABELS[kind])}</option>`).join('')}</select><p class="field-hint">風格只描述版面，不限制內容用途；選擇後，「所屬類別」只顯示相同風格的類別。</p>`;
     block.before(formatBlock);
     const formatSelect=formatBlock.querySelector('#generalContentFormat'),categorySelect=block.querySelector('#itemCategorySelector'),hint=block.querySelector('.field-hint'),saveButton=root.querySelector('#saveEditor');
     const updateGeneralCategories=()=>{
@@ -143,7 +143,7 @@ openEditor=function(type,record,options={}){
       categorySelect.innerHTML=choices.map(c=>`<option value="${esc(c.id)}">${esc(pageName(c.page_id))} → ${esc(categoryName(c))}</option>`).join('');
       categorySelect.disabled=!choices.length;
       if(saveButton)saveButton.disabled=!choices.length;
-      hint.textContent=!kind?'請先選擇內容格式。':choices.length?'項目會跟隨這個類別出現在對應頁面；之後可在「排序」移到相同格式的其他類別。':'目前沒有使用這種格式的類別，請先在「新增」建立類別。';
+      hint.textContent=!kind?'請先選擇顯示風格。':choices.length?'項目會跟隨這個類別出現在對應頁面；之後可在「排序」移到相同風格的其他類別。':'目前沒有使用這種風格的類別，請先在「新增」建立類別。';
     };
     formatSelect.onchange=updateGeneralCategories;
     updateGeneralCategories();
@@ -210,7 +210,7 @@ function categoryFormHtml(category){
   <div class="pair-grid"><div class="field"><label>左上小字（英文）</label><input data-category-field="label.en" value="${esc(c.label?.en||'')}"></div><div class="field"><label>左上小字（中文）</label><input data-category-field="label.zh" value="${esc(c.label?.zh||'')}"></div></div>
   <div class="pair-grid"><div class="field"><label>大標題（英文）</label><input data-category-field="title.en" value="${esc(c.title?.en||'')}"></div><div class="field"><label>大標題（中文）</label><input data-category-field="title.zh" value="${esc(c.title?.zh||'')}"></div></div>
   <div class="pair-grid"><div class="field"><label>簡介（英文，可留白）</label><textarea data-category-field="intro.en">${esc(c.intro?.en||'')}</textarea></div><div class="field"><label>簡介（中文，可留白）</label><textarea data-category-field="intro.zh">${esc(c.intro?.zh||'')}</textarea></div></div>
-  <div class="pair-grid"><div class="field"><label>所在頁面</label><select data-category-field="page_id">${pageOptions}</select></div><div class="field"><label>內容格式</label><select data-category-field="kind" ${category?'disabled':''}>${kindOptions}</select><p class="field-hint">${category?'內容格式決定欄位與網站排版，因此建立後固定；項目可在「排序」移到使用相同格式的其他類別。':'內容格式決定可填欄位與網站排版；相同格式的類別可在「排序」互相搬移項目。'}</p></div></div>
+  <div class="pair-grid"><div class="field"><label>所在頁面</label><select data-category-field="page_id">${pageOptions}</select></div><div class="field"><label>顯示風格</label><select data-category-field="kind" ${category?'disabled':''}>${kindOptions}</select><p class="field-hint">${category?'顯示風格決定網站與 PDF 的排版，因此建立後固定；項目可在「排序」移到使用相同風格的其他類別。':'顯示風格只描述版面，不限制內容用途；相同風格的類別可在「排序」互相搬移項目。'}</p></div></div>
   <div class="form-options"><label class="switch"><input type="checkbox" data-category-field="show_on_web" ${c.show_on_web!==false?'checked':''}>顯示於網站</label><label class="switch"><input type="checkbox" data-category-field="show_on_cv" ${c.show_on_cv?'checked':''}>顯示於 PDF 履歷</label></div>
   <div class="actions"><button class="button primary" data-save-layout-category="${esc(category?.id||'')}">${category?'儲存類別設定':'加入新增類別草稿'}</button>${category?`<button class="button danger" data-delete-layout-category="${esc(category.id)}">刪除類別</button>`:''}</div>`;
 }
@@ -295,7 +295,7 @@ function layoutManagerClick(event){const button=event.target.closest('button');i
 
 function setupUnifiedOrderUI(){
   const tab=$('#orderTab');if(!tab)return;
-  tab.innerHTML=`<div class="toolbar"><div class="field"><label>選擇頁面</label><select id="layoutOrderPage"></select></div><button class="button" id="reloadLayoutOrder">依目前草稿重載</button></div><p class="field-hint">同一頁面的類別與項目會一起顯示。移動類別時，其下所有項目會跟著移動；每個項目的「移到其他類別」只會列出內容格式相同、可安全接收的類別，例如預印本與期刊論文。</p><div id="layoutOrderEditor" class="scroll"></div><details class="order-homepage-panel"><summary><strong>首頁精選與近期活動</strong></summary><div id="homepageManager"></div></details>`;
+  tab.innerHTML=`<div class="toolbar"><div class="field"><label>選擇頁面</label><select id="layoutOrderPage"></select></div><button class="button" id="reloadLayoutOrder">依目前草稿重載</button></div><p class="field-hint">同一頁面的類別與項目會一起顯示。移動類別時，其下所有項目會跟著移動；每個項目的「移到其他類別」只會列出顯示風格相同、可安全接收的類別，例如預印本與期刊論文。</p><div id="layoutOrderEditor" class="scroll"></div><details class="order-homepage-panel"><summary><strong>首頁精選與近期活動</strong></summary><div id="homepageManager"></div></details>`;
   const selector=tab.querySelector('#layoutOrderPage');selector.onchange=renderUnifiedOrder;tab.querySelector('#reloadLayoutOrder').onclick=()=>{syncLayoutAssignments();renderUnifiedOrder();flash('已依目前草稿重新整理')};tab.querySelector('#layoutOrderEditor').onclick=unifiedOrderClick;tab.querySelector('#layoutOrderEditor').onchange=unifiedOrderChange;
   fillOrderPageSelector();renderUnifiedOrder();
 }
