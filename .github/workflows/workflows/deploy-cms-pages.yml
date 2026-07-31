@@ -1,0 +1,181 @@
+name: Deploy cms website
+
+on:
+  push:
+    branches: [cms]
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: hctsui-pages-deploy
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out cms branch
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository }}
+          ref: refs/heads/cms
+          fetch-depth: 0
+          clean: true
+
+      - name: Confirm checked-out repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "repository=$GITHUB_REPOSITORY"
+          echo "workspace=$GITHUB_WORKSPACE"
+          pwd
+          git rev-parse --show-toplevel
+          git rev-parse --abbrev-ref HEAD
+          git rev-parse HEAD
+          test -d content
+          ls -la content
+
+      - name: Verify website and CV automation files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f content/site.json
+          test -f content/translations.json
+          test -f content/people.json
+          test -f content/arxiv-suggestions.json
+          test -f content/notifications.json
+          test -f content/media.json
+          test -f content/search-index.json
+          test -f tools/notification_store.py
+          test -f tools/process_request.py
+          test -f tools/process_batch_request.py
+          test -f tools/build_site.py
+          test -f tools/people_config.py
+          test -f tools/markup_config.py
+          test -f tools/build_cv.py
+          test -f tools/render_grouped_sections.py
+          test -f tools/update_cv_links.py
+          test -f tools/validate_translations.py
+          test -f tools/validate_site.py
+          test -f tools/site_settings_config.py
+          test -f tools/arxiv_suggestions.py
+          test -f tools/check_arxiv.py
+          test -f tools/check_publication_status.py
+          test -f tools/check_links.py
+          test -f tools/cleanup_notifications.py
+          test -f tools/ingest_contact.py
+          test -f tools/build_media_manifest.py
+          test -f tools/build_search_index.py
+          test -f cv/Hung-Chun-Tsui-CV.template.tex
+          test -f cv/Hung-Chun-Tsui-CV-zh.template.tex
+          test -f admin/homepage.js
+          test -f admin/people.js
+          test -f admin/notifications.js
+          test -f admin/media.js
+          test -f admin/site-settings.js
+          test -f admin/layout.js
+          test -f admin/tags.js
+          test -f admin/admin-icon.svg
+          test -f assets/script.js
+          test -f assets/style.css
+          test -f assets/images/photo.jpg
+          test -f assets/images/favicon.svg
+          test -f 404.html
+          test -f contact.html
+          test -f zh/contact.html
+
+      - name: Rebuild website and both LaTeX CVs
+        run: |
+          python3 -m unittest discover -s tests
+          python3 tools/build_site.py
+          python3 tools/build_media_manifest.py
+          python3 tools/build_search_index.py
+          python3 tools/build_cv.py
+          python3 tools/render_grouped_sections.py
+          python3 tools/update_cv_links.py
+          python3 tools/validate_translations.py
+          python3 tools/validate_site.py
+          test -s cv/Hung-Chun-Tsui-CV.tex
+          test -s cv/Hung-Chun-Tsui-CV-zh.tex
+
+      - name: Compile English PDF CV
+        uses: xu-cheng/latex-action@v4
+        with:
+          working_directory: cv
+          root_file: Hung-Chun-Tsui-CV.tex
+          texlive_version: 2025
+          os: debian
+
+      - name: Compile Chinese PDF CV
+        uses: xu-cheng/latex-action@v4
+        with:
+          working_directory: cv
+          root_file: Hung-Chun-Tsui-CV-zh.tex
+          latexmk_use_xelatex: true
+          extra_system_packages: "fonts-noto-cjk"
+          texlive_version: 2025
+          os: debian
+
+      - name: Stage both PDFs for the website
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          find_pdf() {
+            local target="$1"
+            shift
+            local candidate
+            for candidate in "$@"; do
+              if [ -s "$candidate" ]; then
+                mkdir -p files
+                cp "$candidate" "files/$target"
+                test -s "files/$target"
+                echo "Staged $target from $candidate"
+                return 0
+              fi
+            done
+            echo "::error::Could not find generated PDF for $target"
+            find . -maxdepth 3 -type f \( -name '*.pdf' -o -name '*.log' \) -print
+            return 1
+          }
+
+          find_pdf "Hung-Chun-Tsui-CV.pdf" \
+            "cv/Hung-Chun-Tsui-CV.pdf" \
+            "Hung-Chun-Tsui-CV.pdf"
+
+          find_pdf "Hung-Chun-Tsui-CV-zh.pdf" \
+            "cv/Hung-Chun-Tsui-CV-zh.pdf" \
+            "Hung-Chun-Tsui-CV-zh.pdf"
+
+          ls -lh files/Hung-Chun-Tsui-CV*.pdf
+
+      - name: Prepare public website
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp index.html cv.html publications.html activities.html teaching.html contact.html 404.html photo.jpg _site/
+          cp -R assets zh admin content files _site/
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v5
