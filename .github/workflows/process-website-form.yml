@@ -75,8 +75,7 @@ jobs:
 
             git add content/site.json CONTENT-CATALOG.md \
               cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
-              index.html cv.html publications.html activities.html teaching.html \
-              zh/index.html zh/cv.html zh/publications.html zh/activities.html zh/teaching.html \
+              '*.html' 'zh/*.html' \
               .github/ISSUE_TEMPLATE/add-conference.yml \
               .github/ISSUE_TEMPLATE/add-talk.yml \
               .github/ISSUE_TEMPLATE/add-visit.yml \

@@ -13,11 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from build_cv import build_sections, render_education, render_publication, rich_to_latex  # noqa: E402
-from build_site import render_activity, render_category, render_home_sections  # noqa: E402
+from build_site import render_activity, render_category, render_home_sections, render_teaching  # noqa: E402
 from category_config import (  # noqa: E402
     all_items,
     categories_for_page,
     migrate_category_data,
+    normalized_pages,
     validate_category_data,
 )
 from process_batch_request import (  # noqa: E402
@@ -184,6 +185,47 @@ class CategoryArchitectureTests(unittest.TestCase):
         validate_category_data(data)
         self.assertIn("cv-research", [c["id"] for c in categories_for_page(data, "activities")])
         self.assertTrue(all(item["category_id"] == "cv-research" for item in data["profile_items"] if item["type"] == "interest"))
+
+    def test_custom_page_color_and_paths_are_preserved(self) -> None:
+        data = minimal_site()
+        data["settings"]["pages"].append(
+            {
+                "id": "algebra-i",
+                "name": {"en": "Algebra I", "zh": "代數（一）"},
+                "path": {"en": "ignored.html", "zh": "ignored-zh.html"},
+                "header": {
+                    "label": {"en": "Course", "zh": "課程"},
+                    "title": {"en": "Algebra I", "zh": "代數（一）"},
+                    "intro": {"en": "Course information", "zh": "課程資訊"},
+                },
+                "color": "#123456",
+                "order": 5,
+            }
+        )
+        pages = {page["id"]: page for page in normalized_pages(data)}
+        self.assertEqual(pages["algebra-i"]["path"], {"en": "algebra-i.html", "zh": "zh/algebra-i.html"})
+        self.assertEqual(pages["algebra-i"]["color"], "#123456")
+        validate_category_data(data)
+
+    def test_teaching_optional_page_and_notes_render_as_buttons(self) -> None:
+        data = minimal_site()
+        entry = {
+            "id": "teaching-example",
+            "type": "teaching",
+            "term": {"en": "Fall 2026", "zh": "2026 秋"},
+            "course": {"en": "MATH 101 Algebra", "zh": "MATH 101 代數"},
+            "role": {"en": "Lecturer", "zh": "講師"},
+            "course_page_id": "cv",
+            "lecture_notes_title": {"en": "Lecture Notes", "zh": "講義"},
+            "lecture_notes_url": "https://example.com/notes.pdf",
+        }
+        rendered_en = render_teaching(data, entry, "en")
+        rendered_zh = render_teaching(data, entry, "zh")
+        self.assertIn('<div class="item-links">', rendered_en)
+        self.assertIn('href="cv.html">Course Information</a>', rendered_en)
+        self.assertIn('href="cv.html">課程資訊</a>', rendered_zh)
+        self.assertIn(">Lecture Notes</a>", rendered_en)
+        self.assertIn(">講義</a>", rendered_zh)
 
     def test_conference_and_organization_are_independent(self) -> None:
         data = minimal_site()
@@ -383,7 +425,7 @@ class AdminDocumentationTests(unittest.TestCase):
         admin = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
         guide = (ROOT / "admin" / "guide.html").read_text(encoding="utf-8")
         self.assertIn('href="guide.html"', admin)
-        for heading in ("標準工作流程", "欄位、小標註與自動填寫", "排序、頁面與類別", "垃圾桶與還原", "疑難排解", "送出前完整檢查"):
+        for heading in ("標準工作流程", "欄位、小標註與自動填寫", "排序、頁面與類別", "10. 還原", "疑難排解", "送出前完整檢查"):
             self.assertIn(heading, guide)
 
     def test_required_translation_terms_are_canonical(self) -> None:
@@ -458,6 +500,51 @@ class BatchOperationTests(unittest.TestCase):
         moved = next(c for c in data["settings"]["categories"] if c["id"] == "cv-research")
         self.assertEqual(moved["page_id"], "activities")
 
+    def test_layout_operation_adds_custom_page_and_category(self) -> None:
+        data = minimal_site()
+        before = layout_bundle(data)
+        after = copy.deepcopy(before)
+        after["pages"].append(
+            {
+                "id": "algebra-i",
+                "name": {"en": "Algebra I", "zh": "代數（一）"},
+                "path": {"en": "algebra-i.html", "zh": "zh/algebra-i.html"},
+                "header": {
+                    "label": {"en": "Course", "zh": "課程"},
+                    "title": {"en": "Algebra I", "zh": "代數（一）"},
+                    "intro": {"en": "", "zh": ""},
+                },
+                "color": "#123456",
+                "order": len(after["pages"]),
+            }
+        )
+        after["categories"].append(
+            {
+                "id": "algebra-i-materials",
+                "page_id": "algebra-i",
+                "kind": "generic",
+                "label": {"en": "Materials", "zh": "教材"},
+                "title": {"en": "Course Materials", "zh": "課程教材"},
+                "intro": {"en": "", "zh": ""},
+                "order": 0,
+                "show_on_web": True,
+                "show_on_cv": False,
+            }
+        )
+        action, entry_id = apply_special(
+            data,
+            {"schema_version": 2, "tags": [], "pairs": []},
+            empty_history(),
+            {"op": "layout", "before": before, "after": after},
+            "issue-1-op-1",
+            1,
+            datetime.now(timezone.utc),
+            "digest",
+        )
+        self.assertEqual((action, entry_id), ("layout", "layout"))
+        self.assertIn("algebra-i", {page["id"] for page in normalized_pages(data)})
+        self.assertIn("algebra-i-materials", {category["id"] for category in data["settings"]["categories"]})
+
     def test_add_id_collision_is_rejected(self) -> None:
         data = minimal_site()
         data["activities"].append({"id": "talk-1", "type": "talk", "category_id": "activity-talks", "order": 0, "title": {"en": "Existing", "zh": ""}})
@@ -483,8 +570,11 @@ class AdminCompatibilityTests(unittest.TestCase):
 
     def test_legacy_admin_tools_remain_available(self) -> None:
         page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
-        for tab in ("catalog", "add", "draft", "order", "trash", "dictionary", "headings", "homepage"):
+        for tab in ("catalog", "add", "order", "trash", "homepage", "dictionary", "draft"):
             self.assertIn(f'data-tab="{tab}"', page)
+        self.assertNotIn('data-tab="headings"', page)
+        self.assertIn('const ADD_TYPES = [', page)
+        self.assertIn('"page",\n        "category",\n        "publication"', page)
         for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
             self.assertIn(f'"{item_type}"', page)
         self.assertIn('<script src="tags-v1.js"></script>', page)

@@ -5,11 +5,12 @@
 const LAYOUT_DRAFT_KEY='hctsui-layout-draft-v3';
 const CATEGORY_KIND_LABELS={
   featured_publications:'首頁精選論文',upcoming:'首頁近期活動',contact:'聯絡資訊',
-  interest:'研究興趣',education:'學歷',honor:'獎項／榮譽',publication:'論文／作品',
-  visit:'學術訪問',talk:'學術報告',organization:'學術活動籌辦',conference:'會議／工作坊',
-  teaching:'教學',personal:'個人資訊',generic:'一般項目'
+  interest:'一般內容',education:'一般內容',honor:'榮譽',publication:'作品',
+  visit:'學術訪問',talk:'學術報告',organization:'學術活動',conference:'學術會議',
+  teaching:'教學',personal:'一般內容',generic:'一般內容'
 };
 const DIRECT_CATEGORY_KINDS=new Set(['contact','interest','education','honor','publication','visit','talk','organization','conference','teaching','personal','generic']);
+const GENERAL_CATEGORY_KINDS=new Set(['contact','interest','education','personal','generic']);
 const ITEM_KIND={conference:'conference',talk:'talk',visit:'visit',organization:'organization',honor:'honor',publication:'publication',teaching:'teaching',interest:'interest',education:'education',generic:'generic',contact:'contact',personal:'personal'};
 let layoutBase=null,layoutDraft=null,layoutNotice='',layoutReady=false,layoutPreviewSuppressed=false,layoutManagerPageId='';
 
@@ -26,8 +27,9 @@ function layoutBundle(data){
 }
 function normalizeLayoutBundle(bundle){
   const result={pages:clone(bundle?.pages||[]),categories:clone(bundle?.categories||[]),cv_category_order:clone(bundle?.cv_category_order||[]),assignments:clone(bundle?.assignments||{})};
+  const defaultPageColors={home:'#a34f3b',cv:'#8b5a2b',publications:'#315f9b',activities:'#176b52',teaching:'#b14b86'};
   result.pages.sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0)||String(a.id).localeCompare(String(b.id)));
-  result.pages.forEach((p,i)=>{p.order=i;p.name=layoutPair(p.name);if(p.header){p.header={label:layoutPair(p.header.label),title:layoutPair(p.header.title),intro:layoutPair(p.header.intro)}}});
+  result.pages.forEach((p,i)=>{p.order=i;p.name=layoutPair(p.name);p.path=layoutPair(p.path);p.color=/^#[0-9a-f]{6}$/i.test(String(p.color||''))?String(p.color).toLowerCase():(defaultPageColors[p.id]||'#8b3d2e');if(p.header){p.header={label:layoutPair(p.header.label),title:layoutPair(p.header.title),intro:layoutPair(p.header.intro)}}});
   const pageRank=new Map(result.pages.map((p,i)=>[p.id,i]));
   result.categories.sort((a,b)=>(pageRank.get(a.page_id)??999)-(pageRank.get(b.page_id)??999)||(Number(a.order)||0)-(Number(b.order)||0)||String(a.id).localeCompare(String(b.id)));
   const counters={};
@@ -89,6 +91,7 @@ function applyLayoutToData(data,bundle){
 }
 function defaultCategoryForType(type){initLayoutState();return layoutDraft.categories.find(c=>c.kind===ITEM_KIND[type])?.id||''}
 function categoriesForType(type){initLayoutState();const kind=ITEM_KIND[type];return layoutDraft.categories.filter(c=>c.kind===kind).sort(categorySort)}
+function categoriesForEditor(type,record){initLayoutState();if(type==='generic'&&!record)return layoutDraft.categories.filter(c=>GENERAL_CATEGORY_KINDS.has(c.kind)).sort(categorySort);return categoriesForType(type)}
 function pageName(id){initLayoutState();const p=layoutDraft.pages.find(x=>x.id===id);return p?.name?.zh||p?.name?.en||id}
 function categoryName(category){return category?.title?.zh||category?.title?.en||category?.id||'未命名類別'}
 function categorySort(a,b){const pages=new Map(layoutDraft.pages.map((p,i)=>[p.id,i]));return(pages.get(a.page_id)??999)-(pages.get(b.page_id)??999)||(Number(a.order)||0)-(Number(b.order)||0)||String(a.id).localeCompare(String(b.id))}
@@ -112,16 +115,86 @@ payload=function(){const result=basePayload();if(!layoutPreviewSuppressed&&layou
 
 const baseOpenEditor=openEditor;
 openEditor=function(type,record,options={}){
+  if(type==='page'||type==='category'){openLayoutEditor(type,record);return}
   baseOpenEditor(type,record,options);initLayoutState();
   const root=currentEditor?.root;if(!root)return;
-  const cats=categoriesForType(type);
+  const cats=categoriesForEditor(type,record);
   const selected=record?.category_id||options?.draftOp?.after?.category_id||cats[0]?.id||'';
   const block=document.createElement('div');block.className='field category-selector-field';
   block.innerHTML=`<label>所屬類別</label><select data-path="category_id" id="itemCategorySelector">${cats.map(c=>`<option value="${esc(c.id)}" ${c.id===selected?'selected':''}>${esc(pageName(c.page_id))} → ${esc(categoryName(c))}</option>`).join('')}</select><p class="field-hint">項目會跟隨這個類別出現在對應頁面；移動類別時，所有項目會一起移動。</p>`;
   const optionsBox=root.querySelector('.form-options');(optionsBox||root.firstChild)?.after(block);
   for(const id of ['publicationGroup','publicationCustom','teachingGroup','teachingCustom'])root.querySelector('#'+id)?.closest('.field,div')?.classList.add('legacy-category-hidden');
-  if(!cats.length){block.innerHTML='<div class="notice error">目前沒有可容納這種項目的類別。請先到「頁面與類別」新增類別。</div>';root.querySelector('#saveEditor').disabled=true}
+  if(type==='teaching'){
+    const pages=layoutDraft.pages.filter(p=>p.id!=='home');
+    const linkBlock=document.createElement('div');linkBlock.className='field';
+    linkBlock.innerHTML=`<label>課程資訊頁面（選填）</label><select data-path="course_page_id"><option value="">無，維持目前顯示</option>${pages.map(p=>`<option value="${esc(p.id)}" ${p.id===String(record?.course_page_id||'')?'selected':''}>${esc(pageName(p.id))}</option>`).join('')}</select><p class="field-hint">選擇後，網站教學項目旁會出現「課程資訊」按鈕並連到該頁面。</p>`;
+    block.after(linkBlock);
+  }
+  if(!cats.length){block.innerHTML='<div class="notice error">目前沒有可容納這種項目的類別。請先在「新增」選擇「類別」。</div>';root.querySelector('#saveEditor').disabled=true}
 };
+
+const baseCollectEditor=collectEditor;
+collectEditor=function(type,base){
+  const result=baseCollectEditor(type,base);
+  if(type==='generic'&&!base){
+    const category=layoutDraft.categories.find(c=>c.id===result.o.category_id);
+    if(category&&GENERAL_CATEGORY_KINDS.has(category.kind))result.o.type=category.kind;
+  }
+  return result;
+};
+
+function pageFormHtml(page){
+  const p=page||{name:{en:'',zh:''},header:{label:{en:'',zh:''},title:{en:'',zh:''},intro:{en:'',zh:''}},color:'#8b3d2e'};
+  const editing=!!page;
+  return `<h3>${editing?'編輯':'新增'}頁面</h3><div class="notice">新頁面會使用與現有內頁相同的頁首、類別與雙語版型；網址由英文名稱自動產生。</div>
+  <div class="pair-grid"><div class="field"><label>導覽名稱（英文）</label><input data-page-field="name.en" value="${esc(p.name?.en||'')}"></div><div class="field"><label>導覽名稱（中文）</label><input data-page-field="name.zh" value="${esc(p.name?.zh||'')}"></div></div>
+  <div class="pair-grid"><div class="field"><label>左上小字（英文）</label><input data-page-field="header.label.en" value="${esc(p.header?.label?.en||'')}"></div><div class="field"><label>左上小字（中文）</label><input data-page-field="header.label.zh" value="${esc(p.header?.label?.zh||'')}"></div></div>
+  <div class="pair-grid"><div class="field"><label>頁面標題（英文）</label><input data-page-field="header.title.en" value="${esc(p.header?.title?.en||'')}"></div><div class="field"><label>頁面標題（中文）</label><input data-page-field="header.title.zh" value="${esc(p.header?.title?.zh||'')}"></div></div>
+  <div class="pair-grid"><div class="field"><label>簡介（英文，可留白）</label><textarea data-page-field="header.intro.en">${esc(p.header?.intro?.en||'')}</textarea></div><div class="field"><label>簡介（中文，可留白）</label><textarea data-page-field="header.intro.zh">${esc(p.header?.intro?.zh||'')}</textarea></div></div>
+  <div class="field"><label>頁面主色</label><input type="color" data-page-field="color" value="${esc(p.color||'#8b3d2e')}"><p class="field-hint">頁首、按鈕與重點色會依這個顏色自動產生一致色階。</p></div>
+  ${editing?`<div class="field"><label>網址</label><div class="preview-value">${esc(p.path?.en||'')} ／ ${esc(p.path?.zh||'')}</div></div>`:''}
+  <div class="actions"><button class="button primary" data-save-layout-page="${esc(page?.id||'')}">${editing?'儲存頁面設定':'加入新增頁面草稿'}</button></div>`;
+}
+function categoryFormHtml(category){
+  const c=category||{label:{en:'',zh:''},title:{en:'',zh:''},intro:{en:'',zh:''},page_id:layoutDraft.pages.find(p=>p.id!=='home')?.id||'home',kind:'generic',show_on_web:true,show_on_cv:false};
+  const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}" ${p.id===c.page_id?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
+  const kindOrder=['publication','conference','talk','visit','organization','teaching','honor','generic','education','interest','contact','personal'];
+  const formatLabels={generic:'一般內容',education:'一般內容－學歷格式',interest:'一般內容－研究興趣格式',contact:'一般內容－聯絡資訊格式',personal:'一般內容－個人資訊格式'};
+  const kindOptions=kindOrder.map(id=>`<option value="${id}" ${id===c.kind?'selected':''}>${esc(formatLabels[id]||CATEGORY_KIND_LABELS[id])}</option>`).join('');
+  return `<h3>${category?'編輯':'新增'}類別</h3><div class="notice">類別是頁面中的一個大區塊。左上小字、大標題與簡介都可分別填寫中英文。</div>
+  <div class="pair-grid"><div class="field"><label>左上小字（英文）</label><input data-category-field="label.en" value="${esc(c.label?.en||'')}"></div><div class="field"><label>左上小字（中文）</label><input data-category-field="label.zh" value="${esc(c.label?.zh||'')}"></div></div>
+  <div class="pair-grid"><div class="field"><label>大標題（英文）</label><input data-category-field="title.en" value="${esc(c.title?.en||'')}"></div><div class="field"><label>大標題（中文）</label><input data-category-field="title.zh" value="${esc(c.title?.zh||'')}"></div></div>
+  <div class="pair-grid"><div class="field"><label>簡介（英文，可留白）</label><textarea data-category-field="intro.en">${esc(c.intro?.en||'')}</textarea></div><div class="field"><label>簡介（中文，可留白）</label><textarea data-category-field="intro.zh">${esc(c.intro?.zh||'')}</textarea></div></div>
+  <div class="pair-grid"><div class="field"><label>所在頁面</label><select data-category-field="page_id">${pageOptions}</select></div><div class="field"><label>內容格式</label><select data-category-field="kind" ${category?'disabled':''}>${kindOptions}</select><p class="field-hint">${category?'已有項目的類別不能直接改格式；需要時請新增類別後移動項目。':'一般內容的細分類只用來維持舊資料相容性。'}</p></div></div>
+  <div class="form-options"><label class="switch"><input type="checkbox" data-category-field="show_on_web" ${c.show_on_web!==false?'checked':''}>顯示於網站</label><label class="switch"><input type="checkbox" data-category-field="show_on_cv" ${c.show_on_cv?'checked':''}>顯示於 PDF 履歷</label></div>
+  <div class="actions"><button class="button primary" data-save-layout-category="${esc(category?.id||'')}">${category?'儲存類別設定':'加入新增類別草稿'}</button>${category?`<button class="button danger" data-delete-layout-category="${esc(category.id)}">刪除類別</button>`:''}</div>`;
+}
+function openLayoutEditor(type,record){
+  initLayoutState();const box=document.createElement('div');
+  box.innerHTML=type==='page'?pageFormHtml(record?layoutDraft.pages.find(p=>p.id===record._layout_id):null):categoryFormHtml(record?layoutDraft.categories.find(c=>c.id===record._layout_id):null);
+  $('#addEditor').replaceChildren(box);currentEditor={type,record,root:box};
+  box.onclick=event=>{
+    const button=event.target.closest('button');if(!button)return;
+    if(button.hasAttribute('data-save-layout-page'))saveLayoutPage(button.dataset.saveLayoutPage,box);
+    else if(button.hasAttribute('data-save-layout-category'))saveLayoutCategory(button.dataset.saveLayoutCategory,box);
+    else if(button.dataset.deleteLayoutCategory)deleteCategory(button.dataset.deleteLayoutCategory);
+  };
+}
+function saveLayoutPage(id,root){
+  const value=readNestedFields(root,'data-page-field'),required=[value.name?.en,value.name?.zh,value.header?.label?.en,value.header?.label?.zh,value.header?.title?.en,value.header?.title?.zh];
+  if(required.some(v=>!String(v||'').trim()))return flash('導覽名稱、左上小字與頁面標題的中英文都不能留白');
+  if(id){const page=layoutDraft.pages.find(p=>p.id===id);if(!page)return;page.name=layoutPair(value.name);page.header={label:layoutPair(value.header.label),title:layoutPair(value.header.title),intro:layoutPair(value.header.intro)};page.color=value.color;saveLayoutDraft('已儲存頁面設定');return}
+  const pageId=uniquePageId(value.name.en),page={id:pageId,name:layoutPair(value.name),path:{en:`${pageId}.html`,zh:`zh/${pageId}.html`},header:{label:layoutPair(value.header.label),title:layoutPair(value.header.title),intro:layoutPair(value.header.intro)},color:value.color,order:layoutDraft.pages.length};
+  layoutDraft.pages.push(page);saveLayoutDraft('已加入新增頁面草稿');openLayoutEditor('page',{_layout_id:pageId});renderRecords();
+}
+function uniquePageId(seed){let id=slug(seed||'page'),base=id,n=2,used=new Set(layoutDraft.pages.map(p=>p.id));while(used.has(id))id=`${base}-${n++}`;return id}
+function saveLayoutCategory(id,root){
+  const value=readNestedFields(root,'data-category-field'),required=[value.label?.en,value.label?.zh,value.title?.en,value.title?.zh];
+  if(required.some(v=>!String(v||'').trim()))return flash('左上小字與大標題的中英文都不能留白');
+  if(id){setCategoryFromEditor(id,root);renderRecords();return}
+  const categoryId=uniqueCategoryId(value.title.en),same=layoutDraft.categories.filter(c=>c.page_id===value.page_id),category={id:categoryId,page_id:value.page_id,kind:value.kind||'generic',label:layoutPair(value.label),title:layoutPair(value.title),intro:layoutPair(value.intro),order:same.length,show_on_web:value.show_on_web!==false,show_on_cv:!!value.show_on_cv};
+  layoutDraft.categories.push(category);if(category.show_on_cv)layoutDraft.cv_category_order.push(categoryId);saveLayoutDraft('已加入新增類別草稿');openLayoutEditor('category',{_layout_id:categoryId});renderRecords();
+}
 
 function categoryEditorHtml(category){
   const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}" ${p.id===category.page_id?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
@@ -196,7 +269,7 @@ function moveCategory(id,delta){const page=$('#layoutOrderPage').value;if(page==
 function moveItem(id,delta){const state=layoutDraft.assignments[id];if(!state)return;const ids=categoryItemIds(state.category_id),i=ids.indexOf(id);if(!moveInArray(ids,i,delta))return;ids.forEach((iid,n)=>layoutDraft.assignments[iid].order=n);saveLayoutDraft('已調整項目順序')}
 function recordSortValue(item){return String(item?.start_date||item?.date||item?.year||item?.term?.en||item?.term?.zh||'')}
 function sortCategory(id,mode){const map=new Map(layoutItems(effectiveSite()).map(x=>[String(x.id),x])),ids=categoryItemIds(id);ids.sort((a,b)=>{const x=map.get(a),y=map.get(b);if(mode==='title')return itemName(x).localeCompare(itemName(y),'zh-Hant');const result=recordSortValue(x).localeCompare(recordSortValue(y));return(mode==='newest'?-result:result)||itemName(x).localeCompare(itemName(y),'zh-Hant')});ids.forEach((iid,n)=>layoutDraft.assignments[iid].order=n);saveLayoutDraft('已套用類別內快速排序')}
-function unifiedOrderClick(event){const button=event.target.closest('button');if(!button)return;if(button.dataset.categoryUp)moveCategory(button.dataset.categoryUp,-1);else if(button.dataset.categoryDown)moveCategory(button.dataset.categoryDown,1);else if(button.dataset.itemUp)moveItem(button.dataset.itemUp,-1);else if(button.dataset.itemDown)moveItem(button.dataset.itemDown,1);else if(button.dataset.sortCategory)sortCategory(button.dataset.sortCategory,button.dataset.sortMode);else if(button.dataset.editCategoryJump){const category=layoutDraft.categories.find(c=>c.id===button.dataset.editCategoryJump);if(category)layoutManagerPageId=category.page_id;renderLayoutManager();switchTab('headings');setTimeout(()=>document.querySelector(`[data-category-editor="${CSS.escape(button.dataset.editCategoryJump)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),50)}}
+function unifiedOrderClick(event){const button=event.target.closest('button');if(!button)return;if(button.dataset.categoryUp)moveCategory(button.dataset.categoryUp,-1);else if(button.dataset.categoryDown)moveCategory(button.dataset.categoryDown,1);else if(button.dataset.itemUp)moveItem(button.dataset.itemUp,-1);else if(button.dataset.itemDown)moveItem(button.dataset.itemDown,1);else if(button.dataset.sortCategory)sortCategory(button.dataset.sortCategory,button.dataset.sortMode);else if(button.dataset.editCategoryJump){const category=layoutDraft.categories.find(c=>c.id===button.dataset.editCategoryJump);if(category){openLayoutEditor('category',{_layout_id:category.id});switchTab('add')}}}
 function unifiedOrderChange(event){const select=event.target.closest('[data-move-item]');if(!select||!select.value)return;const id=select.dataset.moveItem,target=select.value,state=layoutDraft.assignments[id];if(!state)return;state.category_id=target;state.order=categoryItemIds(target).length;saveLayoutDraft('已將項目移到另一類別')}
 
 function layoutDiffSummary(before,after){
@@ -218,19 +291,46 @@ function layoutPosition(bundle,state){if(!state)return'不存在';const c=bundle
 
 
 const baseSortedRecords=sortedRecords;
+function layoutCatalogRecords(){
+  if(!layoutDraft)return[];
+  return[
+    ...layoutDraft.pages.filter(p=>p.id!=='home').map(p=>({id:`page:${p.id}`,type:'page',_layout_kind:'page',_layout_id:p.id,title:clone(p.name),category_id:'',order:p.order})),
+    ...layoutDraft.categories.map(c=>({id:`category:${c.id}`,type:'category',_layout_kind:'category',_layout_id:c.id,title:clone(c.title),category_id:c.id,order:c.order,page_id:c.page_id}))
+  ];
+}
+function adminFilterMatches(item,filter){
+  if(!filter)return true;
+  if(filter==='generic')return GENERAL_CATEGORY_KINDS.has(item.type);
+  return item.type===filter;
+}
+function findAdminRecord(id){return layoutCatalogRecords().find(x=>x.id===id)}
+function deleteAdminRecord(record){if(record?._layout_kind==='category')deleteCategory(record._layout_id);else flash('頁面目前只能編輯；要移除頁面，請先移除其中所有類別。')}
 sortedRecords=function(){
-  if(!site||$('#viewSort').value!=='manual')return baseSortedRecords();
+  if(!site)return baseSortedRecords();
   const data=effectiveSite(),query=norm($('#search').value),filter=$('#filter').value;
+  const items=[...allRecords(data),...layoutCatalogRecords()].filter(item=>adminFilterMatches(item,filter)&&(!query||norm(JSON.stringify(item)).includes(query)));
+  const sort=$('#viewSort').value;
+  if(sort==='newest')return items.sort((a,b)=>recordDate(b).localeCompare(recordDate(a)));
+  if(sort==='oldest')return items.sort((a,b)=>recordDate(a).localeCompare(recordDate(b)));
+  if(sort==='title')return items.sort((a,b)=>itemName(a).localeCompare(itemName(b),'zh-Hant'));
   const pageRank=new Map(layoutDraft.pages.map((p,i)=>[p.id,i]));
   const categoryRank=new Map(layoutDraft.categories.map(c=>[c.id,[pageRank.get(c.page_id)??999,Number(c.order)||0]]));
-  return allRecords(data).filter(item=>(!filter||item.type===filter)&&(!query||norm(JSON.stringify(item)).includes(query))).sort((a,b)=>{
+  return items.sort((a,b)=>{
+    if(a.type==='page'||b.type==='page'){
+      if(a.type!==b.type)return a.type==='page'?-1:1;
+      return Number(a.order)-Number(b.order);
+    }
+    if(a.type==='category'||b.type==='category'){
+      if(a.type!==b.type)return a.type==='category'?-1:1;
+      return (pageRank.get(a.page_id)??999)-(pageRank.get(b.page_id)??999)||Number(a.order)-Number(b.order);
+    }
     const ca=categoryRank.get(a.category_id)||[999,999],cb=categoryRank.get(b.category_id)||[999,999];
     return ca[0]-cb[0]||ca[1]-cb[1]||(Number(a.order)||0)-(Number(b.order)||0)||itemName(a).localeCompare(itemName(b),'zh-Hant');
   });
 };
 renderRecords=function(){
   const categoryMap=new Map((layoutDraft?.categories||[]).map(c=>[c.id,c]));
-  $('#records').innerHTML=sortedRecords().map(item=>{const category=categoryMap.get(item.category_id);return `<div class="row"><span class="tag">${esc(LABEL[item.type]||item.type)}</span><span class="tag">${esc(categoryName(category))}</span><div class="record-heading"><strong>${esc(itemName(item))}</strong><span class="muted record-meta">${esc(recordMeta(item))}</span></div><div class="id">${esc(item.id)}</div><div class="actions"><button class="button" data-edit="${esc(item.id)}">編輯</button><button class="button danger" data-delete="${esc(item.id)}">刪除</button></div></div>`}).join('')||'<p class="muted">沒有符合項目。</p>';
+  $('#records').innerHTML=sortedRecords().map(item=>{const category=categoryMap.get(item.category_id),layoutMeta=item.type==='page'?'雙語頁面':item.type==='category'?pageName(item.page_id):categoryName(category),canDelete=item.type!=='page';return `<div class="row"><span class="tag">${esc(LABEL[item.type]||item.type)}</span><span class="tag">${esc(layoutMeta)}</span><div class="record-heading"><strong>${esc(itemName(item))}</strong><span class="muted record-meta">${esc(recordMeta(item))}</span></div><div class="id">${esc(item.id)}</div><div class="actions"><button class="button" data-edit="${esc(item.id)}">編輯</button>${canDelete?`<button class="button danger" data-delete="${esc(item.id)}">刪除</button>`:''}</div></div>`}).join('')||'<p class="muted">沒有符合項目。</p>';
 };
 const baseRenderPreview=renderPreview;
 renderPreview=function(refreshDictionary=true){layoutPreviewSuppressed=true;baseRenderPreview(refreshDictionary);layoutPreviewSuppressed=false;if(layoutDirty()){const op=layoutOperation();$('#preview').insertAdjacentHTML('beforeend',layoutPreviewHtml(op));const text=$('#summary').textContent;$('#summary').textContent=text==='尚無變更。'?'頁面、類別或排序有變更。':text.replace(/。$/,'')+'、頁面／類別 1。'}$('#payload').textContent=JSON.stringify(payload(),null,2)};

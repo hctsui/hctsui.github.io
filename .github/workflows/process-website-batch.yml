@@ -58,7 +58,7 @@ jobs:
 
             git add content/site.json content/translations.json content/change-history.json \
               CONTENT-CATALOG.md cv/*.tex \
-              index.html cv.html publications.html activities.html teaching.html \
+              '*.html' \
               zh .github/ISSUE_TEMPLATE
 
             if git diff --cached --quiet; then
