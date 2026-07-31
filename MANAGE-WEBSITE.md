@@ -123,7 +123,7 @@
 - `content/site.json`：頁面、類別、項目與排序資料。
 - `content/translations.json`：中英字詞與標籤。
 - `admin/index.html`：內容編輯介面。
-- `admin/layout-v2.js`：頁面、類別與統一排序管理。
+- `admin/layout.js`：頁面、類別與統一排序管理。
 - `admin/homepage.js`：首頁雙欄、一般內容風格編輯與 Admin 相容修正。
 - `admin/guide.html`：完整操作手冊。
 - `tools/process_batch_request.py`：批次套用、衝突檢查與七日還原。

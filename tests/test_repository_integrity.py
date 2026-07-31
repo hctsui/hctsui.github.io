@@ -1,22 +1,38 @@
 from __future__ import annotations
 
+import re
 import unittest
 from pathlib import Path
 
 from _contracts import ROOT, read
 
+VERSIONED_FILENAME = re.compile(r"(?:^|[-_.])v\d+(?=[-_.]|$)", re.IGNORECASE)
+TEXT_SUFFIXES = {".html", ".js", ".css", ".py", ".md", ".yml", ".yaml", ".json", ".tex"}
+OBSOLETE_NAMES = (
+    "admin/headings-v1.js",
+    "admin/homepage-v1.js",
+    "admin/layout-v2.js",
+    "admin/tags-v1.js",
+    "admin/admin-icon-v13.svg",
+    "admin/admin-icon-v13.png",
+    "admin/admin-icon-v13-180.png",
+    "assets/script-v23.js",
+    "assets/style-v23.css",
+)
+
 
 class RequiredFileTests(unittest.TestCase):
-    def test_required_admin_assets_exist(self) -> None:
+    def test_required_admin_and_public_assets_exist(self) -> None:
         for relative in (
             "admin/index.html",
             "admin/guide.html",
             "admin/homepage.js",
-            "admin/homepage-v1.js",
-            "admin/layout-v2.js",
-            "admin/tags-v1.js",
+            "admin/layout.js",
+            "admin/tags.js",
             "admin/admin-icon.svg",
             "admin/admin-icon.png",
+            "assets/script.js",
+            "assets/style.css",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
 
@@ -70,35 +86,80 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
             self.assertIn("python3 -m unittest discover -s tests", text, relative)
 
 
-class FilenameCleanupTests(unittest.TestCase):
-    def test_unversioned_icon_is_canonical(self) -> None:
-        for relative in (
-            "admin/admin-icon-v13.svg",
-            "admin/admin-icon-v13.png",
-            "admin/admin-icon-v13-180.png",
-        ):
+class CanonicalFilenameTests(unittest.TestCase):
+    def test_no_repository_filename_contains_a_v_number_suffix(self) -> None:
+        offenders = []
+        for path in ROOT.rglob("*"):
+            if not path.is_file() or "__pycache__" in path.parts:
+                continue
+            if VERSIONED_FILENAME.search(path.name):
+                offenders.append(path.relative_to(ROOT).as_posix())
+        self.assertEqual(offenders, [])
+
+    def test_obsolete_versioned_paths_are_absent(self) -> None:
+        for relative in OBSOLETE_NAMES:
             self.assertFalse((ROOT / relative).exists(), relative)
 
-    def test_homepage_manager_has_unversioned_canonical_filename(self) -> None:
-        self.assertTrue((ROOT / "admin/homepage.js").is_file())
-        loader = read("admin/homepage-v1.js")
-        self.assertIn("homepage.js", loader)
-        self.assertLess(len(loader.splitlines()), 25)
+    def test_text_files_do_not_reference_obsolete_filenames(self) -> None:
+        hits: list[str] = []
+        old_tokens = tuple(Path(name).name for name in OBSOLETE_NAMES)
+        for path in ROOT.rglob("*"):
+            if not path.is_file() or "__pycache__" in path.parts or "tests" in path.parts:
+                continue
+            if path.suffix.lower() not in TEXT_SUFFIXES:
+                continue
+            text = path.read_text(encoding="utf-8")
+            for token in old_tokens:
+                if token in text:
+                    hits.append(f"{path.relative_to(ROOT)} -> {token}")
+        self.assertEqual(hits, [])
 
-    def test_high_risk_legacy_filenames_are_not_renamed_blindly(self) -> None:
-        # These files are referenced throughout generated pages and the large
-        # Admin shell. They remain until a dedicated all-reference migration.
-        for relative in (
-            "admin/layout-v2.js",
-            "admin/tags-v1.js",
-            "assets/script-v23.js",
-            "assets/style-v23.css",
+    def test_admin_shell_references_canonical_scripts(self) -> None:
+        page = read("admin/index.html")
+        for marker in (
+            '<script src="tags.js"></script>',
+            '<script src="layout.js"></script>',
+            '<script src="homepage.js"></script>',
         ):
-            self.assertTrue((ROOT / relative).is_file(), relative)
+            self.assertIn(marker, page)
+
+    def test_public_pages_reference_canonical_assets(self) -> None:
+        for relative in (
+            "index.html",
+            "cv.html",
+            "publications.html",
+            "activities.html",
+            "teaching.html",
+        ):
+            text = read(relative)
+            self.assertIn('href="assets/style.css"', text, relative)
+            self.assertIn('src="assets/script.js"', text, relative)
+        for relative in (
+            "zh/index.html",
+            "zh/cv.html",
+            "zh/publications.html",
+            "zh/activities.html",
+            "zh/teaching.html",
+        ):
+            text = read(relative)
+            self.assertIn('href="../assets/style.css"', text, relative)
+            self.assertIn('src="../assets/script.js"', text, relative)
+
+    def test_deploy_workflow_checks_canonical_assets(self) -> None:
+        workflow = read(".github/workflows/deploy-cms-pages.yml")
+        for relative in (
+            "admin/homepage.js",
+            "admin/layout.js",
+            "admin/tags.js",
+            "assets/script.js",
+            "assets/style.css",
+            "admin/admin-icon.svg",
+        ):
+            self.assertIn(f"test -f {relative}", workflow)
 
 
-class ObsoleteRegressionFileTests(unittest.TestCase):
-    def test_old_mixed_regression_files_are_removed(self) -> None:
+class TestSuiteStructureTests(unittest.TestCase):
+    def test_obsolete_duplicate_regression_files_are_removed(self) -> None:
         for relative in (
             "tests/test_admin_regressions.py",
             "tests/test_home_profile.py",

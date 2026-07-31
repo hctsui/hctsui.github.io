@@ -582,7 +582,7 @@ class BatchOperationTests(unittest.TestCase):
 
 class AdminCompatibilityTests(unittest.TestCase):
     def test_layout_extension_handles_both_initialization_orders(self) -> None:
-        script = (ROOT / "admin" / "layout-v2.js").read_text(encoding="utf-8")
+        script = (ROOT / "admin" / "layout.js").read_text(encoding="utf-8")
         self.assertIn("const baseLoadOrder=loadOrder;", script)
         self.assertIn("if($('#layoutOrderPage')){renderUnifiedOrder();return}", script)
         self.assertIn("setupUnifiedOrderUI();\nif(site)renderAll();", script)
@@ -590,7 +590,7 @@ class AdminCompatibilityTests(unittest.TestCase):
         self.assertIn("layoutManagerPageId=event.target.value", script)
         self.assertIn("selectedPage?", script)
 
-    def test_legacy_admin_tools_remain_available(self) -> None:
+    def test_admin_tools_remain_available(self) -> None:
         page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
         for tab in ("catalog", "add", "order", "trash", "draft", "dictionary"):
             self.assertIn(f'data-tab="{tab}"', page)
@@ -606,17 +606,17 @@ class AdminCompatibilityTests(unittest.TestCase):
         self.assertNotIn("Lecture Notes 標題", page)
         for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
             self.assertIn(f'"{item_type}"', page)
-        self.assertIn('<script src="tags-v1.js"></script>', page)
-        self.assertIn('<script src="layout-v2.js"></script>', page)
-        self.assertIn('<script src="homepage-v1.js"></script>', page)
-        homepage = (ROOT / "admin" / "homepage-v1.js").read_text(encoding="utf-8")
+        self.assertIn('<script src="tags.js"></script>', page)
+        self.assertIn('<script src="layout.js"></script>', page)
+        self.assertIn('<script src="homepage.js"></script>', page)
+        homepage = (ROOT / "admin" / "homepage.js").read_text(encoding="utf-8")
         for mode in ("latest", "oldest", "manual", "soonest", "farthest"):
             self.assertIn(f"'{mode}'", homepage)
         self.assertIn("data-home-up", homepage)
         self.assertIn("HOMEPAGE_DRAFT_KEY", homepage)
         self.assertIn("homepageComparableSection", homepage)
         self.assertIn("data-edit-homepage-draft", homepage)
-        layout = (ROOT / "admin" / "layout-v2.js").read_text(encoding="utf-8")
+        layout = (ROOT / "admin" / "layout.js").read_text(encoding="utf-8")
         for label in ("項目類型", "所在頁面", "所在類別", "頁面語言版本"):
             self.assertIn(label, layout)
         self.assertIn("'education','honor','personal'", layout)

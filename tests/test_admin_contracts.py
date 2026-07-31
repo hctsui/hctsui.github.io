@@ -4,21 +4,41 @@ import unittest
 
 from _contracts import node_check, read
 
+ADMIN_PAGE = read("admin/index.html")
 MAIN = read("admin/homepage.js")
-LOADER = read("admin/homepage-v1.js")
+LAYOUT = read("admin/layout.js")
+TAGS = read("admin/tags.js")
 GUIDE = read("admin/guide.html")
 MANAGE = read("MANAGE-WEBSITE.md")
 
 
 class AdminLoadingContracts(unittest.TestCase):
-    def test_canonical_script_parses(self) -> None:
-        node_check("admin/homepage.js")
+    def test_all_admin_javascript_parses(self) -> None:
+        for relative in (
+            "admin/tags.js",
+            "admin/layout.js",
+            "admin/homepage.js",
+        ):
+            with self.subTest(relative=relative):
+                node_check(relative)
 
-    def test_historical_filename_is_only_a_compatibility_loader(self) -> None:
-        self.assertIn("script.src='homepage.js'", LOADER)
-        self.assertIn("data-homepage-manager", LOADER)
-        self.assertNotIn("const HOMEPAGE_DRAFT_KEY", LOADER)
-        self.assertNotIn("function renderHomepageManager", LOADER)
+    def test_admin_loads_only_canonical_unversioned_scripts(self) -> None:
+        expected = (
+            '<script src="tags.js"></script>',
+            '<script src="layout.js"></script>',
+            '<script src="homepage.js"></script>',
+        )
+        positions = [ADMIN_PAGE.index(marker) for marker in expected]
+        self.assertEqual(positions, sorted(positions))
+        for marker in expected:
+            self.assertIn(marker, ADMIN_PAGE)
+        for obsolete in (
+            "tags-v1.js",
+            "layout-v2.js",
+            "homepage-v1.js",
+            "headings-v1.js",
+        ):
+            self.assertNotIn(obsolete, ADMIN_PAGE)
 
     def test_admin_shell_is_installed_before_feature_wrappers(self) -> None:
         self.assertLess(
@@ -26,7 +46,7 @@ class AdminLoadingContracts(unittest.TestCase):
             MAIN.index("const HOMEPAGE_DRAFT_KEY"),
         )
 
-    def test_icon_and_return_link_have_unversioned_assets(self) -> None:
+    def test_icon_and_return_link_use_unversioned_assets(self) -> None:
         for marker in (
             "admin-icon.svg",
             "data-admin-favicon",
@@ -56,9 +76,9 @@ class ExistingFeatureContracts(unittest.TestCase):
         ):
             self.assertIn(label, MAIN)
         for marker in (
-            'data-style-choice-kind=',
-            'aria-pressed=',
-            'general-style-current',
+            "data-style-choice-kind=",
+            "aria-pressed=",
+            "general-style-current",
             '<details class="general-style-guide" open>',
             "styleGuide?.addEventListener('click'",
         ):
@@ -76,12 +96,28 @@ class ExistingFeatureContracts(unittest.TestCase):
         ):
             self.assertIn(marker, MAIN)
 
+    def test_layout_manager_and_dictionary_extensions_remain_loaded(self) -> None:
+        for marker in (
+            'id="layoutManagerPage"',
+            'id="generalContentFormat"',
+            "layoutManagerPageId=event.target.value",
+        ):
+            self.assertIn(marker, LAYOUT)
+        for marker in (
+            "translationImportPanel",
+            "toggleTagManager",
+            "dictionarySearch",
+        ):
+            self.assertIn(marker, ADMIN_PAGE + TAGS)
+
     def test_preview_close_button_keeps_normal_button_size(self) -> None:
         self.assertIn("button.className='button preview-close-button'", MAIN)
         self.assertIn(
             ".preview-close-button{float:right;margin:0 0 8px 8px}", MAIN
         )
-        self.assertNotIn(".preview-close-button{float:right;margin:0 0 8px 8px;padding:", MAIN)
+        self.assertNotIn(
+            ".preview-close-button{float:right;margin:0 0 8px 8px;padding:", MAIN
+        )
 
     def test_mailto_support_does_not_replace_normal_url_validation(self) -> None:
         self.assertIn("homepageBaseValidateEditorObject", MAIN)
@@ -138,9 +174,20 @@ class DocumentationContracts(unittest.TestCase):
             ):
                 self.assertNotIn(obsolete, text)
 
-    def test_docs_use_canonical_homepage_filename(self) -> None:
-        self.assertIn("admin/homepage.js", MANAGE)
-        self.assertNotIn("admin/homepage-v1.js", MANAGE)
+    def test_docs_use_canonical_admin_filenames(self) -> None:
+        for marker in (
+            "admin/homepage.js",
+            "admin/layout.js",
+        ):
+            self.assertIn(marker, MANAGE)
+        for obsolete in (
+            "admin/homepage-v1.js",
+            "admin/layout-v2.js",
+            "admin/tags-v1.js",
+            "assets/script-v23.js",
+            "assets/style-v23.css",
+        ):
+            self.assertNotIn(obsolete, MANAGE + GUIDE)
 
 
 if __name__ == "__main__":
