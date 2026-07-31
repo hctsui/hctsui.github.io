@@ -7,11 +7,11 @@ import re
 from typing import Any
 
 PAGE_DEFAULTS: list[dict[str, Any]] = [
-    {"id": "home", "name": {"en": "Home", "zh": "首頁"}, "path": {"en": "index.html", "zh": "zh/index.html"}, "header": None, "order": 0},
-    {"id": "cv", "name": {"en": "CV", "zh": "履歷"}, "path": {"en": "cv.html", "zh": "zh/cv.html"}, "header": {"label": {"en": "Academic profile", "zh": "學術資料"}, "title": {"en": "Curriculum Vitae", "zh": "履歷"}, "intro": {"en": "Education, research interests, and honors.", "zh": "學歷、研究領域與獎項"}}, "order": 1},
-    {"id": "publications", "name": {"en": "Publications", "zh": "論文"}, "path": {"en": "publications.html", "zh": "zh/publications.html"}, "header": {"label": {"en": "Research record", "zh": "研究紀錄"}, "title": {"en": "Publications and Preprints", "zh": "論文與預印本"}, "intro": {"en": "A complete list of current papers and preprints.", "zh": "論文與預印本的完整列表"}}, "order": 2},
-    {"id": "activities", "name": {"en": "Activities", "zh": "學術活動"}, "path": {"en": "activities.html", "zh": "zh/activities.html"}, "header": {"label": {"en": "Academic record", "zh": "學術紀錄"}, "title": {"en": "Activities", "zh": "學術活動"}, "intro": {"en": "Academic visits, presentations, conferences and workshops.", "zh": "學術訪問、學術報告、會議與工作坊"}}, "order": 3},
-    {"id": "teaching", "name": {"en": "Teaching", "zh": "教學"}, "path": {"en": "teaching.html", "zh": "zh/teaching.html"}, "header": {"label": {"en": "Teaching record", "zh": "教學紀錄"}, "title": {"en": "Teaching Experience", "zh": "教學經歷"}, "intro": {"en": "Teaching and course-assistant experience.", "zh": "教學與課程助教經歷"}}, "order": 4},
+    {"id": "home", "name": {"en": "Home", "zh": "首頁"}, "path": {"en": "index.html", "zh": "zh/index.html"}, "header": None, "color": "#a34f3b", "order": 0},
+    {"id": "cv", "name": {"en": "CV", "zh": "履歷"}, "path": {"en": "cv.html", "zh": "zh/cv.html"}, "header": {"label": {"en": "Academic profile", "zh": "學術資料"}, "title": {"en": "Curriculum Vitae", "zh": "履歷"}, "intro": {"en": "Education, research interests, and honors.", "zh": "學歷、研究領域與獎項"}}, "color": "#8b5a2b", "order": 1},
+    {"id": "publications", "name": {"en": "Publications", "zh": "論文"}, "path": {"en": "publications.html", "zh": "zh/publications.html"}, "header": {"label": {"en": "Research record", "zh": "研究紀錄"}, "title": {"en": "Publications and Preprints", "zh": "論文與預印本"}, "intro": {"en": "A complete list of current papers and preprints.", "zh": "論文與預印本的完整列表"}}, "color": "#315f9b", "order": 2},
+    {"id": "activities", "name": {"en": "Activities", "zh": "學術活動"}, "path": {"en": "activities.html", "zh": "zh/activities.html"}, "header": {"label": {"en": "Academic record", "zh": "學術紀錄"}, "title": {"en": "Activities", "zh": "學術活動"}, "intro": {"en": "Academic visits, presentations, conferences and workshops.", "zh": "學術訪問、學術報告、會議與工作坊"}}, "color": "#176b52", "order": 3},
+    {"id": "teaching", "name": {"en": "Teaching", "zh": "教學"}, "path": {"en": "teaching.html", "zh": "zh/teaching.html"}, "header": {"label": {"en": "Teaching record", "zh": "教學紀錄"}, "title": {"en": "Teaching Experience", "zh": "教學經歷"}, "intro": {"en": "Teaching and course-assistant experience.", "zh": "教學與課程助教經歷"}}, "color": "#b14b86", "order": 4},
 ]
 
 CATEGORY_KIND_LABELS: dict[str, dict[str, str]] = {
@@ -20,15 +20,15 @@ CATEGORY_KIND_LABELS: dict[str, dict[str, str]] = {
     "contact": {"en": "Contact", "zh": "聯絡資訊"},
     "interest": {"en": "Research interests", "zh": "研究興趣"},
     "education": {"en": "Education", "zh": "學歷"},
-    "honor": {"en": "Honors", "zh": "獎項"},
-    "publication": {"en": "Publications", "zh": "論文／作品"},
+    "honor": {"en": "Honors", "zh": "榮譽"},
+    "publication": {"en": "Works", "zh": "作品"},
     "visit": {"en": "Academic visits", "zh": "學術訪問"},
     "talk": {"en": "Presentations", "zh": "學術報告"},
-    "organization": {"en": "Organization", "zh": "學術活動籌辦"},
-    "conference": {"en": "Conferences", "zh": "會議／工作坊"},
+    "organization": {"en": "Academic activities", "zh": "學術活動"},
+    "conference": {"en": "Academic conferences", "zh": "學術會議"},
     "teaching": {"en": "Teaching", "zh": "教學"},
     "personal": {"en": "Personal information", "zh": "個人資訊"},
-    "generic": {"en": "General items", "zh": "一般項目"},
+    "generic": {"en": "General content", "zh": "一般內容"},
 }
 
 DIRECT_ITEM_KINDS = {"interest", "education", "honor", "publication", "visit", "talk", "organization", "conference", "teaching", "personal", "generic", "contact"}
@@ -100,6 +100,7 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
         item["name"] = pair(source.get("name"), default["name"])
         item["path"] = copy.deepcopy(default["path"])
         item["order"] = int(source.get("order", default["order"]))
+        item["color"] = str(source.get("color") or default["color"]).strip().lower()
         if default["header"] is not None:
             old_key = OLD_PAGE_HEADING_KEYS.get(default["id"])
             old = settings.get("headings", {}).get(old_key, {}) if old_key else {}
@@ -109,6 +110,26 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
                 for part in ("label", "title", "intro")
             }
         pages.append(item)
+    default_ids = {p["id"] for p in PAGE_DEFAULTS}
+    for index, source in enumerate(existing if isinstance(existing, list) else []):
+        if not isinstance(source, dict):
+            continue
+        page_id = slugify(str(source.get("id") or source.get("name", {}).get("en") or ""))
+        if not page_id or page_id in default_ids:
+            continue
+        header = source.get("header") if isinstance(source.get("header"), dict) else {}
+        pages.append({
+            "id": page_id,
+            "name": pair(source.get("name"), {"en": page_id.replace("-", " ").title(), "zh": page_id}),
+            "path": {"en": f"{page_id}.html", "zh": f"zh/{page_id}.html"},
+            "header": {
+                "label": pair(header.get("label"), {"en": "Academic profile", "zh": "學術資料"}),
+                "title": pair(header.get("title"), pair(source.get("name"), {"en": page_id.replace("-", " ").title(), "zh": page_id})),
+                "intro": pair(header.get("intro")),
+            },
+            "color": str(source.get("color") or "#8b3d2e").strip().lower(),
+            "order": int(source.get("order", len(PAGE_DEFAULTS) + index)),
+        })
     return sorted(pages, key=lambda p: (int(p.get("order", 999)), p["id"]))
 
 
@@ -328,6 +349,24 @@ def validate_category_data(data: dict[str, Any]) -> None:
     page_ids = [p["id"] for p in pages]
     if len(page_ids) != len(set(page_ids)):
         raise ValueError("settings.pages contains duplicate IDs.")
+    paths: set[str] = set()
+    for page in pages:
+        if not re.fullmatch(r"#[0-9a-fA-F]{6}", str(page.get("color") or "")):
+            raise ValueError(f"Page {page['id']} has an invalid color.")
+        for field in ("name",):
+            for lang in ("en", "zh"):
+                if not str(page.get(field, {}).get(lang) or "").strip():
+                    raise ValueError(f"Page {page['id']} {field}.{lang} cannot be blank.")
+        if page.get("header"):
+            for field in ("label", "title"):
+                for lang in ("en", "zh"):
+                    if not str(page["header"].get(field, {}).get(lang) or "").strip():
+                        raise ValueError(f"Page {page['id']} header.{field}.{lang} cannot be blank.")
+        for lang in ("en", "zh"):
+            path = str(page.get("path", {}).get(lang) or "")
+            if not path or path in paths:
+                raise ValueError(f"Page {page['id']} has a missing or duplicate path.")
+            paths.add(path)
     categories = normalized_categories(data)
     category_ids = [c["id"] for c in categories]
     if len(category_ids) != len(set(category_ids)):
@@ -358,6 +397,10 @@ def validate_category_data(data: dict[str, Any]) -> None:
         expected = category_by_id[cid]["kind"]
         if expected in DIRECT_ITEM_KINDS and item_type != expected:
             raise ValueError(f"{iid}: type '{item_type}' does not match category kind '{expected}'.")
+        if item_type == "teaching":
+            page_id = str(item.get("course_page_id") or "")
+            if page_id and page_id not in page_set:
+                raise ValueError(f"{iid}: unknown course_page_id '{page_id}'.")
     cv_order = normalized_cv_order(data)
     if len(cv_order) != len(set(cv_order)):
         raise ValueError("settings.cv_category_order contains duplicates.")

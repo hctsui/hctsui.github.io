@@ -144,11 +144,30 @@ def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool 
     )
 
 
-def render_teaching(entry: dict[str, Any], lang: str) -> str:
+def page_href(data: dict[str, Any], page_id: str, lang: str) -> str:
+    page = next((p for p in normalized_pages(data) if p["id"] == page_id), None)
+    if not page:
+        return ""
+    path = str(page["path"][lang])
+    return Path(path).name if lang == "zh" else path
+
+
+def render_teaching(data: dict[str, Any], entry: dict[str, Any], lang: str) -> str:
     term = rich_html(plain_value(entry, "term", lang))
     course = rich_html(plain_value(entry, "course", lang))
     role = rich_html(plain_value(entry, "role", lang))
-    return f'<article class="teaching-card" data-entry-id="{esc(entry.get("id"))}"><div class="date">{term}</div><div><h3>{course}</h3>{f"<p class=\"venue\">{role}</p>" if role else ""}</div></article>'
+    links: list[str] = []
+    course_page = str(entry.get("course_page_id") or "")
+    href = page_href(data, course_page, lang) if course_page else ""
+    if href:
+        label = "課程資訊" if lang == "zh" else "Course Information"
+        links.append(f'<a href="{esc(href)}">{label}</a>')
+    notes_url = str(entry.get("lecture_notes_url") or "").strip()
+    if notes_url:
+        notes_title = plain_value(entry, "lecture_notes_title", lang) or ("講義" if lang == "zh" else "Lecture Notes")
+        links.append(f'<a href="{esc(notes_url)}" rel="noopener" target="_blank">{esc(notes_title)}</a>')
+    links_html = f'<div class="item-links">{"".join(links)}</div>' if links else ""
+    return f'<article class="teaching-card" data-entry-id="{esc(entry.get("id"))}"><div class="date">{term}</div><div><h3>{course}</h3>{f"<p class=\"venue\">{role}</p>" if role else ""}{links_html}</div></article>'
 
 
 def render_interest(entry: dict[str, Any], lang: str) -> str:
@@ -215,7 +234,7 @@ def category_body(data: dict[str, Any], category: dict[str, Any], lang: str, tod
     if kind == "organization":
         return '<div class="timeline organization-timeline">' + "".join(render_organization(x, lang) for x in items) + '</div>', len(items)
     if kind == "teaching":
-        return '<div class="teaching-grid">' + "".join(render_teaching(x, lang) for x in items) + '</div>', len(items)
+        return '<div class="teaching-grid">' + "".join(render_teaching(data, x, lang) for x in items) + '</div>', len(items)
     if kind == "personal":
         return render_contact(items, lang), len(items)
     return '<div class="timeline">' + "".join(render_generic(x, lang) for x in items) + '</div>', len(items)
@@ -393,6 +412,31 @@ def update_footer(text: str, lang: str, today: date) -> str:
     return re.sub(pattern, replacement, text, count=1)
 
 
+def custom_page_shell(page: dict[str, Any], lang: str) -> str:
+    template = ROOT / ("zh/teaching.html" if lang == "zh" else "teaching.html")
+    text = template.read_text(encoding="utf-8")
+    text = re.sub(r'class="active"\s+', "", text)
+    text = re.sub(r'<body data-page="[^"]+"', f'<body data-page="{esc(page["id"])}"', text, count=1)
+    counterpart = page["path"]["en"] if lang == "zh" else page["path"]["zh"]
+    href = f"../{counterpart}" if lang == "zh" else counterpart
+    text = re.sub(r'(<a[^>]+class="language-toggle"[^>]+href=")[^"]+(")', rf'\g<1>{esc(href)}\2', text, count=1)
+    return text
+
+
+def page_theme_style(color: str) -> str:
+    value = color if re.fullmatch(r"#[0-9a-fA-F]{6}", color or "") else "#8b3d2e"
+    rgb = tuple(int(value[i:i + 2], 16) for i in (1, 3, 5))
+    dark = "#" + "".join(f"{round(channel * .68):02x}" for channel in rgb)
+    soft_rgb = tuple(round(255 - (255 - channel) * .22) for channel in rgb)
+    soft = "#" + "".join(f"{channel:02x}" for channel in soft_rgb)
+    return f"--accent:{value};--accent-dark:{dark};--accent-soft:{soft}"
+
+
+def apply_page_theme(text: str, page: dict[str, Any]) -> str:
+    style = page_theme_style(str(page.get("color") or ""))
+    return re.sub(r'(<body\b[^>]*?)(?:\sstyle="[^"]*")?(>)', rf'\1 style="{style}"\2', text, count=1)
+
+
 def site_today(data: dict[str, Any], override: str | None = None) -> date:
     value = override or os.environ.get("SITE_TODAY", "")
     if value:
@@ -408,7 +452,11 @@ def build(today: date, update_date: bool = True) -> list[Path]:
         for lang in ("en", "zh"):
             rel = page["path"][lang]
             path = ROOT / rel
-            old = path.read_text(encoding="utf-8")
+            if path.exists():
+                old = path.read_text(encoding="utf-8")
+            else:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                old = custom_page_shell(page, lang)
             categories = categories_for_page(data, page_id)
             if page_id == "home":
                 sections = render_home_sections(data, categories, lang, today)
@@ -424,6 +472,7 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             else:
                 document_title = f"{page_title} | Hung-Chun Tsui"
             new = update_page_title(new, document_title)
+            new = apply_page_theme(new, page)
             if update_date:
                 new = update_footer(new, lang, today)
             if new != old:
