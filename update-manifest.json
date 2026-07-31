@@ -12,6 +12,8 @@
   ],
   "validation": {
     "javascript_syntax": "passed",
-    "admin_smoke_test": "passed"
+    "admin_smoke_test": "passed",
+    "documentation_required_headings": "passed",
+    "admin_hotfix_tests": "5 passed"
   }
 }

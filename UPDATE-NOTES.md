@@ -16,11 +16,13 @@
 4. 每個排序項目都顯示「搬移」選單；沒有相容類別時保持顯示但停用。
 5. 跨越「精簡時間軸（榮譽）」與其他一般內容格式時，以安全的刪除＋新增草稿處理，同一批次送出。
 6. 更新 Admin HTML 手冊與 repository 管理說明。
+7. 補回既有測試要求的完整手冊章節：標準工作流程、欄位與自動填寫、排序／頁面／類別、送出前檢查及還原。
 
 ## 已執行檢查
 
 - `node --check admin/homepage-v1.js`
 - Node VM smoke test：新版搜尋／篩選事件綁定、停用搬移選單輸出。
-- 更新包靜態回歸測試：`tests/test_admin_hotfix.py`
+- 更新包靜態回歸測試：`tests/test_admin_hotfix.py`（5 項通過）
+- `tests/test_cms.py` 的手冊固定章節字串檢查：通過
 
 GitHub connector 在本次工作中可讀取 repository，但建立分支、更新 ref 與寫入檔案均回傳權限／安全層拒絕，因此此包尚未由助理推送至 GitHub。

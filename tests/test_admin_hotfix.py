@@ -28,3 +28,15 @@ def test_general_styles_are_editable_and_previewed() -> None:
 def test_homepage_manager_uses_targeted_refresh() -> None:
     assert "refreshHomepageSurfaces" in SCRIPT
     assert "每次選擇都會立即保存為本機草稿" in SCRIPT
+
+
+def test_guide_keeps_repository_required_sections() -> None:
+    for heading in (
+        "標準工作流程",
+        "欄位、小標註與自動填寫",
+        "排序、頁面與類別",
+        "10. 還原",
+        "疑難排解",
+        "送出前完整檢查",
+    ):
+        assert heading in GUIDE
