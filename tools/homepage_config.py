@@ -193,14 +193,14 @@ def default_home_profile() -> dict[str, Any]:
             "en": "PhD student in mathematics",
             "zh": "數學系博士生",
         },
-        "advisor": {
+        "description": {
             "en": "Advisor: Professor Chieh-Yu Chang",
             "zh": "指導教授：張介玉教授",
         },
-        # Kept out of the Admin form intentionally: the requested editable
-        # surface is the five lines above plus the action buttons.
-        "advisor_url": "https://sites.google.com/gapp.nthu.edu.tw/cychang/",
-        "advisor_link_text": {
+        # The optional link is kept for backward compatibility with the
+        # existing advisor line, but the editable field is now generic.
+        "description_url": "https://sites.google.com/gapp.nthu.edu.tw/cychang/",
+        "description_link_text": {
             "en": "Chieh-Yu Chang",
             "zh": "張介玉教授",
         },
@@ -260,11 +260,17 @@ def normalized_home_profile(value: Any = None) -> dict[str, Any]:
         "name_en": str(raw.get("name_en") or defaults["name_en"]).strip(),
         "name_zh": str(raw.get("name_zh") or defaults["name_zh"]).strip(),
         "role": _profile_pair(raw.get("role"), defaults["role"]),
-        "advisor": _profile_pair(raw.get("advisor"), defaults["advisor"]),
-        "advisor_url": _safe_home_url(raw.get("advisor_url"))
-        or defaults["advisor_url"],
-        "advisor_link_text": _profile_pair(
-            raw.get("advisor_link_text"), defaults["advisor_link_text"]
+        # Read the old advisor keys so existing saved data migrates without
+        # losing text or links. New writes use the generic description keys.
+        "description": _profile_pair(
+            raw.get("description") or raw.get("advisor"), defaults["description"]
+        ),
+        "description_url": _safe_home_url(
+            raw.get("description_url") or raw.get("advisor_url")
+        ) or defaults["description_url"],
+        "description_link_text": _profile_pair(
+            raw.get("description_link_text") or raw.get("advisor_link_text"),
+            defaults["description_link_text"],
         ),
         "actions": actions,
     }
@@ -282,10 +288,10 @@ def homepage_profile(data: dict[str, Any]) -> dict[str, Any]:
     return normalized_home_profile(record.get("profile") if record else None)
 
 
-def _home_advisor_html(profile: dict[str, Any], lang: str) -> str:
-    text = str(profile["advisor"].get(lang) or "")
-    link_text = str(profile["advisor_link_text"].get(lang) or "")
-    url = _safe_home_url(profile.get("advisor_url"))
+def _home_description_html(profile: dict[str, Any], lang: str) -> str:
+    text = str(profile["description"].get(lang) or "")
+    link_text = str(profile["description_link_text"].get(lang) or "")
+    url = _safe_home_url(profile.get("description_url"))
     if url and link_text and link_text in text:
         before, after = text.split(link_text, 1)
         attrs = ' rel="noopener" target="_blank"' if url.startswith(("http://", "https://")) else ""
@@ -319,7 +325,7 @@ def render_home_profile_hero(data: dict[str, Any], lang: str) -> str:
     role = html.escape(profile["role"][lang])
     name_en = html.escape(profile["name_en"])
     name_zh = html.escape(profile["name_zh"])
-    advisor = _home_advisor_html(profile, lang)
+    description = _home_description_html(profile, lang)
     actions = _home_actions_html(profile, lang)
     if lang == "zh":
         photo = (
@@ -351,7 +357,7 @@ def render_home_profile_hero(data: dict[str, Any], lang: str) -> str:
         f'<p class="home-kicker">{kicker}</p>'
         f'<h1 class="home-name">{name_en}<span class="home-name-zh">{name_zh}</span></h1>'
         f'<p class="home-role">{role}</p>'
-        f'<p class="home-advisor">{advisor}</p>'
+        f'<p class="home-advisor">{description}</p>'
         f'{actions}</div>{photo}</div></section>'
     )
 
