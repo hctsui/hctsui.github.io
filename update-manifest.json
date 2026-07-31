@@ -3,10 +3,11 @@
   "base_branch": "cms",
   "base_commit_observed": "6172e5387825bdf0e90ca34c8af60ce212b249da",
   "created_date": "2026-07-31",
-  "package_version": "v8",
+  "package_version": "v9",
   "files": [
     "admin/homepage-v1.js",
     "admin/guide.html",
+    "admin/admin-icon.svg",
     "tools/homepage_config.py",
     "MANAGE-WEBSITE.md",
     "tests/test_admin_hotfix.py",
@@ -14,32 +15,31 @@
     "apply-update.py"
   ],
   "changes": [
-    "CV publication groups and teaching institutions share a smaller subtitle with a lighter right-side rule",
-    "catalog filtering combines general-content display formats into one 一般內容 option while activity types remain separate",
-    "homepage publications, homepage activities, and every normal order category have a 重設 control",
-    "homepage dirty detection compares resolved visible results instead of stale internal selected_ids",
-    "layout and ordering drafts are manageable from the Drafts tab",
-    "page, category, homepage, ordering, and style previews use a unified card-based before/after design",
-    "general-content previews explicitly show display-style and category changes",
-    "general-content style drafts keep linked layout changes and restore them when the content draft is removed or reverted",
-    "opened editor previews have a compact upper-right 關閉 button",
-    "large category guidance is replaced by compact field-hint text",
-    "documentation is aligned with the current Admin behavior"
+    "general-content style preview cards are now direct clickable buttons",
+    "the style chooser remains inside a collapsible details block with the native disclosure arrow",
+    "the selected style is shown with a checkmark, emphasized border, and current-style label",
+    "the former visible style dropdown is retained only as a hidden synchronization field",
+    "Admin gets a dedicated SVG management icon for favicon and page heading",
+    "a 返回網站 button is added beside 開啟完整使用手冊",
+    "the guide and management documentation are aligned with the new interaction",
+    "all v8 reset, preview, draft-linking, homepage ordering, and CV subtitle fixes are preserved"
   ],
   "validation": {
     "javascript_syntax": "node --check admin/homepage-v1.js: passed",
-    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 23 passed",
-    "admin_vm_smoke": "script load and linked-layout restore simulation: passed",
+    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 27 passed",
+    "admin_index_patcher": "applied twice to a mock current-style Admin index; second run made no duplicate changes",
     "cv_patcher": "applied twice successfully to four mock TeX targets (idempotent)",
-    "full_repository_test_suite": "not run locally because direct GitHub network access is unavailable in the container"
+    "icon_render": "SVG rendered successfully to a 256 px preview",
+    "full_repository_test_suite": "not run locally because the complete repository is not present in the container"
   },
   "sha256": {
-    "admin/homepage-v1.js": "99c1359d5305b3c75155c18f421457d9644069afa5da154d22b48b4df5f3b917",
-    "admin/guide.html": "80423ba2df6b414b2bff631ab132719e9486b420d8c12c1f09f21ee764b6e19f",
+    "admin/homepage-v1.js": "6a5661af288fc3e05d3c8728392ab5b470f26c12391521135ce833524906cd3b",
+    "admin/guide.html": "1d292c9a8ea36827b62be062ee47a4efa330bba73523a90c7fb94d80915aa9bd",
+    "admin/admin-icon.svg": "1a5bbeb46d9f71e23263494607780f31bd715ce350dd57d43f86a8ae5b603df2",
     "tools/homepage_config.py": "5225d05770092317bcf9f000363460466e86c4d757eae8a5fb2185446f76b662",
-    "MANAGE-WEBSITE.md": "b35dd4b0f9a31ab373995b6e74ffaefe3305f5f69bbcb527abc8a3716a5b9ca9",
-    "tests/test_admin_hotfix.py": "727f59ad172395ce8625d7cfacdda47fa157bf756b3a96551fe9e37b7d9c67f3",
-    "UPDATE-NOTES.md": "0e4a0dad9790919640338c5b483ec8362a4bcd2fea802c3364ac652718f224be",
-    "apply-update.py": "d38c83d35b26187f0d242a892777827bff1a7cb50b5b068ebdc3194d3f25e4f9"
+    "MANAGE-WEBSITE.md": "20c57a3c658388ef568b479147f49adb9cf4a35183cc3551786d5f3b25637570",
+    "tests/test_admin_hotfix.py": "82c2bd3df41d88a9dc87125e9daaac5227f96672fbc8f4b9af1339379c5c49a1",
+    "UPDATE-NOTES.md": "46b10f1b378fca2b49abf6d224dbc0014001ee10337a55e4f8ff54699a1d1733",
+    "apply-update.py": "156838f2f96ea705810d2482c47f39c76348b59773f0e5361de7c1c7ed0efcc4"
   }
 }

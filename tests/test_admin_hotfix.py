@@ -239,5 +239,59 @@ class AdminResetAndPreviewTests(unittest.TestCase):
         self.assertIn("右上角有小型「關閉」按鈕", GUIDE)
 
 
+class StyleCardAndAdminIdentityTests(unittest.TestCase):
+    def test_style_previews_are_clickable_buttons_and_remain_collapsible(self) -> None:
+        for marker in (
+            '<details class="general-style-guide" open>',
+            'data-style-choice-kind=',
+            'aria-pressed=',
+            'general-style-current',
+            "styleBlock.hidden=true",
+            "styleGuide?.addEventListener('click'",
+        ):
+            self.assertIn(marker, SCRIPT)
+        self.assertIn('六張版面縮圖本身就是顯示風格按鈕', GUIDE)
+        self.assertIn('左側收合箭頭', GUIDE)
+
+    def test_admin_icon_asset_is_valid_svg(self) -> None:
+        icon = ROOT / "admin" / "admin-icon.svg"
+        self.assertTrue(icon.exists())
+        text = icon.read_text(encoding="utf-8")
+        self.assertIn('<svg', text)
+        self.assertIn('linearGradient', text)
+        self.assertIn('aria-label="網站管理"', text)
+
+    def test_apply_update_adds_site_button_and_admin_identity_idempotently(self) -> None:
+        import importlib.util
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("apply_update_v9", ROOT / "apply-update.py")
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(module)
+
+        source = """<!doctype html><html><head><title>Admin</title><style>body{}</style></head>
+<body><h1>網站批次管理</h1><div class="header-actions">
+<a class="button primary" href="guide.html" target="_blank">開啟完整使用手冊</a>
+</div></body></html>"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "index.html"
+            path.write_text(source, encoding="utf-8")
+            self.assertEqual(module.patch_admin_index(path), "已更新")
+            self.assertEqual(module.patch_admin_index(path), "已是新版")
+            result = path.read_text(encoding="utf-8")
+        self.assertEqual(result.count('href="admin-icon.svg"'), 1)
+        self.assertEqual(result.count('data-return-site'), 1)
+        self.assertEqual(result.count('class="admin-title-row"'), 1)
+        self.assertIn('返回網站', result)
+        self.assertIn('../index.html', result)
+
+    def test_guide_and_management_docs_describe_navigation(self) -> None:
+        manage = (ROOT / "MANAGE-WEBSITE.md").read_text(encoding="utf-8")
+        for marker in ('返回網站', 'admin/admin-icon.svg', '直接點選卡片'):
+            self.assertIn(marker, manage)
+        self.assertIn('Admin 頁首使用專用管理圖示', GUIDE)
+
+
 if __name__ == "__main__":
     unittest.main()
