@@ -1,0 +1,67 @@
+name: Ingest contact alert
+
+on:
+  repository_dispatch:
+    types: [contact_message]
+  workflow_dispatch:
+    inputs:
+      event_id:
+        description: Opaque event ID (no personal data)
+        required: false
+
+concurrency:
+  group: hctsui-automation-writes
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out cms branch
+        uses: actions/checkout@v6
+        with:
+          ref: refs/heads/cms
+          fetch-depth: 0
+          clean: true
+
+      - name: Prepare privacy-safe event
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+          INPUT_EVENT_ID: ${{ inputs.event_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os, secrets
+          from datetime import datetime, timezone
+          source = json.loads(os.environ.get("DISPATCH_PAYLOAD") or "{}") if os.environ.get("EVENT_NAME") == "repository_dispatch" else {}
+          payload = {
+              "event_id": str(source.get("event_id") or os.environ.get("INPUT_EVENT_ID") or secrets.token_hex(12))[:160],
+              "received_at": str(source.get("received_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))[:80],
+          }
+          open("contact-event.json", "w", encoding="utf-8").write(json.dumps(payload))
+          PY
+
+      - name: Run regression tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Add Admin alert
+        run: python3 tools/ingest_contact.py --payload-file contact-event.json
+
+      - name: Commit contact alert
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- content/notifications.json; then
+            echo "Contact alert already present."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/notifications.json
+          git commit -m "Add privacy-safe contact alert"
+          git pull --rebase origin cms
+          git push origin HEAD:cms

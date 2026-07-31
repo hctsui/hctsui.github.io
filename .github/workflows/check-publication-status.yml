@@ -1,8 +1,8 @@
-name: Check arXiv publications
+name: Check publication status
 
 on:
   schedule:
-    - cron: "15 9 * * 1"
+    - cron: "35 9 * * 3"
       timezone: "Asia/Tokyo"
   workflow_dispatch:
 
@@ -16,7 +16,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Check out cms branch
         uses: actions/checkout@v6
@@ -25,23 +25,23 @@ jobs:
           fetch-depth: 0
           clean: true
 
-      - name: Run regression tests
+      - name: Query Crossref for published versions
+        run: python3 tools/check_publication_status.py
+
+      - name: Validate notification data
         run: python3 -m unittest discover -s tests
 
-      - name: Query official arXiv API
-        run: python3 tools/check_arxiv.py
-
-      - name: Commit new suggestions
+      - name: Commit notifications
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- content/arxiv-suggestions.json; then
-            echo "No new arXiv suggestions."
+          if git diff --quiet -- content/notifications.json; then
+            echo "No publication-status notification changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/arxiv-suggestions.json
-          git commit -m "Update arXiv publication suggestions"
+          git add content/notifications.json
+          git commit -m "Update publication status notifications"
           git pull --rebase origin cms
           git push origin HEAD:cms
