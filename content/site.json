@@ -293,6 +293,7 @@
         },
         "header": null,
         "color": "#a34f3b",
+        "show_in_navigation": true,
         "order": 0,
         "languages": [
           "en",
@@ -324,6 +325,7 @@
           }
         },
         "color": "#8b5a2b",
+        "show_in_navigation": true,
         "order": 1,
         "languages": [
           "en",
@@ -355,6 +357,7 @@
           }
         },
         "color": "#315f9b",
+        "show_in_navigation": true,
         "order": 2,
         "languages": [
           "en",
@@ -386,6 +389,7 @@
           }
         },
         "color": "#176b52",
+        "show_in_navigation": true,
         "order": 3,
         "languages": [
           "en",
@@ -417,6 +421,7 @@
           }
         },
         "color": "#b14b86",
+        "show_in_navigation": true,
         "order": 4,
         "languages": [
           "en",

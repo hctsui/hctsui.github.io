@@ -47403,6 +47403,89 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-61-op-1",
+      "batch_issue": 61,
+      "applied_at": "2026-07-31T16:53:49.286722Z",
+      "expires_at": "2026-08-07T16:53:49.286722Z",
+      "reverted_by": null,
+      "request_digest": "71f27523a47044fe68948c8880e065f4f5e7b9738a552dc381d014cee026f02f",
+      "request_action": "people",
+      "action": "people",
+      "type": "people",
+      "entry_id": "people",
+      "label": {
+        "en": "Person links",
+        "zh": "人名連結"
+      },
+      "before": {
+        "schema_version": 1,
+        "people": [
+          {
+            "id": "ting-wei-chang",
+            "name": {
+              "en": "Ting-Wei Chang",
+              "zh": "張庭瑋"
+            },
+            "aliases": [],
+            "url": ""
+          },
+          {
+            "id": "song-yun-chen",
+            "name": {
+              "en": "Song-Yun Chen",
+              "zh": "陳松筠"
+            },
+            "aliases": [],
+            "url": ""
+          },
+          {
+            "id": "fei-jun-huang",
+            "name": {
+              "en": "Fei-Jun Huang",
+              "zh": "黃斐浚"
+            },
+            "aliases": [],
+            "url": ""
+          }
+        ]
+      },
+      "after": {
+        "schema_version": 1,
+        "people": [
+          {
+            "id": "ting-wei-chang",
+            "name": {
+              "en": "Ting-Wei Chang",
+              "zh": "張庭瑋"
+            },
+            "aliases": [],
+            "url": "https://twchang.com/"
+          },
+          {
+            "id": "song-yun-chen",
+            "name": {
+              "en": "Song-Yun Chen",
+              "zh": "陳松筠"
+            },
+            "aliases": [],
+            "url": "https://sites.google.com/view/songyun-math/homepage?authuser=0"
+          },
+          {
+            "id": "fei-jun-huang",
+            "name": {
+              "en": "Fei-Jun Huang",
+              "zh": "黃斐浚"
+            },
+            "aliases": [],
+            "url": "https://feijunhuang.github.io/slidesandposters.html"
+          }
+        ]
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
