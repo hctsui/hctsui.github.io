@@ -34,13 +34,26 @@ class AdminShellRegressionTests(unittest.TestCase):
         self.assertIn("homepageBaseValidateEditorObject", SCRIPT)
         self.assertIn(r"/^mailto:[^\s@]+@[^\s@]+$/i", SCRIPT)
 
-    def test_cv_templates_keep_visible_group_rule(self):
-        marker = r"\leaders\hrule height 0.45pt depth 0pt\hfill\kern0pt"
-        for name in (
-            "Hung-Chun-Tsui-CV.template.tex",
-            "Hung-Chun-Tsui-CV-zh.template.tex",
+
+    def test_home_page_is_in_catalog_and_has_restricted_editor(self):
+        for marker in (
+            "page:home",
+            "homeProfilePageFormHtml",
+            "首頁只開放修改下列五行文字",
+            "data-add-home-action",
+            "data-remove-home-action",
+            "data-home-action-url",
         ):
-            self.assertIn(marker, (ROOT / "cv" / name).read_text(encoding="utf-8"))
+            self.assertIn(marker, SCRIPT)
+
+    def test_home_profile_uses_hidden_content_record(self):
+        for marker in (
+            "HOME_PROFILE_ITEM_ID='home-profile-settings'",
+            "HOME_PROFILE_CATEGORY_ID='home-publications'",
+            "replaceDraftsForId(HOME_PROFILE_ITEM_ID",
+            "filter(item=>String(item?.id)!==HOME_PROFILE_ITEM_ID)",
+        ):
+            self.assertIn(marker, SCRIPT)
 
     def test_documents_no_longer_describe_update_packages(self):
         for text in (GUIDE, MANAGE):

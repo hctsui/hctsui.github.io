@@ -167,3 +167,235 @@ def homepage_activities(data: dict[str, Any], today: date) -> list[dict[str, Any
     )
     selected = items[: config["limit"]]
     return _preferred_order(selected, config["selected_ids"])
+
+
+# ---------------------------------------------------------------------------
+# Managed homepage hero/profile
+# ---------------------------------------------------------------------------
+# The Admin stores these settings as one internal generic record.  Assigning it
+# to the derived home-publications category keeps it out of ordinary website and
+# CV category rendering while letting the existing batch/content pipeline keep
+# conflict checks, history, and undo support.
+HOME_PROFILE_ITEM_ID = "home-profile-settings"
+HOME_PROFILE_CATEGORY_ID = "home-publications"
+HOME_PROFILE_MAX_ACTIONS = 12
+
+
+def default_home_profile() -> dict[str, Any]:
+    return {
+        "kicker": {
+            "en": "Department of Mathematics · National Tsing Hua University",
+            "zh": "國立清華大學數學系",
+        },
+        "name_en": "Hung-Chun Tsui",
+        "name_zh": "崔鴻竣",
+        "role": {
+            "en": "PhD student in mathematics",
+            "zh": "數學系博士生",
+        },
+        "advisor": {
+            "en": "Advisor: Professor Chieh-Yu Chang",
+            "zh": "指導教授：張介玉教授",
+        },
+        # Kept out of the Admin form intentionally: the requested editable
+        # surface is the five lines above plus the action buttons.
+        "advisor_url": "https://sites.google.com/gapp.nthu.edu.tw/cychang/",
+        "advisor_link_text": {
+            "en": "Chieh-Yu Chang",
+            "zh": "張介玉教授",
+        },
+        "actions": [
+            {"label": {"en": "CV", "zh": "履歷"}, "url": "cv.html"},
+            {
+                "label": {"en": "ORCID", "zh": "ORCID"},
+                "url": "https://orcid.org/0009-0009-7445-5634",
+            },
+            {
+                "label": {"en": "Email", "zh": "電子郵件"},
+                "url": "mailto:hctsui@gapp.nthu.edu.tw",
+            },
+        ],
+    }
+
+
+def _profile_pair(value: Any, fallback: dict[str, str]) -> dict[str, str]:
+    source = value if isinstance(value, dict) else {}
+    return {
+        lang: str(source.get(lang) or fallback.get(lang) or "").strip()
+        for lang in ("en", "zh")
+    }
+
+
+def _safe_home_url(value: Any) -> str:
+    text = str(value or "").strip()
+    if not text or any(ord(ch) < 32 for ch in text) or any(ch.isspace() for ch in text):
+        return ""
+    lowered = text.casefold()
+    if lowered.startswith(("javascript:", "data:", "vbscript:")):
+        return ""
+    if re.match(r"^[a-z][a-z0-9+.-]*:", text, flags=re.I):
+        if lowered.startswith(("http://", "https://")):
+            return text
+        if lowered.startswith("mailto:") and "@" in text[7:]:
+            return text
+        return ""
+    if text.startswith("//"):
+        return ""
+    return text
+
+
+def normalized_home_profile(value: Any = None) -> dict[str, Any]:
+    defaults = default_home_profile()
+    raw = value if isinstance(value, dict) else {}
+    actions: list[dict[str, Any]] = []
+    for item in raw.get("actions", defaults["actions"]):
+        if not isinstance(item, dict) or len(actions) >= HOME_PROFILE_MAX_ACTIONS:
+            continue
+        label = _profile_pair(item.get("label"), {"en": "", "zh": ""})
+        url = _safe_home_url(item.get("url"))
+        if label["en"] and label["zh"] and url:
+            actions.append({"label": label, "url": url})
+    return {
+        "kicker": _profile_pair(raw.get("kicker"), defaults["kicker"]),
+        "name_en": str(raw.get("name_en") or defaults["name_en"]).strip(),
+        "name_zh": str(raw.get("name_zh") or defaults["name_zh"]).strip(),
+        "role": _profile_pair(raw.get("role"), defaults["role"]),
+        "advisor": _profile_pair(raw.get("advisor"), defaults["advisor"]),
+        "advisor_url": _safe_home_url(raw.get("advisor_url"))
+        or defaults["advisor_url"],
+        "advisor_link_text": _profile_pair(
+            raw.get("advisor_link_text"), defaults["advisor_link_text"]
+        ),
+        "actions": actions,
+    }
+
+
+def homepage_profile_record(data: dict[str, Any]) -> dict[str, Any] | None:
+    for item in data.get("profile_items", []):
+        if isinstance(item, dict) and str(item.get("id")) == HOME_PROFILE_ITEM_ID:
+            return item
+    return None
+
+
+def homepage_profile(data: dict[str, Any]) -> dict[str, Any]:
+    record = homepage_profile_record(data)
+    return normalized_home_profile(record.get("profile") if record else None)
+
+
+def _home_advisor_html(profile: dict[str, Any], lang: str) -> str:
+    text = str(profile["advisor"].get(lang) or "")
+    link_text = str(profile["advisor_link_text"].get(lang) or "")
+    url = _safe_home_url(profile.get("advisor_url"))
+    if url and link_text and link_text in text:
+        before, after = text.split(link_text, 1)
+        attrs = ' rel="noopener" target="_blank"' if url.startswith(("http://", "https://")) else ""
+        return (
+            html.escape(before)
+            + f'<a href="{html.escape(url, quote=True)}"{attrs}>'
+            + html.escape(link_text)
+            + "</a>"
+            + html.escape(after)
+        )
+    return html.escape(text)
+
+
+def _home_actions_html(profile: dict[str, Any], lang: str) -> str:
+    links: list[str] = []
+    for action in profile.get("actions", []):
+        label = str((action.get("label") or {}).get(lang) or "").strip()
+        url = _safe_home_url(action.get("url"))
+        if not label or not url:
+            continue
+        attrs = ' rel="noopener" target="_blank"' if url.startswith(("http://", "https://")) else ""
+        links.append(
+            f'<a href="{html.escape(url, quote=True)}"{attrs}>{html.escape(label)}</a>'
+        )
+    return '<div class="home-actions">' + "".join(links) + "</div>"
+
+
+def render_home_profile_hero(data: dict[str, Any], lang: str) -> str:
+    profile = homepage_profile(data)
+    kicker = html.escape(profile["kicker"][lang])
+    role = html.escape(profile["role"][lang])
+    name_en = html.escape(profile["name_en"])
+    name_zh = html.escape(profile["name_zh"])
+    advisor = _home_advisor_html(profile, lang)
+    actions = _home_actions_html(profile, lang)
+    if lang == "zh":
+        photo = (
+            '<div class="home-visual"><div class="home-visual-panel">'
+            '<figure class="home-portrait"><img alt="風景照片" '
+            'data-photo-candidates="../assets/photo-960.webp|../photo.jpg" '
+            'decoding="async" fetchpriority="high" height="720" '
+            'sizes="(max-width: 800px) 100vw, 45vw" '
+            'src="../assets/photo-960.webp" '
+            'srcset="../assets/photo-640.webp 640w, ../assets/photo-960.webp 960w, ../assets/photo-1440.webp 1440w" '
+            'width="960"/><figcaption>日本福岡志賀島，2025 年 9 月</figcaption>'
+            '</figure></div></div>'
+        )
+    else:
+        photo = (
+            '<div class="home-visual"><div class="home-visual-panel">'
+            '<figure class="home-portrait"><img alt="Landscape photograph" '
+            'data-photo-candidates="assets/photo-960.webp|photo.jpg" '
+            'decoding="async" fetchpriority="high" height="720" '
+            'sizes="(max-width: 800px) 100vw, 45vw" '
+            'src="assets/photo-960.webp" '
+            'srcset="assets/photo-640.webp 640w, assets/photo-960.webp 960w, assets/photo-1440.webp 1440w" '
+            'width="960"/><figcaption>Shikanoshima, Fukuoka · September 2025</figcaption>'
+            '</figure></div></div>'
+        )
+    return (
+        '<section class="home-hero" id="top"><div class="container home-hero-grid">'
+        '<div class="home-hero-copy">'
+        f'<p class="home-kicker">{kicker}</p>'
+        f'<h1 class="home-name">{name_en}<span class="home-name-zh">{name_zh}</span></h1>'
+        f'<p class="home-role">{role}</p>'
+        f'<p class="home-advisor">{advisor}</p>'
+        f'{actions}</div>{photo}</div></section>'
+    )
+
+
+def replace_home_profile_hero(text: str, hero: str) -> str:
+    updated, count = re.subn(
+        r'<section class="home-hero"[^>]*>.*?</section>', hero, text, count=1, flags=re.S
+    )
+    if count != 1:
+        raise RuntimeError("Could not find homepage hero section")
+    return updated
+
+
+def render_home_profile_files() -> None:
+    root = Path(__file__).resolve().parents[1]
+    data_file = root / "content" / "site.json"
+    if not data_file.exists():
+        return
+    data = json.loads(data_file.read_text(encoding="utf-8"))
+    for lang, relative in (("en", "index.html"), ("zh", "zh/index.html")):
+        path = root / relative
+        if not path.exists():
+            continue
+        old = path.read_text(encoding="utf-8")
+        new = replace_home_profile_hero(old, render_home_profile_hero(data, lang))
+        if new != old:
+            path.write_text(new, encoding="utf-8")
+
+
+def _register_home_profile_post_build() -> None:
+    # build_site.py imports homepage_config.  Registering this post-build step
+    # keeps every existing workflow unchanged while ensuring the generated hero
+    # comes from managed data rather than whichever HTML happened to exist.
+    if Path(sys.argv[0]).name == "build_site.py":
+        atexit.register(render_home_profile_files)
+
+
+# Imports are intentionally local to the managed-home extension so the original
+# homepage selection API remains unchanged.
+import atexit  # noqa: E402
+import html  # noqa: E402
+import json  # noqa: E402
+import re  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
+
+_register_home_profile_post_build()

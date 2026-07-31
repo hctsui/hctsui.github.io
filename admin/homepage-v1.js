@@ -556,3 +556,143 @@ bindModernRecordControls();
 installClearAllDraftHandler();
 installPreviewCloseButton();
 if(site)renderAll();
+
+/* -------------------------------------------------------------------------
+   Homepage page item editor
+   -------------------------------------------------------------------------
+   The public homepage hero is managed as one internal generic content record.
+   It stays out of the ordinary item catalog and derived homepage categories,
+   while the existing batch pipeline still provides drafts, conflict checks,
+   history, and undo support. */
+const HOME_PROFILE_ITEM_ID='home-profile-settings';
+const HOME_PROFILE_CATEGORY_ID='home-publications';
+const HOME_PROFILE_MAX_ACTIONS=12;
+function defaultHomeProfile(){return{
+  kicker:{en:'Department of Mathematics · National Tsing Hua University',zh:'國立清華大學數學系'},
+  name_en:'Hung-Chun Tsui',name_zh:'崔鴻竣',
+  role:{en:'PhD student in mathematics',zh:'數學系博士生'},
+  advisor:{en:'Advisor: Professor Chieh-Yu Chang',zh:'指導教授：張介玉教授'},
+  advisor_url:'https://sites.google.com/gapp.nthu.edu.tw/cychang/',
+  advisor_link_text:{en:'Chieh-Yu Chang',zh:'張介玉教授'},
+  actions:[
+    {label:{en:'CV',zh:'履歷'},url:'cv.html'},
+    {label:{en:'ORCID',zh:'ORCID'},url:'https://orcid.org/0009-0009-7445-5634'},
+    {label:{en:'Email',zh:'電子郵件'},url:'mailto:hctsui@gapp.nthu.edu.tw'}
+  ]
+}}
+function homeProfilePair(value,fallback){return{en:String(value?.en||fallback?.en||'').trim(),zh:String(value?.zh||fallback?.zh||'').trim()}}
+function homeProfileUrlValid(value){
+  const text=String(value||'').trim();if(!text||/[\u0000-\u001f\s]/.test(text))return false;
+  if(/^(?:javascript|data|vbscript):/i.test(text)||text.startsWith('//'))return false;
+  const scheme=text.match(/^([a-z][a-z0-9+.-]*):/i)?.[1]?.toLowerCase();
+  if(!scheme)return true;
+  if(scheme==='http'||scheme==='https')return true;
+  return scheme==='mailto'&&/^mailto:[^\s@]+@[^\s@]+$/i.test(text);
+}
+function normalizeHomeProfile(value){
+  const defaults=defaultHomeProfile(),raw=value&&typeof value==='object'?value:{};
+  const actions=[];for(const item of Array.isArray(raw.actions)?raw.actions:defaults.actions){
+    if(actions.length>=HOME_PROFILE_MAX_ACTIONS||!item||typeof item!=='object')continue;
+    const label=homeProfilePair(item.label,{en:'',zh:''}),url=String(item.url||'').trim();
+    if(label.en&&label.zh&&homeProfileUrlValid(url))actions.push({label,url});
+  }
+  return{
+    kicker:homeProfilePair(raw.kicker,defaults.kicker),
+    name_en:String(raw.name_en||defaults.name_en).trim(),name_zh:String(raw.name_zh||defaults.name_zh).trim(),
+    role:homeProfilePair(raw.role,defaults.role),advisor:homeProfilePair(raw.advisor,defaults.advisor),
+    advisor_url:homeProfileUrlValid(raw.advisor_url)?String(raw.advisor_url).trim():defaults.advisor_url,
+    advisor_link_text:homeProfilePair(raw.advisor_link_text,defaults.advisor_link_text),actions
+  }
+}
+function homeProfileRecord(data){return(data?.profile_items||[]).find(item=>String(item?.id)===HOME_PROFILE_ITEM_ID)||null}
+function currentHomeProfile(){return normalizeHomeProfile(homeProfileRecord(effectiveSite())?.profile)}
+function homeProfileActionRow(action,index){
+  const item=action||{label:{en:'',zh:''},url:''};
+  return`<div class="home-profile-action-row" data-home-action-row>
+    <div class="field"><label>按鈕文字（英文）</label><input data-home-action-label="en" value="${esc(item.label?.en||'')}"></div>
+    <div class="field"><label>按鈕文字（中文）</label><input data-home-action-label="zh" value="${esc(item.label?.zh||'')}"></div>
+    <div class="field home-profile-action-url"><label>按鈕 URL</label><input data-home-action-url value="${esc(item.url||'')}" placeholder="cv.html、https://… 或 mailto:…"></div>
+    <button type="button" class="button danger home-profile-remove-action" data-remove-home-action aria-label="刪除第 ${index+1} 個按鈕">刪除</button>
+  </div>`
+}
+function homeProfilePageFormHtml(){
+  const p=currentHomeProfile();
+  return`<h3>編輯首頁</h3>
+  <p class="field-hint home-profile-scope-hint">首頁只開放修改下列五行文字與下方按鈕；照片、精選論文、近期活動和聯絡區仍由原本功能管理。</p>
+  <div class="pair-grid"><div class="field"><label>第一行（英文）</label><input data-home-profile-field="kicker.en" value="${esc(p.kicker.en)}"></div><div class="field"><label>第一行（中文）</label><input data-home-profile-field="kicker.zh" value="${esc(p.kicker.zh)}"></div></div>
+  <div class="pair-grid"><div class="field"><label>英文姓名</label><input data-home-profile-field="name_en" value="${esc(p.name_en)}"></div><div class="field"><label>中文姓名</label><input data-home-profile-field="name_zh" value="${esc(p.name_zh)}"></div></div>
+  <div class="pair-grid"><div class="field"><label>身分（英文）</label><input data-home-profile-field="role.en" value="${esc(p.role.en)}"></div><div class="field"><label>身分（中文）</label><input data-home-profile-field="role.zh" value="${esc(p.role.zh)}"></div></div>
+  <div class="pair-grid"><div class="field"><label>指導教授一行（英文）</label><input data-home-profile-field="advisor.en" value="${esc(p.advisor.en)}"></div><div class="field"><label>指導教授一行（中文）</label><input data-home-profile-field="advisor.zh" value="${esc(p.advisor.zh)}"></div></div>
+  <div class="home-profile-actions-editor"><div class="home-profile-actions-head"><div><h4>首頁按鈕</h4><p class="field-hint">可以新增或刪除按鈕，也能修改每個按鈕顯示文字與背後 URL；排列順序就是網站顯示順序。</p></div><button type="button" class="button" data-add-home-action>新增按鈕</button></div><div id="homeProfileActionRows">${p.actions.map(homeProfileActionRow).join('')}</div></div>
+  <div class="actions"><button class="button primary" data-save-layout-page="home">將首頁修改加入草稿</button></div>`
+}
+function installHomeProfileEditor(root){
+  if(!root||root.dataset.homeProfileBound)return;root.dataset.homeProfileBound='1';
+  root.addEventListener('click',event=>{
+    const add=event.target.closest('[data-add-home-action]');if(add){
+      const rows=root.querySelector('#homeProfileActionRows');if(!rows)return;
+      if(rows.querySelectorAll('[data-home-action-row]').length>=HOME_PROFILE_MAX_ACTIONS)return flash(`首頁按鈕最多 ${HOME_PROFILE_MAX_ACTIONS} 個`);
+      rows.insertAdjacentHTML('beforeend',homeProfileActionRow(null,rows.children.length));return;
+    }
+    const remove=event.target.closest('[data-remove-home-action]');if(remove)remove.closest('[data-home-action-row]')?.remove();
+  });
+}
+function collectHomeProfile(root){
+  const current=currentHomeProfile(),value=readNestedFields(root,'data-home-profile-field'),actions=[];
+  root.querySelectorAll('[data-home-action-row]').forEach(row=>actions.push({label:{en:row.querySelector('[data-home-action-label="en"]')?.value.trim()||'',zh:row.querySelector('[data-home-action-label="zh"]')?.value.trim()||''},url:row.querySelector('[data-home-action-url]')?.value.trim()||''}));
+  return normalizeHomeProfile({...current,...value,kicker:{...current.kicker,...value.kicker},role:{...current.role,...value.role},advisor:{...current.advisor,...value.advisor},actions});
+}
+function validateHomeProfileForm(root){
+  const raw=readNestedFields(root,'data-home-profile-field'),required=[raw.kicker?.en,raw.kicker?.zh,raw.name_en,raw.name_zh,raw.role?.en,raw.role?.zh,raw.advisor?.en,raw.advisor?.zh];
+  if(required.some(value=>!String(value||'').trim()))return'首頁的五行文字，中英文欄位都不能留白';
+  const rows=[...root.querySelectorAll('[data-home-action-row]')];
+  for(const [index,row] of rows.entries()){
+    const en=row.querySelector('[data-home-action-label="en"]')?.value.trim(),zh=row.querySelector('[data-home-action-label="zh"]')?.value.trim(),url=row.querySelector('[data-home-action-url]')?.value.trim();
+    if(!en||!zh||!url)return`第 ${index+1} 個按鈕的中英文文字與 URL 都必須填寫`;
+    if(!homeProfileUrlValid(url))return`第 ${index+1} 個按鈕 URL 格式不正確`;
+  }
+  return'';
+}
+function saveHomeProfilePage(root){
+  const error=validateHomeProfileForm(root);if(error)return flash(error);
+  const profile=collectHomeProfile(root),formal=homeProfileRecord(site),after={
+    id:HOME_PROFILE_ITEM_ID,type:'generic',category_id:HOME_PROFILE_CATEGORY_ID,order:-1000,internal:true,
+    title:{en:'Homepage profile',zh:'首頁基本資料'},description:{en:'',zh:''},profile
+  };
+  const operation=formal?{op:'update',type:'generic',id:HOME_PROFILE_ITEM_ID,before:clone(formal),after}:{op:'add',type:'generic',after};
+  replaceDraftsForId(HOME_PROFILE_ITEM_ID,[operation]);saveLocal();switchTab('draft');flash('首頁內容已加入草稿');
+}
+function homeProfileButtonsPreview(profile){return(profile.actions||[]).map((item,index)=>`${index+1}. ${item.label?.zh||item.label?.en||''} → ${item.url||''}`).join('\n')||'（沒有按鈕）'}
+function homeProfilePreviewHtml(before,after){
+  const oldProfile=normalizeHomeProfile(before?.profile),newProfile=normalizeHomeProfile(after?.profile);
+  const rows=[
+    previewFieldRow('第一行（英文）',oldProfile.kicker.en,newProfile.kicker.en),previewFieldRow('第一行（中文）',oldProfile.kicker.zh,newProfile.kicker.zh),
+    previewFieldRow('英文姓名',oldProfile.name_en,newProfile.name_en),previewFieldRow('中文姓名',oldProfile.name_zh,newProfile.name_zh),
+    previewFieldRow('身分（英文）',oldProfile.role.en,newProfile.role.en),previewFieldRow('身分（中文）',oldProfile.role.zh,newProfile.role.zh),
+    previewFieldRow('指導教授（英文）',oldProfile.advisor.en,newProfile.advisor.en),previewFieldRow('指導教授（中文）',oldProfile.advisor.zh,newProfile.advisor.zh),
+    previewFieldRow('首頁按鈕',homeProfileButtonsPreview(oldProfile),homeProfileButtonsPreview(newProfile))
+  ].filter(Boolean).join('');
+  return`<details class="diff unified-preview" open><summary><strong>首頁基本資料</strong><span class="tag">頁面</span></summary><section class="unified-preview-card"><div class="unified-preview-card-head"><div><span class="preview-kicker">首頁</span><h4>五行文字與按鈕</h4></div><span class="tag preview-status-changed">修改</span></div><div class="unified-preview-fields">${rows||'<p class="muted unified-preview-empty">沒有差異。</p>'}</div></section></details>`
+}
+
+const homeProfileBaseLayoutCatalogRecords=layoutCatalogRecords;
+layoutCatalogRecords=function(){
+  const rows=homeProfileBaseLayoutCatalogRecords(),home=layoutDraft?.pages?.find(page=>page.id==='home');
+  if(home&&!rows.some(row=>row._layout_kind==='page'&&row._layout_id==='home'))rows.unshift({id:'page:home',type:'page',_layout_kind:'page',_layout_id:'home',title:clone(home.name),category_id:'',order:home.order});
+  return rows;
+};
+const homeProfileBasePageFormHtml=pageFormHtml;
+pageFormHtml=function(page){return page?.id==='home'?homeProfilePageFormHtml():homeProfileBasePageFormHtml(page)};
+const homeProfileBaseOpenLayoutEditor=openLayoutEditor;
+openLayoutEditor=function(type,record){homeProfileBaseOpenLayoutEditor(type,record);if(type==='page'&&record?._layout_id==='home')installHomeProfileEditor(currentEditor?.root)};
+const homeProfileBaseSaveLayoutPage=saveLayoutPage;
+saveLayoutPage=function(id,root){if(id==='home')return saveHomeProfilePage(root);return homeProfileBaseSaveLayoutPage(id,root)};
+const homeProfileBaseSortedRecords=sortedRecords;
+sortedRecords=function(){return homeProfileBaseSortedRecords().filter(item=>String(item?.id)!==HOME_PROFILE_ITEM_ID)};
+const homeProfileBaseChangePreviewHtml=changePreviewHtml;
+changePreviewHtml=function(type,before,after){if(String(after?.id||before?.id)===HOME_PROFILE_ITEM_ID)return homeProfilePreviewHtml(before,after);return homeProfileBaseChangePreviewHtml(type,before,after)};
+
+(function installHomeProfileCss(){const style=document.createElement('style');style.textContent=`
+.home-profile-scope-hint{margin:0 0 12px;padding:9px 11px;border-left:4px solid #8d493d;background:#faf5f1;border-radius:8px}.home-profile-actions-editor{margin:16px 0 12px;padding:12px;border:1px solid #ded3ca;border-radius:12px;background:#fcfaf8}.home-profile-actions-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}.home-profile-actions-head h4{margin:0 0 3px}.home-profile-action-row{display:grid;grid-template-columns:minmax(140px,.8fr) minmax(140px,.8fr) minmax(220px,1.4fr) auto;gap:8px;align-items:end;padding:9px 0;border-top:1px solid #e7ddd5}.home-profile-action-row .field{margin:0}.home-profile-remove-action{margin-bottom:0}.unified-preview-field .preview-before-value,.unified-preview-field .preview-after-value{white-space:pre-wrap}@media(max-width:900px){.home-profile-action-row{grid-template-columns:1fr 1fr}.home-profile-action-url{grid-column:1/-1}.home-profile-remove-action{justify-self:end}}@media(max-width:600px){.home-profile-actions-head{display:grid}.home-profile-action-row{grid-template-columns:1fr}.home-profile-action-url{grid-column:auto}.home-profile-remove-action{justify-self:stretch}}
+`;document.head.append(style)})();
+if(site)renderAll();
