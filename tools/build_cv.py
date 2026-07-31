@@ -144,7 +144,7 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
     if entry.get("type") == "conference":
         role = field_rich(entry, "role", lang)
         if role and role.casefold() != "participant" and role != "一般參與者":
-            title_line += r" \quad {\color{secondaryColor}\textit{" + role + "}}"
+            title_line += r" \quad {\color{secondaryColor}" + (("（" + role + "）") if lang == "zh" else ("(" + role + ")")) + "}"
     description = field_rich(entry, "description", lang)
     if description:
         detail_lines.append(description)
