@@ -728,12 +728,11 @@
           <div class="tabs" id="tabs">
             <button class="tab active" data-tab="catalog">項目</button
             ><button class="tab" data-tab="add">新增</button
-            ><button class="tab" data-tab="draft">草稿</button
             ><button class="tab" data-tab="order">排序</button
-            ><button class="tab" data-tab="trash">垃圾桶</button
+            ><button class="tab" data-tab="trash">還原</button
+            ><button class="tab" data-tab="homepage">首頁精選</button
             ><button class="tab" data-tab="dictionary">中英對照</button
-            ><button class="tab" data-tab="headings">頁面與類別</button
-            ><button class="tab" data-tab="homepage">首頁精選</button>
+            ><button class="tab" data-tab="draft">草稿</button>
           </div>
           <div id="catalogTab">
             <div class="toolbar">
@@ -793,7 +792,7 @@
                 </button>
               </div>
               <p class="field-hint">
-                論文／作品與教學會保留作品類別／機構，只排序各類別或機構內的項目；套用後仍可用上下箭頭微調。
+                作品與教學會保留作品類別／機構，只排序各類別或機構內的項目；套用後仍可用上下箭頭微調。
               </p>
             </div>
             <div id="orderEditor" class="scroll"></div>
@@ -921,7 +920,6 @@
             <div id="translationAudit"></div>
             <div id="dictionaryRows" class="scroll"></div>
           </div>
-          <div id="headingsTab" hidden><div id="layoutManager"></div></div>
           <div id="homepageTab" hidden><div id="homepageManager"></div></div>
         </section>
         <section class="panel">
@@ -965,19 +963,34 @@
           "contact",
           "personal",
         ];
+      const GENERAL_TYPES = ["interest", "education", "generic", "contact", "personal"];
+      const ADD_TYPES = [
+        "page",
+        "category",
+        "publication",
+        "conference",
+        "talk",
+        "visit",
+        "organization",
+        "teaching",
+        "honor",
+        "generic",
+      ];
       const LABEL = {
-        conference: "會議／工作坊",
+        page: "頁面",
+        category: "類別",
+        conference: "學術會議",
         talk: "學術報告",
         visit: "學術訪問",
-        organization: "學術活動籌辦",
-        honor: "獎項／榮譽",
-        publication: "論文／作品",
+        organization: "學術活動",
+        honor: "榮譽",
+        publication: "作品",
         teaching: "教學",
-        interest: "研究興趣",
-        education: "學歷",
-        generic: "一般項目",
-        contact: "聯絡資訊",
-        personal: "個人資訊",
+        interest: "一般內容",
+        education: "一般內容",
+        generic: "一般內容",
+        contact: "一般內容",
+        personal: "一般內容",
         headings: "頁面與類別",
         layout: "頁面與類別",
         homepage: "首頁精選",
@@ -1581,10 +1594,17 @@
           ["term", "學期", "pair-term"],
           ["course_code", "課號", "text"],
           ["course_title", "課名", "pair"],
+          ["lecture_notes_title", "Lecture Notes 標題", "pair"],
+          ["lecture_notes_url", "Lecture Notes 連結", "url"],
         ],
         interest: [
-          ["title", "內容", "pair"],
-          ["description", "補充說明", "pair"],
+          ["start_date", "開始日期", "date"],
+          ["end_date", "結束日期", "date"],
+          ["date_label", "顯示日期", "pair"],
+          ["title", "名稱", "pair"],
+          ["organization", "學校／機構", "pair"],
+          ["description", "說明", "pair"],
+          ["url", "連結", "url"],
         ],
         education: [
           ["start_date", "開始日期", "date"],
@@ -1600,17 +1620,26 @@
           ["end_date", "結束日期", "date"],
           ["date_label", "顯示日期", "pair"],
           ["title", "名稱", "pair"],
+          ["organization", "學校／機構", "pair"],
           ["description", "說明", "pair"],
           ["url", "連結", "url"],
         ],
         contact: [
-          ["title", "欄位名稱", "pair"],
-          ["description", "內容", "pair"],
+          ["start_date", "開始日期", "date"],
+          ["end_date", "結束日期", "date"],
+          ["date_label", "顯示日期", "pair"],
+          ["title", "名稱", "pair"],
+          ["organization", "學校／機構", "pair"],
+          ["description", "說明", "pair"],
           ["url", "連結", "url"],
         ],
         personal: [
-          ["title", "欄位名稱", "pair"],
-          ["description", "內容", "pair"],
+          ["start_date", "開始日期", "date"],
+          ["end_date", "結束日期", "date"],
+          ["date_label", "顯示日期", "pair"],
+          ["title", "名稱", "pair"],
+          ["organization", "學校／機構", "pair"],
+          ["description", "說明", "pair"],
           ["url", "連結", "url"],
         ],
       };
@@ -1964,7 +1993,7 @@
         let s = editorState(type, obj),
           html = '<div class="preview-card">';
         if (type === "publication")
-          html += `<div class="field"><label>論文／作品類別</label><div class="preview-value">${esc(groupLabel("publication", obj.group_id, obj))}</div></div>`;
+          html += `<div class="field"><label>作品類別</label><div class="preview-value">${esc(groupLabel("publication", obj.group_id, obj))}</div></div>`;
         if (type === "teaching") {
           html += `<div class="field"><label>機構</label><div class="preview-value">${esc(pairText(obj.institution) || groupLabel("teaching", obj.group_id, obj))}</div></div>`;
           html += `<div class="pair-grid"><div class="field"><label>教學身分（英文）</label><div class="preview-value">${esc(obj.role?.en || "—")}</div></div><div class="field"><label>教學身分（中文）</label><div class="preview-value">${esc(obj.role?.zh || "—")}</div></div></div>`;
@@ -2020,7 +2049,7 @@
         if (type === "publication") {
           let groups = groupData(effectiveSite(), "publication"),
             current = s.group_id || "auto";
-          html += `<div class="field"><label>論文／作品類別</label><select id="publicationGroup"><option value="auto">自動判定</option>${groups.map((g) => `<option value="${esc(g.id)}" ${current === g.id ? "selected" : ""}>${esc(pairText(g.label) || g.id)}</option>`).join("")}<option value="__other__">其他／新增作品類別</option></select><p class="field-hint">選擇「自動判定」時：有 DOI、期刊頁或正式刊登資訊會歸入期刊論文，否則歸入預印本。</p></div><div id="publicationCustom" class="hidden">${pairFields("group_label", "新作品類別名稱", s.group_label || {})}</div>`;
+          html += `<div class="field"><label>作品類別</label><select id="publicationGroup"><option value="auto">自動判定</option>${groups.map((g) => `<option value="${esc(g.id)}" ${current === g.id ? "selected" : ""}>${esc(pairText(g.label) || g.id)}</option>`).join("")}<option value="__other__">其他／新增作品類別</option></select><p class="field-hint">選擇「自動判定」時：有 DOI、期刊頁或正式刊登資訊會歸入期刊論文，否則歸入預印本。</p></div><div id="publicationCustom" class="hidden">${pairFields("group_label", "新作品類別名稱", s.group_label || {})}</div>`;
         }
         if (type === "teaching") {
           let groups = groupData(effectiveSite(), "teaching"),
@@ -3224,7 +3253,7 @@
                 return `<div class="row"><span class="tag">${esc(historyActionLabel(h))}</span><strong>${esc(historyTitle(h))}</strong><span class="muted">${esc(LABEL[h.type] || h.type || "系統資料")} · GitHub #${h.batch_issue} · ${new Date(h.applied_at).toLocaleString("zh-TW")} · ${h.reverted_by ? "已還原" : used ? "已加入還原草稿" : "可還原"}</span><div class="actions"><button class="button" data-history-preview="${esc(h.history_id)}">預覽</button><button class="button" data-undo="${esc(h.history_id)}" ${disabled ? "disabled" : ""}>加入還原草稿</button><button class="button" data-history="${esc(h.history_id)}">JSON</button></div></div>`;
               })
               .join("")
-          : '<p class="muted">垃圾桶內沒有可還原紀錄。</p>';
+          : '<p class="muted">目前沒有可還原紀錄。</p>';
       }
       function validateDictionary() {
         let errors = [],
@@ -3402,7 +3431,7 @@
       }
       function historyOperationPreviewHtml(h) {
         if (!h) return '<p class="muted">找不到歷史資料。</p>';
-        let heading = `<div class="notice"><strong>垃圾桶預覽 · ${esc(historyActionLabel(h))}</strong><div>${esc(historyTitle(h))}</div><div class="muted">${esc(LABEL[h.type] || h.type || "系統資料")} · GitHub #${esc(h.batch_issue || "—")} · ${esc(new Date(h.applied_at).toLocaleString("zh-TW"))}</div></div>`;
+        let heading = `<div class="notice"><strong>還原預覽 · ${esc(historyActionLabel(h))}</strong><div>${esc(historyTitle(h))}</div><div class="muted">${esc(LABEL[h.type] || h.type || "系統資料")} · GitHub #${esc(h.batch_issue || "—")} · ${esc(new Date(h.applied_at).toLocaleString("zh-TW"))}</div></div>`;
         let body;
         if (h.request_action === "headings" || h.action === "headings")
           body = headingsHistoryPreviewHtml(h);
@@ -3455,7 +3484,6 @@
           "order",
           "trash",
           "dictionary",
-          "headings",
           "homepage",
         ])
           $(`#${n}Tab`).hidden = n !== name;
@@ -3555,8 +3583,11 @@
       };
       $("#filter").innerHTML =
         '<option value="">全部</option>' +
-        TYPES.map((t) => `<option value="${t}">${LABEL[t]}</option>`).join("");
-      $("#addType").innerHTML = $("#orderType").innerHTML = TYPES.map(
+        ADD_TYPES.map((t) => `<option value="${t}">${LABEL[t]}</option>`).join("");
+      $("#addType").innerHTML = ADD_TYPES.map(
+        (t) => `<option value="${t}">${LABEL[t]}</option>`,
+      ).join("");
+      $("#orderType").innerHTML = TYPES.map(
         (t) => `<option value="${t}">${LABEL[t]}</option>`,
       ).join("");
       $("#addType").onchange = () => openEditor($("#addType").value, null);
@@ -3564,14 +3595,21 @@
         let b = e.target.closest("button");
         if (!b) return;
         let d = effectiveSite(),
-          x = allRecords(d).find(
-            (r) => r.id === (b.dataset.edit || b.dataset.delete),
-          );
+          targetId = b.dataset.edit || b.dataset.delete,
+          x =
+            (typeof findAdminRecord === "function"
+              ? findAdminRecord(targetId)
+              : null) || allRecords(d).find((r) => r.id === targetId);
+        if (!x) return flash("找不到這筆資料，請重新整理");
         if (b.dataset.edit) {
           openEditor(x.type, x);
           switchTab("add");
         }
-        if (b.dataset.delete) deleteRecord(x);
+        if (b.dataset.delete) {
+          if (typeof deleteAdminRecord === "function" && x._layout_kind)
+            deleteAdminRecord(x);
+          else deleteRecord(x);
+        }
       };
       $("#drafts").onclick = (e) => {
         let b = e.target.closest("button");
@@ -3737,7 +3775,7 @@
           originalTranslations = clone(t);
           translations = loadTranslationDraft(t);
           history = h;
-          openEditor("conference", null);
+          openEditor($("#addType").value, null);
           $("#editorPreview").innerHTML =
             '<p class="muted">在左側填寫後，按「在右側預覽」查看表格預覽。</p>';
           loadOrder();

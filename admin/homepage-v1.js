@@ -109,11 +109,13 @@ function homepageManagerClick(event){
 }
 function homepagePreviewHtml(op){
   const data=homepageBaseEffectiveSite();
-  const rows=['publications','activities'].map(section=>{
+  const changedSections=['publications','activities'].filter(section=>homepageSignature(op.before[section])!==homepageSignature(op.after[section]));
+  const rows=changedSections.map(section=>{
     const before=op.before[section],after=op.after[section],beforeIds=homepageResolvedIds(data,section,before),afterIds=homepageResolvedIds(data,section,after);
     return`<div class="preview-card"><h4>${section==='publications'?'精選論文':'近期活動'}</h4><div class="preview-columns"><div><strong>修改前</strong><p>${esc(homepageModeLabel(section,before.mode))}${before.mode==='manual'?'':` · N=${before.limit}`}</p><ol>${beforeIds.map(id=>`<li>${esc(homepageNameById(data,id))}</li>`).join('')}</ol></div><div><strong>修改後</strong><p>${esc(homepageModeLabel(section,after.mode))}${after.mode==='manual'?'':` · N=${after.limit}`}</p><ol>${afterIds.map(id=>`<li>${esc(homepageNameById(data,id))}</li>`).join('')}</ol></div></div></div>`;
   }).join('');
-  return`<details class="diff"><summary><strong>首頁精選與近期活動</strong></summary>${rows}</details>`;
+  const label=changedSections.length===1?(changedSections[0]==='publications'?'精選論文':'近期活動'):'首頁精選與近期活動';
+  return`<details class="diff"><summary><strong>${label}</strong></summary>${rows}</details>`;
 }
 
 const homepageBaseEffectiveSite=effectiveSite;
@@ -123,7 +125,7 @@ payload=function(){const result=homepageBasePayload();if(!homepagePreviewSuppres
 const homepageBaseRenderPreview=renderPreview;
 renderPreview=function(refreshDictionary=true){homepagePreviewSuppressed=true;homepageBaseRenderPreview(refreshDictionary);homepagePreviewSuppressed=false;if(homepageDirty()){const op=homepageOperation();$('#preview').insertAdjacentHTML('beforeend',homepagePreviewHtml(op));const text=$('#summary').textContent;$('#summary').textContent=text==='尚無變更。'?'首頁精選有變更。':text.replace(/。$/,'')+'、首頁精選 1。'}$('#payload').textContent=JSON.stringify(payload(),null,2)};
 const homepageBaseHistoryPreview=historyOperationPreviewHtml;
-historyOperationPreviewHtml=function(h){if(h?.action==='homepage')return`<div class="notice"><strong>垃圾桶預覽 · 首頁精選</strong><div>${esc(historyTitle(h))}</div></div>${homepagePreviewHtml({before:h.before,after:h.after})}`;return homepageBaseHistoryPreview(h)};
+historyOperationPreviewHtml=function(h){if(h?.action==='homepage')return`<div class="notice"><strong>還原預覽 · 首頁精選</strong><div>${esc(historyTitle(h))}</div></div>${homepagePreviewHtml({before:h.before,after:h.after})}`;return homepageBaseHistoryPreview(h)};
 const homepageBaseUndoPreview=undoPreviewHtml;
 undoPreviewHtml=function(h){if(h?.action==='homepage')return homepagePreviewHtml({before:h.after,after:h.before});return homepageBaseUndoPreview(h)};
 const homepageBaseRenderAll=renderAll;
