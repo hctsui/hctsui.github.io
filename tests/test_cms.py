@@ -204,6 +204,21 @@ class CategoryArchitectureTests(unittest.TestCase):
         self.assertIn('<p class="activity-role"><span>Role</span>Speaker</p>', rendered)
         self.assertNotIn("<h3>Example<span", rendered)
 
+    def test_talk_slides_use_the_same_button_group_as_publication_links(self) -> None:
+        entry = {
+            "id": "talk-with-slides",
+            "type": "talk",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-01",
+            "title": {"en": "Example Talk", "zh": "範例演講"},
+            "slides_url": "https://example.com/slides.pdf",
+        }
+        rendered_en = render_activity(entry, "en")
+        rendered_zh = render_activity(entry, "zh")
+        self.assertIn('<div class="item-links"><a class="activity-link"', rendered_en)
+        self.assertIn(">Slides</a></div>", rendered_en)
+        self.assertIn(">投影片</a></div>", rendered_zh)
+
     def test_home_keeps_legacy_two_column_overview_and_links(self) -> None:
         data = minimal_site()
         data["publications"].append(
