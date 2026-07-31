@@ -1,0 +1,46 @@
+name: Check arXiv publications
+
+on:
+  schedule:
+    - cron: "15 9 * * 1"
+      timezone: "Asia/Tokyo"
+  workflow_dispatch:
+
+concurrency:
+  group: hctsui-arxiv-check
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out cms branch
+        uses: actions/checkout@v6
+        with:
+          ref: refs/heads/cms
+          fetch-depth: 0
+          clean: true
+
+      - name: Run regression tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Query official arXiv API
+        run: python3 tools/check_arxiv.py
+
+      - name: Commit new suggestions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- content/arxiv-suggestions.json; then
+            echo "No new arXiv suggestions."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/arxiv-suggestions.json
+          git commit -m "Update arXiv publication suggestions"
+          git push origin HEAD:cms
