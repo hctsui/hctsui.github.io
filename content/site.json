@@ -881,9 +881,11 @@
       ]
     },
     "analytics": {
-      "schema_version": 1,
+      "schema_version": 2,
       "enabled": true,
-      "token": "7d6f118151be461abcda7f7659aeace6"
+      "provider": "cloudflare",
+      "cloudflare_token": "7d6f118151be461abcda7f7659aeace6",
+      "google_measurement_id": ""
     },
     "error_page": {
       "schema_version": 1,
@@ -925,6 +927,51 @@
         "muted": "#6c625c",
         "button": "#2d2926",
         "button_text": "#ffffff"
+      }
+    },
+    "contact_form": {
+      "schema_version": 2,
+      "enabled": true,
+      "mode": "worker",
+      "web3forms_access_key": "",
+      "worker_url": "https://hctsui-contact-bridge.hctsui-math.workers.dev",
+      "turnstile_site_key": "0x4AAAAAAEDAWfBne1jtRv8u",
+      "email_subject": "[hctsui.github.io] New contact message",
+      "title": {
+        "en": "Send a message",
+        "zh": "傳送訊息"
+      },
+      "intro": {
+        "en": "For academic invitations or research correspondence, you may use this form.",
+        "zh": "如有學術邀請或研究交流，可使用此表單聯絡。"
+      },
+      "name_label": {
+        "en": "Name",
+        "zh": "姓名"
+      },
+      "email_label": {
+        "en": "Email",
+        "zh": "電子郵件"
+      },
+      "subject_label": {
+        "en": "Subject",
+        "zh": "主旨"
+      },
+      "message_label": {
+        "en": "Message",
+        "zh": "訊息"
+      },
+      "submit_label": {
+        "en": "Send message",
+        "zh": "送出訊息"
+      },
+      "success_message": {
+        "en": "Thank you. Your message has been sent.",
+        "zh": "謝謝，訊息已送出。"
+      },
+      "privacy_note": {
+        "en": "Your message will be delivered privately by Web3Forms.",
+        "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。"
       }
     }
   },
