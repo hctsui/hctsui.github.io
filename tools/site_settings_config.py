@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalization and validation for editable SEO/OG metadata and footer content."""
+"""Normalization and validation for editable site-wide settings."""
 from __future__ import annotations
 
 import copy
@@ -10,20 +10,37 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 ALIGNMENTS = {"left", "center", "right"}
-ICONS = {"none", "copyright", "email", "link", "github", "orcid", "location", "book", "calendar"}
+# Keep historical values readable, while the Admin only offers the simplified set.
+ICONS = {
+    "none",
+    "copyright",
+    "link",
+    "location",
+    "book",
+    "calendar",
+    "other",
+    "email",
+    "github",
+    "orcid",
+}
 PAGE_IDS = ("home", "cv", "publications", "activities", "teaching")
+HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
+CLOUDFLARE_TOKEN = re.compile(r"^[0-9a-fA-F]{32}$")
 
 
-def _text(value: Any, limit: int = 500) -> str:
-    return re.sub(r"\s+", " ", str(value or "").strip())[:limit]
+def _text(value: Any, limit: int = 500, *, collapse: bool = True) -> str:
+    raw = str(value or "").strip()
+    if collapse:
+        raw = re.sub(r"\s+", " ", raw)
+    return raw[:limit]
 
 
 def _pair(value: Any, fallback: dict[str, str] | None = None, limit: int = 500) -> dict[str, str]:
     source = value if isinstance(value, dict) else {}
     fallback = fallback or {"en": "", "zh": ""}
     return {
-        "en": _text(source.get("en") or fallback.get("en"), limit),
-        "zh": _text(source.get("zh") or fallback.get("zh"), limit),
+        "en": _text(source["en"], limit) if "en" in source else _text(fallback.get("en"), limit),
+        "zh": _text(source["zh"], limit) if "zh" in source else _text(fallback.get("zh"), limit),
     }
 
 
@@ -34,11 +51,16 @@ def _safe_http_url(value: Any, *, allow_relative: bool = False, allow_mailto: bo
     if allow_mailto and re.fullmatch(r"mailto:[^\s@]+@[^\s@]+", text, flags=re.I):
         return text
     if allow_relative and not re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", text) and not text.startswith("//"):
-        return text
+        return text if not any(ch.isspace() for ch in text) else ""
     parsed = urlparse(text)
     if parsed.scheme in {"http", "https"} and parsed.netloc and not any(ch.isspace() for ch in text):
         return text
     return ""
+
+
+def _color(value: Any, fallback: str) -> str:
+    text = str(value or "").strip()
+    return text.lower() if HEX_COLOR.fullmatch(text) else fallback.lower()
 
 
 def default_seo(data: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -100,13 +122,14 @@ def default_seo(data: dict[str, Any] | None = None) -> dict[str, Any]:
 
 def default_footer() -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "items": [
             {
                 "id": "copyright",
                 "text": {"en": "{year} Hung-Chun Tsui", "zh": "{year} Hung-Chun Tsui"},
                 "url": "",
                 "icon": "copyright",
+                "custom_icon": "",
                 "alignment": "left",
                 "new_tab": False,
             },
@@ -115,10 +138,46 @@ def default_footer() -> dict[str, Any]:
                 "text": {"en": "Last updated: {updated}", "zh": "最後更新：{updated}"},
                 "url": "",
                 "icon": "none",
+                "custom_icon": "",
                 "alignment": "right",
                 "new_tab": False,
             },
         ],
+    }
+
+
+def default_analytics() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "enabled": False,
+        "token": "",
+    }
+
+
+def default_error_page() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "eyebrow": {"en": "Page not found", "zh": "找不到頁面"},
+        "title": {"en": "This page does not exist.", "zh": "這個頁面不存在。"},
+        "description": {
+            "en": "The address may be outdated or mistyped. You can return to the homepage or continue browsing the website.",
+            "zh": "網址可能已更新或輸入有誤。你可以返回首頁，或繼續瀏覽網站內容。",
+        },
+        "home_label": {"en": "Return home", "zh": "返回首頁"},
+        "secondary_label": {"en": "View publications", "zh": "查看論文"},
+        "secondary_url": {"en": "publications.html", "zh": "zh/publications.html"},
+        "show_navigation": True,
+        "show_footer": True,
+        "auto_redirect": {"enabled": False, "seconds": 8},
+        "colors": {
+            "background": "#f7f3ed",
+            "surface": "#ffffff",
+            "accent": "#8d493d",
+            "text": "#2d2926",
+            "muted": "#6c625c",
+            "button": "#2d2926",
+            "button_text": "#ffffff",
+        },
     }
 
 
@@ -144,11 +203,13 @@ def normalize_seo(value: Any, data: dict[str, Any] | None = None) -> dict[str, A
             "og_description": _pair(raw.get("og_description"), fallback.get("og_description"), 500),
             "og_image": _safe_http_url(raw.get("og_image"), allow_relative=True),
         }
+    base_url = _safe_http_url(source.get("base_url")) if "base_url" in source else defaults["base_url"]
+    default_image = _safe_http_url(source.get("default_image"), allow_relative=True) if "default_image" in source else defaults["default_image"]
     return {
         "schema_version": 1,
-        "base_url": _safe_http_url(source.get("base_url")) or defaults["base_url"],
+        "base_url": base_url or defaults["base_url"],
         "site_name": _pair(source.get("site_name"), defaults["site_name"], 120),
-        "default_image": _safe_http_url(source.get("default_image"), allow_relative=True) or defaults["default_image"],
+        "default_image": default_image or defaults["default_image"],
         "pages": pages,
     }
 
@@ -180,24 +241,80 @@ def normalize_footer(value: Any) -> dict[str, Any]:
                 "text": _pair(raw.get("text"), {"en": "", "zh": ""}, 300),
                 "url": _safe_http_url(raw.get("url"), allow_relative=True, allow_mailto=True),
                 "icon": icon if icon in ICONS else "none",
+                "custom_icon": _safe_http_url(raw.get("custom_icon"), allow_relative=True),
                 "alignment": alignment if alignment in ALIGNMENTS else "center",
                 "new_tab": bool(raw.get("new_tab")),
             }
         )
-    return {"schema_version": 1, "items": result}
+    return {"schema_version": 2, "items": result}
+
+
+def normalize_analytics(value: Any) -> dict[str, Any]:
+    source = value if isinstance(value, dict) else {}
+    return {
+        "schema_version": 1,
+        "enabled": bool(source.get("enabled")),
+        "token": _text(source.get("token"), 80),
+    }
+
+
+def normalize_error_page(value: Any) -> dict[str, Any]:
+    defaults = default_error_page()
+    source = value if isinstance(value, dict) else {}
+    colors_source = source.get("colors") if isinstance(source.get("colors"), dict) else {}
+    redirect_source = source.get("auto_redirect") if isinstance(source.get("auto_redirect"), dict) else {}
+    secondary_url = source.get("secondary_url") if isinstance(source.get("secondary_url"), dict) else {}
+    seconds_raw = redirect_source.get("seconds", defaults["auto_redirect"]["seconds"])
+    try:
+        seconds = int(seconds_raw)
+    except (TypeError, ValueError):
+        seconds = defaults["auto_redirect"]["seconds"]
+    seconds = min(300, max(1, seconds))
+    return {
+        "schema_version": 1,
+        "eyebrow": _pair(source.get("eyebrow"), defaults["eyebrow"], 120),
+        "title": _pair(source.get("title"), defaults["title"], 180),
+        "description": _pair(source.get("description"), defaults["description"], 600),
+        "home_label": _pair(source.get("home_label"), defaults["home_label"], 100),
+        "secondary_label": _pair(source.get("secondary_label"), defaults["secondary_label"], 100),
+        "secondary_url": {
+            "en": _safe_http_url(secondary_url.get("en"), allow_relative=True) or defaults["secondary_url"]["en"],
+            "zh": _safe_http_url(secondary_url.get("zh"), allow_relative=True) or defaults["secondary_url"]["zh"],
+        },
+        "show_navigation": bool(source.get("show_navigation", defaults["show_navigation"])),
+        "show_footer": bool(source.get("show_footer", defaults["show_footer"])),
+        "auto_redirect": {
+            "enabled": bool(redirect_source.get("enabled")),
+            "seconds": seconds,
+        },
+        "colors": {
+            key: _color(colors_source.get(key), fallback)
+            for key, fallback in defaults["colors"].items()
+        },
+    }
 
 
 def normalized_site_settings(value: Any, data: dict[str, Any] | None = None) -> dict[str, Any]:
     source = value if isinstance(value, dict) else {}
     return {
-        "seo": normalize_seo(source.get("seo"), data),
         "footer": normalize_footer(source.get("footer")),
+        "seo": normalize_seo(source.get("seo"), data),
+        "analytics": normalize_analytics(source.get("analytics")),
+        "error_page": normalize_error_page(source.get("error_page")),
     }
 
 
 def current_site_settings(data: dict[str, Any]) -> dict[str, Any]:
     settings = data.get("settings") if isinstance(data.get("settings"), dict) else {}
-    return normalized_site_settings({"seo": settings.get("seo"), "footer": settings.get("footer")}, data)
+    return normalized_site_settings(
+        {
+            "footer": settings.get("footer"),
+            "seo": settings.get("seo"),
+            "analytics": settings.get("analytics"),
+            "error_page": settings.get("error_page"),
+        },
+        data,
+    )
 
 
 def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> None:
@@ -220,6 +337,18 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
     for item in footer["items"]:
         if not item["text"]["en"] and not item["text"]["zh"]:
             raise ValueError(f"Footer item {item['id']} needs English or Chinese text.")
+        if item["icon"] == "other" and not item["custom_icon"]:
+            raise ValueError(f"Footer item {item['id']} needs a custom icon path.")
+    analytics = normalized["analytics"]
+    if analytics["enabled"] and not CLOUDFLARE_TOKEN.fullmatch(analytics["token"]):
+        raise ValueError("Cloudflare Web Analytics token must be 32 hexadecimal characters.")
+    error_page = normalized["error_page"]
+    for field in ("eyebrow", "title", "description", "home_label"):
+        for lang in ("en", "zh"):
+            if not error_page[field][lang]:
+                raise ValueError(f"404 {field} is required for {lang}.")
+    if error_page["auto_redirect"]["enabled"] and not (1 <= error_page["auto_redirect"]["seconds"] <= 300):
+        raise ValueError("404 redirect seconds must be between 1 and 300.")
 
 
 def site_settings_snapshot(value: Any, data: dict[str, Any] | None = None) -> dict[str, Any]:

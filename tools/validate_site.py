@@ -198,6 +198,33 @@ for page in data.get("settings", {}).get("pages", []):
             if fragment not in text:
                 errors.append(f"{rel}: missing SEO/footer contract {fragment!r}")
 
+settings_bundle = current_site_settings(data)
+analytics_enabled = settings_bundle["analytics"]["enabled"]
+beacon_marker = "managed:cloudflare-web-analytics"
+for rel in [path for paths in page_files.values() for path in paths]:
+    text = (ROOT / rel).read_text(encoding="utf-8")
+    if analytics_enabled and beacon_marker not in text:
+        errors.append(f"{rel}: Cloudflare analytics is enabled but the managed beacon is missing")
+    if not analytics_enabled and beacon_marker in text:
+        errors.append(f"{rel}: Cloudflare analytics is disabled but the managed beacon remains")
+
+error_page_path = ROOT / "404.html"
+if not error_page_path.exists():
+    errors.append("404.html is missing")
+else:
+    error_text = error_page_path.read_text(encoding="utf-8")
+    for fragment in ('<meta name="robots" content="noindex,nofollow">', 'data-language="en"', 'data-language="zh"', 'data-switch-language'):
+        if fragment not in error_text:
+            errors.append(f"404.html: missing contract {fragment!r}")
+    if analytics_enabled and beacon_marker not in error_text:
+        errors.append("404.html: Cloudflare analytics is enabled but the managed beacon is missing")
+    if not analytics_enabled and beacon_marker in error_text:
+        errors.append("404.html: Cloudflare analytics is disabled but the managed beacon remains")
+
+admin_text = (ROOT / "admin/index.html").read_text(encoding="utf-8")
+if beacon_marker in admin_text or "static.cloudflareinsights.com/beacon.min.js" in admin_text:
+    errors.append("admin/index.html must not contain the Cloudflare analytics beacon")
+
 
 if errors:
     raise SystemExit("\n".join(errors))

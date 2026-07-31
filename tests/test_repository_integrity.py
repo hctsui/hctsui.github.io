@@ -34,6 +34,7 @@ class RequiredFileTests(unittest.TestCase):
             "admin/admin-icon.png",
             "assets/script.js",
             "assets/style.css",
+            "404.html",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
 
@@ -159,10 +160,20 @@ class CanonicalFilenameTests(unittest.TestCase):
             "admin/tags.js",
             "assets/script.js",
             "assets/style.css",
+            "404.html",
             "admin/admin-icon.svg",
         ):
             self.assertIn(f"test -f {relative}", workflow)
 
+
+
+    def test_custom_404_and_cloudflare_contracts_exist(self) -> None:
+        page = read("404.html")
+        self.assertIn('<meta name="robots" content="noindex,nofollow">', page)
+        self.assertIn('data-language="en"', page)
+        self.assertIn('data-language="zh"', page)
+        self.assertIn("data-switch-language", page)
+        self.assertNotIn("static.cloudflareinsights.com/beacon.min.js", read("admin/index.html"))
 
 class TestSuiteStructureTests(unittest.TestCase):
     def test_obsolete_duplicate_regression_files_are_removed(self) -> None:

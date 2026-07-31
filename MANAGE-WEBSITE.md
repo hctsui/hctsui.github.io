@@ -110,25 +110,49 @@
 
 ## 資料庫：中英對照與人名連結
 
-Admin 的「資料庫」分成兩種類型：
+Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁之間保留獨立間距：
 
-- 「中英對照」保留原本的字詞、標籤、匯入、匯出與精確補填功能。
-- 「人名連結」集中管理中英文姓名、其他拼法與學術網址；其他拼法每行一個，例如 `Tsui, Hung-Chun`。
-- 編輯論文作者時只顯示可能人名，必須手動點選才填入，不會自動替換相似姓名。
-- 人名連結會套用到整個公開網站的可見文字，包括首頁說明、指導教授、活動、教學和論文作者；既有連結、粗體、程式碼與 BibTeX 會保持原樣。
-- 人名資料保存在 `content/people.json`，PDF CV 不加入人名連結。
+- **中英對照**：新增、修改、刪除、合併與排序詞條和標籤，也可匯入／匯出 JSON。大型字詞庫會自動 gzip 壓縮，避免 GitHub Issue 欄位長度限制。
+- **人名連結**：集中管理英文姓名、中文姓名、其他拼法與學術網址。其他拼法每行一個，例如 `Tsui, Hung-Chun`。
+- 編輯論文作者時，輸入框下方只會列出可能的人名；必須手動點選才會填入，不會因相似姓名自動替換。
+- 人名精確比對會套用到整個公開網站，包括首頁說明、指導教授、活動、教學及論文作者。既有超連結、粗體、程式碼、數學標記與 BibTeX 不會被重複包覆。
+- 人名資料保存於 `content/people.json`；沒有匹配或沒有網址時維持普通文字，PDF CV 不加入人名連結。
 
-## SEO／OG 與頁尾
+## 網站設定
 
-「網站設定」可管理：
+「網站設定」依序分成 **頁尾 → SEO／OG → 流量統計 → 404 頁面**。四個區塊都沿用本機草稿、右側逐欄預覽、Batch Issue、衝突檢查與七日還原。
 
-- 網站基準網址、網站名稱與預設分享圖片。
-- 各頁中英文 SEO title、Meta description、OG title、OG description 與個別分享圖片。
-- 自動生成 canonical、Open Graph、Twitter Card 與中英文 hreflang。
-- 頁尾中英文文字、小圖標、超連結、靠左／置中／靠右及項目順序。
-- 頁尾文字可用 `{year}` 與 `{updated}`。
+### 頁尾
 
-SEO／OG、頁尾與人名連結都沿用既有草稿、預覽、Batch Issue、衝突檢查和七日還原流程。
+- 頁尾可新增多個中英文項目，設定超連結、是否開新分頁、靠左／置中／靠右及上下順序。
+- 預覽分成英文與中文兩列，使用固定高對比配色，不會因公開網站的頁尾顏色而看不清楚。
+- 小圖標選單順序為：無圖標、版權、連結、地點、書籍、日曆、其他。
+- 選擇「其他」時，必須填入已放在 repository 中的圖檔相對路徑，例如 `assets/icons/my-icon.svg`；也可使用完整 `https://` 網址。
+- 頁尾文字支援 `{year}` 與 `{updated}`，分別代入目前年份和網站最後更新日期。
+
+### SEO／OG
+
+- 可設定基準網址、網站名稱、預設分享圖片，以及每頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。
+- 建置時自動產生 canonical、Open Graph、Twitter Card、中文／英文 hreflang 與 x-default。
+
+### Cloudflare Web Analytics
+
+- 流量統計預設關閉；啟用後填入 Cloudflare Web Analytics 的 32 字元 Site Token。
+- 產生器只把 Cloudflare beacon 加入公開頁面與 `404.html`，不會加入 `/admin/`。
+- 關閉功能或清空 Token 後，下一次建置會移除先前由系統加入的 beacon。
+
+### 404 頁面
+
+- GitHub Pages 使用 repository 根目錄的 `404.html` 顯示自訂錯誤頁面。
+- 可編輯中英文小標、標題、說明、首頁按鈕、次要按鈕與次要網址。
+- 可選擇是否顯示導覽列、共用頁尾，以及是否在 1–300 秒後自動返回相同語言的首頁。
+- 可調整背景、卡片、強調色、主要文字、說明文字、按鈕及按鈕文字顏色，Admin 會即時預覽。
+- 404 頁固定輸出 `noindex,nofollow`，不會被當作正常內容建立索引。
+
+### 網站設定草稿與預覽
+
+- 草稿採正規化後的語意比較；欄位改回原值時會立即恢復「尚未修改」，並自動清除對應的本機草稿。
+- 右側預覽不再只顯示「0 個頁面變更」或「2 → 2 個項目」，而會逐項列出真正變動的欄位、修改前值與修改後值。
 
 ## GitHub Issue 與自動流程
 
@@ -140,15 +164,17 @@ SEO／OG、頁尾與人名連結都沿用既有草稿、預覽、Batch Issue、�
 
 - `content/site.json`：頁面、類別、項目與排序資料。
 - `content/translations.json`：中英字詞與標籤。
-- `content/people.json`：整站人名連結資料。
+- `content/people.json`：中英文姓名、其他拼法與學術網址。
+- `404.html`：由網站設定產生的雙語自訂錯誤頁。
 - `admin/index.html`：內容編輯介面。
 - `admin/layout.js`：頁面、類別與統一排序管理。
+- `admin/people.js`：資料庫的人名連結管理與作者候選建議。
+- `admin/site-settings.js`：頁尾、SEO／OG、Cloudflare 流量統計與 404 管理。
 - `admin/homepage.js`：首頁雙欄、一般內容風格編輯與 Admin 相容修正。
-- `admin/people.js`：資料庫中的人名連結與作者候選建議。
-- `admin/site-settings.js`：SEO／OG 與頁尾管理。
 - `admin/guide.html`：完整操作手冊。
 - `tools/process_batch_request.py`：批次套用、衝突檢查與七日還原。
-- `tools/build_site.py`：中英文網站生成。
+- `tools/build_site.py`：中英文網站、頁尾、SEO／OG、分析 beacon 與 404 生成。
+- `tools/site_settings_config.py`：網站設定的預設值、正規化與驗證。
 - `tools/build_cv.py`：中英文 LaTeX 履歷生成。
 
 ### 活動入口與首頁精選

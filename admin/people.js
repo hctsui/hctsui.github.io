@@ -144,6 +144,9 @@
   function installStyles(){
     if(document.querySelector('#people-manager-styles'))return;
     const style=document.createElement('style');style.id='people-manager-styles';style.textContent=`
+      .database-type-shell{margin-top:20px;padding-top:18px;border-top:1px solid #e3d8cf}
+      .database-type-tabs{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 10px}
+      .database-type-tabs .button.active{background:#2d2926;color:#fff;border-color:#2d2926}
       .person-manager-row{border:1px solid #dfd3ca;border-radius:12px;padding:12px;margin:10px 0;background:#fcfaf8}
       .person-manager-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
       .author-suggestions{margin-top:8px;border:1px solid #cfc4bb;border-radius:11px;background:#fff;box-shadow:0 12px 28px rgba(45,41,38,.14);overflow:hidden;position:relative;z-index:8}

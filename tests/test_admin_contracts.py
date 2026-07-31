@@ -198,21 +198,55 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn('data-database-type="translations">中英對照', people)
         self.assertIn('data-database-type="people">人名連結', people)
         self.assertIn('data-tab="siteSettings">網站設定', settings)
-        self.assertIn('data-site-settings-section="seo">SEO／OG', settings)
-        self.assertIn('data-site-settings-section="footer">頁尾', settings)
+        order = [
+            settings.index('data-site-settings-section="footer">頁尾'),
+            settings.index('data-site-settings-section="seo">SEO／OG'),
+            settings.index('data-site-settings-section="analytics">流量統計'),
+            settings.index('data-site-settings-section="errorPage">404 頁面'),
+        ]
+        self.assertEqual(order, sorted(order))
+        self.assertIn("site-settings-nav-shell,.database-type-shell", settings)
+        self.assertIn("margin-top:20px", settings)
 
-    def test_footer_editor_supports_icon_link_and_alignment(self) -> None:
+    def test_footer_editor_supports_icon_link_alignment_and_custom_paths(self) -> None:
         settings = read("admin/site-settings.js")
         for marker in (
             "小圖標",
+            "版權",
+            "連結",
+            "地點",
+            "書籍",
+            "日曆",
+            "其他圖標檔案路徑",
+            "assets/icons/my-icon.svg",
             "超連結（選填）",
             "靠左",
             "置中",
             "靠右",
+            "English footer",
+            "中文頁尾",
             "data-footer-move",
             "siteSettingsOperation",
         ):
             self.assertIn(marker, settings)
+
+
+    def test_analytics_404_and_semantic_preview_are_editable(self) -> None:
+        settings = read("admin/site-settings.js")
+        for marker in (
+            "Cloudflare Web Analytics",
+            "Cloudflare Site Token",
+            "不會追蹤 <code>/admin/</code>",
+            "自動返回首頁",
+            "幾秒後返回首頁",
+            "恢復預設顏色",
+            "data-error-color",
+            "網站設定：${total} 項實際變更",
+            "逐欄列出真正改了什麼",
+        ):
+            self.assertIn(marker, settings)
+        self.assertIn("const equal=(a,b)=>JSON.stringify(stable(a))===JSON.stringify(stable(b))", settings)
+        self.assertNotIn("draft=normalize(draft,siteDataCache)", settings)
 
     def test_seo_editor_exposes_page_specific_meta_and_og_fields(self) -> None:
         settings = read("admin/site-settings.js")

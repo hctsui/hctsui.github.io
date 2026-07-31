@@ -26,7 +26,7 @@
       <li><a href="#home-profile">首頁內容</a></li>
       <li><a href="#homepage">首頁精選</a></li>
       <li><a href="#database">資料庫</a></li>
-      <li><a href="#site-settings">SEO／OG 與頁尾</a></li>
+      <li><a href="#site-settings">頁尾、SEO／OG、流量統計與 404</a></li>
       <li><a href="#drafts">草稿與預覽</a></li>
       <li><a href="#submit">GitHub 送出</a></li>
       <li><a href="#preflight">送出前檢查</a></li>
@@ -149,15 +149,35 @@
       </section>
 
       <section id="site-settings">
-        <h2>網站設定：SEO／OG 與頁尾</h2>
-        <p>「網站設定」分成「SEO／OG」和「頁尾」，兩者都沿用本機草稿、修改前後預覽、Batch Issue、衝突檢查與七日還原。</p>
+        <h2>網站設定：頁尾、SEO／OG、流量統計與 404</h2>
+        <p>「網站設定」依序分成「頁尾」、「SEO／OG」、「流量統計」、「404 頁面」。子分頁和上方主分頁之間保留明顯間距；四個區塊都沿用本機草稿、逐欄預覽、Batch Issue、衝突檢查與七日還原。</p>
+        <h3>頁尾</h3>
         <ul>
-          <li><strong>SEO／OG：</strong>可設定網站基準網址、網站名稱、預設分享圖片，以及各頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。</li>
-          <li>建置時會自動生成 canonical、Open Graph、Twitter Card 與中英文 hreflang 標籤。</li>
-          <li><strong>頁尾：</strong>每個項目可輸入中英文文字、選擇小圖標、設定超連結與靠左／置中／靠右，並可上下調整順序。</li>
-          <li>頁尾文字支援 <code>{year}</code> 和 <code>{updated}</code>，分別代入目前年份與網站最後更新日期。</li>
-          <li>頁尾連結支援相對路徑、http／https 與 <code>mailto:</code>。</li>
+          <li>英文與中文預覽分開顯示，採固定高對比配色，不受公開網站頁尾顏色影響。</li>
+          <li>每個項目可輸入中英文文字、設定超連結、是否開新分頁、靠左／置中／靠右，以及上下順序。</li>
+          <li>圖標選單順序為：無圖標、版權、連結、地點、書籍、日曆、其他。</li>
+          <li>選擇「其他」後，填入 repository 內的圖檔路徑，例如 <code>assets/icons/my-icon.svg</code>；也可填完整 https 網址。</li>
+          <li>頁尾文字支援 <code>{year}</code> 與 <code>{updated}</code>。</li>
         </ul>
+        <h3>SEO／OG</h3>
+        <ul>
+          <li>可設定網站基準網址、網站名稱、預設分享圖片，以及各頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。</li>
+          <li>建置時自動生成 canonical、Open Graph、Twitter Card、中英文 hreflang 與 x-default。</li>
+        </ul>
+        <h3>Cloudflare Web Analytics</h3>
+        <ul>
+          <li>預設關閉。啟用後，只需填入 Cloudflare Web Analytics 的 32 字元 Site Token，不要貼整段 script。</li>
+          <li>beacon 只會加入公開網站與 <code>404.html</code>，不會加入 <code>/admin/</code>。</li>
+          <li>關閉功能後，下一次建置會移除系統管理的 beacon。</li>
+        </ul>
+        <h3>404 頁面</h3>
+        <ul>
+          <li>可編輯中英文小標、標題、說明、首頁按鈕、次要按鈕與網址。</li>
+          <li>可選擇是否顯示導覽列、共用頁尾，以及是否在 1–300 秒後自動返回相同語言的首頁。</li>
+          <li>可調整背景、卡片、強調色、主要文字、說明文字、按鈕與按鈕文字顏色，並在 Admin 即時預覽。</li>
+          <li>404 固定輸出 <code>noindex,nofollow</code>。</li>
+        </ul>
+        <div class="callout success"><strong>網站設定改回原值時會自動取消修改狀態。</strong>右側預覽會逐欄列出真正的修改前後值，不再只顯示頁面數或項目數。</div>
       </section>
 
       <section id="drafts">
@@ -215,7 +235,7 @@
           <tr><td>搬移選單是灰色</td><td>目前沒有其他能接受相同格式的類別；先新增相同顯示風格的類別。</td></tr>
           <tr><td>首頁精選介面看不到</td><td>到「排序」並把「選擇頁面」切換為「首頁」；精選論文與近期活動會直接出現在各自類別位置。</td></tr>
           <tr><td>首頁順序沒有套用</td><td>確認已使用「上移／下移」調整，並到「草稿」檢查首頁設定的修改前後順序。</td></tr>
-          <tr><td>首頁調整後又改回原狀</td><td>狀態應自動回到「目前無變更」。若仍顯示有變更，先重新整理確認已載入最新版 Admin。</td></tr>
+          <tr><td>首頁或網站設定改回原狀</td><td>狀態應立即回到「目前無變更」，並清除該組本機草稿。右側預覽仍有內容時，重新整理確認已載入最新版 Admin。</td></tr>
           <tr><td>找不到項目排序草稿</td><td>排序或搬移後到「草稿」查看「頁面／類別／排序」管理列，可修改、預覽或重設整組排序草稿。</td></tr>
           <tr><td>活動種類選錯</td><td>使用表單最上方的「← 返回活動類型」，回到學術會議、學術報告、學術訪問、學術籌辦四選一畫面。</td></tr>
           <tr><td>改風格後出現刪除與新增兩筆草稿</td><td>這是精簡時間軸（榮譽）與其他一般內容資料區之間的安全轉換，屬正常行為。刪除或改回這筆內容草稿時，系統也會還原它自動產生的類別與排序變更。</td></tr>

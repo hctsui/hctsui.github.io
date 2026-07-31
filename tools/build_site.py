@@ -556,6 +556,27 @@ def apply_seo_metadata(text: str, data: dict[str, Any], page: dict[str, Any], la
     return text.replace("</head>", block + "\n</head>", 1)
 
 
+_ANALYTICS_START = "<!-- managed:cloudflare-web-analytics -->"
+_ANALYTICS_END = "<!-- /managed:cloudflare-web-analytics -->"
+
+
+def apply_cloudflare_analytics(text: str, data: dict[str, Any]) -> str:
+    """Insert the Cloudflare beacon only in generated public pages."""
+    pattern = re.escape(_ANALYTICS_START) + r".*?" + re.escape(_ANALYTICS_END) + r"\s*"
+    text = re.sub(pattern, "", text, flags=re.S)
+    analytics = current_site_settings(data)["analytics"]
+    if not analytics.get("enabled") or not analytics.get("token"):
+        return text
+    payload = json.dumps({"token": analytics["token"]}, separators=(",", ":"))
+    block = (
+        f"{_ANALYTICS_START}\n"
+        '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
+        f"data-cf-beacon='{esc(payload)}'></script>\n"
+        f"{_ANALYTICS_END}"
+    )
+    return text.replace("</body>", block + "\n</body>", 1)
+
+
 _FOOTER_ICONS = {
     "copyright": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 9.5a4 4 0 1 0 0 5"></path></svg>',
     "email": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg>',
@@ -568,7 +589,9 @@ _FOOTER_ICONS = {
 }
 
 
-def _footer_icon(name: str) -> str:
+def _footer_icon(name: str, custom_icon: str = "") -> str:
+    if name == "other" and custom_icon:
+        return f'<img class="footer-custom-icon" src="{esc(custom_icon)}" alt="">'
     return _FOOTER_ICONS.get(name, "")
 
 
@@ -579,15 +602,22 @@ def _existing_updated(text: str, lang: str, today: date) -> str:
 
 
 def render_footer(data: dict[str, Any], lang: str, today: date, *, updated: str | None = None) -> str:
-    footer = current_site_settings(data)["footer"]
+    settings = current_site_settings(data)
+    footer = settings["footer"]
+    base_url = settings["seo"]["base_url"]
     values = {"year": str(today.year), "updated": updated or f"{today.year}/{today.month}/{today.day}"}
     zones: dict[str, list[str]] = {"left": [], "center": [], "right": []}
     for item in footer["items"]:
         text = item["text"].get(lang) or item["text"].get("en") or item["text"].get("zh") or ""
         for key, value in values.items():
             text = text.replace("{" + key + "}", value)
-        content = f'{_footer_icon(item["icon"])}<span>{esc(text)}</span>'
+        custom_icon = str(item.get("custom_icon") or "").strip()
+        if custom_icon and not re.match(r"^https?://", custom_icon, flags=re.I):
+            custom_icon = _absolute_url(base_url, custom_icon)
+        content = f'{_footer_icon(item["icon"], custom_icon)}<span>{esc(text)}</span>'
         url = str(item.get("url") or "").strip()
+        if url and not re.match(r"^(?:https?://|mailto:)", url, flags=re.I):
+            url = _absolute_url(base_url, url)
         if url:
             attrs = ' rel="noopener"' + (' target="_blank"' if item.get("new_tab") else "")
             content = f'<a class="footer-item" href="{esc(url)}"{attrs}>{content}</a>'
@@ -635,6 +665,132 @@ def apply_page_theme(text: str, page: dict[str, Any]) -> str:
     return re.sub(r'(<body\b[^>]*?)(?:\sstyle="[^"]*")?(>)', rf'\1 style="{style}"\2', text, count=1)
 
 
+def _not_found_navigation(data: dict[str, Any], lang: str, base_url: str) -> str:
+    links = []
+    for page in normalized_pages(data):
+        path = str((page.get("path") or {}).get(lang) or "")
+        if not path:
+            continue
+        label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
+        links.append(f'<a href="{esc(_absolute_url(base_url, path))}">{esc(label)}</a>')
+    return '<nav class="not-found-nav" aria-label="Website navigation">' + "".join(links) + "</nav>"
+
+
+def render_404_page(data: dict[str, Any], today: date) -> str:
+    settings = current_site_settings(data)
+    error = settings["error_page"]
+    seo = settings["seo"]
+    base = seo["base_url"]
+    colors = error["colors"]
+    home = {
+        "en": _absolute_url(base, "index.html"),
+        "zh": _absolute_url(base, "zh/index.html"),
+    }
+    secondary = {
+        lang: _absolute_url(base, error["secondary_url"][lang])
+        for lang in ("en", "zh")
+    }
+    css_url = _absolute_url(base, "assets/style.css")
+    language_payload = json.dumps(
+        {"home": home, "redirect": error["auto_redirect"]},
+        ensure_ascii=False, separators=(",", ":"),
+    )
+
+    def language_panel(lang: str) -> str:
+        redirect_text = "Returning home in {seconds} seconds." if lang == "en" else "將在 {seconds} 秒後返回首頁。"
+        redirect = ""
+        if error["auto_redirect"]["enabled"]:
+            redirect = (
+                f'<p class="not-found-redirect" data-countdown-template="{esc(redirect_text)}" '
+                f'data-countdown>{esc(redirect_text.format(seconds=error["auto_redirect"]["seconds"]))}</p>'
+            )
+        secondary_button = ""
+        if error["secondary_label"][lang]:
+            secondary_button = (
+                f'<a class="not-found-button secondary" href="{esc(secondary[lang])}">'
+                f'{esc(error["secondary_label"][lang])}</a>'
+            )
+        footer = render_footer(data, lang, today) if error["show_footer"] else ""
+        nav = _not_found_navigation(data, lang, base) if error["show_navigation"] else ""
+        switch_label = "中文" if lang == "en" else "EN"
+        return f'''<div class="not-found-language" data-language="{lang}" hidden>
+          <header class="not-found-header">
+            <a class="not-found-brand" href="{esc(home[lang])}">{esc(seo["site_name"][lang])}</a>
+            {nav}
+            <button class="not-found-language-button" type="button" data-switch-language>{switch_label}</button>
+          </header>
+          <main class="not-found-main">
+            <section class="not-found-card">
+              <div class="not-found-code">404</div>
+              <p class="not-found-eyebrow">{esc(error["eyebrow"][lang])}</p>
+              <h1>{esc(error["title"][lang])}</h1>
+              <p class="not-found-description">{esc(error["description"][lang])}</p>
+              {redirect}
+              <div class="not-found-actions">
+                <a class="not-found-button primary" href="{esc(home[lang])}">{esc(error["home_label"][lang])}</a>
+                {secondary_button}
+              </div>
+            </section>
+          </main>
+          {footer}
+        </div>'''
+
+    page = f'''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>404 | {esc(seo["site_name"]["en"])}</title>
+  <link rel="stylesheet" href="{esc(css_url)}">
+  <style>
+    :root{{--nf-background:{colors["background"]};--nf-surface:{colors["surface"]};--nf-accent:{colors["accent"]};--nf-text:{colors["text"]};--nf-muted:{colors["muted"]};--nf-button:{colors["button"]};--nf-button-text:{colors["button_text"]}}}
+    body{{margin:0;background:var(--nf-background);color:var(--nf-text)}}
+    .not-found-language{{min-height:100vh;display:flex;flex-direction:column}}
+    .not-found-header{{width:min(1120px,calc(100% - 32px));margin:auto;padding:24px 0;display:flex;align-items:center;gap:20px}}
+    .not-found-brand{{font-family:Georgia,"Times New Roman",serif;font-size:1.2rem;font-weight:800;color:var(--nf-text);text-decoration:none}}
+    .not-found-nav{{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}}.not-found-nav a{{color:var(--nf-muted);font-weight:700;text-decoration:none}}.not-found-nav a:hover{{color:var(--nf-accent)}}
+    .not-found-language-button{{border:1px solid color-mix(in srgb,var(--nf-text) 20%,transparent);border-radius:999px;background:var(--nf-surface);color:var(--nf-text);padding:8px 12px;font:inherit;font-weight:800;cursor:pointer}}
+    .not-found-main{{width:min(900px,calc(100% - 32px));margin:auto;flex:1;display:grid;place-items:center;padding:48px 0 72px}}
+    .not-found-card{{width:100%;text-align:center;padding:clamp(36px,7vw,76px);border:1px solid color-mix(in srgb,var(--nf-text) 14%,transparent);border-radius:28px;background:var(--nf-surface);box-shadow:0 24px 60px color-mix(in srgb,var(--nf-text) 10%,transparent)}}
+    .not-found-code{{font:800 clamp(4.5rem,16vw,9rem)/.85 Georgia,"Times New Roman",serif;color:color-mix(in srgb,var(--nf-accent) 18%,transparent)}}
+    .not-found-eyebrow{{margin:1.3rem 0 .5rem;text-transform:uppercase;letter-spacing:.15em;color:var(--nf-accent);font-size:.78rem;font-weight:900}}
+    .not-found-card h1{{margin:.25rem 0 1rem;color:var(--nf-text);font-size:clamp(2rem,6vw,4.2rem)}}
+    .not-found-description{{max-width:680px;margin:0 auto;color:var(--nf-muted);font-size:1.08rem}}
+    .not-found-redirect{{margin:1rem 0 0;color:var(--nf-accent);font-weight:800}}
+    .not-found-actions{{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:28px}}
+    .not-found-button{{display:inline-flex;padding:11px 17px;border-radius:999px;font-weight:850;text-decoration:none;border:1px solid var(--nf-button)}}
+    .not-found-button.primary{{background:var(--nf-button);color:var(--nf-button-text)}}.not-found-button.secondary{{background:transparent;color:var(--nf-button)}}
+    .not-found-language .site-footer{{margin-top:auto}}
+    @media(max-width:760px){{.not-found-nav{{display:none}}.not-found-header{{justify-content:space-between}}}}
+  </style>
+</head>
+<body data-page="404">
+  {language_panel("en")}
+  {language_panel("zh")}
+  <script>
+    (()=>{{
+      const config={language_payload};
+      let lang=location.pathname.startsWith('/zh/')||(!location.pathname.includes('/en/')&&navigator.language.toLowerCase().startsWith('zh'))?'zh':'en';
+      let redirectTimer=null,countdownTimer=null;
+      function show(next){{
+        lang=next;document.documentElement.lang=lang;
+        document.querySelectorAll('[data-language]').forEach(el=>el.hidden=el.dataset.language!==lang);
+        if(redirectTimer)clearTimeout(redirectTimer);if(countdownTimer)clearInterval(countdownTimer);
+        const counter=document.querySelector(`[data-language="${{lang}}"] [data-countdown]`);
+        if(counter){{let remaining=config.redirect.seconds;const update=()=>counter.textContent=counter.dataset.countdownTemplate.replace('{{seconds}}',remaining);update();countdownTimer=setInterval(()=>{{remaining-=1;update();if(remaining<=0)clearInterval(countdownTimer)}},1000)}}
+        if(config.redirect.enabled)redirectTimer=setTimeout(()=>location.href=config.home[lang],config.redirect.seconds*1000);
+      }}
+      document.addEventListener('click',event=>{{if(event.target.closest('[data-switch-language]'))show(lang==='en'?'zh':'en')}});
+      show(lang);
+    }})();
+  </script>
+</body>
+</html>'''
+    page = apply_cloudflare_analytics(page, data)
+    return page
+
+
 def site_today(data: dict[str, Any], override: str | None = None) -> date:
     value = override or os.environ.get("SITE_TODAY", "")
     if value:
@@ -671,9 +827,16 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             updated_value = f"{today.year}/{today.month}/{today.day}" if update_date else _existing_updated(old, lang, today)
             new = replace_footer(new, render_footer(data, lang, today, updated=updated_value))
             new = link_people_html(new, PEOPLE, lang)
+            new = apply_cloudflare_analytics(new, data)
             if new != old:
                 path.write_text(new, encoding="utf-8")
                 changed.append(path)
+    error_path = ROOT / "404.html"
+    error_old = error_path.read_text(encoding="utf-8") if error_path.exists() else ""
+    error_new = render_404_page(data, today)
+    if error_new != error_old:
+        error_path.write_text(error_new, encoding="utf-8")
+        changed.append(error_path)
     return changed
 
 
