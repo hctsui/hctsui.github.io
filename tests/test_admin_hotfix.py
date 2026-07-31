@@ -81,7 +81,7 @@ class CvSubtitlePatchTests(unittest.TestCase):
         patcher = (ROOT / "apply-update.py").read_text(encoding="utf-8")
         self.assertIn(r"\newcommand{\cvgroup}[1]", patcher)
         self.assertIn(r"primaryColor!28", patcher)
-        self.assertIn(r"\titlerule[0.45pt]", patcher)
+        self.assertIn(r"\leaders\hrule height 0.45pt\hfill", patcher)
         for target in (
             "Hung-Chun-Tsui-CV.template.tex",
             "Hung-Chun-Tsui-CV-zh.template.tex",
@@ -236,7 +236,7 @@ class AdminResetAndPreviewTests(unittest.TestCase):
             "關閉預覽",
         ):
             self.assertIn(marker, SCRIPT)
-        self.assertIn("右上角有小型「關閉」按鈕", GUIDE)
+        self.assertIn("右上角有與其他操作一致的「關閉」按鈕", GUIDE)
 
 
 class StyleCardAndAdminIdentityTests(unittest.TestCase):
@@ -291,6 +291,27 @@ class StyleCardAndAdminIdentityTests(unittest.TestCase):
         for marker in ('返回網站', 'admin/admin-icon.svg', '直接點選卡片'):
             self.assertIn(marker, manage)
         self.assertIn('Admin 頁首使用專用管理圖示', GUIDE)
+
+
+class V10UrlAndCvVisibilityTests(unittest.TestCase):
+    def test_preview_close_button_uses_regular_button_size(self) -> None:
+        self.assertIn("button.className='button preview-close-button'", SCRIPT)
+        self.assertIn('.preview-close-button{float:right;margin:0 0 8px 8px}', SCRIPT)
+        self.assertNotIn('.preview-close-button{float:right;margin:0 0 8px 8px;padding:4px 8px', SCRIPT)
+
+    def test_mailto_is_allowed_without_disabling_other_url_validation(self) -> None:
+        patcher = (ROOT / "apply-update.py").read_text(encoding="utf-8")
+        self.assertIn('homepageBaseValidateEditorObject', SCRIPT)
+        self.assertIn(r'/^mailto:[^\s@]+@[^\s@]+$/i', SCRIPT)
+        self.assertIn('["http:", "https:", "mailto:"]', patcher)
+        self.assertIn('mailto:name@example.com', GUIDE)
+
+    def test_cv_rule_uses_horizontal_leaders_not_titlesec_titlerule(self) -> None:
+        patcher = (ROOT / "apply-update.py").read_text(encoding="utf-8")
+        self.assertIn(r'\leaders\hrule height 0.45pt\hfill\kern0pt', patcher)
+        self.assertIn('PREVIOUS_V9_MACRO', patcher)
+        new_macro = patcher.split('NEW_MACRO =', 1)[1].split('CV_TARGETS', 1)[0]
+        self.assertNotIn(r'\titlerule', new_macro)
 
 
 if __name__ == "__main__":

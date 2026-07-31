@@ -103,3 +103,13 @@ GitHub connector 可讀取 repository，但建立工作分支仍回傳 `403 Reso
 - 新增 `admin/admin-icon.svg`，用於 Admin 分頁 favicon、主標題圖示與使用手冊 favicon。
 - `apply-update.py` 會安全且可重複地更新 `admin/index.html`，加入圖示、返回網站按鈕與必要樣式。
 - 完整使用手冊與 repository 管理說明已同步更新。
+
+
+## 預覽按鈕、mailto 與 CV 橫線 v10
+
+- 預覽右上角「關閉」改用一般 `.button` 尺寸，不再縮成小膠囊。
+- URL 欄位額外允許格式正確的 `mailto:`，電子郵件項目可正常編輯。
+- 修正 v9 CV 子標題使用 `\titlerule` 在一般段落中可能不顯示的問題。
+- CV 子標題改用 `\leaders\hrule ... \hfill`，已用 LaTeX 實際編譯確認 Preprints 與 National Tsing Hua University 右側都有淡色橫線。
+- 更新腳本可從舊版無橫線或 v9 未顯示橫線的巨集安全升級，並同步更新英文、中文模板與目前產生的 TeX。
+- 手冊與網站管理說明已同步更新。

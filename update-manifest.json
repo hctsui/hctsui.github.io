@@ -3,7 +3,7 @@
   "base_branch": "cms",
   "base_commit_observed": "6172e5387825bdf0e90ca34c8af60ce212b249da",
   "created_date": "2026-07-31",
-  "package_version": "v9",
+  "package_version": "v10",
   "files": [
     "admin/homepage-v1.js",
     "admin/guide.html",
@@ -15,31 +15,30 @@
     "apply-update.py"
   ],
   "changes": [
-    "general-content style preview cards are now direct clickable buttons",
-    "the style chooser remains inside a collapsible details block with the native disclosure arrow",
-    "the selected style is shown with a checkmark, emphasized border, and current-style label",
-    "the former visible style dropdown is retained only as a hidden synchronization field",
-    "Admin gets a dedicated SVG management icon for favicon and page heading",
-    "a 返回網站 button is added beside 開啟完整使用手冊",
-    "the guide and management documentation are aligned with the new interaction",
-    "all v8 reset, preview, draft-linking, homepage ordering, and CV subtitle fixes are preserved"
+    "preview close button uses the same standard button sizing as other Admin actions",
+    "URL fields accept valid mailto links in addition to http and https",
+    "CV group subtitles use a visible leaders/hrule line instead of titlesec titlerule outside a section heading",
+    "the updater recognizes and replaces both the original and v9 CV group macros",
+    "guide and management documentation are aligned with v10",
+    "all v9 clickable style cards, Admin identity, draft management, and preview fixes are preserved"
   ],
   "validation": {
     "javascript_syntax": "node --check admin/homepage-v1.js: passed",
-    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 27 passed",
-    "admin_index_patcher": "applied twice to a mock current-style Admin index; second run made no duplicate changes",
-    "cv_patcher": "applied twice successfully to four mock TeX targets (idempotent)",
-    "icon_render": "SVG rendered successfully to a 256 px preview",
+    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 30 passed",
+    "admin_index_patcher": "applied twice to a mock Admin index; second run made no duplicate changes",
+    "mailto_validation": "mock Admin validator updated to accept http, https, and mailto while retaining malformed URL errors",
+    "cv_patcher": "applied twice successfully to four mock TeX targets; second run was idempotent",
+    "cv_visual_compile": "new leaders/hrule cvgroup macro compiled with pdflatex and visibly rendered lines for Preprints and National Tsing Hua University",
     "full_repository_test_suite": "not run locally because the complete repository is not present in the container"
   },
   "sha256": {
-    "admin/homepage-v1.js": "6a5661af288fc3e05d3c8728392ab5b470f26c12391521135ce833524906cd3b",
-    "admin/guide.html": "1d292c9a8ea36827b62be062ee47a4efa330bba73523a90c7fb94d80915aa9bd",
+    "admin/homepage-v1.js": "4939d4c57b697f576dfcae16e0b0ae5a9e11b3e040e0d4f91a9d8d21c9814848",
+    "admin/guide.html": "9881aa530e9e0f7cd3acae435ea874e2112bfbb3eb8b258286d1d93602ff0346",
     "admin/admin-icon.svg": "1a5bbeb46d9f71e23263494607780f31bd715ce350dd57d43f86a8ae5b603df2",
     "tools/homepage_config.py": "5225d05770092317bcf9f000363460466e86c4d757eae8a5fb2185446f76b662",
-    "MANAGE-WEBSITE.md": "20c57a3c658388ef568b479147f49adb9cf4a35183cc3551786d5f3b25637570",
-    "tests/test_admin_hotfix.py": "82c2bd3df41d88a9dc87125e9daaac5227f96672fbc8f4b9af1339379c5c49a1",
-    "UPDATE-NOTES.md": "46b10f1b378fca2b49abf6d224dbc0014001ee10337a55e4f8ff54699a1d1733",
-    "apply-update.py": "156838f2f96ea705810d2482c47f39c76348b59773f0e5361de7c1c7ed0efcc4"
+    "MANAGE-WEBSITE.md": "3b6dea0f2ea49a3b7b5cf4e22e997eb08d2d88e9339d3b10a1c32088921072e0",
+    "tests/test_admin_hotfix.py": "63feded14ee8be7aa7aba660caee875e63a2f178df140ecf6cfb105373752d29",
+    "UPDATE-NOTES.md": "0b2db40ebf8a5a9f6a16c91d1b23b70ce8ef2c9725fd0bd6eadc5a1b6ee52ef9",
+    "apply-update.py": "4a35fef9c9e147192a37197193753f28291fa192ad16cd288f3379ac47f8362e"
   }
 }
