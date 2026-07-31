@@ -1,0 +1,17 @@
+{
+  "repository": "hctsui/hctsui.github.io",
+  "base_branch": "cms",
+  "base_commit": "84eac784d5d91b1f4386457364bda159a96a1b8f",
+  "created_date": "2026-07-31",
+  "files": [
+    "admin/homepage-v1.js",
+    "admin/guide.html",
+    "MANAGE-WEBSITE.md",
+    "tests/test_admin_hotfix.py",
+    "UPDATE-NOTES.md"
+  ],
+  "validation": {
+    "javascript_syntax": "passed",
+    "admin_smoke_test": "passed"
+  }
+}
