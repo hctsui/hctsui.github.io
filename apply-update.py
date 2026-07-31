@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Apply the v9 Admin identity and CV subtitle updates safely.
+"""Apply the v11 Admin, URL, and CV subtitle updates safely.
 
 Regular replacement files in this package update the Admin JavaScript,
 documentation, and homepage generation logic. This helper performs the small
 in-place changes that should not replace whole user-maintained files:
 
 * update the shared ``\\cvgroup`` macro in both CV templates and generated TeX;
-* add the Admin favicon/header icon and a ``返回網站`` button to admin/index.html.
+* add the Admin favicon/header icon and a ``返回網站`` button to admin/index.html;
+* allow ``mailto:`` in URL fields used by contact/email entries.
 
 The operation is idempotent and can be run more than once.
 """
@@ -16,6 +17,8 @@ import re
 import sys
 from pathlib import Path
 
+PACKAGE_VERSION = "v11"
+
 OLD_MACRO = r"""\newcommand{\cvgroup}[1]{%
     \needspace{3\baselineskip}%
     \vspace{0.08cm}%
@@ -23,11 +26,19 @@ OLD_MACRO = r"""\newcommand{\cvgroup}[1]{%
     \vspace{0.08cm}%
 }"""
 
-NEW_MACRO = r"""\newcommand{\cvgroup}[1]{%
+PREVIOUS_V9_MACRO = r"""\newcommand{\cvgroup}[1]{%
     \needspace{3\baselineskip}%
     \vspace{0.08cm}%
     {\large\bfseries #1}\hspace{0.15cm}%
     {\color{primaryColor!28}\titlerule[0.45pt]}\hspace{-0.1cm}\par%
+    \vspace{0.08cm}%
+}"""
+
+NEW_MACRO = r"""\newcommand{\cvgroup}[1]{%
+    \needspace{3\baselineskip}%
+    \vspace{0.08cm}%
+    \noindent{\large\bfseries #1}\hspace{0.15cm}%
+    {\color{primaryColor!28}\leaders\hrule height 0.45pt\hfill\kern0pt}\par%
     \vspace{0.08cm}%
 }"""
 
@@ -99,6 +110,8 @@ def patch_cv_file(path: Path) -> str:
         return "已是新版"
     if OLD_MACRO in text:
         updated = text.replace(OLD_MACRO, NEW_MACRO, 1)
+    elif PREVIOUS_V9_MACRO in text:
+        updated = text.replace(PREVIOUS_V9_MACRO, NEW_MACRO, 1)
     else:
         match = MACRO_PATTERN.search(text)
         if not match or r"\large\bfseries #1" not in match.group(0):
@@ -154,6 +167,17 @@ def patch_admin_index(path: Path) -> str:
         )
         text = text[: match.start()] + site_button + text[match.end() :]
 
+
+    protocol_pattern = re.compile(
+        r'\["http:",\s*"https:"\]\.includes\(u\.protocol\)'
+    )
+    text = protocol_pattern.sub(
+        '["http:", "https:", "mailto:"].includes(u.protocol)', text
+    )
+    text = text.replace(
+        '只允許 http 或 https', '只允許 http、https 或 mailto',
+    )
+
     if text == original:
         return "已是新版"
     path.write_text(text, encoding="utf-8")
@@ -162,6 +186,16 @@ def patch_admin_index(path: Path) -> str:
 
 def main() -> int:
     root = repository_root()
+    required_markers = (
+        r"\leaders\hrule height 0.45pt\hfill\kern0pt",
+        "[\"http:\", \"https:\", \"mailto:\"]",
+    )
+    source = Path(__file__).read_text(encoding="utf-8")
+    missing = [marker for marker in required_markers if marker not in source]
+    if missing:
+        print(f"{PACKAGE_VERSION} 更新腳本不完整：{missing}", file=sys.stderr)
+        return 2
+    print(f"更新腳本版本：{PACKAGE_VERSION}")
     print(f"Repository：{root}")
     failures: list[str] = []
 
@@ -187,7 +221,8 @@ def main() -> int:
         return 1
 
     print("\n更新已套用：")
-    print("- CV 作品類別與教學機構使用淡色右側橫線。")
+    print("- CV 作品類別與教學機構使用確實可見的淡色右側橫線。")
+    print("- URL 欄位可使用 http、https 或 mailto。")
     print("- Admin 使用專用圖示，並在使用手冊旁提供「返回網站」。")
     print("接著可執行：python3 -m unittest discover -s tests")
     return 0

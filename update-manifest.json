@@ -1,9 +1,9 @@
 {
   "repository": "hctsui/hctsui.github.io",
   "base_branch": "cms",
-  "base_commit_observed": "6172e5387825bdf0e90ca34c8af60ce212b249da",
+  "base_commit_observed": "83ffc5756f13d858f876c1ded85c4f1bb0bcbf9f",
   "created_date": "2026-07-31",
-  "package_version": "v10",
+  "package_version": "v11",
   "files": [
     "admin/homepage-v1.js",
     "admin/guide.html",
@@ -12,33 +12,34 @@
     "MANAGE-WEBSITE.md",
     "tests/test_admin_hotfix.py",
     "UPDATE-NOTES.md",
-    "apply-update.py"
+    "apply-update.py",
+    "VERSION.txt"
   ],
   "changes": [
-    "preview close button uses the same standard button sizing as other Admin actions",
-    "URL fields accept valid mailto links in addition to http and https",
-    "CV group subtitles use a visible leaders/hrule line instead of titlesec titlerule outside a section heading",
-    "the updater recognizes and replaces both the original and v9 CV group macros",
-    "guide and management documentation are aligned with v10",
-    "all v9 clickable style cards, Admin identity, draft management, and preview fixes are preserved"
+    "replace the stale v9 apply-update.py with an explicitly versioned v11 updater",
+    "self-check required CV horizontal-rule and mailto markers before modifying files",
+    "use a visible leaders/hrule line for CV group subtitles and replace the earlier titlerule macro",
+    "allow valid mailto links while preserving http and https URL validation",
+    "preserve all v10 Admin preview, style-card, draft-management, icon, and navigation fixes",
+    "document how to verify that the repository root is using the v11 updater"
   ],
   "validation": {
     "javascript_syntax": "node --check admin/homepage-v1.js: passed",
-    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 30 passed",
-    "admin_index_patcher": "applied twice to a mock Admin index; second run made no duplicate changes",
-    "mailto_validation": "mock Admin validator updated to accept http, https, and mailto while retaining malformed URL errors",
-    "cv_patcher": "applied twice successfully to four mock TeX targets; second run was idempotent",
-    "cv_visual_compile": "new leaders/hrule cvgroup macro compiled with pdflatex and visibly rendered lines for Preprints and National Tsing Hua University",
-    "full_repository_test_suite": "not run locally because the complete repository is not present in the container"
+    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 31 passed",
+    "python_syntax": "python3 -m py_compile apply-update.py tools/homepage_config.py: passed",
+    "updater_mock_repository": "v11 updater applied to a mock current-v9 repository, then reran idempotently",
+    "zip_retest": "pending packaging verification",
+    "full_repository_test_suite": "the user-provided GitHub run had 66 tests with 3 failures caused by the stale root updater; package-local tests pass after replacement"
   },
   "sha256": {
     "admin/homepage-v1.js": "4939d4c57b697f576dfcae16e0b0ae5a9e11b3e040e0d4f91a9d8d21c9814848",
     "admin/guide.html": "9881aa530e9e0f7cd3acae435ea874e2112bfbb3eb8b258286d1d93602ff0346",
     "admin/admin-icon.svg": "1a5bbeb46d9f71e23263494607780f31bd715ce350dd57d43f86a8ae5b603df2",
     "tools/homepage_config.py": "5225d05770092317bcf9f000363460466e86c4d757eae8a5fb2185446f76b662",
-    "MANAGE-WEBSITE.md": "3b6dea0f2ea49a3b7b5cf4e22e997eb08d2d88e9339d3b10a1c32088921072e0",
-    "tests/test_admin_hotfix.py": "63feded14ee8be7aa7aba660caee875e63a2f178df140ecf6cfb105373752d29",
-    "UPDATE-NOTES.md": "0b2db40ebf8a5a9f6a16c91d1b23b70ce8ef2c9725fd0bd6eadc5a1b6ee52ef9",
-    "apply-update.py": "4a35fef9c9e147192a37197193753f28291fa192ad16cd288f3379ac47f8362e"
+    "MANAGE-WEBSITE.md": "e1f144b590790e482a4b99d851fcc9fe8946ba9662dacee112f4bf30158ac286",
+    "tests/test_admin_hotfix.py": "a9aa580620ba6a3c4e6ea41c2bd193ce33f6a74a0c745876851923749c9fafa5",
+    "UPDATE-NOTES.md": "0a236068572284bf989550431e402eb98bbccd6f90f311a922fe6070c1449e48",
+    "apply-update.py": "7c27f22e472b5248b63d50911b25747b67258e37a262e2adc76d1bf77cef9ed9",
+    "VERSION.txt": "6ea7df1b0590ac53eff91d21baa34ec28bfe3f5bf0c39af27fa6075a9b1084f1"
   }
 }

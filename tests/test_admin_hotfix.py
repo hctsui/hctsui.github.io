@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (ROOT / "admin" / "homepage-v1.js").read_text(encoding="utf-8")
 GUIDE = (ROOT / "admin" / "guide.html").read_text(encoding="utf-8")
+PATCHER = (ROOT / "apply-update.py").read_text(encoding="utf-8")
 
 
 class AdminHotfixTests(unittest.TestCase):
@@ -312,6 +313,14 @@ class V10UrlAndCvVisibilityTests(unittest.TestCase):
         self.assertIn('PREVIOUS_V9_MACRO', patcher)
         new_macro = patcher.split('NEW_MACRO =', 1)[1].split('CV_TARGETS', 1)[0]
         self.assertNotIn(r'\titlerule', new_macro)
+
+
+
+class V11PackageConsistencyTests(unittest.TestCase):
+    def test_patcher_declares_v11_and_self_checks_required_markers(self):
+        self.assertIn('PACKAGE_VERSION = "v11"', PATCHER)
+        self.assertIn('更新腳本版本：{PACKAGE_VERSION}', PATCHER)
+        self.assertIn('required_markers = (', PATCHER)
 
 
 if __name__ == "__main__":

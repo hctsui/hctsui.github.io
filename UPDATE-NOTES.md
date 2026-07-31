@@ -113,3 +113,11 @@ GitHub connector 可讀取 repository，但建立工作分支仍回傳 `403 Reso
 - CV 子標題改用 `\leaders\hrule ... \hfill`，已用 LaTeX 實際編譯確認 Preprints 與 National Tsing Hua University 右側都有淡色橫線。
 - 更新腳本可從舊版無橫線或 v9 未顯示橫線的巨集安全升級，並同步更新英文、中文模板與目前產生的 TeX。
 - 手冊與網站管理說明已同步更新。
+
+## v11：修正混包與 CI 失敗
+
+- 根目錄 `apply-update.py` 明確標記為 v11。
+- 腳本啟動時會檢查 CV 可見橫線與 `mailto:` 修正是否真的存在；若更新包混入舊腳本，會立即停止並顯示錯誤。
+- CV 子標題使用 `\leaders\hrule height 0.45pt\hfill\kern0pt`，不再使用可能無法顯示的 `\titlerule`。
+- URL 驗證保留 `http:`、`https:`，並允許格式正確的 `mailto:`。
+
