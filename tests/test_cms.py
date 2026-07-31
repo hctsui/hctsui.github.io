@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from build_cv import build_sections, render_education, render_publication, rich_to_latex  # noqa: E402
-from build_site import render_activity, render_category, render_home_sections, render_teaching  # noqa: E402
+from build_site import page_href, render_activity, render_category, render_home_sections, render_teaching  # noqa: E402
 from category_config import (  # noqa: E402
     all_items,
     categories_for_page,
@@ -205,6 +205,28 @@ class CategoryArchitectureTests(unittest.TestCase):
         pages = {page["id"]: page for page in normalized_pages(data)}
         self.assertEqual(pages["algebra-i"]["path"], {"en": "algebra-i.html", "zh": "zh/algebra-i.html"})
         self.assertEqual(pages["algebra-i"]["color"], "#123456")
+        validate_category_data(data)
+
+    def test_custom_page_can_be_chinese_only(self) -> None:
+        data = minimal_site()
+        data["settings"]["pages"].append(
+            {
+                "id": "algebra-zh",
+                "name": {"en": "", "zh": "代數課程"},
+                "languages": ["zh"],
+                "header": {
+                    "label": {"en": "", "zh": "課程"},
+                    "title": {"en": "", "zh": "代數課程"},
+                    "intro": {"en": "", "zh": "課程資訊"},
+                },
+                "color": "#123456",
+                "order": 5,
+            }
+        )
+        page = next(p for p in normalized_pages(data) if p["id"] == "algebra-zh")
+        self.assertEqual(page["languages"], ["zh"])
+        self.assertEqual(page["path"], {"en": "", "zh": "zh/algebra-zh.html"})
+        self.assertEqual(page_href(data, "algebra-zh", "en"), "zh/algebra-zh.html")
         validate_category_data(data)
 
     def test_teaching_optional_page_and_notes_render_as_buttons(self) -> None:
@@ -570,11 +592,18 @@ class AdminCompatibilityTests(unittest.TestCase):
 
     def test_legacy_admin_tools_remain_available(self) -> None:
         page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
-        for tab in ("catalog", "add", "order", "trash", "homepage", "dictionary", "draft"):
+        for tab in ("catalog", "add", "order", "trash", "draft", "dictionary"):
             self.assertIn(f'data-tab="{tab}"', page)
+        self.assertNotIn('data-tab="homepage"', page)
+        self.assertLess(page.index('data-tab="draft"'), page.index('data-tab="dictionary"'))
         self.assertNotIn('data-tab="headings"', page)
         self.assertIn('const ADD_TYPES = [', page)
         self.assertIn('"page",\n        "category",\n        "publication"', page)
+        self.assertIn('"academic_event"', page)
+        self.assertNotIn('"honor",\n        "generic"', page)
+        self.assertIn('id="homepageManager"', page)
+        self.assertIn("講義標題", page)
+        self.assertNotIn("Lecture Notes 標題", page)
         for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
             self.assertIn(f'"{item_type}"', page)
         self.assertIn('<script src="tags-v1.js"></script>', page)
@@ -585,6 +614,18 @@ class AdminCompatibilityTests(unittest.TestCase):
             self.assertIn(f"'{mode}'", homepage)
         self.assertIn("data-home-up", homepage)
         self.assertIn("HOMEPAGE_DRAFT_KEY", homepage)
+        self.assertIn("homepageComparableSection", homepage)
+        self.assertIn("data-edit-homepage-draft", homepage)
+        layout = (ROOT / "admin" / "layout-v2.js").read_text(encoding="utf-8")
+        for label in ("項目類型", "所在頁面", "所在類別", "頁面語言版本"):
+            self.assertIn(label, layout)
+        self.assertIn("'education','honor','personal'", layout)
+        self.assertIn("顯示風格相同、可安全接收的類別", layout)
+        self.assertIn("c.kind===category.kind", layout)
+        self.assertIn('id="generalContentFormat"', layout)
+        for label in ("標準時間軸", "雙欄紀錄", "標題清單", "資訊卡片", "標籤列表", "精簡時間軸"):
+            self.assertIn(label, layout)
+        self.assertNotIn("一般內容的細分類只用來維持舊資料相容性", layout)
 
 
 if __name__ == "__main__":

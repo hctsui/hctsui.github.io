@@ -3,7 +3,7 @@
 /* Homepage Selected Publications / Upcoming manager. It extends the legacy
    editor without changing the content-form workflow. */
 const HOMEPAGE_DRAFT_KEY='hctsui-homepage-draft-v1';
-let homepageBase=null,homepageDraft=null,homepageReady=false,homepageNotice='',homepagePreviewSuppressed=false;
+let homepageBase=null,homepageDraft=null,homepageReady=false,homepagePreviewSuppressed=false;
 
 function homepageUniqueIds(value){const result=[];for(const raw of Array.isArray(value)?value:[]){const id=String(raw||'').trim();if(id&&!result.includes(id))result.push(id)}return result}
 function homepageLimit(value,fallback=2){const number=Number.parseInt(value,10);return Math.min(50,Math.max(1,Number.isFinite(number)?number:fallback))}
@@ -20,13 +20,21 @@ function homepageBundle(data,value){
   };
 }
 function homepageSignature(value){return JSON.stringify(value)}
+function homepageComparableSection(config){return config.mode==='manual'?{mode:'manual',selected_ids:[...config.selected_ids]}:{mode:config.mode,limit:config.limit}}
+function homepageSectionChanged(before,after){return homepageSignature(homepageComparableSection(before))!==homepageSignature(homepageComparableSection(after))}
+function homepageComparableBundle(value){return{publications:homepageComparableSection(value.publications),activities:homepageComparableSection(value.activities)}}
 function initHomepageState(){
   if(homepageReady||!site)return;
   homepageBase=homepageBundle(site);homepageDraft=clone(homepageBase);
   try{
     const saved=JSON.parse(localStorage.getItem(HOMEPAGE_DRAFT_KEY)||'null');
-    if(saved?.base_signature===homepageSignature(homepageBase)&&saved?.draft){homepageDraft=homepageBundle(site,saved.draft);homepageNotice='已恢復尚未送出的首頁精選草稿。'}
-    else if(saved){localStorage.removeItem(HOMEPAGE_DRAFT_KEY);homepageNotice='首頁資料已更新，舊的首頁精選草稿已安全丟棄。'}
+    if(saved?.base_signature===homepageSignature(homepageBase)&&saved?.draft){
+      homepageDraft=homepageBundle(site,saved.draft);
+      if(homepageSignature(homepageComparableBundle(homepageDraft))===homepageSignature(homepageComparableBundle(homepageBase))){
+        homepageDraft=clone(homepageBase);localStorage.removeItem(HOMEPAGE_DRAFT_KEY);
+      }
+    }
+    else if(saved)localStorage.removeItem(HOMEPAGE_DRAFT_KEY);
   }catch{localStorage.removeItem(HOMEPAGE_DRAFT_KEY)}
   homepageReady=true;
 }
@@ -37,7 +45,7 @@ function homepageSubmissionBundle(){
   result.activities.selected_ids=result.activities.selected_ids.filter(id=>activityIds.has(id));
   return result;
 }
-function homepageDirty(){return homepageReady&&homepageSignature(homepageSubmissionBundle())!==homepageSignature(homepageBase)}
+function homepageDirty(){return homepageReady&&homepageSignature(homepageComparableBundle(homepageSubmissionBundle()))!==homepageSignature(homepageComparableBundle(homepageBase))}
 function homepageOperation(){return{op:'homepage',before:clone(homepageBase),after:homepageSubmissionBundle()}}
 function applyHomepageToData(data,value){data.settings=data.settings||{};data.settings.homepage=clone(value);data.settings.homepage_publication_limit=value.publications.limit;return data}
 function saveHomepageDraft(message=''){
@@ -85,7 +93,7 @@ function homepageSectionHtml(data,section){
 function renderHomepageManager(){
   initHomepageState();const box=$('#homepageManager');if(!box)return;
   const data=homepageBaseEffectiveSite();
-  box.innerHTML=`<div class="notice"><strong>只控制首頁雙欄，不會刪除原始資料。</strong><p>自動模式會隨內容更新；手動模式可指定項目與順序。右側預覽確認後，再按「前往 GitHub 送出批次」。</p>${homepageNotice?`<p>${esc(homepageNotice)}</p>`:''}</div>${homepageSectionHtml(data,'publications')}${homepageSectionHtml(data,'activities')}<div class="actions"><button class="button" id="resetHomepageDraft" ${homepageDirty()?'':'disabled'}>放棄首頁精選草稿</button></div>`;
+  box.innerHTML=`<div class="notice"><strong>只控制首頁雙欄，不會刪除原始資料。</strong><p>自動模式會隨內容更新；手動模式可指定項目與順序。變更會和其他內容一起列在「草稿」。</p></div>${homepageSectionHtml(data,'publications')}${homepageSectionHtml(data,'activities')}<div class="actions"><button class="button" id="resetHomepageDraft" ${homepageDirty()?'':'disabled'}>移除首頁精選草稿</button></div>`;
   box.onchange=homepageManagerChange;box.onclick=homepageManagerClick;
 }
 function homepageManagerChange(event){
@@ -96,7 +104,7 @@ function homepageManagerChange(event){
 function splitHomepageAction(value){const index=value.indexOf(':');return[value.slice(0,index),value.slice(index+1)]}
 function homepageManagerClick(event){
   const button=event.target.closest('button');if(!button)return;
-  if(button.id==='resetHomepageDraft'){homepageDraft=clone(homepageBase);saveHomepageDraft('已放棄首頁精選草稿');return}
+  if(button.id==='resetHomepageDraft'){clearHomepageDraft();return}
   for(const action of ['homeAdd','homeRemove','homeUp','homeDown']){
     if(button.dataset[action]===undefined)continue;
     const[section,id]=splitHomepageAction(button.dataset[action]),ids=homepageDraft[section].selected_ids,index=ids.indexOf(id);
@@ -109,7 +117,7 @@ function homepageManagerClick(event){
 }
 function homepagePreviewHtml(op){
   const data=homepageBaseEffectiveSite();
-  const changedSections=['publications','activities'].filter(section=>homepageSignature(op.before[section])!==homepageSignature(op.after[section]));
+  const changedSections=['publications','activities'].filter(section=>homepageSectionChanged(op.before[section],op.after[section]));
   const rows=changedSections.map(section=>{
     const before=op.before[section],after=op.after[section],beforeIds=homepageResolvedIds(data,section,before),afterIds=homepageResolvedIds(data,section,after);
     return`<div class="preview-card"><h4>${section==='publications'?'精選論文':'近期活動'}</h4><div class="preview-columns"><div><strong>修改前</strong><p>${esc(homepageModeLabel(section,before.mode))}${before.mode==='manual'?'':` · N=${before.limit}`}</p><ol>${beforeIds.map(id=>`<li>${esc(homepageNameById(data,id))}</li>`).join('')}</ol></div><div><strong>修改後</strong><p>${esc(homepageModeLabel(section,after.mode))}${after.mode==='manual'?'':` · N=${after.limit}`}</p><ol>${afterIds.map(id=>`<li>${esc(homepageNameById(data,id))}</li>`).join('')}</ol></div></div></div>`;
@@ -117,6 +125,22 @@ function homepagePreviewHtml(op){
   const label=changedSections.length===1?(changedSections[0]==='publications'?'精選論文':'近期活動'):'首頁精選與近期活動';
   return`<details class="diff"><summary><strong>${label}</strong></summary>${rows}</details>`;
 }
+function clearHomepageDraft(shouldRender=true){initHomepageState();homepageDraft=clone(homepageBase);localStorage.removeItem(HOMEPAGE_DRAFT_KEY);if(shouldRender){flash('已移除首頁精選草稿');renderAll()}}
+
+const homepageBaseRenderDrafts=renderDrafts;
+renderDrafts=function(){
+  homepageBaseRenderDrafts();
+  if(!homepageDirty())return;
+  const box=$('#drafts');
+  if(!contentOps().length)box.innerHTML='';
+  box.insertAdjacentHTML('beforeend',`<div class="row draft-row homepage-draft-row"><span class="tag">首頁設定</span><strong>首頁精選與近期活動</strong><span class="muted">只包含實際變更的區塊</span><div class="actions"><button class="button" data-edit-homepage-draft>修改草稿</button><button class="button" data-preview-homepage-draft>預覽</button><button class="button danger" data-drop-homepage-draft>移除</button></div></div>`);
+};
+$('#drafts').addEventListener('click',event=>{
+  const button=event.target.closest('button');if(!button)return;
+  if(button.hasAttribute('data-edit-homepage-draft')){switchTab('order');document.querySelector('.order-homepage-panel')?.setAttribute('open','');document.querySelector('.order-homepage-panel')?.scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(button.hasAttribute('data-preview-homepage-draft')){$('#editorPreview').innerHTML=`<div class="notice"><strong>草稿預覽 · 首頁設定</strong></div>${homepagePreviewHtml(homepageOperation())}`;return}
+  if(button.hasAttribute('data-drop-homepage-draft'))clearHomepageDraft();
+});
 
 const homepageBaseEffectiveSite=effectiveSite;
 effectiveSite=function(){const data=homepageBaseEffectiveSite();initHomepageState();return applyHomepageToData(data,homepageSubmissionBundle())};

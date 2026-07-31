@@ -148,8 +148,13 @@ def page_href(data: dict[str, Any], page_id: str, lang: str) -> str:
     page = next((p for p in normalized_pages(data) if p["id"] == page_id), None)
     if not page:
         return ""
-    path = str(page["path"][lang])
-    return Path(path).name if lang == "zh" else path
+    target_lang = lang if page["path"].get(lang) else ("zh" if page["path"].get("zh") else "en")
+    path = str(page["path"].get(target_lang) or "")
+    if not path:
+        return ""
+    if lang == "zh":
+        return Path(path).name if target_lang == "zh" else f"../{path}"
+    return path
 
 
 def render_teaching(data: dict[str, Any], entry: dict[str, Any], lang: str) -> str:
@@ -417,9 +422,12 @@ def custom_page_shell(page: dict[str, Any], lang: str) -> str:
     text = template.read_text(encoding="utf-8")
     text = re.sub(r'class="active"\s+', "", text)
     text = re.sub(r'<body data-page="[^"]+"', f'<body data-page="{esc(page["id"])}"', text, count=1)
-    counterpart = page["path"]["en"] if lang == "zh" else page["path"]["zh"]
-    href = f"../{counterpart}" if lang == "zh" else counterpart
-    text = re.sub(r'(<a[^>]+class="language-toggle"[^>]+href=")[^"]+(")', rf'\g<1>{esc(href)}\2', text, count=1)
+    counterpart = page["path"].get("en" if lang == "zh" else "zh")
+    if counterpart:
+        href = f"../{counterpart}" if lang == "zh" else counterpart
+        text = re.sub(r'(<a[^>]+class="language-toggle"[^>]+href=")[^"]+(")', rf'\g<1>{esc(href)}\2', text, count=1)
+    else:
+        text = re.sub(r'<a[^>]+class="language-toggle"[^>]*>.*?</a>', "", text, count=1, flags=re.S)
     return text
 
 
@@ -451,6 +459,8 @@ def build(today: date, update_date: bool = True) -> list[Path]:
     for page_id, page in pages.items():
         for lang in ("en", "zh"):
             rel = page["path"][lang]
+            if not rel:
+                continue
             path = ROOT / rel
             if path.exists():
                 old = path.read_text(encoding="utf-8")
