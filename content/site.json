@@ -292,7 +292,12 @@
           "zh": "zh/index.html"
         },
         "header": null,
-        "order": 0
+        "color": "#a34f3b",
+        "order": 0,
+        "languages": [
+          "en",
+          "zh"
+        ]
       },
       {
         "id": "cv",
@@ -318,7 +323,12 @@
             "zh": "學歷、研究領域與獎項"
           }
         },
-        "order": 1
+        "color": "#8b5a2b",
+        "order": 1,
+        "languages": [
+          "en",
+          "zh"
+        ]
       },
       {
         "id": "publications",
@@ -344,7 +354,12 @@
             "zh": "論文與預印本的完整列表"
           }
         },
-        "order": 2
+        "color": "#315f9b",
+        "order": 2,
+        "languages": [
+          "en",
+          "zh"
+        ]
       },
       {
         "id": "activities",
@@ -370,7 +385,12 @@
             "zh": "學術訪問、學術報告、會議與工作坊"
           }
         },
-        "order": 3
+        "color": "#176b52",
+        "order": 3,
+        "languages": [
+          "en",
+          "zh"
+        ]
       },
       {
         "id": "teaching",
@@ -396,7 +416,12 @@
             "zh": "教學與課程助教經歷"
           }
         },
-        "order": 4
+        "color": "#b14b86",
+        "order": 4,
+        "languages": [
+          "en",
+          "zh"
+        ]
       }
     ],
     "categories": [
@@ -714,7 +739,189 @@
       "activity-conferences",
       "teaching-national-tsing-hua-university",
       "cv-personal"
-    ]
+    ],
+    "seo": {
+      "schema_version": 1,
+      "base_url": "https://hctsui.github.io",
+      "site_name": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "default_image": "assets/photo-1440.webp",
+      "pages": {
+        "home": {
+          "title": {
+            "en": "Hung-Chun Tsui | Mathematics",
+            "zh": "崔鴻竣｜數學"
+          },
+          "description": {
+            "en": "Academic website of Hung-Chun Tsui, PhD student in mathematics at National Tsing Hua University.",
+            "zh": "崔鴻竣的學術個人網站，收錄研究、論文、學術活動與教學經歷。"
+          },
+          "og_title": {
+            "en": "",
+            "zh": ""
+          },
+          "og_description": {
+            "en": "",
+            "zh": ""
+          },
+          "og_image": ""
+        },
+        "cv": {
+          "title": {
+            "en": "Curriculum Vitae | Hung-Chun Tsui",
+            "zh": "履歷｜崔鴻竣"
+          },
+          "description": {
+            "en": "Education, research interests, and honors.",
+            "zh": "學歷、研究領域與獎項"
+          },
+          "og_title": {
+            "en": "",
+            "zh": ""
+          },
+          "og_description": {
+            "en": "",
+            "zh": ""
+          },
+          "og_image": ""
+        },
+        "publications": {
+          "title": {
+            "en": "Publications and Preprints | Hung-Chun Tsui",
+            "zh": "論文與預印本｜崔鴻竣"
+          },
+          "description": {
+            "en": "A complete list of current papers and preprints.",
+            "zh": "論文與預印本的完整列表"
+          },
+          "og_title": {
+            "en": "",
+            "zh": ""
+          },
+          "og_description": {
+            "en": "",
+            "zh": ""
+          },
+          "og_image": ""
+        },
+        "activities": {
+          "title": {
+            "en": "Activities | Hung-Chun Tsui",
+            "zh": "學術活動｜崔鴻竣"
+          },
+          "description": {
+            "en": "Academic visits, presentations, conferences and workshops.",
+            "zh": "學術訪問、學術報告、會議與工作坊"
+          },
+          "og_title": {
+            "en": "",
+            "zh": ""
+          },
+          "og_description": {
+            "en": "",
+            "zh": ""
+          },
+          "og_image": ""
+        },
+        "teaching": {
+          "title": {
+            "en": "Teaching Experience | Hung-Chun Tsui",
+            "zh": "教學經歷｜崔鴻竣"
+          },
+          "description": {
+            "en": "Teaching and course-assistant experience.",
+            "zh": "教學與課程助教經歷"
+          },
+          "og_title": {
+            "en": "",
+            "zh": ""
+          },
+          "og_description": {
+            "en": "",
+            "zh": ""
+          },
+          "og_image": ""
+        }
+      }
+    },
+    "footer": {
+      "schema_version": 2,
+      "items": [
+        {
+          "id": "copyright",
+          "text": {
+            "en": "{year} Hung-Chun Tsui",
+            "zh": "{year} Hung-Chun Tsui"
+          },
+          "url": "",
+          "icon": "copyright",
+          "custom_icon": "",
+          "alignment": "left",
+          "new_tab": false
+        },
+        {
+          "id": "last-updated",
+          "text": {
+            "en": "Last updated: {updated}",
+            "zh": "最後更新：{updated}"
+          },
+          "url": "",
+          "icon": "none",
+          "custom_icon": "",
+          "alignment": "right",
+          "new_tab": false
+        }
+      ]
+    },
+    "analytics": {
+      "schema_version": 1,
+      "enabled": true,
+      "token": "7d6f118151be461abcda7f7659aeace6"
+    },
+    "error_page": {
+      "schema_version": 1,
+      "eyebrow": {
+        "en": "Page not found",
+        "zh": "找不到頁面"
+      },
+      "title": {
+        "en": "This page does not exist.",
+        "zh": "這個頁面不存在。"
+      },
+      "description": {
+        "en": "The address may be outdated or mistyped. You can return to the homepage or continue browsing the website.",
+        "zh": "網址可能已更新或輸入有誤。你可以返回首頁，或繼續瀏覽網站內容。"
+      },
+      "home_label": {
+        "en": "Return home",
+        "zh": "返回首頁"
+      },
+      "secondary_label": {
+        "en": "View publications",
+        "zh": "查看論文"
+      },
+      "secondary_url": {
+        "en": "publications.html",
+        "zh": "zh/publications.html"
+      },
+      "show_navigation": true,
+      "show_footer": true,
+      "auto_redirect": {
+        "enabled": false,
+        "seconds": 8
+      },
+      "colors": {
+        "background": "#f7f3ed",
+        "surface": "#ffffff",
+        "accent": "#8d493d",
+        "text": "#2d2926",
+        "muted": "#6c625c",
+        "button": "#2d2926",
+        "button_text": "#ffffff"
+      }
+    }
   },
   "activities": [
     {

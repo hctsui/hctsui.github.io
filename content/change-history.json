@@ -47016,6 +47016,393 @@
       "index_before": 0,
       "index_after": 0,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-60-op-1",
+      "batch_issue": 60,
+      "applied_at": "2026-07-31T16:28:40.296900Z",
+      "expires_at": "2026-08-07T16:28:40.296900Z",
+      "reverted_by": null,
+      "request_digest": "f6e1102e9eb89db4a1160e2c6a0d15c7e75feb89f353fbcd63bccc6d33ce1409",
+      "request_action": "site_settings",
+      "action": "site_settings",
+      "type": "site_settings",
+      "entry_id": "site-settings",
+      "label": {
+        "en": "Website settings",
+        "zh": "網站設定"
+      },
+      "before": {
+        "footer": {
+          "schema_version": 2,
+          "items": [
+            {
+              "id": "copyright",
+              "text": {
+                "en": "{year} Hung-Chun Tsui",
+                "zh": "{year} Hung-Chun Tsui"
+              },
+              "url": "",
+              "icon": "copyright",
+              "custom_icon": "",
+              "alignment": "left",
+              "new_tab": false
+            },
+            {
+              "id": "last-updated",
+              "text": {
+                "en": "Last updated: {updated}",
+                "zh": "最後更新：{updated}"
+              },
+              "url": "",
+              "icon": "none",
+              "custom_icon": "",
+              "alignment": "right",
+              "new_tab": false
+            }
+          ]
+        },
+        "seo": {
+          "schema_version": 1,
+          "base_url": "https://hctsui.github.io",
+          "site_name": {
+            "en": "Hung-Chun Tsui",
+            "zh": "崔鴻竣"
+          },
+          "default_image": "assets/photo-1440.webp",
+          "pages": {
+            "home": {
+              "title": {
+                "en": "Hung-Chun Tsui | Mathematics",
+                "zh": "崔鴻竣｜數學"
+              },
+              "description": {
+                "en": "Academic website of Hung-Chun Tsui, PhD student in mathematics at National Tsing Hua University.",
+                "zh": "崔鴻竣的學術個人網站，收錄研究、論文、學術活動與教學經歷。"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "cv": {
+              "title": {
+                "en": "Curriculum Vitae | Hung-Chun Tsui",
+                "zh": "履歷｜崔鴻竣"
+              },
+              "description": {
+                "en": "Education, research interests, and honors.",
+                "zh": "學歷、研究領域與獎項"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "publications": {
+              "title": {
+                "en": "Publications and Preprints | Hung-Chun Tsui",
+                "zh": "論文與預印本｜崔鴻竣"
+              },
+              "description": {
+                "en": "A complete list of current papers and preprints.",
+                "zh": "論文與預印本的完整列表"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "activities": {
+              "title": {
+                "en": "Activities | Hung-Chun Tsui",
+                "zh": "學術活動｜崔鴻竣"
+              },
+              "description": {
+                "en": "Academic visits, presentations, conferences and workshops.",
+                "zh": "學術訪問、學術報告、會議與工作坊"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "teaching": {
+              "title": {
+                "en": "Teaching Experience | Hung-Chun Tsui",
+                "zh": "教學經歷｜崔鴻竣"
+              },
+              "description": {
+                "en": "Teaching and course-assistant experience.",
+                "zh": "教學與課程助教經歷"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            }
+          }
+        },
+        "analytics": {
+          "schema_version": 1,
+          "enabled": false,
+          "token": ""
+        },
+        "error_page": {
+          "schema_version": 1,
+          "eyebrow": {
+            "en": "Page not found",
+            "zh": "找不到頁面"
+          },
+          "title": {
+            "en": "This page does not exist.",
+            "zh": "這個頁面不存在。"
+          },
+          "description": {
+            "en": "The address may be outdated or mistyped. You can return to the homepage or continue browsing the website.",
+            "zh": "網址可能已更新或輸入有誤。你可以返回首頁，或繼續瀏覽網站內容。"
+          },
+          "home_label": {
+            "en": "Return home",
+            "zh": "返回首頁"
+          },
+          "secondary_label": {
+            "en": "View publications",
+            "zh": "查看論文"
+          },
+          "secondary_url": {
+            "en": "publications.html",
+            "zh": "zh/publications.html"
+          },
+          "show_navigation": true,
+          "show_footer": true,
+          "auto_redirect": {
+            "enabled": false,
+            "seconds": 8
+          },
+          "colors": {
+            "background": "#f7f3ed",
+            "surface": "#ffffff",
+            "accent": "#8d493d",
+            "text": "#2d2926",
+            "muted": "#6c625c",
+            "button": "#2d2926",
+            "button_text": "#ffffff"
+          }
+        }
+      },
+      "after": {
+        "footer": {
+          "schema_version": 2,
+          "items": [
+            {
+              "id": "copyright",
+              "text": {
+                "en": "{year} Hung-Chun Tsui",
+                "zh": "{year} Hung-Chun Tsui"
+              },
+              "url": "",
+              "icon": "copyright",
+              "custom_icon": "",
+              "alignment": "left",
+              "new_tab": false
+            },
+            {
+              "id": "last-updated",
+              "text": {
+                "en": "Last updated: {updated}",
+                "zh": "最後更新：{updated}"
+              },
+              "url": "",
+              "icon": "none",
+              "custom_icon": "",
+              "alignment": "right",
+              "new_tab": false
+            }
+          ]
+        },
+        "seo": {
+          "schema_version": 1,
+          "base_url": "https://hctsui.github.io",
+          "site_name": {
+            "en": "Hung-Chun Tsui",
+            "zh": "崔鴻竣"
+          },
+          "default_image": "assets/photo-1440.webp",
+          "pages": {
+            "home": {
+              "title": {
+                "en": "Hung-Chun Tsui | Mathematics",
+                "zh": "崔鴻竣｜數學"
+              },
+              "description": {
+                "en": "Academic website of Hung-Chun Tsui, PhD student in mathematics at National Tsing Hua University.",
+                "zh": "崔鴻竣的學術個人網站，收錄研究、論文、學術活動與教學經歷。"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "cv": {
+              "title": {
+                "en": "Curriculum Vitae | Hung-Chun Tsui",
+                "zh": "履歷｜崔鴻竣"
+              },
+              "description": {
+                "en": "Education, research interests, and honors.",
+                "zh": "學歷、研究領域與獎項"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "publications": {
+              "title": {
+                "en": "Publications and Preprints | Hung-Chun Tsui",
+                "zh": "論文與預印本｜崔鴻竣"
+              },
+              "description": {
+                "en": "A complete list of current papers and preprints.",
+                "zh": "論文與預印本的完整列表"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "activities": {
+              "title": {
+                "en": "Activities | Hung-Chun Tsui",
+                "zh": "學術活動｜崔鴻竣"
+              },
+              "description": {
+                "en": "Academic visits, presentations, conferences and workshops.",
+                "zh": "學術訪問、學術報告、會議與工作坊"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            },
+            "teaching": {
+              "title": {
+                "en": "Teaching Experience | Hung-Chun Tsui",
+                "zh": "教學經歷｜崔鴻竣"
+              },
+              "description": {
+                "en": "Teaching and course-assistant experience.",
+                "zh": "教學與課程助教經歷"
+              },
+              "og_title": {
+                "en": "",
+                "zh": ""
+              },
+              "og_description": {
+                "en": "",
+                "zh": ""
+              },
+              "og_image": ""
+            }
+          }
+        },
+        "analytics": {
+          "schema_version": 1,
+          "enabled": true,
+          "token": "7d6f118151be461abcda7f7659aeace6"
+        },
+        "error_page": {
+          "schema_version": 1,
+          "eyebrow": {
+            "en": "Page not found",
+            "zh": "找不到頁面"
+          },
+          "title": {
+            "en": "This page does not exist.",
+            "zh": "這個頁面不存在。"
+          },
+          "description": {
+            "en": "The address may be outdated or mistyped. You can return to the homepage or continue browsing the website.",
+            "zh": "網址可能已更新或輸入有誤。你可以返回首頁，或繼續瀏覽網站內容。"
+          },
+          "home_label": {
+            "en": "Return home",
+            "zh": "返回首頁"
+          },
+          "secondary_label": {
+            "en": "View publications",
+            "zh": "查看論文"
+          },
+          "secondary_url": {
+            "en": "publications.html",
+            "zh": "zh/publications.html"
+          },
+          "show_navigation": true,
+          "show_footer": true,
+          "auto_redirect": {
+            "enabled": false,
+            "seconds": 8
+          },
+          "colors": {
+            "background": "#f7f3ed",
+            "surface": "#ffffff",
+            "accent": "#8d493d",
+            "text": "#2d2926",
+            "muted": "#6c625c",
+            "button": "#2d2926",
+            "button_text": "#ffffff"
+          }
+        }
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
