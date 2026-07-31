@@ -55,6 +55,8 @@ jobs:
           test -f content/people.json
           test -f content/arxiv-suggestions.json
           test -f content/notifications.json
+          test -f content/media.json
+          test -f content/search-index.json
           test -f tools/notification_store.py
           test -f tools/process_request.py
           test -f tools/process_batch_request.py
@@ -73,17 +75,22 @@ jobs:
           test -f tools/check_links.py
           test -f tools/cleanup_notifications.py
           test -f tools/ingest_contact.py
+          test -f tools/build_media_manifest.py
+          test -f tools/build_search_index.py
           test -f cv/Hung-Chun-Tsui-CV.template.tex
           test -f cv/Hung-Chun-Tsui-CV-zh.template.tex
           test -f admin/homepage.js
           test -f admin/people.js
           test -f admin/notifications.js
+          test -f admin/media.js
           test -f admin/site-settings.js
           test -f admin/layout.js
           test -f admin/tags.js
           test -f admin/admin-icon.svg
           test -f assets/script.js
           test -f assets/style.css
+          test -f assets/images/photo.jpg
+          test -f assets/images/favicon.svg
           test -f 404.html
           test -f contact.html
           test -f zh/contact.html
@@ -92,6 +99,8 @@ jobs:
         run: |
           python3 -m unittest discover -s tests
           python3 tools/build_site.py
+          python3 tools/build_media_manifest.py
+          python3 tools/build_search_index.py
           python3 tools/build_cv.py
           python3 tools/render_grouped_sections.py
           python3 tools/update_cv_links.py
