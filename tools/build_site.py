@@ -96,7 +96,10 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
     slides = ""
     if entry.get("slides_url"):
         label = "投影片" if lang == "zh" else "Slides"
-        slides = f'<a class="activity-link" href="{esc(entry["slides_url"])}" rel="noopener" target="_blank">{label}</a>'
+        slides = (
+            f'<div class="item-links"><a class="activity-link" '
+            f'href="{esc(entry["slides_url"])}" rel="noopener" target="_blank">{label}</a></div>'
+        )
     desc = inline_value(entry, "description", lang)
     return (
         f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}">'
