@@ -158,6 +158,54 @@ def default_analytics() -> dict[str, Any]:
     }
 
 
+
+def default_contact_form() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "enabled": False,
+        "mode": "email_only",
+        "web3forms_access_key": "",
+        "worker_url": "",
+        "turnstile_site_key": "",
+        "title": {"en": "Send a message", "zh": "傳送訊息"},
+        "intro": {
+            "en": "For academic invitations or research correspondence, you may use this form.",
+            "zh": "如有學術邀請或研究交流，可使用此表單聯絡。",
+        },
+        "name_label": {"en": "Name", "zh": "姓名"},
+        "email_label": {"en": "Email", "zh": "電子郵件"},
+        "subject_label": {"en": "Subject", "zh": "主旨"},
+        "message_label": {"en": "Message", "zh": "訊息"},
+        "submit_label": {"en": "Send message", "zh": "送出訊息"},
+        "success_message": {"en": "Thank you. Your message has been sent.", "zh": "謝謝，訊息已送出。"},
+        "privacy_note": {"en": "Your message will be delivered by Web3Forms.", "zh": "訊息將透過 Web3Forms 傳送。"},
+    }
+
+
+def normalize_contact_form(value: Any) -> dict[str, Any]:
+    defaults = default_contact_form()
+    source = value if isinstance(value, dict) else {}
+    mode = str(source.get("mode") or defaults["mode"]).strip().lower()
+    if mode not in {"email_only", "worker"}:
+        mode = defaults["mode"]
+    return {
+        "schema_version": 1,
+        "enabled": bool(source.get("enabled")),
+        "mode": mode,
+        "web3forms_access_key": _text(source.get("web3forms_access_key"), 80),
+        "worker_url": _safe_http_url(source.get("worker_url")),
+        "turnstile_site_key": _text(source.get("turnstile_site_key"), 120),
+        "title": _pair(source.get("title"), defaults["title"], 160),
+        "intro": _pair(source.get("intro"), defaults["intro"], 500),
+        "name_label": _pair(source.get("name_label"), defaults["name_label"], 80),
+        "email_label": _pair(source.get("email_label"), defaults["email_label"], 80),
+        "subject_label": _pair(source.get("subject_label"), defaults["subject_label"], 80),
+        "message_label": _pair(source.get("message_label"), defaults["message_label"], 80),
+        "submit_label": _pair(source.get("submit_label"), defaults["submit_label"], 100),
+        "success_message": _pair(source.get("success_message"), defaults["success_message"], 300),
+        "privacy_note": _pair(source.get("privacy_note"), defaults["privacy_note"], 300),
+    }
+
 def default_error_page() -> dict[str, Any]:
     return {
         "schema_version": 1,
@@ -313,6 +361,7 @@ def normalized_site_settings(value: Any, data: dict[str, Any] | None = None) -> 
         "footer": normalize_footer(source.get("footer")),
         "seo": normalize_seo(source.get("seo"), data),
         "analytics": normalize_analytics(source.get("analytics")),
+        "contact_form": normalize_contact_form(source.get("contact_form")),
         "error_page": normalize_error_page(source.get("error_page")),
     }
 
@@ -324,6 +373,7 @@ def current_site_settings(data: dict[str, Any]) -> dict[str, Any]:
             "footer": settings.get("footer"),
             "seo": settings.get("seo"),
             "analytics": settings.get("analytics"),
+            "contact_form": settings.get("contact_form"),
             "error_page": settings.get("error_page"),
         },
         data,
@@ -359,6 +409,12 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
     if analytics["enabled"] and analytics["provider"] == "google":
         if not GOOGLE_MEASUREMENT_ID.fullmatch(analytics["google_measurement_id"]):
             raise ValueError("Google Analytics measurement ID must look like G-XXXXXXXXXX.")
+    contact = normalized["contact_form"]
+    if contact["enabled"] and contact["mode"] == "email_only":
+        if not re.fullmatch(r"[0-9a-fA-F-]{20,80}", contact["web3forms_access_key"]):
+            raise ValueError("Web3Forms access key is required when the contact form uses email-only mode.")
+    if contact["enabled"] and contact["mode"] == "worker" and not contact["worker_url"]:
+        raise ValueError("A complete Cloudflare Worker URL is required for Admin notification mode.")
     error_page = normalized["error_page"]
     for field in ("eyebrow", "title", "description", "home_label"):
         for lang in ("en", "zh"):

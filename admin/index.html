@@ -3400,6 +3400,10 @@
           let arxivOp = arxivSuggestionsOperation();
           if (arxivOp) ops.push(arxivOp);
         }
+        if (typeof notificationsOperation === "function") {
+          let notificationsOp = notificationsOperation();
+          if (notificationsOp) ops.push(notificationsOp);
+        }
         if (typeof siteSettingsOperation === "function") {
           let settingsOp = siteSettingsOperation();
           if (settingsOp) ops.push(settingsOp);
@@ -3435,6 +3439,7 @@
             headings: 0,
             people: 0,
             arxiv_suggestions: 0,
+            notifications: 0,
             site_settings: 0,
           };
         ops.forEach((x) => (c[x.op] = (c[x.op] || 0) + 1));
@@ -3453,7 +3458,7 @@
         $("#summary").textContent = errs.length
           ? "資料有衝突，請先修正。"
           : ops.length
-            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.people ? "、人名連結 1" : ""}${c.arxiv_suggestions ? "、arXiv 通知 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
+            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.people ? "、人名連結 1" : ""}${c.arxiv_suggestions ? "、arXiv 通知 1" : ""}${c.notifications ? "、通知中心 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
             : "尚無變更。";
         $("#preview").innerHTML = ops
           .map((o) => {
@@ -3464,6 +3469,8 @@
               return peoplePreviewHtml(o);
             if (o.op === "arxiv_suggestions" && typeof arxivSuggestionsPreviewHtml === "function")
               return arxivSuggestionsPreviewHtml(o);
+            if (o.op === "notifications" && typeof notificationsPreviewHtml === "function")
+              return notificationsPreviewHtml(o);
             if (o.op === "site_settings" && typeof siteSettingsPreviewHtml === "function")
               return siteSettingsPreviewHtml(o);
             if (o.op === "reorder")
@@ -3531,6 +3538,11 @@
         )
           body = arxivSuggestionsHistoryPreviewHtml(h);
         else if (
+          (h.request_action === "notifications" || h.action === "notifications") &&
+          typeof notificationsHistoryPreviewHtml === "function"
+        )
+          body = notificationsHistoryPreviewHtml(h);
+        else if (
           (h.request_action === "site_settings" || h.action === "site_settings") &&
           typeof siteSettingsHistoryPreviewHtml === "function"
         )
@@ -3563,6 +3575,8 @@
           });
         if (h.action === "arxiv_suggestions" && typeof arxivSuggestionsPreviewHtml === "function")
           return arxivSuggestionsPreviewHtml({ before: h.after, after: h.before });
+        if (h.action === "notifications" && typeof notificationsPreviewHtml === "function")
+          return notificationsPreviewHtml({ before: h.after, after: h.before });
         if (h.action === "site_settings" && typeof siteSettingsPreviewHtml === "function")
           return siteSettingsPreviewHtml({before: h.after, after: h.before});
         if (h.action === "headings")
@@ -3920,7 +3934,7 @@
     <script src="layout.js"></script>
     <script src="homepage.js"></script>
     <script src="people.js"></script>
-    <script src="arxiv-notifications.js"></script>
+    <script src="notifications.js"></script>
     <script src="site-settings.js"></script>
   </body>
 </html>

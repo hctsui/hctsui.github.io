@@ -134,3 +134,31 @@ document.addEventListener("click", async (event) => {
   if (!copied) target.querySelector("pre")?.focus({ preventScroll: true });
   setTimeout(() => { copyButton.textContent = original; }, copied ? 1800 : 2600);
 });
+
+/* Optional Web3Forms / Cloudflare Worker contact form. */
+document.addEventListener("submit", async (event) => {
+  const form = event.target.closest("[data-contact-form]");
+  if (!form) return;
+  event.preventDefault();
+  const submit = form.querySelector("[type=submit]");
+  const status = form.querySelector(".contact-form-status");
+  const original = submit?.textContent || "Send";
+  if (submit) { submit.disabled = true; submit.textContent = document.documentElement.lang === "zh" ? "傳送中…" : "Sending…"; }
+  if (status) { status.textContent = ""; status.className = "contact-form-status"; }
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { Accept: "application/json" },
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.success === false) throw new Error(result.message || `HTTP ${response.status}`);
+    form.reset();
+    if (window.turnstile) window.turnstile.reset();
+    if (status) { status.textContent = form.dataset.successMessage || (document.documentElement.lang === "zh" ? "訊息已送出。" : "Message sent."); status.className = "contact-form-status success-message"; }
+  } catch (error) {
+    if (status) { status.textContent = document.documentElement.lang === "zh" ? `傳送失敗：${error.message || error}` : `Could not send: ${error.message || error}`; status.className = "contact-form-status error-message"; }
+  } finally {
+    if (submit) { submit.disabled = false; submit.textContent = original; }
+  }
+});

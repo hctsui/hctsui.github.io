@@ -28,7 +28,7 @@ class RequiredFileTests(unittest.TestCase):
             "admin/guide.html",
             "admin/homepage.js",
             "admin/people.js",
-            "admin/arxiv-notifications.js",
+            "admin/notifications.js",
             "admin/layout.js",
             "admin/tags.js",
             "admin/admin-icon.svg",
@@ -132,7 +132,7 @@ class CanonicalFilenameTests(unittest.TestCase):
             '<script src="layout.js"></script>',
             '<script src="homepage.js"></script>',
             '<script src="people.js"></script>',
-            '<script src="arxiv-notifications.js"></script>',
+            '<script src="notifications.js"></script>',
         ):
             self.assertIn(marker, page)
 
@@ -163,7 +163,7 @@ class CanonicalFilenameTests(unittest.TestCase):
         for relative in (
             "admin/homepage.js",
             "admin/people.js",
-            "admin/arxiv-notifications.js",
+            "admin/notifications.js",
             "admin/layout.js",
             "admin/tags.js",
             "assets/script.js",

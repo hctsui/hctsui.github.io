@@ -118,14 +118,14 @@ class ArxivBatchTests(unittest.TestCase):
 
 class StaticArxivUiTests(unittest.TestCase):
     def test_notification_button_is_inserted_before_guide(self) -> None:
-        script = (ROOT / "admin/arxiv-notifications.js").read_text(encoding="utf-8")
+        script = (ROOT / "admin/notifications.js").read_text(encoding="utf-8")
         for marker in (
-            "arxivNotificationButton",
-            "actions.insertBefore(button, guide)",
+            "data-notification-button",
+            "actions.insertBefore(button,guide)",
             "加入新增草稿",
             "忽略",
             "arxivSuggestionsOperation",
-            "Thank you to arXiv for use of its open access interoperability.",
+            "arXiv metadata 來自 arXiv",
         ):
             self.assertIn(marker, script)
 
@@ -139,7 +139,7 @@ class StaticArxivUiTests(unittest.TestCase):
         admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
         self.assertIn('timezone: "Asia/Tokyo"', workflow)
         self.assertIn("python3 tools/check_arxiv.py", workflow)
-        self.assertIn('<script src="arxiv-notifications.js"></script>', admin)
+        self.assertIn('<script src="notifications.js"></script>', admin)
 
 
 if __name__ == "__main__":

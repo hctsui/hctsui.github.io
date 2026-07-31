@@ -218,6 +218,13 @@
   window.validatePeopleDraft=validatePeopleDraft;
   window.clearPeopleDraft=clearPeopleDraft;
   window.renderPeopleManager=renderPeopleManager;
+  window.openPeopleRecord=function(personId){
+    setDatabaseType('people');
+    const person=normalizePeople(peopleDraft).people.find(row=>row.id===personId);
+    const search=document.querySelector('#peopleSearch');
+    if(search){search.value=person?.name?.en||person?.name?.zh||personId;renderPeopleManager();}
+    requestAnimationFrame(()=>document.querySelector('#peopleRows input')?.focus());
+  };
   window.peopleHistoryPreviewHtml=function(history){return peoplePreviewHtml({before:history.before,after:history.after});};
 
   installStyles();installPanel();

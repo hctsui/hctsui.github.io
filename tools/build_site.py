@@ -553,6 +553,39 @@ def render_home_overview_panel(
     )
 
 
+def render_contact_form(data: dict[str, Any], lang: str) -> str:
+    config = current_site_settings(data).get("contact_form", {})
+    if not config.get("enabled"):
+        return ""
+    mode = str(config.get("mode") or "email_only")
+    endpoint = "https://api.web3forms.com/submit" if mode == "email_only" else str(config.get("worker_url") or "")
+    if not endpoint:
+        return ""
+    title = esc(config.get("title", {}).get(lang) or "")
+    intro = esc(config.get("intro", {}).get(lang) or "")
+    labels = {key: esc(config.get(key, {}).get(lang) or "") for key in ("name_label", "email_label", "subject_label", "message_label", "submit_label", "success_message", "privacy_note")}
+    hidden = ''
+    if mode == "email_only":
+        hidden += f'<input type="hidden" name="access_key" value="{esc(config.get("web3forms_access_key") or "")}">'
+    hidden += '<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="contact-botcheck" aria-hidden="true">'
+    turnstile = ""
+    if mode == "worker" and config.get("turnstile_site_key"):
+        turnstile = f'<div class="cf-turnstile" data-sitekey="{esc(config["turnstile_site_key"])}"></div><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>'
+    intro_html = f"<p>{intro}</p>" if intro else ""
+    privacy_html = f'<p class="contact-form-privacy">{labels["privacy_note"]}</p>' if labels["privacy_note"] else ""
+    return (
+        f'<div class="contact-form-shell"><h3>{title}</h3>{intro_html}'
+        f'<form class="contact-form" method="post" action="{esc(endpoint)}" data-contact-form data-contact-mode="{esc(mode)}" data-success-message="{labels["success_message"]}">'
+        f'{hidden}<div class="contact-form-grid"><label>{labels["name_label"]}<input name="name" required maxlength="160" autocomplete="name"></label>'
+        f'<label>{labels["email_label"]}<input type="email" name="email" required maxlength="320" autocomplete="email"></label></div>'
+        f'<label>{labels["subject_label"]}<input name="subject" maxlength="240"></label>'
+        f'<label>{labels["message_label"]}<textarea name="message" required maxlength="8000" rows="6"></textarea></label>'
+        f'{turnstile}<button class="button primary contact-submit" type="submit">{labels["submit_label"]}</button>'
+        f'<p class="contact-form-status" role="status" aria-live="polite"></p>{privacy_html}'
+        f'</form></div>'
+    )
+
+
 def render_home_contact(
     data: dict[str, Any],
     category: dict[str, Any],
@@ -570,7 +603,7 @@ def render_home_contact(
         f'<section class="section managed-category category-contact contact-section" '
         f'data-category-id="{cid}" id="contact"><div class="container split"><div>'
         f'<p class="section-label">{label}</p><h2>{title}</h2>{intro_html}</div>'
-        f'{render_contact(items, lang)}</div></section>'
+        f'<div>{render_contact(items, lang)}{render_contact_form(data, lang)}</div></div></section>'
     )
 
 

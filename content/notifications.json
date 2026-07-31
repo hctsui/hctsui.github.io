@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "retention_days": 60,
+  "notifications": []
+}

@@ -261,6 +261,23 @@
       </section>
     </article>
   </div>
+
+<section id="notifications">
+  <h2>通知中心與自動檢查</h2>
+  <p>Admin 頂部的「通知」整合 arXiv、Crossref 正式出版候選、外部死鏈、匿名聯絡提醒與 GitHub Pages 部署狀態。每筆通知可搜尋、加星號、標記已讀、刪除或標記已處理；修改會和其他草稿一起透過 Batch Issue 送出並支援七日 Undo。</p>
+  <ul>
+    <li>arXiv：每週一查詢，新結果只建立候選，不自動公開。</li>
+    <li>Crossref：每週三比對尚無 DOI 的 Preprints；「轉為 Published」只建立修改草稿，必須人工確認。</li>
+    <li>死鏈：每月檢查管理資料中的外部網址，只對確認的 404/410 建立通知。</li>
+    <li>部署：面板開啟時顯示 ⏳／✅／❌；失敗可查看 Log 並前往 GitHub 重新執行。</li>
+    <li>清理：超過 60 天且未加星號的通知由排程移除。</li>
+  </ul>
+  <div class="callout warning"><strong>公開 repository 不保存聯絡表單個資。</strong>完整留言只會寄到 Email；Admin 的聯絡通知僅包含匿名事件 ID 與收到時間。</div>
+</section>
+<section id="contact-form">
+  <h2>聯絡表單</h2>
+  <p>在「網站設定 → 聯絡表單」啟用。Email 模式直接使用 Web3Forms；Cloudflare Worker 橋接模式可在寄信後建立匿名 Admin 通知。Worker Secrets、GitHub token 與 Turnstile Secret 絕不可填進 Admin 或提交到 repository。完整步驟見 <code>integrations/CONTACT-FORM-SETUP.md</code>。</p>
+</section>
 </main>
 </body>
 </html>

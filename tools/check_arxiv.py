@@ -98,6 +98,11 @@ def update_store(store: dict[str, Any], site: dict[str, Any], fetched: list[dict
             continue
         if not exact_author_match(item.get("authors", []), accepted_names):
             continue
+        previous = merged.get(arxiv_id, {})
+        item = dict(item)
+        item["discovered_at"] = previous.get("discovered_at") or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        item["starred"] = bool(previous.get("starred", False))
+        item["read"] = bool(previous.get("read", False))
         merged[arxiv_id] = item
     suggestions = sorted(merged.values(), key=lambda item: (item.get("published", ""), item["arxiv_id"]), reverse=True)
     before_signature = json.dumps(current["suggestions"], ensure_ascii=False, sort_keys=True)

@@ -85,6 +85,9 @@ def normalized_store(value: Any) -> dict[str, Any]:
             "pdf_url": str(raw.get("pdf_url") or f"https://arxiv.org/pdf/{arxiv_id}").strip(),
             "doi": str(raw.get("doi") or "").strip(),
             "journal_ref": str(raw.get("journal_ref") or "").strip(),
+            "discovered_at": str(raw.get("discovered_at") or raw.get("published") or "").strip(),
+            "starred": bool(raw.get("starred", False)),
+            "read": bool(raw.get("read", False)),
         })
     suggestions.sort(key=lambda item: (item.get("published", ""), item["arxiv_id"]), reverse=True)
     return {

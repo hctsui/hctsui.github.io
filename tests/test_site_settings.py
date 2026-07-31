@@ -14,6 +14,7 @@ from build_site import (  # noqa: E402
     apply_cloudflare_analytics,
     apply_seo_metadata,
     render_404_page,
+    render_contact_form,
     render_footer,
 )
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
@@ -122,6 +123,26 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(analytics["provider"], "cloudflare")
         self.assertEqual(analytics["cloudflare_token"], "d" * 32)
         validate_site_settings(current_site_settings(data), data)
+
+
+    def test_contact_form_modes_are_safe_and_configurable(self) -> None:
+        data = site_data()
+        settings = current_site_settings(data)
+        self.assertFalse(settings["contact_form"]["enabled"])
+        self.assertEqual(render_contact_form(data, "en"), "")
+        settings["contact_form"].update({
+            "enabled": True,
+            "mode": "worker",
+            "worker_url": "https://contact.example.workers.dev",
+            "turnstile_site_key": "site-key-public",
+        })
+        data["settings"].update(settings)
+        rendered = render_contact_form(data, "en")
+        self.assertIn('action="https://contact.example.workers.dev"', rendered)
+        self.assertIn('class="cf-turnstile"', rendered)
+        self.assertIn('data-sitekey="site-key-public"', rendered)
+        self.assertNotIn("TURNSTILE_SECRET", rendered)
+        self.assertNotIn("GITHUB_TOKEN", rendered)
 
     def test_404_page_supports_colors_bilingual_content_and_redirect(self) -> None:
         data = site_data()

@@ -11,9 +11,10 @@ from homepage_config import apply_homepage_config, normalized_homepage_config, v
 from people_config import empty_people, normalized_people, validate_people
 from site_settings_config import current_site_settings, normalized_site_settings, validate_site_settings
 from arxiv_suggestions import empty_store as empty_arxiv_store, normalized_store as normalized_arxiv_store, validate_store as validate_arxiv_store
+from notification_store import empty_store as empty_notification_store, normalized_store as normalized_notification_store, validate_store as validate_notification_store
 from markup_config import rich_html
 from process_request import strip_invisible_chars
-ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; PEOPLE=ROOT/'content/people.json'; ARXIV_STORE=ROOT/'content/arxiv-suggestions.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
+ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; PEOPLE=ROOT/'content/people.json'; ARXIV_STORE=ROOT/'content/arxiv-suggestions.json'; NOTIFICATIONS=ROOT/'content/notifications.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
 def parse_body(body):
  m=re.search(r'### Batch payload / 批次資料\s+(.+)',body,re.S);raw=(m.group(1) if m else body).strip();f=re.search(r'```(?:json)?\s*(.*?)```',raw,re.S);text=(f.group(1) if f else raw).strip()
@@ -236,9 +237,10 @@ def layout_expected_matches(current,expected):
   if str(left.get('category_id') or '')!=str(right.get('category_id') or ''):return False
   if int(left.get('order',999999))!=int(right.get('order',999999)):return False
  return True
-def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
+def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None,notifications=None):
  if people is None:people=empty_people()
  if arxiv_store is None:arxiv_store=empty_arxiv_store()
+ if notifications is None:notifications=empty_notification_store()
  if op['op']=='homepage':
   before=normalized_homepage_config(data);expected=op.get('before')
   if expected and before!=normalized_homepage_config(data,expected):raise ValueError('Conflict: homepage settings changed after Admin loaded.')
@@ -262,6 +264,10 @@ def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
   before=normalized_arxiv_store(arxiv_store);expected=op.get('before')
   if expected and before!=normalized_arxiv_store(expected):raise ValueError('Conflict: arXiv suggestions changed after Admin loaded.')
   after=normalized_arxiv_store(copy.deepcopy(op['after']));validate_arxiv_store(after);arxiv_store.clear();arxiv_store.update(copy.deepcopy(after));append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='arxiv_suggestions',action='arxiv_suggestions',type='arxiv_suggestions',entry_id='arxiv-suggestions',label={'en':'arXiv suggestions','zh':'arXiv 通知'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'arxiv_suggestions','arxiv-suggestions'
+ if op['op']=='notifications':
+  before=normalized_notification_store(notifications);expected=op.get('before')
+  if expected and before!=normalized_notification_store(expected):raise ValueError('Conflict: notification center changed after Admin loaded.')
+  after=normalized_notification_store(copy.deepcopy(op['after']));validate_notification_store(after);notifications.clear();notifications.update(copy.deepcopy(after));append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='notifications',action='notifications',type='notifications',entry_id='notifications',label={'en':'Notification center','zh':'通知中心'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'notifications','notifications'
  if op['op']=='people':
   before=normalized_people(people);expected=op.get('before')
   if expected and before!=normalized_people(expected):raise ValueError('Conflict: person-link database changed after Admin loaded.')
@@ -269,13 +275,14 @@ def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
  if op['op']=='site_settings':
   before=current_site_settings(data);expected=op.get('before')
   if expected and before!=normalized_site_settings(expected,data):raise ValueError('Conflict: website settings changed after Admin loaded.')
-  after=normalized_site_settings(copy.deepcopy(op['after']),data);validate_site_settings(after,data);settings=data.setdefault('settings',{});settings['seo']=copy.deepcopy(after['seo']);settings['footer']=copy.deepcopy(after['footer']);settings['analytics']=copy.deepcopy(after['analytics']);settings['error_page']=copy.deepcopy(after['error_page']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='site_settings',action='site_settings',type='site_settings',entry_id='site-settings',label={'en':'Website settings','zh':'網站設定'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'site_settings','site-settings'
+  after=normalized_site_settings(copy.deepcopy(op['after']),data);validate_site_settings(after,data);settings=data.setdefault('settings',{});settings['seo']=copy.deepcopy(after['seo']);settings['footer']=copy.deepcopy(after['footer']);settings['analytics']=copy.deepcopy(after['analytics']);settings['contact_form']=copy.deepcopy(after['contact_form']);settings['error_page']=copy.deepcopy(after['error_page']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='site_settings',action='site_settings',type='site_settings',entry_id='site-settings',label={'en':'Website settings','zh':'網站設定'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'site_settings','site-settings'
  before=copy.deepcopy(trans);expected=op.get('before')
  if expected and before!=expected:raise ValueError('Conflict: translations changed after Admin loaded.')
  after=copy.deepcopy(op['after']);normalize_translation_tags(after);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照表'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
-def apply_undo(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
+def apply_undo(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None,notifications=None):
  if people is None:people=empty_people()
  if arxiv_store is None:arxiv_store=empty_arxiv_store()
+ if notifications is None:notifications=empty_notification_store()
  tid=op.get('history_id');target=next((x for x in h['operations'] if x.get('history_id')==tid),None)
  if not target:raise ValueError(f'Undo target unavailable or expired: {tid}')
  if target.get('reverted_by'):raise ValueError(f'{tid} was already undone.')
@@ -306,6 +313,10 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
   cur=normalized_arxiv_store(arxiv_store)
   if cur!=normalized_arxiv_store(target['after']):raise ValueError('Cannot undo arXiv suggestion changes: notifications changed later.')
   restored=normalized_arxiv_store(target['before']);validate_arxiv_store(restored);arxiv_store.clear();arxiv_store.update(copy.deepcopy(restored));new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='arxiv_suggestions',type='arxiv_suggestions',entry_id='arxiv-suggestions',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
+ elif act=='notifications':
+  cur=normalized_notification_store(notifications)
+  if cur!=normalized_notification_store(target['after']):raise ValueError('Cannot undo notification changes: notification center changed later.')
+  restored=normalized_notification_store(target['before']);validate_notification_store(restored);notifications.clear();notifications.update(copy.deepcopy(restored));new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='notifications',type='notifications',entry_id='notifications',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
  elif act=='people':
   cur=normalized_people(people)
   if cur!=normalized_people(target['after']):raise ValueError('Cannot undo person links: database changed later.')
@@ -313,7 +324,7 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
  elif act=='site_settings':
   cur=current_site_settings(data)
   if cur!=normalized_site_settings(target['after'],data):raise ValueError('Cannot undo website settings: settings changed later.')
-  restored=normalized_site_settings(target['before'],data);validate_site_settings(restored,data);settings=data.setdefault('settings',{});settings['seo']=copy.deepcopy(restored['seo']);settings['footer']=copy.deepcopy(restored['footer']);settings['analytics']=copy.deepcopy(restored['analytics']);settings['error_page']=copy.deepcopy(restored['error_page']);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='site_settings',type='site_settings',entry_id='site-settings',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
+  restored=normalized_site_settings(target['before'],data);validate_site_settings(restored,data);settings=data.setdefault('settings',{});settings['seo']=copy.deepcopy(restored['seo']);settings['footer']=copy.deepcopy(restored['footer']);settings['analytics']=copy.deepcopy(restored['analytics']);settings['contact_form']=copy.deepcopy(restored['contact_form']);settings['error_page']=copy.deepcopy(restored['error_page']);new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='site_settings',type='site_settings',entry_id='site-settings',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
  else:
   a,i=find(data,t,eid)
   if act=='add':
@@ -330,7 +341,7 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None):
 def validate_operation(op):
  if not isinstance(op,dict):raise ValueError('Every batch operation must be an object.')
  action=op.get('op')
- if action not in {'add','update','delete','undo','reorder','translations','people','arxiv_suggestions','site_settings','headings','layout','homepage'}:raise ValueError(f'Unsupported batch operation: {action}')
+ if action not in {'add','update','delete','undo','reorder','translations','people','arxiv_suggestions','notifications','site_settings','headings','layout','homepage'}:raise ValueError(f'Unsupported batch operation: {action}')
  if action=='undo':
   if not str(op.get('history_id') or '').strip():raise ValueError('Undo operation is missing history_id.')
   return
@@ -343,6 +354,9 @@ def validate_operation(op):
  if action=='arxiv_suggestions':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('arXiv suggestions operation requires before and after objects.')
   validate_arxiv_store(normalized_arxiv_store(op['after']));return
+ if action=='notifications':
+  if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Notifications operation requires before and after objects.')
+  validate_notification_store(normalized_notification_store(op['after']));return
  if action=='site_settings':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Site settings operation requires before and after objects.')
   validate_site_settings(op['after']);return
@@ -368,16 +382,16 @@ def validate_operation(op):
 def main():
  p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
  if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
- data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);people=normalized_people(json.load(open(PEOPLE,encoding='utf-8')) if PEOPLE.exists() else empty_people());validate_people(people);arxiv_store=normalized_arxiv_store(json.load(open(ARXIV_STORE,encoding='utf-8')) if ARXIV_STORE.exists() else empty_arxiv_store());validate_arxiv_store(arxiv_store);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','people','arxiv_suggestions','site_settings','headings','layout','homepage','replayed')};ids=[]
+ data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);people=normalized_people(json.load(open(PEOPLE,encoding='utf-8')) if PEOPLE.exists() else empty_people());validate_people(people);arxiv_store=normalized_arxiv_store(json.load(open(ARXIV_STORE,encoding='utf-8')) if ARXIV_STORE.exists() else empty_arxiv_store());validate_arxiv_store(arxiv_store);notifications=normalized_notification_store(json.load(open(NOTIFICATIONS,encoding='utf-8')) if NOTIFICATIONS.exists() else empty_notification_store());validate_notification_store(notifications);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','people','arxiv_suggestions','notifications','site_settings','headings','layout','homepage','replayed')};ids=[]
  for i,op in enumerate(ops,1):
   validate_operation(op);hid=f'issue-{issue}-op-{i}';rd=digest(op)
   if hid in existing:
    if existing[hid].get('request_digest')!=rd:raise ValueError(f'{hid} exists with different content.')
    counts['replayed']+=1;continue
-  if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd,people=people,arxiv_store=arxiv_store)
-  elif op['op'] in ('reorder','translations','people','arxiv_suggestions','site_settings','headings','layout','homepage'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd,people=people,arxiv_store=arxiv_store)
+  if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd,people=people,arxiv_store=arxiv_store,notifications=notifications)
+  elif op['op'] in ('reorder','translations','people','arxiv_suggestions','notifications','site_settings','headings','layout','homepage'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd,people=people,arxiv_store=arxiv_store,notifications=notifications)
   else:act,eid=apply_content(data,h,op,hid,issue,n,rd)
   counts[act]+=1;ids.append(eid);existing[hid]=h['operations'][-1]
- normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);people=strip_invisible_chars(normalized_people(people));arxiv_store=strip_invisible_chars(normalized_arxiv_store(arxiv_store));h=strip_invisible_chars(h);validate_category_data(data);validate_homepage_config(data,normalized_homepage_config(data));validate_trans(trans);validate_people(people);validate_arxiv_store(arxiv_store);validate_site_settings(current_site_settings(data),data);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');PEOPLE.write_text(json.dumps(people,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');ARXIV_STORE.write_text(json.dumps(arxiv_store,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
- summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','people','arxiv_suggestions','site_settings','headings','layout','homepage') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
+ normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);people=strip_invisible_chars(normalized_people(people));arxiv_store=strip_invisible_chars(normalized_arxiv_store(arxiv_store));notifications=strip_invisible_chars(normalized_notification_store(notifications));h=strip_invisible_chars(h);validate_category_data(data);validate_homepage_config(data,normalized_homepage_config(data));validate_trans(trans);validate_people(people);validate_arxiv_store(arxiv_store);validate_notification_store(notifications);validate_site_settings(current_site_settings(data),data);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');PEOPLE.write_text(json.dumps(people,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');ARXIV_STORE.write_text(json.dumps(arxiv_store,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');NOTIFICATIONS.write_text(json.dumps(notifications,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','people','arxiv_suggestions','notifications','site_settings','headings','layout','homepage') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
 if __name__=='__main__':main()

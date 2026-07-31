@@ -19,7 +19,7 @@ class AdminLoadingContracts(unittest.TestCase):
             "admin/layout.js",
             "admin/homepage.js",
             "admin/people.js",
-            "admin/arxiv-notifications.js",
+            "admin/notifications.js",
             "admin/site-settings.js",
         ):
             with self.subTest(relative=relative):
@@ -31,7 +31,7 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="layout.js"></script>',
             '<script src="homepage.js"></script>',
             '<script src="people.js"></script>',
-            '<script src="arxiv-notifications.js"></script>',
+            '<script src="notifications.js"></script>',
             '<script src="site-settings.js"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
