@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from build_site import publication_bibtex, render_publication_article, rich_html  # noqa: E402
+from build_site import publication_bibitem, publication_bibtex, render_publication_article, replace_main, rich_html  # noqa: E402
 from people_config import link_author_html, link_people_html, normalized_people, validate_people  # noqa: E402
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
 
@@ -144,11 +144,41 @@ class BibtexTests(unittest.TestCase):
         item["bibtex"] = "@article{custom, title={Exact publisher record}}"
         self.assertEqual(publication_bibtex(item), item["bibtex"])
 
-    def test_publication_html_has_expand_and_copy_controls(self) -> None:
+    def test_auto_generated_bibitem_contains_core_fields(self) -> None:
+        text = publication_bibitem(self.publication())
+        self.assertIn(r"\bibitem{", text)
+        self.assertIn("Ting-Wei Chang and Hung-Chun Tsui", text)
+        self.assertIn(r"\emph{Algebra Structures of Multiple Eisenstein Series}", text)
+        self.assertIn("arXiv:2603.10376", text)
+
+
+    def test_bibitem_preserves_inline_italic_symbols_as_math(self) -> None:
+        item = self.publication()
+        item["title"] = {"en": "On u -Multiple Zeta Values", "zh": ""}
+        item["title_html"] = {"en": "On <em>u</em>-Multiple Zeta Values", "zh": ""}
+        text = publication_bibitem(item)
+        self.assertIn(r"\emph{On $u$-Multiple Zeta Values}", text)
+
+    def test_manual_bibitem_wins(self) -> None:
+        item = self.publication()
+        item["bibitem"] = r"\bibitem{custom} Exact legacy citation."
+        self.assertEqual(publication_bibitem(item), item["bibitem"])
+
+
+    def test_main_replacement_accepts_latex_backslashes(self) -> None:
+        page = '<html><body><main id="main">old</main></body></html>'
+        replaced = replace_main(page, r'<pre>\bibitem{x} \emph{Title}</pre>')
+        self.assertIn(r'\bibitem{x} \emph{Title}', replaced)
+
+    def test_publication_html_has_expand_format_and_copy_controls(self) -> None:
         rendered = render_publication_article(self.publication(), "en")
         self.assertIn("data-bibtex-toggle", rendered)
         self.assertIn("data-copy-bibtex", rendered)
+        self.assertIn("data-copy-citation", rendered)
+        self.assertIn('data-citation-format="bibtex"', rendered)
+        self.assertIn('data-citation-format="bibitem"', rendered)
         self.assertIn("Copy BibTeX", rendered)
+        self.assertIn(r"Copy \bibitem", rendered)
 
 
 class StaticMathTests(unittest.TestCase):

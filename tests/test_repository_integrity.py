@@ -28,6 +28,7 @@ class RequiredFileTests(unittest.TestCase):
             "admin/guide.html",
             "admin/homepage.js",
             "admin/people.js",
+            "admin/arxiv-notifications.js",
             "admin/layout.js",
             "admin/tags.js",
             "admin/admin-icon.svg",
@@ -47,6 +48,9 @@ class RequiredFileTests(unittest.TestCase):
             "tools/people_config.py",
             "tools/markup_config.py",
             "content/people.json",
+            "content/arxiv-suggestions.json",
+            "tools/arxiv_suggestions.py",
+            "tools/check_arxiv.py",
             "tools/render_grouped_sections.py",
             "tools/update_cv_links.py",
             "tools/validate_site.py",
@@ -54,6 +58,7 @@ class RequiredFileTests(unittest.TestCase):
             ".github/workflows/process-website-batch.yml",
             ".github/workflows/daily-upcoming.yml",
             ".github/workflows/deploy-cms-pages.yml",
+            ".github/workflows/check-arxiv.yml",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
 
@@ -84,6 +89,7 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
             ".github/workflows/process-website-batch.yml",
             ".github/workflows/daily-upcoming.yml",
             ".github/workflows/deploy-cms-pages.yml",
+            ".github/workflows/check-arxiv.yml",
         ):
             text = read(relative)
             self.assertNotIn("build_dynamic_forms.py", text, relative)
@@ -126,6 +132,7 @@ class CanonicalFilenameTests(unittest.TestCase):
             '<script src="layout.js"></script>',
             '<script src="homepage.js"></script>',
             '<script src="people.js"></script>',
+            '<script src="arxiv-notifications.js"></script>',
         ):
             self.assertIn(marker, page)
 
@@ -156,6 +163,7 @@ class CanonicalFilenameTests(unittest.TestCase):
         for relative in (
             "admin/homepage.js",
             "admin/people.js",
+            "admin/arxiv-notifications.js",
             "admin/layout.js",
             "admin/tags.js",
             "assets/script.js",

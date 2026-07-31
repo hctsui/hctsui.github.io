@@ -181,20 +181,98 @@ def publication_bibtex(entry: dict[str, Any]) -> str:
     return f"@{entry_type}{{{_bibtex_key(entry)},\n" + ",\n".join(rows) + "\n}"
 
 
+def _latex_citation_escape(value: Any, *, strip: bool = True) -> str:
+    text = str(value or "")
+    if strip:
+        text = text.strip()
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+    }
+    return "".join(replacements.get(char, char) for char in text)
+
+
+def _publication_title_latex(entry: dict[str, Any]) -> str:
+    rich = (entry.get("title_html") or {}).get("en") if isinstance(entry.get("title_html"), dict) else ""
+    raw = str(rich or plain_value(entry, "title", "en"))
+    result: list[str] = []
+    position = 0
+    for match in re.finditer(r"<em>(.*?)</em>", raw, flags=re.I | re.S):
+        before = re.sub(r"<[^>]+>", "", raw[position:match.start()])
+        result.append(_latex_citation_escape(html.unescape(before), strip=False))
+        inner = re.sub(r"<[^>]+>", "", match.group(1))
+        result.append(f"${_latex_citation_escape(html.unescape(inner), strip=False)}$")
+        position = match.end()
+    tail = re.sub(r"<[^>]+>", "", raw[position:])
+    result.append(_latex_citation_escape(html.unescape(tail), strip=False))
+    return "".join(result).strip()
+
+
+def publication_bibitem(entry: dict[str, Any]) -> str:
+    manual = str(entry.get("bibitem") or "").strip()
+    if manual:
+        return manual
+    authors = _latex_citation_escape(plain_value(entry, "authors", "en"))
+    title = _publication_title_latex(entry)
+    venue = _latex_citation_escape(plain_value(entry, "venue", "en"))
+    year = str(entry.get("year") or str(entry.get("date") or "")[:4] or "").strip()
+    arxiv = _latex_citation_escape(str(entry.get("arxiv") or "").strip())
+    doi_url = str(entry.get("doi_url") or "").strip()
+    doi = _latex_citation_escape(re.sub(r"^https?://(?:dx\.)?doi\.org/", "", doi_url, flags=re.I)) if doi_url else ""
+
+    details: list[str] = []
+    if venue:
+        details.append(venue.rstrip(". "))
+    if arxiv and arxiv.casefold() not in venue.casefold():
+        details.append(f"arXiv:{arxiv}")
+    if doi:
+        details.append(f"doi:{doi}")
+    if year and year not in venue:
+        details.append(f"({year})")
+
+    citation = ", ".join(part for part in (authors, rf"\emph{{{title}}}" if title else "", *details) if part)
+    if citation and not citation.endswith("."):
+        citation += "."
+    return rf"\bibitem{{{_bibtex_key(entry)}}} {citation}".rstrip()
+
+
 def bibtex_controls(entry: dict[str, Any], lang: str) -> str:
     bibtex = publication_bibtex(entry)
-    if not bibtex:
+    bibitem = publication_bibitem(entry)
+    if not bibtex and not bibitem:
         return ""
     identifier = "bibtex-" + re.sub(r"[^A-Za-z0-9_-]+", "-", str(entry.get("id") or "publication"))
-    copy_label = "複製 BibTeX" if lang == "zh" else "Copy BibTeX"
+    bibtex_id = f"{identifier}-bibtex"
+    bibitem_id = f"{identifier}-bibitem"
     copied_label = "已複製" if lang == "zh" else "Copied"
+    copy_bibtex = "複製 BibTeX" if lang == "zh" else "Copy BibTeX"
+    copy_bibitem = r"複製 \bibitem" if lang == "zh" else r"Copy \bibitem"
     return (
         f'<button class="pub-bibtex-toggle" type="button" data-bibtex-toggle="{esc(identifier)}" '
         f'aria-expanded="false">BibTeX</button>'
         f'<div class="bibtex-panel" id="{esc(identifier)}" hidden>'
+        f'<div class="citation-format-tabs" role="tablist" aria-label="Citation format">'
+        f'<button type="button" class="citation-format-tab active" role="tab" aria-selected="true" '
+        f'data-citation-panel="{esc(identifier)}" data-citation-format="bibtex">BibTeX</button>'
+        f'<button type="button" class="citation-format-tab" role="tab" aria-selected="false" '
+        f'data-citation-panel="{esc(identifier)}" data-citation-format="bibitem">\\bibitem</button></div>'
+        f'<section class="citation-format-view" data-citation-view="bibtex" id="{esc(bibtex_id)}">'
         f'<div class="bibtex-panel-actions"><button type="button" class="bibtex-copy" '
-        f'data-copy-bibtex="{esc(identifier)}" data-copied-label="{esc(copied_label)}">{copy_label}</button></div>'
-        f'<pre><code>{esc(bibtex)}</code></pre></div>'
+        f'data-copy-citation="{esc(bibtex_id)}" data-copy-bibtex="{esc(bibtex_id)}" '
+        f'data-copied-label="{esc(copied_label)}">{copy_bibtex}</button></div>'
+        f'<pre><code>{esc(bibtex)}</code></pre></section>'
+        f'<section class="citation-format-view" data-citation-view="bibitem" id="{esc(bibitem_id)}" hidden>'
+        f'<div class="bibtex-panel-actions"><button type="button" class="bibtex-copy" '
+        f'data-copy-citation="{esc(bibitem_id)}" data-copied-label="{esc(copied_label)}">{copy_bibitem}</button></div>'
+        f'<pre><code>{esc(bibitem)}</code></pre></section></div>'
     )
 
 def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool = False) -> str:
@@ -275,7 +353,7 @@ def replace_navigation(text: str, data: dict[str, Any], current_page_id: str, la
     navigation = render_site_navigation(data, current_page_id, lang)
     updated, count = re.subn(
         r'<nav\b(?=[^>]*\bclass="[^"]*\bsite-nav\b[^"]*")[^>]*>.*?</nav>',
-        navigation,
+        lambda _: navigation,
         text,
         count=1,
         flags=re.S,
@@ -525,14 +603,16 @@ def extract_home_hero(text: str) -> str:
 
 
 def replace_main(text: str, content: str) -> str:
-    updated, count = re.subn(r'<main id="main">.*?</main>', f'<main id="main">{content}</main>', text, count=1, flags=re.S)
+    replacement = f'<main id="main">{content}</main>'
+    updated, count = re.subn(r'<main id="main">.*?</main>', lambda _: replacement, text, count=1, flags=re.S)
     if count != 1:
         raise RuntimeError("Could not replace main element")
     return updated
 
 
 def update_page_title(text: str, title: str) -> str:
-    updated, count = re.subn(r'<title>.*?</title>', f'<title>{esc(title)}</title>', text, count=1, flags=re.S)
+    replacement = f'<title>{esc(title)}</title>'
+    updated, count = re.subn(r'<title>.*?</title>', lambda _: replacement, text, count=1, flags=re.S)
     if count != 1:
         raise RuntimeError("Could not update title")
     return updated
@@ -551,7 +631,7 @@ def _absolute_url(base_url: str, value: str, page_path: str = "") -> str:
 
 def _replace_or_insert_head(text: str, pattern: str, replacement: str) -> str:
     if re.search(pattern, text, flags=re.I | re.S):
-        return re.sub(pattern, replacement, text, count=1, flags=re.I | re.S)
+        return re.sub(pattern, lambda _: replacement, text, count=1, flags=re.I | re.S)
     return text.replace("</head>", replacement + "\n</head>", 1)
 
 
@@ -688,7 +768,7 @@ def render_footer(data: dict[str, Any], lang: str, today: date, *, updated: str 
 
 
 def replace_footer(text: str, footer: str) -> str:
-    updated, count = re.subn(r'<footer class="site-footer">.*?</footer>', footer, text, count=1, flags=re.S)
+    updated, count = re.subn(r'<footer class="site-footer">.*?</footer>', lambda _: footer, text, count=1, flags=re.S)
     if count != 1:
         updated = text.replace("</body>", footer + "\n</body>", 1)
     return updated

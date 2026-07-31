@@ -64,7 +64,7 @@ document.querySelectorAll("img[data-photo-candidates]").forEach((image) => {
   });
 });
 
-/* Publication BibTeX panels and clipboard copy. */
+/* Publication citation panels, format tabs, and clipboard copy. */
 document.addEventListener("click", async (event) => {
   const toggle = event.target.closest("[data-bibtex-toggle]");
   if (toggle) {
@@ -73,14 +73,31 @@ document.addEventListener("click", async (event) => {
     const opening = panel.hidden;
     panel.hidden = !opening;
     toggle.setAttribute("aria-expanded", String(opening));
-    if (opening) panel.querySelector(".bibtex-copy")?.focus({ preventScroll: true });
+    if (opening) panel.querySelector(".citation-format-tab.active")?.focus({ preventScroll: true });
     return;
   }
 
-  const copyButton = event.target.closest("[data-copy-bibtex]");
+  const formatButton = event.target.closest("[data-citation-format]");
+  if (formatButton) {
+    const panel = document.getElementById(formatButton.dataset.citationPanel || "");
+    if (!panel) return;
+    const format = formatButton.dataset.citationFormat || "bibtex";
+    panel.querySelectorAll("[data-citation-format]").forEach((button) => {
+      const active = button.dataset.citationFormat === format;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    panel.querySelectorAll("[data-citation-view]").forEach((view) => {
+      view.hidden = view.dataset.citationView !== format;
+    });
+    return;
+  }
+
+  const copyButton = event.target.closest("[data-copy-citation], [data-copy-bibtex]");
   if (!copyButton) return;
-  const panel = document.getElementById(copyButton.dataset.copyBibtex || "");
-  const text = panel?.querySelector("code")?.textContent || "";
+  const targetId = copyButton.dataset.copyCitation || copyButton.dataset.copyBibtex || "";
+  const target = document.getElementById(targetId);
+  const text = target?.querySelector("code")?.textContent || "";
   if (!text) return;
   const original = copyButton.textContent;
   let copied = false;
