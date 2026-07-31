@@ -55,7 +55,7 @@ jobs:
             python3 tools/validate_translations.py
             python3 tools/validate_site.py
 
-            git add content/site.json content/translations.json content/change-history.json \
+            git add content/site.json content/translations.json content/people.json content/change-history.json \
               CONTENT-CATALOG.md cv/*.tex \
               '*.html' zh
 
