@@ -60,12 +60,40 @@ class AdminHotfixTests(unittest.TestCase):
         self.assertIn(".layout-order-item-actions{display:flex;flex-wrap:nowrap", SCRIPT)
 
     def test_activity_filter_keeps_four_independent_types(self) -> None:
-        self.assertIn("types=['page','category',...TYPES]", SCRIPT)
+        filter_types = "types=['page','category','publication','conference','talk','visit','organization','honor','teaching','general_content']"
+        self.assertIn(filter_types, SCRIPT)
         for kind in ("conference", "talk", "visit", "organization"):
             self.assertIn(kind, SCRIPT)
         self.assertIn("types=['page','category','publication','academic_event','teaching','generic']", SCRIPT)
         self.assertIn("LABEL.organization='學術籌辦'", SCRIPT)
 
+    def test_general_content_filter_is_single_combined_option(self) -> None:
+        self.assertIn("LABEL.general_content='一般內容'", SCRIPT)
+        self.assertIn("filter==='general_content'", SCRIPT)
+        self.assertIn("GENERAL_CONTENT_FILTER_TYPES", SCRIPT)
+        self.assertIn("'interest','education','generic','contact','personal'", SCRIPT)
+        self.assertNotIn("types=['page','category',...TYPES]", SCRIPT)
+        self.assertIn("合併成單一「一般內容」選項", GUIDE)
+
+
+class CvSubtitlePatchTests(unittest.TestCase):
+    def test_patcher_uses_shared_lighter_subtitle_rule(self) -> None:
+        patcher = (ROOT / "apply-update.py").read_text(encoding="utf-8")
+        self.assertIn(r"\newcommand{\cvgroup}[1]", patcher)
+        self.assertIn(r"primaryColor!28", patcher)
+        self.assertIn(r"\titlerule[0.45pt]", patcher)
+        for target in (
+            "Hung-Chun-Tsui-CV.template.tex",
+            "Hung-Chun-Tsui-CV-zh.template.tex",
+            "Hung-Chun-Tsui-CV.tex",
+            "Hung-Chun-Tsui-CV-zh.tex",
+        ):
+            self.assertIn(target, patcher)
+
+    def test_guide_explains_future_groups_use_same_style(self) -> None:
+        for label in ("Preprints", "Journal Articles", "National Tsing Hua University"):
+            self.assertIn(label, GUIDE)
+        self.assertIn("較淡的右側橫線", GUIDE)
 
 class HomepageOrderingTests(unittest.TestCase):
     def test_automatic_publications_keep_manual_relative_order(self) -> None:
@@ -129,6 +157,86 @@ class HomepageOrderingTests(unittest.TestCase):
             [item["id"] for item in module.homepage_publications(data)],
             ["paper-a", "paper-new"],
         )
+
+
+
+class AdminResetAndPreviewTests(unittest.TestCase):
+    def test_all_order_sections_have_reset_controls(self) -> None:
+        self.assertIn('data-reset-home-section=', SCRIPT)
+        self.assertIn('data-reset-order-category=', SCRIPT)
+        self.assertIn('>重設</button>', SCRIPT)
+        self.assertNotIn('重設首頁設定</button>', SCRIPT)
+
+    def test_homepage_dirty_state_compares_resolved_results(self) -> None:
+        self.assertIn("resolved_ids=homepageResolvedIds", SCRIPT)
+        self.assertIn("homepageComparableBundle(homepageSubmissionBundle(),data)", SCRIPT)
+        self.assertIn("homepageSectionChanged(homepageBase[section]", SCRIPT)
+
+    def test_layout_draft_is_manageable_from_drafts_tab(self) -> None:
+        for marker in (
+            'layout-draft-row',
+            'data-edit-layout-draft',
+            'data-preview-layout-draft',
+            'data-drop-layout-draft',
+        ):
+            self.assertIn(marker, SCRIPT)
+        self.assertIn('頁面／類別／排序', GUIDE)
+        self.assertIn('可修改、預覽或重設', GUIDE)
+
+    def test_page_and_category_preview_lists_real_fields(self) -> None:
+        for label in (
+            '導覽名稱（英文）',
+            '頁面標題（中文）',
+            '左上小字（英文）',
+            '大標題（中文）',
+            '顯示於 PDF 履歷',
+            '項目位置',
+        ):
+            self.assertIn(label, SCRIPT)
+        self.assertIn('unified-preview-card', SCRIPT)
+        self.assertIn('修改前', SCRIPT)
+        self.assertIn('修改後', SCRIPT)
+
+    def test_category_help_is_compact_hint(self) -> None:
+        self.assertIn('compact-layout-hint', SCRIPT)
+        self.assertIn('類別是頁面中的一個大區塊；', SCRIPT)
+        self.assertIn(".replace('<div class=\"notice\">類別是頁面中的一個大區塊。", SCRIPT)
+
+    def test_clear_all_drafts_includes_layout(self) -> None:
+        self.assertIn('installClearAllDraftHandler', SCRIPT)
+        self.assertIn('layoutDraft=clone(layoutBase)', SCRIPT)
+        self.assertIn('localStorage.removeItem(LAYOUT_DRAFT_KEY)', SCRIPT)
+
+    def test_general_style_preview_shows_style_and_category_changes(self) -> None:
+        for marker in (
+            "generalStyleChangePreview",
+            "previewFieldRow('顯示風格'",
+            "previewFieldRow('所屬類別'",
+            "修改前風格 → 修改後風格",
+        ):
+            target = GUIDE if marker == "修改前風格 → 修改後風格" else SCRIPT
+            self.assertIn(marker, target)
+
+    def test_style_draft_removal_restores_linked_layout_change(self) -> None:
+        for marker in (
+            "GENERAL_LAYOUT_LINK_KEY",
+            "rememberGeneralLayoutLink",
+            "reconcileGeneralLayoutLinks",
+            "forgetGeneralLayoutLink",
+            "layoutDraft.assignments[id]=clone(link.before)",
+        ):
+            self.assertIn(marker, SCRIPT)
+        self.assertIn("刪除該內容草稿或把風格、類別改回原狀", GUIDE)
+
+    def test_editor_preview_has_close_button(self) -> None:
+        for marker in (
+            "preview-close-button",
+            "installPreviewCloseButton",
+            "closeEditorPreview",
+            "關閉預覽",
+        ):
+            self.assertIn(marker, SCRIPT)
+        self.assertIn("右上角有小型「關閉」按鈕", GUIDE)
 
 
 if __name__ == "__main__":

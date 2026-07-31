@@ -1,38 +1,45 @@
 {
   "repository": "hctsui/hctsui.github.io",
   "base_branch": "cms",
-  "base_commit_observed": "e5c1c2d3dfb1309241916fd7500372669fec49c5",
+  "base_commit_observed": "6172e5387825bdf0e90ca34c8af60ce212b249da",
   "created_date": "2026-07-31",
-  "package_version": "v4",
+  "package_version": "v8",
   "files": [
     "admin/homepage-v1.js",
     "admin/guide.html",
     "tools/homepage_config.py",
     "MANAGE-WEBSITE.md",
     "tests/test_admin_hotfix.py",
-    "UPDATE-NOTES.md"
+    "UPDATE-NOTES.md",
+    "apply-update.py"
   ],
   "changes": [
-    "homepage controls replace the two empty homepage category bodies inside unified ordering",
-    "automatic homepage modes select by date and then apply a saved relative order",
-    "automatic and manual modes share the same ordered item-row presentation",
-    "homepage helper copy is compact field-hint text instead of a large notice",
-    "homepage sections show compact unchanged/unsaved status tags",
-    "activity add menu remains grouped while catalog filtering remains four separate types",
-    "organization label is 學術籌辦 and long order titles keep controls on one row"
+    "CV publication groups and teaching institutions share a smaller subtitle with a lighter right-side rule",
+    "catalog filtering combines general-content display formats into one 一般內容 option while activity types remain separate",
+    "homepage publications, homepage activities, and every normal order category have a 重設 control",
+    "homepage dirty detection compares resolved visible results instead of stale internal selected_ids",
+    "layout and ordering drafts are manageable from the Drafts tab",
+    "page, category, homepage, ordering, and style previews use a unified card-based before/after design",
+    "general-content previews explicitly show display-style and category changes",
+    "general-content style drafts keep linked layout changes and restore them when the content draft is removed or reverted",
+    "opened editor previews have a compact upper-right 關閉 button",
+    "large category guidance is replaced by compact field-hint text",
+    "documentation is aligned with the current Admin behavior"
   ],
   "validation": {
-    "javascript_syntax": "passed",
-    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 11 passed",
-    "homepage_backend_ordering_tests": "2 passed",
+    "javascript_syntax": "node --check admin/homepage-v1.js: passed",
+    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 23 passed",
+    "admin_vm_smoke": "script load and linked-layout restore simulation: passed",
+    "cv_patcher": "applied twice successfully to four mock TeX targets (idempotent)",
     "full_repository_test_suite": "not run locally because direct GitHub network access is unavailable in the container"
   },
   "sha256": {
-    "admin/homepage-v1.js": "084875b46445301f419d98a3dfb86079e64281c04be12a3bf0dbd52681e6639a",
-    "admin/guide.html": "98e2ebd62a3e428f70eb739c1306c418201103c433f8d46a2bb018aaf002fe1c",
+    "admin/homepage-v1.js": "99c1359d5305b3c75155c18f421457d9644069afa5da154d22b48b4df5f3b917",
+    "admin/guide.html": "80423ba2df6b414b2bff631ab132719e9486b420d8c12c1f09f21ee764b6e19f",
     "tools/homepage_config.py": "5225d05770092317bcf9f000363460466e86c4d757eae8a5fb2185446f76b662",
-    "MANAGE-WEBSITE.md": "6375a118469ce2b7df3fd6cb6520bc9530067db250948845976bd66fe6bebfb8",
-    "tests/test_admin_hotfix.py": "6f9b2d0dfdbddd3a5ffc68b7716d37376d011f38ffb6b60493411dc9ddd2b6fc",
-    "UPDATE-NOTES.md": "3d6bef6dfc9ea42f5739174cb62b12ba1ba5759fbb455d238b20e0f1518c943b"
+    "MANAGE-WEBSITE.md": "b35dd4b0f9a31ab373995b6e74ffaefe3305f5f69bbcb527abc8a3716a5b9ca9",
+    "tests/test_admin_hotfix.py": "727f59ad172395ce8625d7cfacdda47fa157bf756b3a96551fe9e37b7d9c67f3",
+    "UPDATE-NOTES.md": "0e4a0dad9790919640338c5b483ec8362a4bcd2fea802c3364ac652718f224be",
+    "apply-update.py": "d38c83d35b26187f0d242a892777827bff1a7cb50b5b068ebdc3194d3f25e4f9"
   }
 }
