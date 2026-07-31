@@ -4,6 +4,8 @@ import copy
 from datetime import date
 from typing import Any
 
+from people_config import link_people_html, load_people
+
 MAX_HOMEPAGE_ITEMS = 50
 PUBLICATION_MODES = {"latest", "oldest", "manual"}
 ACTIVITY_MODES = {"soonest", "farthest", "manual"}
@@ -295,14 +297,16 @@ def _home_description_html(profile: dict[str, Any], lang: str) -> str:
     if url and link_text and link_text in text:
         before, after = text.split(link_text, 1)
         attrs = ' rel="noopener" target="_blank"' if url.startswith(("http://", "https://")) else ""
-        return (
+        fragment = (
             html.escape(before)
             + f'<a href="{html.escape(url, quote=True)}"{attrs}>'
             + html.escape(link_text)
             + "</a>"
             + html.escape(after)
         )
-    return html.escape(text)
+    else:
+        fragment = html.escape(text)
+    return link_people_html(fragment, load_people(), lang)
 
 
 def _home_actions_html(profile: dict[str, Any], lang: str) -> str:

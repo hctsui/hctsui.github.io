@@ -19,6 +19,7 @@ class AdminLoadingContracts(unittest.TestCase):
             "admin/layout.js",
             "admin/homepage.js",
             "admin/people.js",
+            "admin/site-settings.js",
         ):
             with self.subTest(relative=relative):
                 node_check(relative)
@@ -29,6 +30,7 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="layout.js"></script>',
             '<script src="homepage.js"></script>',
             '<script src="people.js"></script>',
+            '<script src="site-settings.js"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -167,8 +169,10 @@ class PeopleAndBibtexContracts(unittest.TestCase):
     def test_shared_author_manager_uses_click_only_suggestions(self) -> None:
         people = read("admin/people.js")
         for marker in (
-            "共同作者",
-            "可能的共同作者（點選後才會填入）",
+            "人名連結",
+            "可能的人名（點選後才會填入）",
+            "資料庫分成中英對照與人名連結",
+            "每行一個，例如 Tsui, Hung-Chun",
             "data-person-id",
             "chooseSuggestion",
             "peopleOperation",
@@ -184,6 +188,41 @@ class PeopleAndBibtexContracts(unittest.TestCase):
             "data-copy-bibtex",
         ):
             self.assertIn(marker, ADMIN_PAGE + read("assets/script.js") + read("tools/build_site.py"))
+
+
+class SiteSettingsContracts(unittest.TestCase):
+    def test_database_and_site_settings_are_grouped_in_admin(self) -> None:
+        people = read("admin/people.js")
+        settings = read("admin/site-settings.js")
+        self.assertIn('data-tab="dictionary">資料庫', ADMIN_PAGE)
+        self.assertIn('data-database-type="translations">中英對照', people)
+        self.assertIn('data-database-type="people">人名連結', people)
+        self.assertIn('data-tab="siteSettings">網站設定', settings)
+        self.assertIn('data-site-settings-section="seo">SEO／OG', settings)
+        self.assertIn('data-site-settings-section="footer">頁尾', settings)
+
+    def test_footer_editor_supports_icon_link_and_alignment(self) -> None:
+        settings = read("admin/site-settings.js")
+        for marker in (
+            "小圖標",
+            "超連結（選填）",
+            "靠左",
+            "置中",
+            "靠右",
+            "data-footer-move",
+            "siteSettingsOperation",
+        ):
+            self.assertIn(marker, settings)
+
+    def test_seo_editor_exposes_page_specific_meta_and_og_fields(self) -> None:
+        settings = read("admin/site-settings.js")
+        for marker in (
+            "SEO 標題（英文）",
+            "Meta description（中文）",
+            "OG 標題（英文，留白沿用 SEO）",
+            "本頁 OG 圖片（留白沿用預設）",
+        ):
+            self.assertIn(marker, settings)
 
 
 class DocumentationContracts(unittest.TestCase):

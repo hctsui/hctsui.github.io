@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared-author directory normalization, validation, and safe HTML linking."""
+"""Person-link database normalization, validation, and safe HTML linking."""
 from __future__ import annotations
 
 import copy
@@ -229,6 +229,100 @@ def link_author_html(fragment: str, people: Any, lang: str) -> str:
     if not fragment or not names:
         return fragment
     parser = _AuthorLinker(names)
+    parser.feed(fragment)
+    parser.close()
+    return parser.get_html()
+
+
+
+def _general_name_pattern(name: str) -> re.Pattern[str]:
+    escaped = re.escape(name)
+    if re.search(r"[A-Za-z0-9]", name):
+        return re.compile(rf"(?<![\w-]){escaped}(?![\w-])", re.IGNORECASE)
+    return re.compile(escaped)
+
+
+def _link_visible_text(data: str, names: list[tuple[str, str]], css_class: str) -> str:
+    """Insert links into the original text only, choosing longest non-overlapping names."""
+    candidates: list[tuple[int, int, str]] = []
+    for name, url in names:
+        pattern = _general_name_pattern(name)
+        candidates.extend((match.start(), match.end(), url) for match in pattern.finditer(data))
+    if not candidates:
+        return data
+    candidates.sort(key=lambda row: (row[0], -(row[1] - row[0])))
+    selected: list[tuple[int, int, str]] = []
+    cursor = -1
+    for start, end, url in candidates:
+        if start < cursor:
+            continue
+        selected.append((start, end, url))
+        cursor = end
+    parts: list[str] = []
+    cursor = 0
+    for start, end, url in selected:
+        parts.append(data[cursor:start])
+        label = data[start:end]
+        parts.append(
+            f'<a class="{css_class}" href="{html.escape(url, quote=True)}" '
+            f'rel="noopener" target="_blank">{label}</a>'
+        )
+        cursor = end
+    parts.append(data[cursor:])
+    return "".join(parts)
+
+
+class _DocumentPersonLinker(HTMLParser):
+    """Link visible person names while leaving existing semantic markup untouched."""
+
+    BLOCKED_TAGS = {"a", "strong", "script", "style", "code", "pre", "textarea", "title", "head", "svg"}
+
+    def __init__(self, names: list[tuple[str, str]]) -> None:
+        super().__init__(convert_charrefs=False)
+        self.names = names
+        self.parts: list[str] = []
+        self.blocked_depth = 0
+
+    def handle_decl(self, decl: str) -> None:
+        self.parts.append(f"<!{decl}>")
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.parts.append(self.get_starttag_text() or "")
+        if tag.lower() in self.BLOCKED_TAGS:
+            self.blocked_depth += 1
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.parts.append(self.get_starttag_text() or "")
+
+    def handle_endtag(self, tag: str) -> None:
+        self.parts.append(f"</{tag}>")
+        if tag.lower() in self.BLOCKED_TAGS and self.blocked_depth:
+            self.blocked_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        self.parts.append(data if self.blocked_depth else _link_visible_text(data, self.names, "person-link"))
+
+    def handle_entityref(self, name: str) -> None:
+        self.parts.append(f"&{name};")
+
+    def handle_charref(self, name: str) -> None:
+        self.parts.append(f"&#{name};")
+
+    def handle_comment(self, data: str) -> None:
+        self.parts.append(f"<!--{data}-->")
+
+    def handle_pi(self, data: str) -> None:
+        self.parts.append(f"<?{data}>")
+
+    def get_html(self) -> str:
+        return "".join(self.parts)
+
+
+def link_people_html(fragment: str, people: Any, lang: str) -> str:
+    names = person_link_names(people, lang)
+    if not fragment or not names:
+        return fragment
+    parser = _DocumentPersonLinker(names)
     parser.feed(fragment)
     parser.close()
     return parser.get_html()

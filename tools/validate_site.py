@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 from category_config import all_items, categories_for_page, migrate_category_data, validate_category_data
 from homepage_config import validate_homepage_config
 from people_config import load_people, validate_people
+from site_settings_config import current_site_settings, validate_site_settings
 
 ROOT = Path(__file__).resolve().parents[1]
 data = migrate_category_data(json.loads((ROOT / "content/site.json").read_text(encoding="utf-8")))
@@ -17,6 +18,11 @@ errors: list[str] = []
 
 try:
     validate_people(load_people())
+except ValueError as exc:
+    errors.append(str(exc))
+
+try:
+    validate_site_settings(current_site_settings(data), data)
 except ValueError as exc:
     errors.append(str(exc))
 
@@ -181,6 +187,17 @@ for rel, labels in home_contract.items():
     for fragment in required_fragments:
         if fragment not in text:
             errors.append(f"{rel}: missing legacy homepage contract {fragment!r}")
+
+for page in data.get("settings", {}).get("pages", []):
+    for lang in ("en", "zh"):
+        rel = str((page.get("path") or {}).get(lang) or "")
+        if not rel or not (ROOT / rel).exists():
+            continue
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        for fragment in ('<meta name="description"', '<link rel="canonical"', '<meta property="og:title"', '<meta name="twitter:card"', '<footer class="site-footer">'):
+            if fragment not in text:
+                errors.append(f"{rel}: missing SEO/footer contract {fragment!r}")
+
 
 if errors:
     raise SystemExit("\n".join(errors))

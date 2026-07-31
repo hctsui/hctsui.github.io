@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from build_site import publication_bibtex, render_publication_article, rich_html  # noqa: E402
-from people_config import link_author_html, normalized_people, validate_people  # noqa: E402
+from people_config import link_author_html, link_people_html, normalized_people, validate_people  # noqa: E402
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
 
 
@@ -43,6 +43,27 @@ class PeopleDirectoryTests(unittest.TestCase):
         self.assertIn('href="https://example.edu/chen"', linked)
         self.assertIn("<strong>Hung-Chun Tsui</strong>", linked)
         self.assertNotIn("<a", linked.split("<strong>", 1)[1])
+
+    def test_general_page_text_links_people_outside_publications(self) -> None:
+        source = '<p>Advisor: Ting-Wei Chang</p><p>Hosted by Song-Yun Chen.</p>'
+        linked = link_people_html(source, self.people, "en")
+        self.assertEqual(linked.count('class="person-link"'), 2)
+        self.assertIn('Advisor: <a class="person-link"', linked)
+
+    def test_general_linking_does_not_touch_existing_links_or_similar_names(self) -> None:
+        source = '<p><a href="/existing">Ting-Wei Chang</a> and Ting-Wei Chang-Smith</p>'
+        linked = link_people_html(source, self.people, "en")
+        self.assertEqual(linked.count('<a '), 1)
+        self.assertNotIn('person-link', linked)
+
+    def test_longest_person_name_wins_without_nested_links(self) -> None:
+        people = normalized_people({"schema_version": 1, "people": [
+            {"id": "chang", "name": {"en": "Chang", "zh": ""}, "aliases": [], "url": "https://example.edu/c"},
+            {"id": "ting-wei-chang", "name": {"en": "Ting-Wei Chang", "zh": ""}, "aliases": [], "url": "https://example.edu/t"},
+        ]})
+        linked = link_people_html('<p>Ting-Wei Chang</p>', people, 'en')
+        self.assertEqual(linked.count('person-link'), 1)
+        self.assertIn('https://example.edu/t', linked)
 
     def test_similar_names_are_not_partial_matches(self) -> None:
         linked = link_author_html("Ting-Wei Chang Jr.", self.people, "en")

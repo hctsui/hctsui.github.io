@@ -1,4 +1,4 @@
-/* Shared-author directory and click-only author suggestions. */
+/* Person-link database and click-only author suggestions. */
 (function installPeopleManager(){
   const PEOPLE_DRAFT_KEY='hctsui-people-draft';
   let peopleRemote={schema_version:1,people:[]};
@@ -45,7 +45,7 @@
       if(!saved?.base||!saved?.data)return copy(remote);
       if(peopleEqual(saved.base,remote))return normalizePeople(saved.data);
       localStorage.removeItem(PEOPLE_DRAFT_KEY);
-      if(typeof flash==='function')flash('共同作者資料已在其他地方更新；舊草稿未自動套用。');
+      if(typeof flash==='function')flash('人名連結資料已在其他地方更新；舊草稿未自動套用。');
     }catch{localStorage.removeItem(PEOPLE_DRAFT_KEY);}
     return copy(remote);
   }
@@ -65,7 +65,7 @@
   function validatePeopleDraft(){
     const errors=[],ids=new Set(),names=new Map();
     const rows=normalizePeople(peopleDraft).people;
-    if(rows.length>1000)errors.push('共同作者資料最多 1000 人');
+    if(rows.length>1000)errors.push('人名連結資料最多 1000 人');
     rows.forEach((person,index)=>{
       const label=person.name.en||person.name.zh||`第 ${index+1} 人`;
       if(!person.name.en&&!person.name.zh)errors.push(`${label}：至少需要英文或中文姓名`);
@@ -93,22 +93,22 @@
     const changed=after.filter(row=>JSON.stringify(row)!==JSON.stringify(beforeMap.get(row.id)));
     const removed=before.filter(row=>!afterMap.has(row.id));
     const rowHtml=row=>`<div class="order-diff-row changed"><span class="order-diff-name"><strong>${esc(row.name.en||row.name.zh||row.id)}</strong>${row.name.en&&row.name.zh?`／${esc(row.name.zh)}`:''}<br><span class="muted">${esc(row.url||'未設定網址')}</span></span></div>`;
-    return `<details class="diff"><summary><strong>共同作者資料</strong>：${before.length} → ${after.length} 人</summary><div class="preview-columns"><div><h4>新增／修改</h4>${changed.length?`<div class="order-diff-list">${changed.map(rowHtml).join('')}</div>`:'<p class="muted">沒有新增或修改</p>'}</div><div><h4>刪除</h4>${removed.length?`<div class="order-diff-list">${removed.map(rowHtml).join('')}</div>`:'<p class="muted">沒有刪除</p>'}</div></div></details>`;
+    return `<details class="diff"><summary><strong>人名連結資料</strong>：${before.length} → ${after.length} 人</summary><div class="preview-columns"><div><h4>新增／修改</h4>${changed.length?`<div class="order-diff-list">${changed.map(rowHtml).join('')}</div>`:'<p class="muted">沒有新增或修改</p>'}</div><div><h4>刪除</h4>${removed.length?`<div class="order-diff-list">${removed.map(rowHtml).join('')}</div>`:'<p class="muted">沒有刪除</p>'}</div></div></details>`;
   }
   function personRowHtml(person,index){
-    return `<div class="person-manager-row" data-person-index="${index}"><div class="person-manager-head"><strong>${esc(person.name.en||person.name.zh||'未命名作者')}</strong><button class="button danger" type="button" data-remove-person="${index}">刪除</button></div><div class="pair-grid"><div class="field"><label>英文姓名</label><input data-person-field="name.en" value="${esc(person.name.en)}"></div><div class="field"><label>中文姓名</label><input data-person-field="name.zh" value="${esc(person.name.zh)}"></div></div><div class="field"><label>學術網頁 URL</label><input data-person-field="url" type="url" placeholder="https://..." value="${esc(person.url)}"></div><div class="field"><label>其他拼法</label><textarea data-person-field="aliases" placeholder="每行一個，例如 Chang, Ting-Wei">${esc(person.aliases.join('\n'))}</textarea><p class="field-hint">只用於搜尋與精確比對，不會改變論文中實際顯示的姓名。</p></div></div>`;
+    return `<div class="person-manager-row" data-person-index="${index}"><div class="person-manager-head"><strong>${esc(person.name.en||person.name.zh||'未命名作者')}</strong><button class="button danger" type="button" data-remove-person="${index}">刪除</button></div><div class="pair-grid"><div class="field"><label>英文姓名</label><input data-person-field="name.en" value="${esc(person.name.en)}"></div><div class="field"><label>中文姓名</label><input data-person-field="name.zh" value="${esc(person.name.zh)}"></div></div><div class="field"><label>學術網頁 URL</label><input data-person-field="url" type="url" placeholder="https://..." value="${esc(person.url)}"></div><div class="field"><label>其他拼法</label><textarea data-person-field="aliases" placeholder="每行一個，例如 Tsui, Hung-Chun">${esc(person.aliases.join('\n'))}</textarea><p class="field-hint">只用於搜尋與精確比對，不會改變論文中實際顯示的姓名。</p></div></div>`;
   }
   function renderPeopleStatus(){
     const errors=validatePeopleDraft();
     const status=document.querySelector('#peopleStatus');
-    if(status){status.className='notice '+(errors.length?'error':peopleDirty()?'success':'');status.innerHTML=errors.length?`<strong>不能送出：</strong>${errors.map(esc).join('；')}`:peopleDirty()?`已修改共同作者資料；目前 ${peopleDraft.people.length} 人，會和本次批次一起送出。`:`目前 ${peopleDraft.people.length} 人；尚未修改。`;}
+    if(status){status.className='notice '+(errors.length?'error':peopleDirty()?'success':'');status.innerHTML=errors.length?`<strong>不能送出：</strong>${errors.map(esc).join('；')}`:peopleDirty()?`已修改人名連結資料；目前 ${peopleDraft.people.length} 人，會和本次批次一起送出。`:`目前 ${peopleDraft.people.length} 人；尚未修改。`;}
   }
   function renderPeopleManager(){
-    const root=document.querySelector('#peopleTab');if(!root)return;
+    const root=document.querySelector('#peopleDatabasePane');if(!root)return;
     const q=normalizeKey(document.querySelector('#peopleSearch')?.value);
     const rows=normalizePeople(peopleDraft).people.map((person,index)=>({person,index})).filter(({person})=>!q||[person.name.en,person.name.zh,person.url,...person.aliases].some(v=>normalizeKey(v).includes(q)));
     renderPeopleStatus();
-    const list=document.querySelector('#peopleRows');if(list)list.innerHTML=rows.length?rows.map(({person,index})=>personRowHtml(person,index)).join(''):'<p class="muted">沒有符合的共同作者。</p>';
+    const list=document.querySelector('#peopleRows');if(list)list.innerHTML=rows.length?rows.map(({person,index})=>personRowHtml(person,index)).join(''):'<p class="muted">沒有符合的人名。</p>';
   }
   function addPerson(){
     const used=new Set(peopleDraft.people.map(p=>p.id));let base='new-person',id=base,n=2;while(used.has(id))id=`${base}-${n++}`;
@@ -130,7 +130,7 @@
     if(!box){box=document.createElement('div');box.dataset.authorSuggestions='';box.className='author-suggestions';row.append(box);}
     const candidates=authorCandidates(input.value);
     if(!candidates.length){box.hidden=true;return;}
-    box.innerHTML=`<div class="author-suggestions-label">可能的共同作者（點選後才會填入）</div>${candidates.map(person=>`<button type="button" class="author-suggestion" data-person-id="${esc(person.id)}"><span><strong>${esc(person.name.en||'—')}</strong><small>${esc(person.name.zh||'—')}</small></span>${person.url?'<span class="tag">有連結</span>':'<span class="muted">未設網址</span>'}</button>`).join('')}`;
+    box.innerHTML=`<div class="author-suggestions-label">可能的人名（點選後才會填入）</div>${candidates.map(person=>`<button type="button" class="author-suggestion" data-person-id="${esc(person.id)}"><span><strong>${esc(person.name.en||'—')}</strong><small>${esc(person.name.zh||'—')}</small></span>${person.url?'<span class="tag">有連結</span>':'<span class="muted">未設網址</span>'}</button>`).join('')}`;
     box.hidden=false;closeSuggestions(box);
   }
   function chooseSuggestion(button){
@@ -153,14 +153,36 @@
       .bibtex-editor textarea{min-height:150px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem}
     `;document.head.append(style);
   }
+  function setDatabaseType(type){
+    const active=type==='people'?'people':'translations';
+    document.querySelectorAll('[data-database-type]').forEach(button=>button.classList.toggle('active',button.dataset.databaseType===active));
+    const translationsPane=document.querySelector('#translationDatabasePane');
+    const peoplePane=document.querySelector('#peopleDatabasePane');
+    if(translationsPane)translationsPane.hidden=active!=='translations';
+    if(peoplePane)peoplePane.hidden=active!=='people';
+    localStorage.setItem('hctsui-database-type',active);
+    if(active==='people')renderPeopleManager();
+  }
   function installPanel(){
     const dictionaryButton=document.querySelector('[data-tab="dictionary"]');
-    if(dictionaryButton&&!document.querySelector('[data-tab="people"]'))dictionaryButton.insertAdjacentHTML('afterend','<button class="tab" data-tab="people">共同作者</button>');
+    if(dictionaryButton)dictionaryButton.textContent='資料庫';
     const dictionaryTab=document.querySelector('#dictionaryTab');
-    if(dictionaryTab&&!document.querySelector('#peopleTab'))dictionaryTab.insertAdjacentHTML('afterend',`<div id="peopleTab" hidden><p class="muted">共同作者的姓名與學術網址集中保存在 people.json。論文表單只顯示搜尋建議，必須手動點選才會填入，不會自動替換相似姓名。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增共同作者</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleRows" class="scroll"></div></div>`);
+    if(!dictionaryTab)return;
+    let translationPane=document.querySelector('#translationDatabasePane');
+    if(!translationPane){
+      translationPane=document.createElement('div');
+      translationPane.id='translationDatabasePane';
+      while(dictionaryTab.firstChild)translationPane.append(dictionaryTab.firstChild);
+      dictionaryTab.append(translationPane);
+    }
+    if(!document.querySelector('#databaseTypeTabs')){
+      dictionaryTab.insertAdjacentHTML('afterbegin',`<div class="database-type-shell"><div class="database-type-tabs" id="databaseTypeTabs"><button class="button active" type="button" data-database-type="translations">中英對照</button><button class="button" type="button" data-database-type="people">人名連結</button></div><p class="field-hint">資料庫分成中英對照與人名連結。兩種資料都會沿用草稿、預覽、Batch Issue、衝突檢查與還原流程。</p></div>`);
+    }
+    if(!document.querySelector('#peopleDatabasePane'))dictionaryTab.insertAdjacentHTML('beforeend',`<div id="peopleDatabasePane" hidden><p class="muted">集中管理中英文姓名、其他拼法與學術網址。整個網站的可見文字都會精確比對；作者欄位只顯示候選，必須手動點選才會填入。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增人名</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleRows" class="scroll"></div></div>`);
+    document.querySelector('#databaseTypeTabs')?.addEventListener('click',event=>{const button=event.target.closest('[data-database-type]');if(button)setDatabaseType(button.dataset.databaseType);});
     document.querySelector('#peopleSearch')?.addEventListener('input',renderPeopleManager);
     document.querySelector('#addPerson')?.addEventListener('click',addPerson);
-    document.querySelector('#resetPeople')?.addEventListener('click',()=>{if(confirm('放棄尚未送出的共同作者修改？')){peopleDraft=copy(peopleRemote);savePeopleLocal();}});
+    document.querySelector('#resetPeople')?.addEventListener('click',()=>{if(confirm('放棄尚未送出的人名連結修改？')){peopleDraft=copy(peopleRemote);savePeopleLocal();}});
     document.querySelector('#peopleRows')?.addEventListener('input',event=>{
       const field=event.target.closest('[data-person-field]');if(!field)return;
       const row=field.closest('[data-person-index]'),index=Number(row?.dataset.personIndex),person=peopleDraft.people[index];if(!person)return;
@@ -169,8 +191,10 @@
       savePeopleLocal(false);
     });
     document.querySelector('#peopleRows')?.addEventListener('change',()=>renderPeopleManager());
-    document.querySelector('#peopleRows')?.addEventListener('click',event=>{const button=event.target.closest('[data-remove-person]');if(!button)return;const index=Number(button.dataset.removePerson);if(confirm('刪除這位共同作者？')){peopleDraft.people.splice(index,1);savePeopleLocal();}});
+    document.querySelector('#peopleRows')?.addEventListener('click',event=>{const button=event.target.closest('[data-remove-person]');if(!button)return;const index=Number(button.dataset.removePerson);if(confirm('刪除這筆人名連結？')){peopleDraft.people.splice(index,1);savePeopleLocal();}});
+    setDatabaseType(localStorage.getItem('hctsui-database-type')||'translations');
   }
+
   document.addEventListener('input',event=>{const input=event.target.closest('[data-author-en],[data-author-zh]');if(input&&peopleReady)showSuggestions(input);});
   document.addEventListener('focusin',event=>{const input=event.target.closest('[data-author-en],[data-author-zh]');if(input&&peopleReady&&input.value)showSuggestions(input);});
   document.addEventListener('click',event=>{const choice=event.target.closest('[data-person-id]');if(choice){chooseSuggestion(choice);return;}if(!event.target.closest('[data-author-row]'))closeSuggestions();});

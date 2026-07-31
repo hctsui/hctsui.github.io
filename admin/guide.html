@@ -25,6 +25,8 @@
       <li><a href="#structure">排序、頁面與類別</a></li>
       <li><a href="#home-profile">首頁內容</a></li>
       <li><a href="#homepage">首頁精選</a></li>
+      <li><a href="#database">資料庫</a></li>
+      <li><a href="#site-settings">SEO／OG 與頁尾</a></li>
       <li><a href="#drafts">草稿與預覽</a></li>
       <li><a href="#submit">GitHub 送出</a></li>
       <li><a href="#preflight">送出前檢查</a></li>
@@ -132,15 +134,29 @@
         <p>系統以實際顯示模式、N 值與最終順序判斷是否有變更；若調整後完整改回原狀，狀態會自動回到「目前無變更」，不會因內部暫存順序留下假草稿。變更會先存為本機草稿，並在「草稿」分頁提供修改、預覽與重設。</p>
       </section>
 
-      <section id="people-bibtex">
-        <h2>共同作者、BibTeX 與數學標記</h2>
-        <p>「共同作者」分頁集中管理中英文姓名、其他拼法和學術網址。編輯論文作者時只會顯示可能的人名，必須手動點選才會填入，不會因為相似姓名自動替換。</p>
+      <section id="database">
+        <h2>資料庫：中英對照與人名連結</h2>
+        <p>Admin 的「資料庫」分成「中英對照」與「人名連結」兩種類型。</p>
         <ul>
-          <li>作者網址集中保存在 <code>content/people.json</code>，論文資料只保存姓名。</li>
-          <li>沒有匹配或沒有網址時，作者仍以普通文字顯示；PDF CV 不加入作者連結。</li>
-          <li>每篇論文可手動貼入正式 BibTeX；留白時系統會自動產生基本引用。</li>
-          <li>網站上的 BibTeX 按鈕可展開並複製引用內容。</li>
+          <li><strong>中英對照：</strong>保留原本字詞、標籤、匯入、匯出與精確補填功能。</li>
+          <li><strong>人名連結：</strong>集中管理中英文姓名、其他拼法與學術網址。其他拼法每行一個，例如 <code>Tsui, Hung-Chun</code>。</li>
+          <li>編輯論文作者時，只在輸入框下方顯示可能人名；必須手動點選才會填入，不會自動替換相似姓名。</li>
+          <li>建置網站時，人名資料會套用到整個公開網站，包括首頁說明、指導教授、活動、教學與論文作者；既有超連結、粗體姓名、程式碼與 BibTeX 不會被重複包覆。</li>
+          <li>人名網址集中保存在 <code>content/people.json</code>；沒有匹配或沒有網址時仍顯示普通文字，PDF CV 不加入人名連結。</li>
+          <li>每篇論文可手動貼入正式 BibTeX；留白時系統會自動產生基本引用。網站可展開並複製 BibTeX。</li>
           <li>題目可用 <code>[i]...[/i]</code>、<code>[b]...[/b]</code> 和 <code>$...$</code>；常見數論符號以靜態方式渲染。</li>
+        </ul>
+      </section>
+
+      <section id="site-settings">
+        <h2>網站設定：SEO／OG 與頁尾</h2>
+        <p>「網站設定」分成「SEO／OG」和「頁尾」，兩者都沿用本機草稿、修改前後預覽、Batch Issue、衝突檢查與七日還原。</p>
+        <ul>
+          <li><strong>SEO／OG：</strong>可設定網站基準網址、網站名稱、預設分享圖片，以及各頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。</li>
+          <li>建置時會自動生成 canonical、Open Graph、Twitter Card 與中英文 hreflang 標籤。</li>
+          <li><strong>頁尾：</strong>每個項目可輸入中英文文字、選擇小圖標、設定超連結與靠左／置中／靠右，並可上下調整順序。</li>
+          <li>頁尾文字支援 <code>{year}</code> 和 <code>{updated}</code>，分別代入目前年份與網站最後更新日期。</li>
+          <li>頁尾連結支援相對路徑、http／https 與 <code>mailto:</code>。</li>
         </ul>
       </section>
 
@@ -152,7 +168,7 @@
           <li>首頁精選與近期活動也有獨立草稿管理列。</li>
           <li>按「預覽」查看單筆修改前後；新增與修改草稿可再次編輯。開啟的右側預覽右上角有與其他操作一致的「關閉」按鈕，只收起目前預覽，不會刪除草稿。</li>
           <li>右側預覽採一致的卡片與修改前／修改後樣式。頁面和類別會逐欄列出實際變更，例如中英文標題、簡介、所在頁面、顯示狀態與順序，不再只顯示概略資訊。</li>
-          <li>「清空內容草稿」會清除內容、排序、首頁精選與還原草稿，但不會修改正式網站，也不會清除中英對照表草稿。</li>
+          <li>「清空內容草稿」會清除內容、排序、首頁精選與還原草稿，但不會修改正式網站，也不會清除資料庫或網站設定草稿。</li>
         </ul>
       </section>
 

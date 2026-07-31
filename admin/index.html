@@ -731,7 +731,7 @@
             ><button class="tab" data-tab="order">排序</button
             ><button class="tab" data-tab="trash">還原</button
             ><button class="tab" data-tab="draft">草稿</button
-            ><button class="tab" data-tab="dictionary">中英對照</button>
+            ><button class="tab" data-tab="dictionary">資料庫</button>
           </div>
           <div id="catalogTab">
             <div class="toolbar">
@@ -995,7 +995,8 @@
         headings: "頁面與類別",
         layout: "頁面與類別",
         homepage: "首頁精選",
-        people: "共同作者",
+        people: "人名連結",
+        site_settings: "網站設定",
       };
       const ACTION_LABEL = {
         add: "新增",
@@ -1006,7 +1007,8 @@
         translations: "中英對照表",
         layout: "頁面與類別",
         homepage: "首頁精選",
-        people: "共同作者",
+        people: "人名連結",
+        site_settings: "網站設定",
       };
       const SECTION = {
         conference: "activities",
@@ -1182,7 +1184,9 @@
         if (h.request_action === "translations" || h.action === "translations")
           return "中英對照表";
         if (h.request_action === "people" || h.action === "people")
-          return "共同作者資料";
+          return "人名連結資料";
+        if (h.request_action === "site_settings" || h.action === "site_settings")
+          return "SEO／OG 與頁尾";
         if (h.action === "reorder") return `${LABEL[h.type] || h.type}排序`;
         return (
           rawTitle(h.after) ||
@@ -3354,6 +3358,10 @@
           let peopleOp = peopleOperation();
           if (peopleOp) ops.push(peopleOp);
         }
+        if (typeof siteSettingsOperation === "function") {
+          let settingsOp = siteSettingsOperation();
+          if (settingsOp) ops.push(settingsOp);
+        }
         if (typeof headingsDirty === "function" && headingsDirty())
           ops.push(headingOperation());
         return {
@@ -3384,20 +3392,25 @@
             translations: 0,
             headings: 0,
             people: 0,
+            site_settings: 0,
           };
         ops.forEach((x) => (c[x.op] = (c[x.op] || 0) + 1));
         let errs = validateDictionary(),
           peopleErrors =
             typeof validatePeopleDraft === "function"
               ? validatePeopleDraft()
+              : [],
+          siteSettingsErrors =
+            typeof validateSiteSettingsDraft === "function"
+              ? validateSiteSettingsDraft()
               : [];
-        errs.push(...peopleErrors);
+        errs.push(...peopleErrors, ...siteSettingsErrors);
         $("#summary").className =
           "notice " + (errs.length ? "error" : ops.length ? "success" : "");
         $("#summary").textContent = errs.length
           ? "資料有衝突，請先修正。"
           : ops.length
-            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.people ? "、共同作者 1" : ""}${c.headings ? "、網站標題 1" : ""}`
+            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.people ? "、人名連結 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
             : "尚無變更。";
         $("#preview").innerHTML = ops
           .map((o) => {
@@ -3406,6 +3419,8 @@
               return `<details class="diff"><summary><strong>中英對照表</strong>：${o.before.pairs.length} → ${o.after.pairs.length} 組</summary><div class="preview-columns"><div class="preview-card"><h4>修改前</h4><div class="preview-value">${o.before.pairs.length} 組</div></div><div class="preview-card"><h4>修改後</h4><div class="preview-value">${o.after.pairs.length} 組</div></div></div></details>`;
             if (o.op === "people" && typeof peoplePreviewHtml === "function")
               return peoplePreviewHtml(o);
+            if (o.op === "site_settings" && typeof siteSettingsPreviewHtml === "function")
+              return siteSettingsPreviewHtml(o);
             if (o.op === "reorder")
               return `<details class="diff"><summary><strong>${esc(orderDraftName(o))}</strong></summary>${orderDiffHtml(o.before, o.after, o.type)}</details>`;
             if (o.op === "undo") {
@@ -3465,6 +3480,11 @@
           typeof peopleHistoryPreviewHtml === "function"
         )
           body = peopleHistoryPreviewHtml(h);
+        else if (
+          (h.request_action === "site_settings" || h.action === "site_settings") &&
+          typeof siteSettingsHistoryPreviewHtml === "function"
+        )
+          body = siteSettingsHistoryPreviewHtml(h);
         else if (h.action === "reorder")
           body = orderDiffHtml(h.before, h.after, h.type);
         else if (h.action === "add")
@@ -3491,6 +3511,8 @@
             before: h.after,
             after: h.before,
           });
+        if (h.action === "site_settings" && typeof siteSettingsPreviewHtml === "function")
+          return siteSettingsPreviewHtml({before: h.after, after: h.before});
         if (h.action === "headings")
           return headingPreviewHtml({
             op: "headings",
@@ -3503,6 +3525,7 @@
         renderPreview();
         if (typeof renderHeadings === "function") renderHeadings();
         if (typeof renderPeopleManager === "function") renderPeopleManager();
+        if (typeof renderSiteSettings === "function") renderSiteSettings();
       }
       function switchTab(name) {
         document
@@ -3515,9 +3538,11 @@
           "order",
           "trash",
           "dictionary",
-          "people",
-        ])
-          $(`#${n}Tab`).hidden = n !== name;
+          "siteSettings",
+        ]) {
+          const panel = $(`#${n}Tab`);
+          if (panel) panel.hidden = n !== name;
+        }
       }
       async function copyText(s) {
         try {
@@ -3553,6 +3578,7 @@
         localStorage.removeItem(TRANSLATION_DRAFT_KEY);
         localStorage.removeItem("hctsui-headings-draft-v1");
         if (typeof clearPeopleDraft === "function") clearPeopleDraft(false);
+        if (typeof clearSiteSettingsDraft === "function") clearSiteSettingsDraft(false);
         sessionStorage.removeItem("hctsui-submission-pending");
         location.reload();
       }
@@ -3587,6 +3613,10 @@
             typeof validatePeopleDraft === "function"
               ? validatePeopleDraft()
               : [],
+          siteSettingsErrors =
+            typeof validateSiteSettingsDraft === "function"
+              ? validateSiteSettingsDraft()
+              : [],
           headingErrors =
             typeof validateHeadingsDraft === "function"
               ? validateHeadingsDraft()
@@ -3594,7 +3624,9 @@
           p = payload();
         if (errs.length) return flash("請先修正中英對照表衝突");
         if (peopleErrors.length)
-          return flash("請先修正共同作者資料：" + peopleErrors[0]);
+          return flash("請先修正人名連結資料：" + peopleErrors[0]);
+        if (siteSettingsErrors.length)
+          return flash("請先修正網站設定：" + siteSettingsErrors[0]);
         if (headingErrors.length)
           return flash("請先修正標題欄位：" + headingErrors[0]);
         if (!p.operations.length) return flash("尚無變更");
@@ -3833,5 +3865,6 @@
     <script src="layout.js"></script>
     <script src="homepage.js"></script>
     <script src="people.js"></script>
+    <script src="site-settings.js"></script>
   </body>
 </html>

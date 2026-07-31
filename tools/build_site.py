@@ -16,7 +16,8 @@ import process_request as core
 from category_config import categories_for_page, items_for_category, migrate_category_data, normalized_pages
 from homepage_config import homepage_activities, homepage_publications
 from markup_config import rich_html as safe_rich_html
-from people_config import link_author_html, load_people
+from site_settings_config import current_site_settings
+from people_config import link_author_html, link_people_html, load_people
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -481,12 +482,130 @@ def update_page_title(text: str, title: str) -> str:
     return updated
 
 
-def update_footer(text: str, lang: str, today: date) -> str:
-    formatted = f"{today.year}/{today.month}/{today.day}"
-    pattern = r'<p>最後更新：[^<]*</p>' if lang == "zh" else r'<p>Last updated:[^<]*</p>'
-    replacement = f'<p>最後更新：{formatted}</p>' if lang == "zh" else f'<p>Last updated: {formatted}</p>'
-    return re.sub(pattern, replacement, text, count=1)
+def _absolute_url(base_url: str, value: str, page_path: str = "") -> str:
+    from urllib.parse import urljoin
 
+    base = base_url.rstrip("/") + "/"
+    if not value:
+        return urljoin(base, page_path)
+    if re.match(r"^https?://", value, flags=re.I):
+        return value
+    return urljoin(base, value.lstrip("/"))
+
+
+def _replace_or_insert_head(text: str, pattern: str, replacement: str) -> str:
+    if re.search(pattern, text, flags=re.I | re.S):
+        return re.sub(pattern, replacement, text, count=1, flags=re.I | re.S)
+    return text.replace("</head>", replacement + "\n</head>", 1)
+
+
+def apply_seo_metadata(text: str, data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
+    settings = current_site_settings(data)["seo"]
+    page_id = str(page.get("id") or "home")
+    page_settings = settings["pages"].get(page_id) or settings["pages"]["home"]
+    title = page_settings["title"][lang]
+    description = page_settings["description"][lang]
+    og_title = page_settings["og_title"][lang] or title
+    og_description = page_settings["og_description"][lang] or description
+    rel_path = str((page.get("path") or {}).get(lang) or "")
+    canonical_path = rel_path[:-10] if rel_path.endswith("index.html") else rel_path
+    canonical = _absolute_url(settings["base_url"], "", canonical_path)
+    image = _absolute_url(settings["base_url"], page_settings.get("og_image") or settings["default_image"])
+    site_name = settings["site_name"][lang]
+    counterpart_lang = "zh" if lang == "en" else "en"
+    counterpart_path = str((page.get("path") or {}).get(counterpart_lang) or "")
+    if counterpart_path.endswith("index.html"):
+        counterpart_path = counterpart_path[:-10]
+    counterpart = _absolute_url(settings["base_url"], "", counterpart_path) if counterpart_path or page_id == "home" else ""
+
+    text = update_page_title(text, title)
+    tags = [
+        f'<meta name="description" content="{esc(description)}">',
+        f'<link rel="canonical" href="{esc(canonical)}">',
+        f'<meta property="og:type" content="website">',
+        f'<meta property="og:title" content="{esc(og_title)}">',
+        f'<meta property="og:description" content="{esc(og_description)}">',
+        f'<meta property="og:url" content="{esc(canonical)}">',
+        f'<meta property="og:image" content="{esc(image)}">',
+        f'<meta property="og:site_name" content="{esc(site_name)}">',
+        f'<meta property="og:locale" content="{"zh_TW" if lang == "zh" else "en_US"}">',
+        f'<meta property="og:locale:alternate" content="{"en_US" if lang == "zh" else "zh_TW"}">',
+        f'<meta name="twitter:card" content="summary_large_image">',
+        f'<meta name="twitter:title" content="{esc(og_title)}">',
+        f'<meta name="twitter:description" content="{esc(og_description)}">',
+        f'<meta name="twitter:image" content="{esc(image)}">',
+        f'<link rel="alternate" hreflang="{lang}" href="{esc(canonical)}">',
+    ]
+    if counterpart:
+        tags.append(f'<link rel="alternate" hreflang="{counterpart_lang}" href="{esc(counterpart)}">')
+    default_path = str((page.get("path") or {}).get("en") or rel_path)
+    if default_path.endswith("index.html"):
+        default_path = default_path[:-10]
+    tags.append(f'<link rel="alternate" hreflang="x-default" href="{esc(_absolute_url(settings["base_url"], "", default_path))}">')
+    block = "\n".join(tags)
+    # Remove all metadata managed by this function before inserting the fresh block.
+    managed_patterns = [
+        r'<meta\b(?=[^>]*\bname=["\']description["\'])[^>]*>\s*',
+        r'<link\b(?=[^>]*\brel=["\']canonical["\'])[^>]*>\s*',
+        r'<meta\b(?=[^>]*\bproperty=["\']og:[^"\']+["\'])[^>]*>\s*',
+        r'<meta\b(?=[^>]*\bname=["\']twitter:[^"\']+["\'])[^>]*>\s*',
+        r'<link\b(?=[^>]*\brel=["\']alternate["\'])[^>]*>\s*',
+    ]
+    for pattern in managed_patterns:
+        text = re.sub(pattern, "", text, flags=re.I)
+    return text.replace("</head>", block + "\n</head>", 1)
+
+
+_FOOTER_ICONS = {
+    "copyright": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 9.5a4 4 0 1 0 0 5"></path></svg>',
+    "email": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg>',
+    "link": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"></path></svg>',
+    "github": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-2.8 17.6c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 0 1.6 1.1 1.6 1.1.9 1.6 2.4 1.1 2.9.8.1-.7.4-1.1.7-1.3-2.2-.3-4.6-1.1-4.6-5A3.9 3.9 0 0 1 7.2 8c-.1-.3-.5-1.3.1-2.7 0 0 .9-.3 2.8 1.1a9.7 9.7 0 0 1 5.1 0c2-1.4 2.8-1.1 2.8-1.1.6 1.4.2 2.4.1 2.7a3.9 3.9 0 0 1 1 2.7c0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.8v2.6c0 .3.2.6.7.5A9 9 0 0 0 12 3Z"></path></svg>',
+    "orcid": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="8.5" cy="8" r="1"></circle><path d="M8.5 11v5M11.5 11v5M11.5 11h2a2.5 2.5 0 0 1 0 5h-2"></path></svg>',
+    "location": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>',
+    "book": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Z"></path><path d="M20 5.5A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z"></path></svg>',
+    "calendar": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M7 3v4M17 3v4M3 10h18"></path></svg>',
+}
+
+
+def _footer_icon(name: str) -> str:
+    return _FOOTER_ICONS.get(name, "")
+
+
+def _existing_updated(text: str, lang: str, today: date) -> str:
+    pattern = r'最後更新：(\d{4}/\d{1,2}/\d{1,2})' if lang == "zh" else r'Last updated:\s*(\d{4}/\d{1,2}/\d{1,2})'
+    match = re.search(pattern, text)
+    return match.group(1) if match else f"{today.year}/{today.month}/{today.day}"
+
+
+def render_footer(data: dict[str, Any], lang: str, today: date, *, updated: str | None = None) -> str:
+    footer = current_site_settings(data)["footer"]
+    values = {"year": str(today.year), "updated": updated or f"{today.year}/{today.month}/{today.day}"}
+    zones: dict[str, list[str]] = {"left": [], "center": [], "right": []}
+    for item in footer["items"]:
+        text = item["text"].get(lang) or item["text"].get("en") or item["text"].get("zh") or ""
+        for key, value in values.items():
+            text = text.replace("{" + key + "}", value)
+        content = f'{_footer_icon(item["icon"])}<span>{esc(text)}</span>'
+        url = str(item.get("url") or "").strip()
+        if url:
+            attrs = ' rel="noopener"' + (' target="_blank"' if item.get("new_tab") else "")
+            content = f'<a class="footer-item" href="{esc(url)}"{attrs}>{content}</a>'
+        else:
+            content = f'<span class="footer-item">{content}</span>'
+        zones[item["alignment"]].append(content)
+    inner = "".join(
+        f'<div class="footer-zone footer-{name}">{"".join(zones[name])}</div>'
+        for name in ("left", "center", "right")
+    )
+    return f'<footer class="site-footer"><div class="container footer-inner">{inner}</div></footer>'
+
+
+def replace_footer(text: str, footer: str) -> str:
+    updated, count = re.subn(r'<footer class="site-footer">.*?</footer>', footer, text, count=1, flags=re.S)
+    if count != 1:
+        updated = text.replace("</body>", footer + "\n</body>", 1)
+    return updated
 
 def custom_page_shell(page: dict[str, Any], lang: str) -> str:
     template = ROOT / ("zh/teaching.html" if lang == "zh" else "teaching.html")
@@ -547,15 +666,11 @@ def build(today: date, update_date: bool = True) -> list[Path]:
                 sections = "".join(x for x in rendered if x)
                 content = page_header(data, page_id, lang) + sections
             new = replace_main(old, content)
-            page_title = page.get("header", {}).get("title", {}).get(lang) if page.get("header") else ("Hung-Chun Tsui" if lang == "en" else "崔鴻竣")
-            if page_id == "home":
-                document_title = "Hung-Chun Tsui | Mathematics" if lang == "en" else "崔鴻竣｜數學"
-            else:
-                document_title = f"{page_title} | Hung-Chun Tsui"
-            new = update_page_title(new, document_title)
             new = apply_page_theme(new, page)
-            if update_date:
-                new = update_footer(new, lang, today)
+            new = apply_seo_metadata(new, data, page, lang)
+            updated_value = f"{today.year}/{today.month}/{today.day}" if update_date else _existing_updated(old, lang, today)
+            new = replace_footer(new, render_footer(data, lang, today, updated=updated_value))
+            new = link_people_html(new, PEOPLE, lang)
             if new != old:
                 path.write_text(new, encoding="utf-8")
                 changed.append(path)
