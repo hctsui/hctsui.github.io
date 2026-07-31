@@ -730,9 +730,8 @@
             ><button class="tab" data-tab="add">新增</button
             ><button class="tab" data-tab="order">排序</button
             ><button class="tab" data-tab="trash">還原</button
-            ><button class="tab" data-tab="homepage">首頁精選</button
-            ><button class="tab" data-tab="dictionary">中英對照</button
-            ><button class="tab" data-tab="draft">草稿</button>
+            ><button class="tab" data-tab="draft">草稿</button
+            ><button class="tab" data-tab="dictionary">中英對照</button>
           </div>
           <div id="catalogTab">
             <div class="toolbar">
@@ -801,6 +800,10 @@
                 將排序加入本次批次
               </button>
             </div>
+            <details class="order-homepage-panel">
+              <summary><strong>首頁精選與近期活動</strong></summary>
+              <div id="homepageManager"></div>
+            </details>
           </div>
           <div id="trashTab" hidden>
             <p class="muted">
@@ -920,7 +923,6 @@
             <div id="translationAudit"></div>
             <div id="dictionaryRows" class="scroll"></div>
           </div>
-          <div id="homepageTab" hidden><div id="homepageManager"></div></div>
         </section>
         <section class="panel">
           <h2>預覽與送出</h2>
@@ -968,17 +970,16 @@
         "page",
         "category",
         "publication",
-        "conference",
+        "academic_event",
         "talk",
-        "visit",
         "organization",
         "teaching",
-        "honor",
         "generic",
       ];
       const LABEL = {
         page: "頁面",
         category: "類別",
+        academic_event: "學術會議／訪問",
         conference: "學術會議",
         talk: "學術報告",
         visit: "學術訪問",
@@ -1594,8 +1595,8 @@
           ["term", "學期", "pair-term"],
           ["course_code", "課號", "text"],
           ["course_title", "課名", "pair"],
-          ["lecture_notes_title", "Lecture Notes 標題", "pair"],
-          ["lecture_notes_url", "Lecture Notes 連結", "url"],
+          ["lecture_notes_title", "講義標題", "pair"],
+          ["lecture_notes_url", "講義連結", "url"],
         ],
         interest: [
           ["start_date", "開始日期", "date"],
@@ -2031,7 +2032,7 @@
               Object.entries(CONFERENCE_ROLES).find(
                 ([, v]) => v.en === roleEn,
               )?.[0] || (!roleEn ? "participant" : "other");
-          html += `<div class="field"><label>會議中的身分</label><select id="conferenceRole"><option value="participant" ${roleKey === "participant" ? "selected" : ""}>一般參與者（不顯示標記）</option><option value="speaker" ${roleKey === "speaker" ? "selected" : ""}>講者</option><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select><p class="field-hint">一般參與者不顯示身分；其他身分會沿用 CV 原本的名稱後方樣式。首頁顯示請到「首頁精選」設定。</p></div><div id="conferenceRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂會議身分", roleKey === "other" ? s.role : {})}</div>`;
+          html += `<div class="field"><label>會議中的身分</label><select id="conferenceRole"><option value="participant" ${roleKey === "participant" ? "selected" : ""}>一般參與者（不顯示標記）</option><option value="speaker" ${roleKey === "speaker" ? "selected" : ""}>講者</option><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select><p class="field-hint">一般參與者不顯示身分；其他身分會沿用 CV 原本的名稱後方樣式。首頁顯示可在「排序」下方設定。</p></div><div id="conferenceRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂會議身分", roleKey === "other" ? s.role : {})}</div>`;
         }
         if (type === "organization") {
           let kindEn = s.organization_kind?.en || "Seminar",
@@ -2044,7 +2045,7 @@
               Object.entries(ORGANIZATION_ROLES).find(
                 ([, v]) => v.en === roleEn,
               )?.[0] || "other";
-          html += `<div class="field"><label>籌辦活動類型</label><select id="organizationKind"><option value="conference" ${kindKey === "conference" ? "selected" : ""}>會議</option><option value="workshop" ${kindKey === "workshop" ? "selected" : ""}>工作坊</option><option value="seminar" ${kindKey === "seminar" ? "selected" : ""}>研討會</option><option value="reading_group" ${kindKey === "reading_group" ? "selected" : ""}>讀書會</option><option value="other" ${kindKey === "other" ? "selected" : ""}>其他</option></select></div><div id="organizationKindCustom" class="${kindKey === "other" ? "" : "hidden"}">${pairFields("organization_kind", "自訂活動類型", kindKey === "other" ? s.organization_kind : {})}</div><div class="field"><label>籌辦身分</label><select id="organizationRole"><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="coordinator" ${roleKey === "coordinator" ? "selected" : ""}>召集人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select></div><div id="organizationRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂籌辦身分", roleKey === "other" ? s.role : {})}</div><div class="notice">籌辦活動與會議紀錄彼此獨立；這筆資料只會出現在所選類別。</div>`;
+          html += `<div class="field"><label>籌辦活動類型</label><select id="organizationKind"><option value="conference" ${kindKey === "conference" ? "selected" : ""}>會議</option><option value="workshop" ${kindKey === "workshop" ? "selected" : ""}>工作坊</option><option value="seminar" ${kindKey === "seminar" ? "selected" : ""}>研討會</option><option value="reading_group" ${kindKey === "reading_group" ? "selected" : ""}>讀書會</option><option value="other" ${kindKey === "other" ? "selected" : ""}>其他</option></select></div><div id="organizationKindCustom" class="${kindKey === "other" ? "" : "hidden"}">${pairFields("organization_kind", "自訂活動類型", kindKey === "other" ? s.organization_kind : {})}</div><div class="field"><label>籌辦身分</label><select id="organizationRole"><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="coordinator" ${roleKey === "coordinator" ? "selected" : ""}>召集人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select></div><div id="organizationRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂籌辦身分", roleKey === "other" ? s.role : {})}</div>`;
         }
         if (type === "publication") {
           let groups = groupData(effectiveSite(), "publication"),
@@ -3484,7 +3485,6 @@
           "order",
           "trash",
           "dictionary",
-          "homepage",
         ])
           $(`#${n}Tab`).hidden = n !== name;
       }
@@ -3642,8 +3642,10 @@
         }
       };
       $("#clearDraft").onclick = () => {
-        if (confirm("清空所有內容、排序與還原草稿？")) {
+        if (confirm("清空所有內容、排序、首頁精選與還原草稿？")) {
           draft = [];
+          if (typeof clearHomepageDraft === "function")
+            clearHomepageDraft(false);
           saveLocal();
         }
       };
