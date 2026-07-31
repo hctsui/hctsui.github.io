@@ -3,32 +3,36 @@
   "base_branch": "cms",
   "base_commit_observed": "e5c1c2d3dfb1309241916fd7500372669fec49c5",
   "created_date": "2026-07-31",
+  "package_version": "v4",
   "files": [
     "admin/homepage-v1.js",
     "admin/guide.html",
+    "tools/homepage_config.py",
     "MANAGE-WEBSITE.md",
     "tests/test_admin_hotfix.py",
     "UPDATE-NOTES.md"
   ],
   "changes": [
-    "homepage manager is permanently visible inside the order tab",
-    "add menu groups four academic activity forms under one 活動 entry",
-    "activity forms include a back-to-chooser button",
-    "organization label is renamed 學術籌辦",
-    "catalog filtering keeps conference, talk, visit, and organization separate",
-    "long order titles wrap only in the content column while controls stay on one row"
+    "homepage controls replace the two empty homepage category bodies inside unified ordering",
+    "automatic homepage modes select by date and then apply a saved relative order",
+    "automatic and manual modes share the same ordered item-row presentation",
+    "homepage helper copy is compact field-hint text instead of a large notice",
+    "homepage sections show compact unchanged/unsaved status tags",
+    "activity add menu remains grouped while catalog filtering remains four separate types",
+    "organization label is 學術籌辦 and long order titles keep controls on one row"
   ],
   "validation": {
     "javascript_syntax": "passed",
-    "documentation_required_headings": "passed",
-    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 9 passed",
-    "full_repository_test_suite": "not run locally (repository not available in container)"
+    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 11 passed",
+    "homepage_backend_ordering_tests": "2 passed",
+    "full_repository_test_suite": "not run locally because direct GitHub network access is unavailable in the container"
   },
   "sha256": {
-    "admin/homepage-v1.js": "0870308e7affce113c3c10d3a3b3642a9c62bbaefeef4ab47967d8c3da193f0d",
-    "admin/guide.html": "8186a46a71e5901745bd0a009a5fa6c85a8ac96ea08bf9dd5f7f7f9fec93f9b9",
-    "MANAGE-WEBSITE.md": "68f9327ef9a7b942e933c54f36fba9ac5336034c29c765ceb5a4a6692f1049bc",
-    "tests/test_admin_hotfix.py": "7de5f7706d579a5d0fd4a0aa37efc83e50c672b69e1c018783e2941e2008c130",
-    "UPDATE-NOTES.md": "2d48bd07c828acad7d16122173d62343ccdf857ef63bbff22a0cf057e1514c57"
+    "admin/homepage-v1.js": "084875b46445301f419d98a3dfb86079e64281c04be12a3bf0dbd52681e6639a",
+    "admin/guide.html": "98e2ebd62a3e428f70eb739c1306c418201103c433f8d46a2bb018aaf002fe1c",
+    "tools/homepage_config.py": "5225d05770092317bcf9f000363460466e86c4d757eae8a5fb2185446f76b662",
+    "MANAGE-WEBSITE.md": "6375a118469ce2b7df3fd6cb6520bc9530067db250948845976bd66fe6bebfb8",
+    "tests/test_admin_hotfix.py": "6f9b2d0dfdbddd3a5ffc68b7716d37376d011f38ffb6b60493411dc9ddd2b6fc",
+    "UPDATE-NOTES.md": "3d6bef6dfc9ea42f5739174cb62b12ba1ba5759fbb455d238b20e0f1518c943b"
   }
 }

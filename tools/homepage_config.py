@@ -133,6 +133,14 @@ def _active_activity(item: dict[str, Any], today: date) -> bool:
     return bool(final_date and final_date >= today.isoformat())
 
 
+def _preferred_order(items: list[dict[str, Any]], selected_ids: list[str]) -> list[dict[str, Any]]:
+    """Keep the selected set, but apply an optional user-defined relative order."""
+    by_id = {str(item.get("id")): item for item in items}
+    preferred = [by_id[item_id] for item_id in selected_ids if item_id in by_id]
+    preferred_ids = {str(item.get("id")) for item in preferred}
+    return preferred + [item for item in items if str(item.get("id")) not in preferred_ids]
+
+
 def homepage_publications(data: dict[str, Any]) -> list[dict[str, Any]]:
     config = normalized_homepage_config(data)["publications"]
     items = list(data.get("publications", []))
@@ -143,7 +151,8 @@ def homepage_publications(data: dict[str, Any]) -> list[dict[str, Any]]:
         key=lambda item: (str(item.get("date") or ""), str(item.get("id") or "")),
         reverse=config["mode"] == "latest",
     )
-    return items[: config["limit"]]
+    selected = items[: config["limit"]]
+    return _preferred_order(selected, config["selected_ids"])
 
 
 def homepage_activities(data: dict[str, Any], today: date) -> list[dict[str, Any]]:
@@ -156,4 +165,5 @@ def homepage_activities(data: dict[str, Any], today: date) -> list[dict[str, Any
         key=lambda item: (str(item.get("start_date") or ""), str(item.get("id") or "")),
         reverse=config["mode"] == "farthest",
     )
-    return items[: config["limit"]]
+    selected = items[: config["limit"]]
+    return _preferred_order(selected, config["selected_ids"])
