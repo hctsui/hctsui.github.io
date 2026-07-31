@@ -124,6 +124,10 @@ payload=function(){const result=basePayload();if(!layoutPreviewSuppressed&&layou
 
 const baseOpenEditor=openEditor;
 openEditor=function(type,record,options={}){
+  if(record?._layout_kind==='system_page'){
+    queueMicrotask(()=>{switchTab('siteSettings');if(typeof openSiteSettingsSection==='function')openSiteSettingsSection(record._settings_section,record._settings_panel)});
+    return;
+  }
   if(type==='academic_event'){openAcademicEventChooser();return}
   if(type==='page'||type==='category'){openLayoutEditor(type,record);return}
   baseOpenEditor(type,record,options);initLayoutState();
@@ -344,6 +348,8 @@ function layoutCatalogRecords(){
   if(!layoutDraft)return[];
   return[
     ...layoutDraft.pages.filter(p=>p.id!=='home').map(p=>({id:`page:${p.id}`,type:'page',_layout_kind:'page',_layout_id:p.id,title:clone(p.name),category_id:'',order:p.order})),
+    {id:'system-page:contact',type:'page',_layout_kind:'system_page',_settings_section:'contactForm',_settings_panel:'design',title:{en:'Contact Form',zh:'聯絡表單頁面'},category_id:'',order:9000},
+    {id:'system-page:404',type:'page',_layout_kind:'system_page',_settings_section:'errorPage',_settings_panel:'',title:{en:'404 Page',zh:'404 頁面'},category_id:'',order:9001},
     ...layoutDraft.categories.map(c=>({id:`category:${c.id}`,type:'category',_layout_kind:'category',_layout_id:c.id,title:clone(c.title),category_id:c.id,order:c.order,page_id:c.page_id}))
   ];
 }
@@ -354,7 +360,7 @@ function adminFilterMatches(item,filter){
   return item.type===filter;
 }
 function findAdminRecord(id){return layoutCatalogRecords().find(x=>x.id===id)}
-function deleteAdminRecord(record){if(record?._layout_kind==='category')deleteCategory(record._layout_id);else flash('頁面目前只能編輯；要移除頁面，請先移除其中所有類別。')}
+function deleteAdminRecord(record){if(record?._layout_kind==='category')deleteCategory(record._layout_id);else flash('系統頁面與一般頁面只能編輯，不能從這裡刪除。')}
 sortedRecords=function(){
   if(!site)return baseSortedRecords();
   const data=effectiveSite(),query=norm($('#search').value),filter=$('#filter').value;

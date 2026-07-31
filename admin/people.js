@@ -187,7 +187,7 @@
       dictionaryTab.append(translationPane);
     }
     if(!document.querySelector('#databaseTypeTabs')){
-      dictionaryTab.insertAdjacentHTML('afterbegin',`<div class="database-type-shell"><div class="database-type-tabs" id="databaseTypeTabs"><button class="button active" type="button" data-database-type="translations">中英對照</button><button class="button" type="button" data-database-type="people">人名連結</button></div><p class="field-hint">資料庫分成中英對照與人名連結。兩種資料都會沿用草稿、預覽、Batch Issue、衝突檢查與還原流程。</p></div>`);
+      dictionaryTab.insertAdjacentHTML('afterbegin',`<div class="database-type-shell"><div class="database-type-tabs" id="databaseTypeTabs"><button class="button active" type="button" data-database-type="translations">中英對照</button><button class="button" type="button" data-database-type="people">人名連結</button></div></div>`);
     }
     if(!document.querySelector('#peopleDatabasePane'))dictionaryTab.insertAdjacentHTML('beforeend',`<div id="peopleDatabasePane" hidden><p class="muted">集中管理中英文姓名、其他拼法與學術網址。整個網站的可見文字都會精確比對；作者欄位只顯示候選，必須手動點選才會填入。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增人名</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleRows" class="scroll"></div></div>`);
     document.querySelector('#databaseTypeTabs')?.addEventListener('click',event=>{const button=event.target.closest('[data-database-type]');if(button)setDatabaseType(button.dataset.databaseType);});

@@ -13,8 +13,11 @@ from build_site import (  # noqa: E402
     apply_analytics,
     apply_cloudflare_analytics,
     apply_seo_metadata,
+    contact_form_home_card,
     render_404_page,
+    render_contact,
     render_contact_form,
+    render_contact_page_main,
     render_footer,
 )
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
@@ -42,6 +45,8 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(len(settings["footer"]["items"]), 2)
         self.assertFalse(settings["analytics"]["enabled"])
         self.assertEqual(settings["error_page"]["auto_redirect"]["seconds"], 8)
+        self.assertIn("contact", settings["seo"]["pages"])
+        self.assertEqual(settings["contact_form"]["page_design"]["title"]["en"], "Contact Form")
         validate_site_settings(settings, data)
 
     def test_admin_and_python_contact_defaults_match_for_conflict_check(self) -> None:
@@ -180,6 +185,44 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertNotIn("TURNSTILE_SECRET", rendered)
         self.assertNotIn("GITHUB_TOKEN", rendered)
 
+
+    def test_contact_page_design_and_home_entry_are_generated(self) -> None:
+        data = site_data()
+        settings = current_site_settings(data)
+        settings["contact_form"].update({
+            "enabled": True,
+            "mode": "email_only",
+            "web3forms_access_key": "a" * 32,
+        })
+        settings["contact_form"]["page_design"]["title"] = {"en": "Write to me", "zh": "聯絡我"}
+        settings["contact_form"]["page_design"]["colors"]["accent"] = "#123456"
+        data["settings"].update(settings)
+        self.assertIn('<div class="contact-form-entry"', contact_form_home_card(data, "en"))
+        self.assertIn('href="contact.html">Fill out</a>', contact_form_home_card(data, "en"))
+        self.assertIn('href="contact.html">填寫</a>', contact_form_home_card(data, "zh"))
+        page = render_contact_page_main(data, "en")
+        self.assertIn("Write to me", page)
+        self.assertIn('class="contact-form-shell"', page)
+
+    def test_contact_home_grid_inserts_form_after_affiliation_and_keeps_address_full_width(self) -> None:
+        items = [
+            {"id": "contact-institutional-email", "title": {"en": "Institutional email"}, "description": {"en": "a@example.com"}},
+            {"id": "contact-personal-email", "title": {"en": "Personal email"}, "description": {"en": "b@example.com"}},
+            {"id": "contact-affiliation", "title": {"en": "Affiliation"}, "description": {"en": "University"}},
+            {"id": "contact-address-office", "title": {"en": "Address & office"}, "description": {"en": "Room 1"}},
+        ]
+        extra = '<div class="contact-form-entry"><span>Contact Form</span><a href="contact.html">Fill out</a></div>'
+        rendered = render_contact(items, "en", extra_card=extra)
+        self.assertLess(rendered.index("Affiliation"), rendered.index("Contact Form"))
+        self.assertLess(rendered.index("Contact Form"), rendered.index("Address &amp; office"))
+        self.assertIn('class="contact-location" data-entry-id="contact-address-office"', rendered)
+
+    def test_contact_page_design_requires_bilingual_content(self) -> None:
+        data = site_data()
+        settings = current_site_settings(data)
+        settings["contact_form"]["page_design"]["title"]["zh"] = ""
+        with self.assertRaisesRegex(ValueError, "Contact page title"):
+            validate_site_settings(settings, data)
 
     def test_incomplete_worker_mode_is_rejected_but_disabled_draft_is_allowed(self) -> None:
         data = site_data()

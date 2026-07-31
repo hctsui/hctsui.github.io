@@ -28,11 +28,11 @@ class AdminLoadingContracts(unittest.TestCase):
     def test_admin_loads_canonical_scripts_with_cache_busting(self) -> None:
         expected = (
             '<script src="tags.js?v=20260801-1"></script>',
-            '<script src="layout.js?v=20260801-1"></script>',
+            '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
-            '<script src="people.js?v=20260801-1"></script>',
+            '<script src="people.js?v=20260801-2"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
-            '<script src="site-settings.js?v=20260801-1"></script>',
+            '<script src="site-settings.js?v=20260801-2"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -183,7 +183,6 @@ class PeopleAndBibtexContracts(unittest.TestCase):
         for marker in (
             "人名連結",
             "可能的人名（點選後才會填入）",
-            "資料庫分成中英對照與人名連結",
             "每行一個，例如 Tsui, Hung-Chun",
             "data-person-id",
             "chooseSuggestion",
@@ -262,19 +261,43 @@ class SiteSettingsContracts(unittest.TestCase):
             "Google Analytics Measurement ID",
             "開啟 Cloudflare 儀表板",
             "開啟 Google Analytics 儀表板",
-            "不會追蹤 <code>/admin/</code>",
-            "為什麼 Admin 不直接顯示統計數字？",
             "自動返回首頁",
             "幾秒後返回首頁",
             "恢復預設顏色",
             "data-error-color",
             "網站設定：${total} 項實際變更",
-            "逐欄列出真正改了什麼",
+            'data-contact-panel="form"',
+            'data-contact-panel="design"',
+            "data-contact-page-field",
+            "data-contact-color",
         ):
             self.assertIn(marker, settings)
         self.assertIn("const equal=(a,b)=>JSON.stringify(stable(a))===JSON.stringify(stable(b))", settings)
         self.assertNotIn("draft=normalize(draft,siteDataCache)", settings)
         self.assertNotIn("網站設定尚未修改。", settings)
+        for removed_hint in (
+            "網站設定依序管理頁尾、聯絡表單、搜尋與分享資訊、流量統計及錯誤頁面。",
+            "改回原值後會自動清除修改狀態；右側預覽會逐欄列出真正改了什麼。",
+            "順序為：版權、連結、地點、書籍、日曆、其他。",
+            "表單顯示在首頁聯絡區。",
+            "可選 Cloudflare Web Analytics 或 Google Analytics 4",
+            "GitHub Pages 找不到網址時會顯示這個雙語頁面。",
+        ):
+            self.assertNotIn(removed_hint, settings)
+
+    def test_contact_and_404_system_pages_route_to_settings(self) -> None:
+        layout = read("admin/layout.js")
+        settings = read("admin/site-settings.js")
+        for marker in (
+            "system-page:contact",
+            "system-page:404",
+            "_settings_section:'contactForm'",
+            "_settings_panel:'design'",
+            "_settings_section:'errorPage'",
+            "openSiteSettingsSection",
+        ):
+            self.assertIn(marker, layout)
+        self.assertIn("window.openSiteSettingsSection=function(section,subsection)", settings)
 
     def test_seo_editor_exposes_page_specific_meta_and_og_fields(self) -> None:
         settings = read("admin/site-settings.js")

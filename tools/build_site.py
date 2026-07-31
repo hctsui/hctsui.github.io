@@ -21,7 +21,7 @@ from people_config import link_author_html, link_people_html, load_people
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
-PAGE_FILES = [ROOT / p for p in ("index.html", "cv.html", "publications.html", "activities.html", "teaching.html", "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html", "zh/teaching.html")]
+PAGE_FILES = [ROOT / p for p in ("index.html", "cv.html", "publications.html", "activities.html", "teaching.html", "contact.html", "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html", "zh/teaching.html", "zh/contact.html")]
 PEOPLE = load_people()
 
 
@@ -383,10 +383,17 @@ def render_site_navigation(data: dict[str, Any], current_page_id: str, lang: str
     home_href = page_href(data, "home", lang)
     if home_href:
         contact_label = "聯絡" if lang == "zh" else "Contact"
-        links.append(f'<a data-nav="contact" href="{esc(home_href)}#contact">{contact_label}</a>')
+        if current_page_id == "contact":
+            contact_href = "contact.html"
+            links.append(f'<a class="active" aria-current="page" data-nav="contact" href="{contact_href}">{contact_label}</a>')
+        else:
+            links.append(f'<a data-nav="contact" href="{esc(home_href)}#contact">{contact_label}</a>')
 
-    current = next((page for page in pages if page.get("id") == current_page_id), None)
-    counterpart = _counterpart_href(current, lang) if current else ""
+    if current_page_id == "contact":
+        counterpart = "../contact.html" if lang == "zh" else "zh/contact.html"
+    else:
+        current = next((page for page in pages if page.get("id") == current_page_id), None)
+        counterpart = _counterpart_href(current, lang) if current else ""
     if counterpart:
         label = "中文" if lang == "en" else "English"
         aria = "切換至中文版" if lang == "en" else "Switch to English"
@@ -450,15 +457,36 @@ def render_generic(entry: dict[str, Any], lang: str) -> str:
     return f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}"><time>{esc(when)}</time><div><h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</div></article>'
 
 
-def render_contact(items: list[dict[str, Any]], lang: str) -> str:
+def render_contact(items: list[dict[str, Any]], lang: str, *, extra_card: str = "") -> str:
     cards = []
+    inserted = False
     for entry in items:
         title = rich_html(plain_value(entry, "title", lang))
         value = rich_html(plain_value(entry, "description", lang))
         url = str(entry.get("url") or "").strip()
         body = f'<a href="{esc(url)}" rel="noopener">{value}</a>' if url else f'<p>{value}</p>'
-        cards.append(f'<div data-entry-id="{esc(entry.get("id"))}"><span>{title}</span>{body}</div>')
+        entry_id = str(entry.get("id") or "")
+        row_class = ' class="contact-location"' if entry_id == "contact-address-office" else ""
+        cards.append(f'<div{row_class} data-entry-id="{esc(entry_id)}"><span>{title}</span>{body}</div>')
+        if extra_card and str(entry.get("id") or "") == "contact-affiliation":
+            cards.append(extra_card)
+            inserted = True
+    if extra_card and not inserted:
+        cards.insert(max(0, len(cards) - 1), extra_card)
     return '<div class="contact-grid">' + "".join(cards) + '</div>'
+
+
+def contact_form_home_card(data: dict[str, Any], lang: str) -> str:
+    config = current_site_settings(data).get("contact_form", {})
+    if not config.get("enabled"):
+        return ""
+    title = "聯絡表單" if lang == "zh" else "Contact Form"
+    label = "填寫" if lang == "zh" else "Fill out"
+    href = "contact.html"
+    return (
+        '<div class="contact-form-entry" data-system-entry="contact-form">'
+        f'<span>{title}</span><a href="{href}">{label}</a></div>'
+    )
 
 
 def category_items(data: dict[str, Any], category: dict[str, Any], today: date) -> list[dict[str, Any]]:
@@ -591,6 +619,61 @@ def render_contact_form(data: dict[str, Any], lang: str) -> str:
     )
 
 
+def contact_system_page() -> dict[str, Any]:
+    return {
+        "id": "contact",
+        "name": {"en": "Contact", "zh": "聯絡"},
+        "path": {"en": "contact.html", "zh": "zh/contact.html"},
+        "languages": ["en", "zh"],
+        "header": None,
+        "color": "#8d493d",
+        "show_in_navigation": False,
+        "order": 999,
+    }
+
+
+def apply_contact_page_design(text: str, design: dict[str, Any]) -> str:
+    colors = design.get("colors", {})
+    accent = str(colors.get("accent") or "#8d493d")
+    style = ";".join(
+        [
+            page_theme_style(accent),
+            f"--contact-bg:{colors.get('background', '#f7f3ed')}",
+            f"--contact-surface:{colors.get('surface', '#ffffff')}",
+            f"--contact-accent:{accent}",
+            f"--contact-text:{colors.get('text', '#2d2926')}",
+            f"--contact-muted:{colors.get('muted', '#6c625c')}",
+            f"--contact-button:{colors.get('button', accent)}",
+            f"--contact-button-text:{colors.get('button_text', '#ffffff')}",
+            f"--bg:{colors.get('background', '#f7f3ed')}",
+            f"--surface:{colors.get('surface', '#ffffff')}",
+            f"--surface-alt:{colors.get('surface', '#ffffff')}",
+            f"--ink:{colors.get('text', '#2d2926')}",
+            f"--muted:{colors.get('muted', '#6c625c')}",
+        ]
+    )
+    return re.sub(r'(<body\b[^>]*?)(?:\sstyle="[^"]*")?(>)', rf'\1 style="{style}"\2', text, count=1)
+
+
+def render_contact_page_main(data: dict[str, Any], lang: str) -> str:
+    config = current_site_settings(data)["contact_form"]
+    design = config["page_design"]
+    eyebrow = rich_html(design["eyebrow"][lang])
+    title = rich_html(design["title"][lang])
+    description = rich_html(design["description"][lang])
+    form = render_contact_form(data, lang)
+    if not form:
+        unavailable = "聯絡表單目前尚未開放。" if lang == "zh" else "The contact form is currently unavailable."
+        form = f'<div class="contact-form-unavailable">{esc(unavailable)}</div>'
+    return (
+        '<section class="contact-page-hero"><div class="container">'
+        f'<p class="section-label">{eyebrow}</p><h1>{title}</h1><p>{description}</p>'
+        '</div></section>'
+        '<section class="contact-page-section"><div class="container contact-page-container">'
+        f'{form}</div></section>'
+    )
+
+
 def render_home_contact(
     data: dict[str, Any],
     category: dict[str, Any],
@@ -608,7 +691,7 @@ def render_home_contact(
         f'<section class="section managed-category category-contact contact-section" '
         f'data-category-id="{cid}" id="contact"><div class="container split"><div>'
         f'<p class="section-label">{label}</p><h2>{title}</h2>{intro_html}</div>'
-        f'<div>{render_contact(items, lang)}{render_contact_form(data, lang)}</div></div></section>'
+        f'<div>{render_contact(items, lang, extra_card=contact_form_home_card(data, lang))}</div></div></section>'
     )
 
 
@@ -938,7 +1021,11 @@ def _not_found_navigation(data: dict[str, Any], lang: str, base_url: str) -> str
     )
     if home_path:
         contact_label = "聯絡" if lang == "zh" else "Contact"
-        links.append(f'<a href="{esc(_absolute_url(base_url, home_path))}#contact">{contact_label}</a>')
+        contact_path = "zh/contact.html" if lang == "zh" else "contact.html"
+        if current_site_settings(data).get("contact_form", {}).get("enabled"):
+            links.append(f'<a href="{esc(_absolute_url(base_url, contact_path))}">{contact_label}</a>')
+        else:
+            links.append(f'<a href="{esc(_absolute_url(base_url, home_path))}#contact">{contact_label}</a>')
     return '<nav class="not-found-nav" aria-label="Website navigation">' + "".join(links) + "</nav>"
 
 
@@ -1099,6 +1186,33 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             if new != old:
                 path.write_text(new, encoding="utf-8")
                 changed.append(path)
+    contact_page = contact_system_page()
+    contact_settings = current_site_settings(data)["contact_form"]
+    contact_design = contact_settings["page_design"]
+    for lang in ("en", "zh"):
+        rel = contact_page["path"][lang]
+        path = ROOT / rel
+        old = path.read_text(encoding="utf-8") if path.exists() else ""
+        path.parent.mkdir(parents=True, exist_ok=True)
+        shell = custom_page_shell(contact_page, lang)
+        new = replace_main(shell, render_contact_page_main(data, lang))
+        new = replace_navigation(new, data, "contact", lang)
+        if not contact_design.get("show_navigation", True):
+            new = re.sub(r'<nav\b(?=[^>]*\bclass="[^"]*\bsite-nav\b[^"]*")[^>]*>.*?</nav>', "", new, count=1, flags=re.S)
+            new = re.sub(r'<button\b(?=[^>]*\bclass="[^"]*\bmenu-button\b[^"]*")[^>]*>.*?</button>', "", new, count=1, flags=re.S)
+        new = apply_contact_page_design(new, contact_design)
+        new = apply_seo_metadata(new, data, contact_page, lang)
+        updated_value = f"{today.year}/{today.month}/{today.day}" if update_date else _existing_updated(old, lang, today)
+        if contact_design.get("show_footer", True):
+            new = replace_footer(new, render_footer(data, lang, today, updated=updated_value))
+        else:
+            new = re.sub(r'<footer class="site-footer">.*?</footer>', "", new, count=1, flags=re.S)
+        new = link_people_html(new, PEOPLE, lang)
+        new = apply_analytics(new, data)
+        if new != old:
+            path.write_text(new, encoding="utf-8")
+            changed.append(path)
+
     error_path = ROOT / "404.html"
     error_old = error_path.read_text(encoding="utf-8") if error_path.exists() else ""
     error_new = render_404_page(data, today)

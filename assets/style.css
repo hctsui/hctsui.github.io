@@ -1304,3 +1304,29 @@ html body[data-page="activities"] .page-hero{
 .contact-form label{display:grid;gap:.35rem;color:var(--ink);font-size:.82rem;font-weight:800}.contact-form input,.contact-form textarea{width:100%;padding:.72rem .78rem;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-weight:400}.contact-form input:focus,.contact-form textarea:focus{border-color:var(--accent);outline:2px solid var(--accent-soft)}
 .contact-botcheck{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}.contact-submit{justify-self:start}.contact-submit:disabled{cursor:wait;opacity:.65}.contact-form-status{min-height:1.4em;margin:0;font-size:.86rem}.contact-form-status.success-message{color:#247a46}.contact-form-status.error-message{color:#a1342b}.contact-form-privacy{margin:0;color:var(--muted);font-size:.76rem;line-height:1.45}
 @media(max-width:620px){.contact-form-grid{grid-template-columns:1fr}}
+
+/* Dedicated contact-form page and compact homepage entry. */
+.contact-grid .contact-form-entry a{font-size:1.08rem;font-weight:700;text-underline-offset:.18em}
+body[data-page="contact"]{background:var(--contact-bg);color:var(--contact-text)}
+body[data-page="contact"] .site-header{background:color-mix(in srgb,var(--contact-bg) 92%,transparent)}
+body[data-page="contact"] .site-nav a{color:var(--contact-text)}
+body[data-page="contact"] .site-nav a:hover,
+body[data-page="contact"] .site-nav a.active{color:var(--contact-accent)}
+.contact-page-hero{padding:84px 0 66px;text-align:center;background:linear-gradient(180deg,color-mix(in srgb,var(--contact-accent) 16%,var(--contact-bg)),var(--contact-bg));border-bottom:1px solid color-mix(in srgb,var(--contact-text) 14%,transparent)}
+.contact-page-hero .section-label{color:var(--contact-accent)}
+.contact-page-hero h1{margin:.25rem 0 .8rem;color:var(--contact-text);font-size:clamp(2.8rem,7vw,5.6rem)}
+.contact-page-hero p:last-child{max-width:720px;margin:0 auto;color:var(--contact-muted);font-size:1.08rem;line-height:1.75}
+.contact-page-section{padding:64px 0 88px;background:var(--contact-bg)}
+.contact-page-container{max-width:860px}
+body[data-page="contact"] .contact-form-shell{margin:0;padding:clamp(24px,5vw,44px);border:1px solid color-mix(in srgb,var(--contact-text) 15%,transparent);border-radius:22px;background:var(--contact-surface);color:var(--contact-text);box-shadow:0 24px 58px color-mix(in srgb,var(--contact-text) 10%,transparent)}
+body[data-page="contact"] .contact-form-shell h3{color:var(--contact-text);font-size:clamp(1.55rem,3vw,2.25rem)}
+body[data-page="contact"] .contact-form-shell>p,
+body[data-page="contact"] .contact-form-privacy{color:var(--contact-muted)}
+body[data-page="contact"] .contact-form label{color:var(--contact-text)}
+body[data-page="contact"] .contact-form input,
+body[data-page="contact"] .contact-form textarea{border-color:color-mix(in srgb,var(--contact-text) 18%,transparent);background:var(--contact-bg);color:var(--contact-text)}
+body[data-page="contact"] .contact-form input:focus,
+body[data-page="contact"] .contact-form textarea:focus{border-color:var(--contact-accent);outline:2px solid color-mix(in srgb,var(--contact-accent) 22%,transparent)}
+body[data-page="contact"] .contact-submit{border-color:var(--contact-button);background:var(--contact-button);color:var(--contact-button-text);font-weight:800}
+body[data-page="contact"] .contact-submit:hover{filter:brightness(.93)}
+.contact-form-unavailable{padding:32px;border:1px solid color-mix(in srgb,var(--contact-text) 16%,transparent);border-radius:18px;background:var(--contact-surface);color:var(--contact-muted);text-align:center}

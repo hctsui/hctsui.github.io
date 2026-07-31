@@ -84,7 +84,7 @@
 
 ## 頁面與類別
 
-頁面與類別都從「新增」建立，也能在「項目」搜尋與編輯。
+頁面與類別都從「新增」建立，也能在「項目」搜尋與編輯。系統頁面「聯絡表單頁面」與「404 頁面」也會出現在頁面清單；它們不能刪除，按「編輯」會直接開啟對應的網站設定。
 
 - 頁面可設為雙語、僅中文或僅英文；建立後語言版本固定。
 - 類別可編輯中英文小字、大標題、簡介、所在頁面，以及是否顯示於網站或 PDF。
@@ -145,12 +145,13 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ### 聯絡表單
 
-- 表單位於首頁聯絡區，可選擇 **Web3Forms Email** 或 **Cloudflare Worker 橋接**。
-- 「通知信固定主旨」會用於每一封聯絡表單信件，預設為 `[hctsui.github.io] New contact message`，方便在 Gmail 等信箱建立篩選器。
-- 訪客填寫的「主旨」不會取代固定 Email 主旨，而會保留在信件內容中。
-- Email 模式只需要 Web3Forms Access Key；完整留言直接寄到 Email，不建立 Admin 通知。
-- Worker 模式會寄信並建立匿名 Admin 通知；完整姓名、Email、訪客主旨與訊息不會寫入公開 repository。
-- Worker 模式建議設定 `EMAIL_SUBJECT` 變數，內容與 Admin 的固定主旨一致。
+- 首頁不再直接嵌入完整表單。聯絡區會新增一個與 Email、Affiliation 相同格式的 **Contact Form／聯絡表單** 項目，連結文字為 **Fill out／填寫**。
+- 聯絡區固定排列為：第一列兩個 Email；第二列 Affiliation 與 Contact Form；Address & office 橫跨最下方兩欄。
+- 點「Fill out／填寫」會開啟獨立的 `contact.html` 或 `zh/contact.html`。
+- Admin 的「網站設定 → 聯絡表單」先顯示 **表單設定** 與 **頁面設計** 兩個選項。表單設定管理傳送方式與欄位文字；頁面設計管理小標、標題、說明、導覽列、頁尾與配色，並提供即時預覽。
+- 可選擇 **Web3Forms Email** 或 **Cloudflare Worker 橋接**。「通知信固定主旨」會用於每一封信，訪客填寫的主旨只放在信件內容中。
+- Email 模式只需要 Web3Forms Access Key；Worker 模式會另外建立不含個資的匿名 Admin 通知。
+- 完整姓名、Email、訪客主旨與訊息不會寫入公開 repository。
 - 詳細步驟見 `integrations/CONTACT-FORM-SETUP.md`。
 
 ### SEO／OG
@@ -166,6 +167,7 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ### 404 頁面
 
+- 「項目 → 頁面」會列出「404 頁面」；按「編輯」會直接開啟「網站設定 → 404 頁面」。
 - GitHub Pages 使用 repository 根目錄的 `404.html` 顯示自訂錯誤頁面。
 - 可編輯中英文小標、標題、說明、首頁按鈕、次要按鈕與次要網址。
 - 可選擇是否顯示導覽列、共用頁尾，以及是否在 1–300 秒後自動返回相同語言的首頁。

@@ -102,7 +102,7 @@
         </ul>
         <h3>頁面與類別</h3>
         <p>頁面與類別從「新增」建立，也會出現在「項目」清單。頁面可選雙語、僅中文或僅英文，並可設定是否顯示於導覽列；類別可編輯中英文標題、簡介、所在頁面，以及網站／PDF 顯示狀態。</p>
-        <ul><li>關閉「顯示於導覽列」只會隱藏導覽按鈕，不會刪除頁面或使網址失效。</li><li>一般網站與 404 頁面共用同一份導覽設定；新增頁面或調整順序後，重建網站會自動同步所有頁面。</li><li>語言切換按鈕固定顯示「中文」或「English」。</li></ul>
+        <ul><li>關閉「顯示於導覽列」只會隱藏導覽按鈕，不會刪除頁面或使網址失效。</li><li>一般網站與 404 頁面共用同一份導覽設定；新增頁面或調整順序後，重建網站會自動同步所有頁面。</li><li>「聯絡表單頁面」與「404 頁面」是不可刪除的系統頁面；在「項目」按編輯會直接跳到對應的網站設定。</li><li>語言切換按鈕固定顯示「中文」或「English」。</li></ul>
         <p>類別表單中的用途說明會以一般小字顯示，不會使用佔版面的大型提示框。類別的顯示風格建立後固定；需要另一種排版時，新增對應風格的類別，再透過項目編輯或排序中的「搬移」轉移項目。</p>
         <h3>PDF 履歷的主標題與子標題</h3>
         <p>PDF 履歷的主區段使用較粗的完整橫線；作品類別（例如 Preprints、Journal Articles）與教學機構（例如 National Tsing Hua University）使用較小標題與較淡的右側橫線。橫線使用可在一般段落中穩定顯示的水平填滿線，而不是只在 section 標題環境有效的命令。這是共用的子標題樣式，日後新增作品類別或其他教學學校時會自動沿用。</p>
@@ -176,11 +176,12 @@
 
         <h3>聯絡表單</h3>
         <ul>
-          <li>表單顯示在首頁聯絡區，可選 Web3Forms Email 或 Cloudflare Worker 橋接。</li>
-          <li>「通知信固定主旨」會套用到每一封信；訪客填寫的主旨會保留在信件內容裡，不會改變 Email 主旨。</li>
-          <li>Email 模式只需 Web3Forms Access Key，不會建立 Admin 通知。</li>
-          <li>Worker 模式會寄信並建立匿名通知；建議在 Worker 變數設定相同的 <code>EMAIL_SUBJECT</code>。</li>
-          <li>完整設定步驟見本手冊後段「聯絡表單」與 <code>integrations/CONTACT-FORM-SETUP.md</code>。</li>
+          <li>首頁聯絡區只顯示一個與其他聯絡資料同格式的「Contact Form／聯絡表單」入口；按「Fill out／填寫」開啟獨立表單頁面。</li>
+          <li>首頁排列為兩個 Email、Affiliation／Contact Form 兩欄，以及最下方橫跨兩欄的 Address &amp; office。</li>
+          <li>進入聯絡表單設定後，先選「表單設定」或「頁面設計」。頁面設計可調整雙語頁首、導覽列、頁尾、背景、卡片、文字與按鈕顏色。</li>
+          <li>「通知信固定主旨」會套用到每一封信；訪客填寫的主旨保留在信件內容裡。</li>
+          <li>Email 模式只需 Web3Forms Access Key；Worker 模式會寄信並建立匿名通知。</li>
+          <li>完整設定步驟見 <code>integrations/CONTACT-FORM-SETUP.md</code>。</li>
         </ul>
         <h3>SEO／OG</h3>
         <ul>
@@ -288,7 +289,8 @@
   <h2>聯絡表單：快速設定</h2>
   <ol>
     <li>先到 Web3Forms 建立 Access Key，並完成驗證。</li>
-    <li>只需要 Email 時：到「網站設定 → 聯絡表單」，選 Web3Forms Email、填入 Access Key、設定固定通知信主旨、啟用後送出 Batch。</li>
+    <li>只需要 Email 時：到「網站設定 → 聯絡表單 → 表單設定」，選 Web3Forms Email、填入 Access Key、設定固定通知信主旨、啟用後送出 Batch。</li>
+    <li>到「頁面設計」確認中英文頁首、導覽列、頁尾與顏色，再一起送出。</li>
     <li>需要 Admin 匿名通知時：另外建立 Cloudflare Worker、Turnstile 與 GitHub fine-grained token，再選 Worker 模式並填入 Worker URL 與 Turnstile Site Key。</li>
     <li>Worker 的 <code>WEB3FORMS_ACCESS_KEY</code>、<code>GITHUB_TOKEN</code>、<code>TURNSTILE_SECRET</code> 必須存為 Secret；<code>SITE_ORIGIN</code>、<code>GITHUB_REPOSITORY</code>、<code>EMAIL_SUBJECT</code> 存為變數。</li>
     <li>送出後用無痕視窗測試一次，確認 Email 到達；Worker 模式再確認 Admin 出現匿名聯絡通知。</li>

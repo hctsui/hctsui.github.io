@@ -35,6 +35,8 @@ class RequiredFileTests(unittest.TestCase):
             "admin/admin-icon.png",
             "assets/script.js",
             "assets/style.css",
+            "contact.html",
+            "zh/contact.html",
             "404.html",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
@@ -129,9 +131,9 @@ class CanonicalFilenameTests(unittest.TestCase):
         page = read("admin/index.html")
         for marker in (
             '<script src="tags.js?v=20260801-1"></script>',
-            '<script src="layout.js?v=20260801-1"></script>',
+            '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
-            '<script src="people.js?v=20260801-1"></script>',
+            '<script src="people.js?v=20260801-2"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
         ):
             self.assertIn(marker, page)
@@ -143,6 +145,7 @@ class CanonicalFilenameTests(unittest.TestCase):
             "publications.html",
             "activities.html",
             "teaching.html",
+            "contact.html",
         ):
             text = read(relative)
             self.assertIn('href="assets/style.css"', text, relative)
@@ -153,6 +156,7 @@ class CanonicalFilenameTests(unittest.TestCase):
             "zh/publications.html",
             "zh/activities.html",
             "zh/teaching.html",
+            "zh/contact.html",
         ):
             text = read(relative)
             self.assertIn('href="../assets/style.css"', text, relative)
@@ -168,12 +172,23 @@ class CanonicalFilenameTests(unittest.TestCase):
             "admin/tags.js",
             "assets/script.js",
             "assets/style.css",
+            "contact.html",
+            "zh/contact.html",
             "404.html",
             "admin/admin-icon.svg",
         ):
             self.assertIn(f"test -f {relative}", workflow)
 
 
+
+    def test_contact_system_pages_have_canonical_contracts(self) -> None:
+        for relative, asset_prefix in (("contact.html", ""), ("zh/contact.html", "../")):
+            page = read(relative)
+            self.assertIn('data-page="contact"', page)
+            self.assertIn('class="contact-page-hero"', page)
+            self.assertIn('class="contact-page-section"', page)
+            self.assertIn(f'href="{asset_prefix}assets/style.css"', page)
+            self.assertIn(f'src="{asset_prefix}assets/script.js"', page)
 
     def test_custom_404_and_cloudflare_contracts_exist(self) -> None:
         page = read("404.html")

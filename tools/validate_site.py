@@ -126,6 +126,7 @@ page_files = {
     "publications": ("publications.html", "zh/publications.html"),
     "activities": ("activities.html", "zh/activities.html"),
     "teaching": ("teaching.html", "zh/teaching.html"),
+    "contact": ("contact.html", "zh/contact.html"),
 }
 for page_id, files in page_files.items():
     category_ids = [c["id"] for c in categories_for_page(data, page_id) if c.get("show_on_web", True)]
@@ -197,6 +198,25 @@ for page in data.get("settings", {}).get("pages", []):
         for fragment in ('<meta name="description"', '<link rel="canonical"', '<meta property="og:title"', '<meta name="twitter:card"', '<footer class="site-footer">'):
             if fragment not in text:
                 errors.append(f"{rel}: missing SEO/footer contract {fragment!r}")
+
+contact_settings = current_site_settings(data)["contact_form"]
+for rel in ("contact.html", "zh/contact.html"):
+    text = (ROOT / rel).read_text(encoding="utf-8")
+    for fragment in ('data-page="contact"', 'class="contact-page-hero"', 'class="contact-page-section"'):
+        if fragment not in text:
+            errors.append(f"{rel}: missing contact page contract {fragment!r}")
+    if contact_settings["enabled"] and 'class="contact-form-shell"' not in text:
+        errors.append(f"{rel}: enabled contact form is missing")
+    if not contact_settings["enabled"] and 'class="contact-form-unavailable"' not in text:
+        errors.append(f"{rel}: disabled contact page must show its unavailable state")
+
+for rel in ("index.html", "zh/index.html"):
+    text = (ROOT / rel).read_text(encoding="utf-8")
+    marker = 'data-system-entry="contact-form"'
+    if contact_settings["enabled"] and marker not in text:
+        errors.append(f"{rel}: enabled contact-form entry is missing from the contact grid")
+    if not contact_settings["enabled"] and marker in text:
+        errors.append(f"{rel}: disabled contact-form entry remains on the homepage")
 
 settings_bundle = current_site_settings(data)
 analytics_enabled = settings_bundle["analytics"]["enabled"]
