@@ -60,6 +60,20 @@ def _safe_http_url(value: Any, *, allow_relative: bool = False, allow_mailto: bo
     return ""
 
 
+LEGACY_IMAGE_PATHS = {
+    "photo.jpg": "assets/images/photo.jpg",
+    "assets/photo-640.webp": "assets/images/photo-640.webp",
+    "assets/photo-960.webp": "assets/images/photo-960.webp",
+    "assets/photo-1440.webp": "assets/images/photo-1440.webp",
+    "assets/favicon.svg": "assets/images/favicon.svg",
+}
+
+
+def _image_path(value: Any) -> str:
+    path = _safe_http_url(value, allow_relative=True)
+    return LEGACY_IMAGE_PATHS.get(path, path)
+
+
 def _color(value: Any, fallback: str) -> str:
     text = str(value or "").strip()
     return text.lower() if HEX_COLOR.fullmatch(text) else fallback.lower()
@@ -124,10 +138,66 @@ def default_seo(data: dict[str, Any] | None = None) -> dict[str, Any]:
         "schema_version": 1,
         "base_url": "https://hctsui.github.io",
         "site_name": {"en": "Hung-Chun Tsui", "zh": "崔鴻竣"},
-        "default_image": "assets/photo-1440.webp",
+        "default_image": "assets/images/photo-1440.webp",
         "pages": pages,
     }
 
+
+
+def default_general() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "identity": {
+            "brand": {"en": "HC Tsui", "zh": "HC Tsui"},
+            "menu_label": {"en": "Menu", "zh": "選單"},
+        },
+        "cover": {
+            "image": "assets/images/photo-960.webp",
+            "fallback": "assets/images/photo.jpg",
+            "alt": {"en": "Landscape photograph", "zh": "風景照片"},
+            "caption": {"en": "Shikanoshima, Fukuoka · September 2025", "zh": "日本福岡志賀島，2025 年 9 月"},
+            "object_position": "center center",
+        },
+        "navigation": {
+            "search_enabled": True,
+            "search_placeholder": {"en": "Search", "zh": "搜尋"},
+            "search_label": {"en": "Search this website", "zh": "搜尋這個網站"},
+            "show_contact_shortcut": True,
+        },
+    }
+
+
+def normalize_general(value: Any) -> dict[str, Any]:
+    defaults = default_general()
+    source = value if isinstance(value, dict) else {}
+    identity = source.get("identity") if isinstance(source.get("identity"), dict) else {}
+    cover = source.get("cover") if isinstance(source.get("cover"), dict) else {}
+    navigation = source.get("navigation") if isinstance(source.get("navigation"), dict) else {}
+    image = _image_path(cover.get("image")) or defaults["cover"]["image"]
+    fallback = _image_path(cover.get("fallback")) or defaults["cover"]["fallback"]
+    position = _text(cover.get("object_position") or defaults["cover"]["object_position"], 40)
+    if position not in {"center center", "center top", "center bottom", "left center", "right center"}:
+        position = defaults["cover"]["object_position"]
+    return {
+        "schema_version": 1,
+        "identity": {
+            "brand": _pair(identity.get("brand"), defaults["identity"]["brand"], 80),
+            "menu_label": _pair(identity.get("menu_label"), defaults["identity"]["menu_label"], 40),
+        },
+        "cover": {
+            "image": image,
+            "fallback": fallback,
+            "alt": _pair(cover.get("alt"), defaults["cover"]["alt"], 160),
+            "caption": _pair(cover.get("caption"), defaults["cover"]["caption"], 240),
+            "object_position": position,
+        },
+        "navigation": {
+            "search_enabled": bool(navigation.get("search_enabled", defaults["navigation"]["search_enabled"])),
+            "search_placeholder": _pair(navigation.get("search_placeholder"), defaults["navigation"]["search_placeholder"], 80),
+            "search_label": _pair(navigation.get("search_label"), defaults["navigation"]["search_label"], 120),
+            "show_contact_shortcut": bool(navigation.get("show_contact_shortcut", defaults["navigation"]["show_contact_shortcut"])),
+        },
+    }
 
 def default_footer() -> dict[str, Any]:
     return {
@@ -295,10 +365,10 @@ def normalize_seo(value: Any, data: dict[str, Any] | None = None) -> dict[str, A
             "description": _pair(raw.get("description"), fallback["description"], 500),
             "og_title": _pair(raw.get("og_title"), fallback.get("og_title"), 180),
             "og_description": _pair(raw.get("og_description"), fallback.get("og_description"), 500),
-            "og_image": _safe_http_url(raw.get("og_image"), allow_relative=True),
+            "og_image": _image_path(raw.get("og_image")),
         }
     base_url = _safe_http_url(source.get("base_url")) if "base_url" in source else defaults["base_url"]
-    default_image = _safe_http_url(source.get("default_image"), allow_relative=True) if "default_image" in source else defaults["default_image"]
+    default_image = _image_path(source.get("default_image")) if "default_image" in source else defaults["default_image"]
     return {
         "schema_version": 1,
         "base_url": base_url or defaults["base_url"],
@@ -335,7 +405,7 @@ def normalize_footer(value: Any) -> dict[str, Any]:
                 "text": _pair(raw.get("text"), {"en": "", "zh": ""}, 300),
                 "url": _safe_http_url(raw.get("url"), allow_relative=True, allow_mailto=True),
                 "icon": icon if icon in ICONS else "none",
-                "custom_icon": _safe_http_url(raw.get("custom_icon"), allow_relative=True),
+                "custom_icon": _image_path(raw.get("custom_icon")),
                 "alignment": alignment if alignment in ALIGNMENTS else "center",
                 "new_tab": bool(raw.get("new_tab")),
             }
@@ -400,6 +470,7 @@ def normalize_error_page(value: Any) -> dict[str, Any]:
 def normalized_site_settings(value: Any, data: dict[str, Any] | None = None) -> dict[str, Any]:
     source = value if isinstance(value, dict) else {}
     return {
+        "general": normalize_general(source.get("general")),
         "footer": normalize_footer(source.get("footer")),
         "seo": normalize_seo(source.get("seo"), data),
         "analytics": normalize_analytics(source.get("analytics")),
@@ -412,6 +483,7 @@ def current_site_settings(data: dict[str, Any]) -> dict[str, Any]:
     settings = data.get("settings") if isinstance(data.get("settings"), dict) else {}
     return normalized_site_settings(
         {
+            "general": settings.get("general"),
             "footer": settings.get("footer"),
             "seo": settings.get("seo"),
             "analytics": settings.get("analytics"),
@@ -424,6 +496,13 @@ def current_site_settings(data: dict[str, Any]) -> dict[str, Any]:
 
 def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> None:
     normalized = normalized_site_settings(value, data)
+    general = normalized["general"]
+    for field in ("image", "fallback"):
+        path = general["cover"][field]
+        if path and not path.startswith("assets/images/") and not path.startswith(("http://", "https://")):
+            raise ValueError(f"Cover {field} must use assets/images/ or a complete web URL.")
+    if not general["identity"]["brand"]["en"] and not general["identity"]["brand"]["zh"]:
+        raise ValueError("Navigation brand needs English or Chinese text.")
     seo = normalized["seo"]
     base = urlparse(seo["base_url"])
     if base.scheme not in {"http", "https"} or not base.netloc:
@@ -444,6 +523,8 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
             raise ValueError(f"Footer item {item['id']} needs English or Chinese text.")
         if item["icon"] == "other" and not item["custom_icon"]:
             raise ValueError(f"Footer item {item['id']} needs a custom icon path.")
+        if item["custom_icon"] and not item["custom_icon"].startswith("assets/images/") and not item["custom_icon"].startswith(("http://", "https://")):
+            raise ValueError(f"Footer item {item['id']} custom icon must use assets/images/ or a complete web URL.")
     analytics = normalized["analytics"]
     if analytics["enabled"] and analytics["provider"] == "cloudflare":
         if not CLOUDFLARE_TOKEN.fullmatch(analytics["cloudflare_token"]):

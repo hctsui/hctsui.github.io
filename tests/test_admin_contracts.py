@@ -219,11 +219,10 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn('data-database-type="people">人名連結', people)
         self.assertIn('data-tab="siteSettings">網站設定', settings)
         order = [
-            settings.index('data-site-settings-section="footer">頁尾'),
+            settings.index('data-site-settings-section="general">一般設定'),
             settings.index('data-site-settings-section="contactForm">聯絡表單'),
             settings.index('data-site-settings-section="seo">SEO／OG'),
             settings.index('data-site-settings-section="analytics">流量統計'),
-            settings.index('data-site-settings-section="errorPage">404 頁面'),
         ]
         self.assertEqual(order, sorted(order))
         self.assertIn("site-settings-nav-shell,.database-type-shell", settings)
@@ -239,7 +238,7 @@ class SiteSettingsContracts(unittest.TestCase):
             "書籍",
             "日曆",
             "其他圖標檔案路徑",
-            "assets/icons/my-icon.svg",
+            "assets/images/my-icon.svg",
             "超連結（選填）",
             "靠左",
             "置中",
@@ -268,6 +267,10 @@ class SiteSettingsContracts(unittest.TestCase):
             "網站設定：${total} 項實際變更",
             'data-contact-panel="form"',
             'data-contact-panel="design"',
+            "['cover','封面照片編輯']",
+            "['navigation','導覽列調整']",
+            "['footer','頁尾設定']",
+            "['error','404 頁面設計']",
             "data-contact-page-field",
             "data-contact-color",
         ):

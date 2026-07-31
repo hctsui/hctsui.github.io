@@ -335,11 +335,11 @@ def render_home_profile_hero(data: dict[str, Any], lang: str) -> str:
         photo = (
             '<div class="home-visual"><div class="home-visual-panel">'
             '<figure class="home-portrait"><img alt="風景照片" '
-            'data-photo-candidates="../assets/photo-960.webp|../photo.jpg" '
+            'data-photo-candidates="../assets/images/photo-960.webp|../assets/images/photo.jpg" '
             'decoding="async" fetchpriority="high" height="720" '
             'sizes="(max-width: 800px) 100vw, 45vw" '
-            'src="../assets/photo-960.webp" '
-            'srcset="../assets/photo-640.webp 640w, ../assets/photo-960.webp 960w, ../assets/photo-1440.webp 1440w" '
+            'src="../assets/images/photo-960.webp" '
+            'srcset="../assets/images/photo-640.webp 640w, ../assets/images/photo-960.webp 960w, ../assets/images/photo-1440.webp 1440w" '
             'width="960"/><figcaption>日本福岡志賀島，2025 年 9 月</figcaption>'
             '</figure></div></div>'
         )
@@ -347,11 +347,11 @@ def render_home_profile_hero(data: dict[str, Any], lang: str) -> str:
         photo = (
             '<div class="home-visual"><div class="home-visual-panel">'
             '<figure class="home-portrait"><img alt="Landscape photograph" '
-            'data-photo-candidates="assets/photo-960.webp|photo.jpg" '
+            'data-photo-candidates="assets/images/photo-960.webp|assets/images/photo.jpg" '
             'decoding="async" fetchpriority="high" height="720" '
             'sizes="(max-width: 800px) 100vw, 45vw" '
-            'src="assets/photo-960.webp" '
-            'srcset="assets/photo-640.webp 640w, assets/photo-960.webp 960w, assets/photo-1440.webp 1440w" '
+            'src="assets/images/photo-960.webp" '
+            'srcset="assets/images/photo-640.webp 640w, assets/images/photo-960.webp 960w, assets/images/photo-1440.webp 1440w" '
             'width="960"/><figcaption>Shikanoshima, Fukuoka · September 2025</figcaption>'
             '</figure></div></div>'
         )

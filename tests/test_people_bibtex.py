@@ -196,8 +196,9 @@ class BibtexTests(unittest.TestCase):
         self.assertIn('data-citation-format="bibtex"', rendered)
         self.assertIn('data-citation-format="bibitem"', rendered)
         self.assertIn('class="citation-panel"', rendered)
-        self.assertIn("Copy BibTeX", rendered)
+        self.assertIn("Copy biblatex", rendered)
         self.assertIn(r"Copy \bibitem", rendered)
+        self.assertIn(">Cite</button>", rendered)
         self.assertIn(r"LaTeX \bibitem", rendered)
         self.assertNotIn("\b", rendered)
 

@@ -102,7 +102,7 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
         )
     desc = inline_value(entry, "description", lang)
     return (
-        f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}">'
+        f'<article class="timeline-item" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}">'
         f'<time>{esc(display_range(entry))}</time><div><h3>{title}</h3>{badge}'
         f'{f"<p>{desc}</p>" if desc else ""}{slides}</div></article>'
     )
@@ -115,7 +115,7 @@ def render_organization(entry: dict[str, Any], lang: str) -> str:
     meta = "".join(f'<span class="organization-badge">{x}</span>' for x in (kind, role) if x)
     desc = inline_value(entry, "description", lang)
     return (
-        f'<article class="timeline-item organization-item" data-entry-id="{esc(entry.get("id"))}">'
+        f'<article class="timeline-item organization-item" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}">'
         f'<time>{esc(display_range(entry))}</time><div><div class="organization-meta">{meta}</div>'
         f'<h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</div></article>'
     )
@@ -124,7 +124,7 @@ def render_organization(entry: dict[str, Any], lang: str) -> str:
 def render_honor(entry: dict[str, Any], lang: str) -> str:
     title = linked_title(entry, lang)
     org = inline_value(entry, "organization", lang)
-    return f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}"><time>{esc(entry.get("year"))}</time><div><h3>{title}</h3>{f"<p>{org}</p>" if org else ""}</div></article>'
+    return f'<article class="timeline-item" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}"><time>{esc(entry.get("year"))}</time><div><h3>{title}</h3>{f"<p>{org}</p>" if org else ""}</div></article>'
 
 
 
@@ -287,17 +287,17 @@ def bibtex_controls(entry: dict[str, Any], lang: str) -> str:
     bibtex_id = f"{identifier}-bibtex"
     bibitem_id = f"{identifier}-bibitem"
     copied_label = "已複製" if lang == "zh" else "Copied"
-    copy_bibtex = "複製 BibTeX" if lang == "zh" else "Copy BibTeX"
+    copy_bibtex = "複製 biblatex" if lang == "zh" else "Copy biblatex"
     copy_bibitem = r"複製 \bibitem" if lang == "zh" else r"Copy \bibitem"
     dialog_label = "引用格式" if lang == "zh" else "Citation formats"
     choose_label = "選擇格式後可直接複製" if lang == "zh" else "Choose a format, then copy it."
     close_label = "關閉" if lang == "zh" else "Close"
-    bibtex_format_label = "BibTeX"
+    bibtex_format_label = "biblatex"
     bibitem_format_label = r"LaTeX \bibitem"
     return (
         f'<button class="publication-action pub-citation-toggle" type="button" '
         f'data-bibtex-toggle="{esc(identifier)}" data-citation-toggle="{esc(identifier)}" '
-        f'aria-controls="{esc(identifier)}" aria-expanded="false">BibTeX</button>'
+        f'aria-controls="{esc(identifier)}" aria-expanded="false">Cite</button>'
         f'<div class="citation-panel" id="{esc(identifier)}" hidden>'
         f'<div class="citation-panel-header"><div><strong>{esc(dialog_label)}</strong>'
         f'<span>{esc(choose_label)}</span></div>'
@@ -306,7 +306,7 @@ def bibtex_controls(entry: dict[str, Any], lang: str) -> str:
         f'<div class="citation-format-tabs" role="tablist" aria-label="{esc(dialog_label)}">'
         f'<button type="button" class="citation-format-tab active" role="tab" aria-selected="true" '
         f'aria-controls="{esc(bibtex_id)}" data-citation-panel="{esc(identifier)}" '
-        f'data-citation-format="bibtex"><span>BibTeX</span><small>.bib</small></button>'
+        f'data-citation-format="bibtex"><span>biblatex</span><small>.bib</small></button>'
         f'<button type="button" class="citation-format-tab" role="tab" aria-selected="false" '
         f'aria-controls="{esc(bibitem_id)}" data-citation-panel="{esc(identifier)}" '
         f'data-citation-format="bibitem"><span>LaTeX \\bibitem</span><small>thebibliography</small></button></div>'
@@ -336,7 +336,7 @@ def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool 
     authors = link_author_html(authors, PEOPLE, lang)
     venue = inline_value(entry, "venue", lang)
     return (
-        f'<article class="publication" data-entry-id="{esc(entry.get("id"))}"><div class="pub-year">{esc(entry.get("year"))}</div><div>'
+        f'<article class="publication" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}"><div class="pub-year">{esc(entry.get("year"))}</div><div>'
         f'<h3>{title}</h3><p class="authors">{authors}</p><p class="venue">{venue}</p>{links}</div></article>'
     )
 
@@ -362,58 +362,97 @@ def _counterpart_href(page: dict[str, Any], lang: str) -> str:
     return path if lang == "en" else f"../{path}"
 
 
-def render_site_navigation(data: dict[str, Any], current_page_id: str, lang: str) -> str:
+def _navigation_href(data: dict[str, Any], page: dict[str, Any], lang: str, *, absolute: bool = False) -> str:
+    path = str((page.get("path") or {}).get(lang) or "")
+    if not path:
+        return ""
+    if absolute:
+        return _absolute_url(current_site_settings(data)["seo"]["base_url"], path)
+    return page_href(data, str(page.get("id") or ""), lang)
+
+
+def render_site_navigation(
+    data: dict[str, Any],
+    current_page_id: str,
+    lang: str,
+    *,
+    absolute: bool = False,
+    language_button: bool = False,
+) -> str:
     pages = normalized_pages(data)
+    settings = current_site_settings(data)
+    general = settings["general"]
+    navigation_settings = general["navigation"]
     links: list[str] = []
     for page in pages:
         if page.get("show_in_navigation", True) is False:
             continue
-        if not str((page.get("path") or {}).get(lang) or ""):
-            continue
-        href = page_href(data, str(page.get("id") or ""), lang)
+        href = _navigation_href(data, page, lang, absolute=absolute)
         if not href:
             continue
         label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
         active = str(page.get("id") or "") == current_page_id
         attrs = ' class="active" aria-current="page"' if active else ""
-        links.append(
-            f'<a{attrs} data-nav="{esc(page.get("id"))}" href="{esc(href)}">{esc(label)}</a>'
-        )
+        links.append(f'<a{attrs} data-nav="{esc(page.get("id"))}" href="{esc(href)}">{esc(label)}</a>')
 
-    home_href = page_href(data, "home", lang)
-    if home_href:
+    home_page = next((page for page in pages if page.get("id") == "home"), None)
+    home_href = _navigation_href(data, home_page, lang, absolute=absolute) if home_page else ""
+    if home_href and navigation_settings.get("show_contact_shortcut", True):
         contact_label = "聯絡" if lang == "zh" else "Contact"
         if current_page_id == "contact":
-            contact_href = "contact.html"
-            links.append(f'<a class="active" aria-current="page" data-nav="contact" href="{contact_href}">{contact_label}</a>')
+            contact_href = _absolute_url(settings["seo"]["base_url"], "zh/contact.html" if lang == "zh" else "contact.html") if absolute else "contact.html"
+            links.append(f'<a class="active" aria-current="page" data-nav="contact" href="{esc(contact_href)}">{contact_label}</a>')
         else:
             links.append(f'<a data-nav="contact" href="{esc(home_href)}#contact">{contact_label}</a>')
 
-    if current_page_id == "contact":
-        counterpart = "../contact.html" if lang == "zh" else "zh/contact.html"
-    else:
-        current = next((page for page in pages if page.get("id") == current_page_id), None)
-        counterpart = _counterpart_href(current, lang) if current else ""
-    if counterpart:
+    if navigation_settings.get("search_enabled", True):
+        placeholder = navigation_settings["search_placeholder"][lang]
+        label = navigation_settings["search_label"][lang]
+        index_url = _absolute_url(settings["seo"]["base_url"], "content/search-index.json") if absolute else ("../content/search-index.json" if lang == "zh" else "content/search-index.json")
+        links.append(
+            '<div class="site-search" data-site-search>'
+            f'<label class="sr-only" for="site-search-{lang}-{esc(current_page_id or "page")}">{esc(label)}</label>'
+            f'<input id="site-search-{lang}-{esc(current_page_id or "page")}" type="search" autocomplete="off" '
+            f'placeholder="{esc(placeholder)}" aria-label="{esc(label)}" data-search-index="{esc(index_url)}" data-search-language="{lang}">'
+            '<div class="site-search-results" data-search-results hidden></div></div>'
+        )
+
+    if language_button:
         label = "中文" if lang == "en" else "English"
         aria = "切換至中文版" if lang == "en" else "Switch to English"
-        links.append(
-            f'<a aria-label="{aria}" class="language-toggle" href="{esc(counterpart)}">{label}</a>'
-        )
-    return '<nav aria-label="Primary navigation" class="site-nav" id="site-nav">' + "".join(links) + "</nav>"
+        links.append(f'<button aria-label="{aria}" class="language-toggle nav-language-button" type="button" data-switch-language>{label}</button>')
+    else:
+        if current_page_id == "contact":
+            counterpart = "../contact.html" if lang == "zh" else "zh/contact.html"
+        else:
+            current = next((page for page in pages if page.get("id") == current_page_id), None)
+            counterpart = _counterpart_href(current, lang) if current else ""
+        if counterpart:
+            label = "中文" if lang == "en" else "English"
+            aria = "切換至中文版" if lang == "en" else "Switch to English"
+            links.append(f'<a aria-label="{aria}" class="language-toggle" href="{esc(counterpart)}">{label}</a>')
+    return '<nav aria-label="Primary navigation" class="site-nav" id="site-nav-' + esc(lang) + '">' + "".join(links) + "</nav>"
 
+
+def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *, absolute: bool = False, language_button: bool = False) -> str:
+    general = current_site_settings(data)["general"]
+    brand = general["identity"]["brand"][lang] or general["identity"]["brand"]["en"] or "HC Tsui"
+    menu = general["identity"]["menu_label"][lang]
+    home_page = next((page for page in normalized_pages(data) if page.get("id") == "home"), None)
+    home_href = _navigation_href(data, home_page, lang, absolute=absolute) if home_page else "/"
+    nav = render_site_navigation(data, current_page_id, lang, absolute=absolute, language_button=language_button)
+    return (
+        '<header class="site-header"><div class="container nav-wrap">'
+        f'<a class="brand" href="{esc(home_href)}">{esc(brand)}</a>'
+        f'<button aria-controls="site-nav-{lang}" aria-expanded="false" class="menu-button" type="button">{esc(menu)}</button>'
+        f'{nav}</div></header>'
+    )
 
 def replace_navigation(text: str, data: dict[str, Any], current_page_id: str, lang: str) -> str:
-    navigation = render_site_navigation(data, current_page_id, lang)
-    updated, count = re.subn(
-        r'<nav\b(?=[^>]*\bclass="[^"]*\bsite-nav\b[^"]*")[^>]*>.*?</nav>',
-        lambda _: navigation,
-        text,
-        count=1,
-        flags=re.S,
-    )
+    header = render_site_header(data, current_page_id, lang)
+    updated, count = re.subn(r'<header\b(?=[^>]*\bclass="[^"]*\bsite-header\b[^"]*")[^>]*>.*?</header>', lambda _: header, text, count=1, flags=re.S)
     if count != 1:
-        raise RuntimeError("Could not replace site navigation")
+        raise RuntimeError("Could not replace site header/navigation")
     return updated
 
 
@@ -432,13 +471,13 @@ def render_teaching(data: dict[str, Any], entry: dict[str, Any], lang: str) -> s
         notes_title = plain_value(entry, "lecture_notes_title", lang) or ("講義" if lang == "zh" else "Lecture Notes")
         links.append(f'<a href="{esc(notes_url)}" rel="noopener" target="_blank">{esc(notes_title)}</a>')
     links_html = f'<div class="item-links">{"".join(links)}</div>' if links else ""
-    return f'<article class="teaching-card" data-entry-id="{esc(entry.get("id"))}"><div class="date">{term}</div><div><h3>{course}</h3>{f"<p class=\"venue\">{role}</p>" if role else ""}{links_html}</div></article>'
+    return f'<article class="teaching-card" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}"><div class="date">{term}</div><div><h3>{course}</h3>{f"<p class=\"venue\">{role}</p>" if role else ""}{links_html}</div></article>'
 
 
 def render_interest(entry: dict[str, Any], lang: str) -> str:
     title = linked_title(entry, lang)
     desc = rich_html(plain_value(entry, "description", lang))
-    return f'<article class="interest-summary-item" data-entry-id="{esc(entry.get("id"))}"><h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</article>'
+    return f'<article class="interest-summary-item" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}"><h3>{title}</h3>{f"<p>{desc}</p>" if desc else ""}</article>'
 
 
 def render_education(entry: dict[str, Any], lang: str) -> str:
@@ -447,7 +486,7 @@ def render_education(entry: dict[str, Any], lang: str) -> str:
     org = rich_html(plain_value(entry, "organization", lang))
     desc = rich_html(plain_value(entry, "description", lang))
     detail = " · ".join(x for x in (org, desc) if x)
-    return f'<article data-entry-id="{esc(entry.get("id"))}"><time>{esc(when)}</time><div><h3>{title}</h3>{f"<p>{detail}</p>" if detail else ""}</div></article>'
+    return f'<article id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}"><time>{esc(when)}</time><div><h3>{title}</h3>{f"<p>{detail}</p>" if detail else ""}</div></article>'
 
 
 def render_generic(entry: dict[str, Any], lang: str) -> str:
@@ -763,6 +802,42 @@ def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
     return f'<section class="page-hero"><div class="container"><p class="section-label">{label}</p><h1 class="page-title">{title}</h1><p class="page-intro">{intro}</p>{download}</div></section>'
 
 
+def render_home_cover(data: dict[str, Any], lang: str) -> str:
+    cover = current_site_settings(data)["general"]["cover"]
+    image = str(cover.get("image") or "assets/images/photo-960.webp")
+    fallback = str(cover.get("fallback") or "assets/images/photo.jpg")
+    prefix = "../" if lang == "zh" else ""
+    def rel(path: str) -> str:
+        return path if re.match(r"^https?://", path, flags=re.I) else prefix + path
+    image_url = rel(image)
+    fallback_url = rel(fallback)
+    srcset = ""
+    match = re.fullmatch(r"assets/images/(.+?)-(640|960|1440)\.(webp|avif|jpg|jpeg|png)", image, flags=re.I)
+    if match:
+        stem, _, ext = match.groups()
+        candidates = []
+        for width in (640, 960, 1440):
+            candidate = ROOT / f"assets/images/{stem}-{width}.{ext}"
+            if candidate.exists():
+                candidates.append(f"{rel(candidate.relative_to(ROOT).as_posix())} {width}w")
+        if candidates:
+            srcset = f' srcset="{esc(", ".join(candidates))}" sizes="(max-width: 800px) 100vw, 45vw"'
+    candidates = "|".join(dict.fromkeys([image_url, fallback_url]))
+    return (
+        '<div class="home-visual"><div class="home-visual-panel"><figure class="home-portrait">'
+        f'<img alt="{esc(cover["alt"][lang])}" data-photo-candidates="{esc(candidates)}" decoding="async" '
+        f'fetchpriority="high" src="{esc(image_url)}"{srcset} style="object-position:{esc(cover["object_position"])}">'
+        f'<figcaption>{esc(cover["caption"][lang])}</figcaption></figure></div></div>'
+    )
+
+
+def apply_home_cover(hero: str, data: dict[str, Any], lang: str) -> str:
+    cover = render_home_cover(data, lang)
+    updated, count = re.subn(r'<div class="home-visual">.*?</div></div></div></section>', lambda _: cover + '</div></section>', hero, count=1, flags=re.S)
+    if count == 1:
+        return updated
+    return hero
+
 def extract_home_hero(text: str) -> str:
     match = re.search(r'(<section class="home-hero".*?</section>)', text, flags=re.S)
     if not match:
@@ -1000,33 +1075,23 @@ def page_theme_style(color: str) -> str:
     return f"--accent:{value};--accent-dark:{dark};--accent-soft:{soft}"
 
 
+def apply_static_asset_paths(text: str, lang: str) -> str:
+    prefix = "../" if lang == "zh" else ""
+    patterns = {
+        r"(?:\.\./)?assets/favicon\.svg": f"{prefix}assets/images/favicon.svg",
+        r"(?:\.\./)?assets/photo-640\.webp": f"{prefix}assets/images/photo-640.webp",
+        r"(?:\.\./)?assets/photo-960\.webp": f"{prefix}assets/images/photo-960.webp",
+        r"(?:\.\./)?assets/photo-1440\.webp": f"{prefix}assets/images/photo-1440.webp",
+        r"(?<!assets/images/)(?:\.\./)?photo\.jpg": f"{prefix}assets/images/photo.jpg",
+    }
+    for pattern, replacement in patterns.items():
+        text = re.sub(pattern, replacement, text)
+    return text
+
+
 def apply_page_theme(text: str, page: dict[str, Any]) -> str:
     style = page_theme_style(str(page.get("color") or ""))
     return re.sub(r'(<body\b[^>]*?)(?:\sstyle="[^"]*")?(>)', rf'\1 style="{style}"\2', text, count=1)
-
-
-def _not_found_navigation(data: dict[str, Any], lang: str, base_url: str) -> str:
-    links = []
-    for page in normalized_pages(data):
-        if page.get("show_in_navigation", True) is False:
-            continue
-        path = str((page.get("path") or {}).get(lang) or "")
-        if not path:
-            continue
-        label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
-        links.append(f'<a href="{esc(_absolute_url(base_url, path))}">{esc(label)}</a>')
-    home_path = next(
-        (str((page.get("path") or {}).get(lang) or "") for page in normalized_pages(data) if page.get("id") == "home"),
-        "",
-    )
-    if home_path:
-        contact_label = "聯絡" if lang == "zh" else "Contact"
-        contact_path = "zh/contact.html" if lang == "zh" else "contact.html"
-        if current_site_settings(data).get("contact_form", {}).get("enabled"):
-            links.append(f'<a href="{esc(_absolute_url(base_url, contact_path))}">{contact_label}</a>')
-        else:
-            links.append(f'<a href="{esc(_absolute_url(base_url, home_path))}#contact">{contact_label}</a>')
-    return '<nav class="not-found-nav" aria-label="Website navigation">' + "".join(links) + "</nav>"
 
 
 def render_404_page(data: dict[str, Any], today: date) -> str:
@@ -1039,15 +1104,11 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
         "en": _absolute_url(base, "index.html"),
         "zh": _absolute_url(base, "zh/index.html"),
     }
-    secondary = {
-        lang: _absolute_url(base, error["secondary_url"][lang])
-        for lang in ("en", "zh")
-    }
+    secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    language_payload = json.dumps(
-        {"home": home, "redirect": error["auto_redirect"]},
-        ensure_ascii=False, separators=(",", ":"),
-    )
+    script_url = _absolute_url(base, "assets/script.js")
+    favicon_url = _absolute_url(base, "assets/images/favicon.svg")
+    language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))
 
     def language_panel(lang: str) -> str:
         redirect_text = "Returning home in {seconds} seconds." if lang == "en" else "將在 {seconds} 秒後返回首頁。"
@@ -1059,20 +1120,12 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
             )
         secondary_button = ""
         if error["secondary_label"][lang]:
-            secondary_button = (
-                f'<a class="not-found-button secondary" href="{esc(secondary[lang])}">'
-                f'{esc(error["secondary_label"][lang])}</a>'
-            )
+            secondary_button = f'<a class="not-found-button secondary" href="{esc(secondary[lang])}">{esc(error["secondary_label"][lang])}</a>'
         footer = render_footer(data, lang, today) if error["show_footer"] else ""
-        nav = _not_found_navigation(data, lang, base) if error["show_navigation"] else ""
-        switch_label = "中文" if lang == "en" else "English"
+        header = render_site_header(data, "404", lang, absolute=True, language_button=True) if error["show_navigation"] else ""
         return f'''<div class="not-found-language" data-language="{lang}" hidden>
-          <header class="not-found-header">
-            <a class="not-found-brand" href="{esc(home[lang])}">{esc(seo["site_name"][lang])}</a>
-            {nav}
-            <button class="not-found-language-button" type="button" data-switch-language>{switch_label}</button>
-          </header>
-          <main class="not-found-main">
+          {header}
+          <main class="not-found-main" id="main-{lang}">
             <section class="not-found-card">
               <div class="not-found-code">404</div>
               <p class="not-found-eyebrow">{esc(error["eyebrow"][lang])}</p>
@@ -1095,15 +1148,13 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>404 | {esc(seo["site_name"]["en"])}</title>
+  <link rel="icon" href="{esc(favicon_url)}" type="image/svg+xml">
   <link rel="stylesheet" href="{esc(css_url)}">
+  <script defer src="{esc(script_url)}"></script>
   <style>
     :root{{--nf-background:{colors["background"]};--nf-surface:{colors["surface"]};--nf-accent:{colors["accent"]};--nf-text:{colors["text"]};--nf-muted:{colors["muted"]};--nf-button:{colors["button"]};--nf-button-text:{colors["button_text"]}}}
     body{{margin:0;background:var(--nf-background);color:var(--nf-text)}}
     .not-found-language{{min-height:100vh;display:flex;flex-direction:column}}
-    .not-found-header{{width:min(1120px,calc(100% - 32px));margin:auto;padding:24px 0;display:flex;align-items:center;gap:20px}}
-    .not-found-brand{{font-family:Georgia,"Times New Roman",serif;font-size:1.2rem;font-weight:800;color:var(--nf-text);text-decoration:none}}
-    .not-found-nav{{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}}.not-found-nav a{{color:var(--nf-muted);font-weight:700;text-decoration:none}}.not-found-nav a:hover{{color:var(--nf-accent)}}
-    .not-found-language-button{{border:1px solid color-mix(in srgb,var(--nf-text) 20%,transparent);border-radius:999px;background:var(--nf-surface);color:var(--nf-text);padding:8px 12px;font:inherit;font-weight:800;cursor:pointer}}
     .not-found-main{{width:min(900px,calc(100% - 32px));margin:auto;flex:1;display:grid;place-items:center;padding:48px 0 72px}}
     .not-found-card{{width:100%;text-align:center;padding:clamp(36px,7vw,76px);border:1px solid color-mix(in srgb,var(--nf-text) 14%,transparent);border-radius:28px;background:var(--nf-surface);box-shadow:0 24px 60px color-mix(in srgb,var(--nf-text) 10%,transparent)}}
     .not-found-code{{font:800 clamp(4.5rem,16vw,9rem)/.85 Georgia,"Times New Roman",serif;color:color-mix(in srgb,var(--nf-accent) 18%,transparent)}}
@@ -1115,7 +1166,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     .not-found-button{{display:inline-flex;padding:11px 17px;border-radius:999px;font-weight:850;text-decoration:none;border:1px solid var(--nf-button)}}
     .not-found-button.primary{{background:var(--nf-button);color:var(--nf-button-text)}}.not-found-button.secondary{{background:transparent;color:var(--nf-button)}}
     .not-found-language .site-footer{{margin-top:auto}}
-    @media(max-width:760px){{.not-found-nav{{display:none}}.not-found-header{{justify-content:space-between}}}}
+    .nav-language-button{{font:inherit;cursor:pointer}}
   </style>
 </head>
 <body data-page="404">
@@ -1140,8 +1191,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
   </script>
 </body>
 </html>'''
-    page = apply_cloudflare_analytics(page, data)
-    return page
+    return apply_analytics(page, data)
 
 
 def site_today(data: dict[str, Any], override: str | None = None) -> date:
@@ -1170,13 +1220,14 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             categories = categories_for_page(data, page_id)
             if page_id == "home":
                 sections = render_home_sections(data, categories, lang, today)
-                content = extract_home_hero(old) + sections
+                content = apply_home_cover(extract_home_hero(old), data, lang) + sections
             else:
                 rendered = [render_category(data, c, lang, today, i) for i, c in enumerate(categories)]
                 sections = "".join(x for x in rendered if x)
                 content = page_header(data, page_id, lang) + sections
             new = replace_main(old, content)
             new = replace_navigation(new, data, page_id, lang)
+            new = apply_static_asset_paths(new, lang)
             new = apply_page_theme(new, page)
             new = apply_seo_metadata(new, data, page, lang)
             updated_value = f"{today.year}/{today.month}/{today.day}" if update_date else _existing_updated(old, lang, today)
@@ -1197,6 +1248,7 @@ def build(today: date, update_date: bool = True) -> list[Path]:
         shell = custom_page_shell(contact_page, lang)
         new = replace_main(shell, render_contact_page_main(data, lang))
         new = replace_navigation(new, data, "contact", lang)
+        new = apply_static_asset_paths(new, lang)
         if not contact_design.get("show_navigation", True):
             new = re.sub(r'<nav\b(?=[^>]*\bclass="[^"]*\bsite-nav\b[^"]*")[^>]*>.*?</nav>', "", new, count=1, flags=re.S)
             new = re.sub(r'<button\b(?=[^>]*\bclass="[^"]*\bmenu-button\b[^"]*")[^>]*>.*?</button>', "", new, count=1, flags=re.S)
@@ -1219,6 +1271,10 @@ def build(today: date, update_date: bool = True) -> list[Path]:
     if error_new != error_old:
         error_path.write_text(error_new, encoding="utf-8")
         changed.append(error_path)
+    from build_media_manifest import main as build_media_manifest
+    from build_search_index import main as build_search_index
+    build_media_manifest()
+    build_search_index()
     return changed
 
 

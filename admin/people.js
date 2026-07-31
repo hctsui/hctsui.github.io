@@ -1,6 +1,9 @@
 /* Person-link database and click-only author suggestions. */
 (function installPeopleManager(){
   const PEOPLE_DRAFT_KEY='hctsui-people-draft';
+  const PEOPLE_AUDIT_IGNORE_KEY='hctsui-people-audit-ignore-v1';
+  let peopleAuditItems=[];
+  let ignoredPeopleAudits=new Set(JSON.parse(localStorage.getItem(PEOPLE_AUDIT_IGNORE_KEY)||'[]'));
   let peopleRemote={schema_version:1,people:[]};
   let peopleDraft={schema_version:1,people:[]};
   let peopleReady=false;
@@ -103,11 +106,44 @@
     const status=document.querySelector('#peopleStatus');
     if(status){status.className='notice '+(errors.length?'error':peopleDirty()?'success':'');status.innerHTML=errors.length?`<strong>不能送出：</strong>${errors.map(esc).join('；')}`:peopleDirty()?`已修改人名連結資料；目前 ${peopleDraft.people.length} 人，會和本次批次一起送出。`:`目前 ${peopleDraft.people.length} 人；尚未修改。`;}
   }
+  function exactPerson(value){
+    const key=normalizeKey(value);if(!key)return null;
+    const matches=normalizePeople(peopleDraft).people.filter(person=>[person.name.en,person.name.zh,...person.aliases].some(candidate=>normalizeKey(candidate)===key));
+    return matches.length===1?matches[0]:null;
+  }
+  function peopleAuditSignature(recordId,index,current,expected){return [recordId,index,current.en,current.zh,expected.en,expected.zh].join('\u0001');}
+  function buildPeopleAudit(){
+    const items=[];if(typeof effectiveSite!=='function'||typeof allRecords!=='function'||typeof authorPairs!=='function')return items;
+    for(const record of allRecords(effectiveSite())){
+      if(record.type!=='publication')continue;
+      authorPairs(record.authors).forEach((current,index)=>{
+        const person=exactPerson(current.en)||exactPerson(current.zh);if(!person||!person.name.en||!person.name.zh)return;
+        const expected={en:person.name.en,zh:person.name.zh};
+        if(normalizeSpace(current.en)===expected.en&&normalizeSpace(current.zh)===expected.zh)return;
+        items.push({record,index,current:{en:current.en||'',zh:current.zh||''},expected,person,signature:peopleAuditSignature(record.id,index,current,expected)});
+      });
+    }
+    peopleAuditItems=items;return items;
+  }
+  function savePeopleAuditIgnore(){localStorage.setItem(PEOPLE_AUDIT_IGNORE_KEY,JSON.stringify([...ignoredPeopleAudits]));}
+  function applyPeopleAudit(items){
+    if(typeof queueOperation!=='function')return;
+    const grouped=new Map();for(const item of items){if(!grouped.has(item.record.id))grouped.set(item.record.id,[]);grouped.get(item.record.id).push(item);}
+    for(const [id,group] of grouped){const current=allRecords(effectiveSite()).find(row=>row.id===id);if(!current)continue;const after=clone(current),rows=authorPairs(after.authors);for(const item of group){while(rows.length<=item.index)rows.push({en:'',zh:''});rows[item.index]=clone(item.expected);ignoredPeopleAudits.delete(item.signature);}after.authors={en:formatEnglishAuthors(rows.map(row=>row.en)),zh:formatChineseAuthors(rows.map(row=>row.zh))};if(typeof htmlPair==='function')after.authors_html=htmlPair(after.authors);queueOperation({op:'update',type:after.type,id:after.id,before:current,after,notes:[`依人名連結修正 ${group.length} 位作者`]});}
+    savePeopleAuditIgnore();renderPeopleManager();if(typeof flash==='function')flash(`已將 ${items.length} 個人名欄位加入修改草稿`);
+  }
+  function renderPeopleAudit(){
+    const root=document.querySelector('#peopleAudit');if(!root)return;const all=buildPeopleAudit(),active=all.filter(item=>!ignoredPeopleAudits.has(item.signature)),ignored=all.length-active.length;
+    if(!all.length){root.innerHTML='<div class="notice success"><strong>一致性檢查完成：</strong>目前論文作者都符合人名連結資料。</div>';return;}
+    const rows=active.slice(0,80).map((item,index)=>`<div class="audit-item"><div><span class="audit-badge">論文</span> <strong>${esc(item.record.title?.zh||item.record.title?.en||item.record.id)}</strong></div><div class="muted">作者 ${item.index+1} · ${esc(item.person.id)}</div><div class="audit-values"><div><strong>目前</strong><br><code>${esc(item.current.en)} ↔ ${esc(item.current.zh)}</code></div><div><strong>人名連結規定</strong><br><code>${esc(item.expected.en)} ↔ ${esc(item.expected.zh)}</code></div></div><div class="actions"><button class="button primary" data-people-audit-apply="${index}">單筆更改</button><button class="button" data-people-audit-ignore="${index}">忽略</button></div></div>`).join('');
+    root.innerHTML=`<div class="notice ${active.length?'error':'success'}"><div class="audit-toolbar"><strong>人名一致性檢查：${active.length} 個待處理${ignored?`，${ignored} 個已忽略`:''}</strong>${active.length?'<button class="button primary" data-people-audit-apply-all>一鍵全部更改</button><button class="button" data-people-audit-ignore-all>全部忽略</button>':''}${ignored?'<button class="button" data-people-audit-clear-ignore>清除忽略</button>':''}</div><p class="field-hint">精確比對論文作者的中英文姓名與別名。更改會加入一般修改草稿，送出前仍可預覽或移除。</p></div>${active.length?`<div class="audit-list">${rows}</div>`:''}`;
+  }
   function renderPeopleManager(){
     const root=document.querySelector('#peopleDatabasePane');if(!root)return;
     const q=normalizeKey(document.querySelector('#peopleSearch')?.value);
     const rows=normalizePeople(peopleDraft).people.map((person,index)=>({person,index})).filter(({person})=>!q||[person.name.en,person.name.zh,person.url,...person.aliases].some(v=>normalizeKey(v).includes(q)));
     renderPeopleStatus();
+    renderPeopleAudit();
     const list=document.querySelector('#peopleRows');if(list)list.innerHTML=rows.length?rows.map(({person,index})=>personRowHtml(person,index)).join(''):'<p class="muted">沒有符合的人名。</p>';
   }
   function addPerson(){
@@ -189,7 +225,7 @@
     if(!document.querySelector('#databaseTypeTabs')){
       dictionaryTab.insertAdjacentHTML('afterbegin',`<div class="database-type-shell"><div class="database-type-tabs" id="databaseTypeTabs"><button class="button active" type="button" data-database-type="translations">中英對照</button><button class="button" type="button" data-database-type="people">人名連結</button></div></div>`);
     }
-    if(!document.querySelector('#peopleDatabasePane'))dictionaryTab.insertAdjacentHTML('beforeend',`<div id="peopleDatabasePane" hidden><p class="muted">集中管理中英文姓名、其他拼法與學術網址。整個網站的可見文字都會精確比對；作者欄位只顯示候選，必須手動點選才會填入。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增人名</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleRows" class="scroll"></div></div>`);
+    if(!document.querySelector('#peopleDatabasePane'))dictionaryTab.insertAdjacentHTML('beforeend',`<div id="peopleDatabasePane" hidden><p class="muted">集中管理中英文姓名、其他拼法與學術網址。整個網站的可見文字都會精確比對；作者欄位只顯示候選，必須手動點選才會填入。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增人名</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleAudit"></div><div id="peopleRows" class="scroll"></div></div>`);
     document.querySelector('#databaseTypeTabs')?.addEventListener('click',event=>{const button=event.target.closest('[data-database-type]');if(button)setDatabaseType(button.dataset.databaseType);});
     document.querySelector('#peopleSearch')?.addEventListener('input',renderPeopleManager);
     document.querySelector('#addPerson')?.addEventListener('click',addPerson);
@@ -203,6 +239,7 @@
     });
     document.querySelector('#peopleRows')?.addEventListener('change',()=>renderPeopleManager());
     document.querySelector('#peopleRows')?.addEventListener('click',event=>{const button=event.target.closest('[data-remove-person]');if(!button)return;const index=Number(button.dataset.removePerson);if(confirm('刪除這筆人名連結？')){peopleDraft.people.splice(index,1);savePeopleLocal();}});
+    document.querySelector('#peopleAudit')?.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;const active=peopleAuditItems.filter(item=>!ignoredPeopleAudits.has(item.signature));if(button.dataset.peopleAuditApply!==undefined){const item=active[Number(button.dataset.peopleAuditApply)];if(item)applyPeopleAudit([item]);}else if(button.dataset.peopleAuditIgnore!==undefined){const item=active[Number(button.dataset.peopleAuditIgnore)];if(item){ignoredPeopleAudits.add(item.signature);savePeopleAuditIgnore();renderPeopleAudit();}}else if(button.dataset.peopleAuditApplyAll!==undefined)applyPeopleAudit(active);else if(button.dataset.peopleAuditIgnoreAll!==undefined){active.forEach(item=>ignoredPeopleAudits.add(item.signature));savePeopleAuditIgnore();renderPeopleAudit();}else if(button.dataset.peopleAuditClearIgnore!==undefined){ignoredPeopleAudits.clear();savePeopleAuditIgnore();renderPeopleAudit();}});
     setDatabaseType(localStorage.getItem('hctsui-database-type')||'translations');
   }
 

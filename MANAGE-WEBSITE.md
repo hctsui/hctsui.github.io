@@ -84,7 +84,7 @@
 
 ## 頁面與類別
 
-頁面與類別都從「新增」建立，也能在「項目」搜尋與編輯。系統頁面「聯絡表單頁面」與「404 頁面」也會出現在頁面清單；它們不能刪除，按「編輯」會直接開啟對應的網站設定。
+頁面與類別都從「新增」建立，也能在「項目」搜尋與編輯。系統頁面「聯絡表單頁面」與「404 頁面」也會出現在頁面清單；它們不能刪除。404 的編輯入口會開啟「網站設定 → 一般設定 → 404 頁面設計」。
 
 - 頁面可設為雙語、僅中文或僅英文；建立後語言版本固定。
 - 類別可編輯中英文小字、大標題、簡介、所在頁面，以及是否顯示於網站或 PDF。
@@ -117,10 +117,11 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - 編輯論文作者時，輸入框下方只會列出可能的人名；必須手動點選才會填入，不會因相似姓名自動替換。
 - 人名精確比對會套用到整個公開網站，包括首頁說明、指導教授、活動、教學及論文作者。既有超連結、粗體、程式碼、數學標記與 BibTeX 不會被重複包覆。
 - 人名資料保存於 `content/people.json`；沒有匹配或沒有網址時維持普通文字，PDF CV 不加入人名連結。
+- 「人名一致性檢查」會掃描論文作者的中英文配對，找出與人名資料庫標準姓名不一致的項目。操作方式和「中英對照」一致，可逐筆套用、全部套用、忽略或清除忽略；修正仍先進入一般草稿。
 
-## 論文 BibTeX 與 arXiv 通知
+## 論文引用與 arXiv 通知
 
-- 公開網站的 BibTeX 使用和 arXiv、PDF 相同的膠囊按鈕樣式；點擊後可在 **BibTeX** 與 **LaTeX `\bibitem`** 間切換，兩種格式都有獨立複製按鈕。
+- 公開網站的引用入口顯示為 **Cite**，並和 arXiv、PDF 使用完全相同的膠囊按鈕樣式；點擊後可在 **biblatex** 與 **LaTeX `ibitem`** 間切換，兩種格式都有獨立複製按鈕。
 - 論文表單可分別手動覆寫 BibTeX 與 `\bibitem`；任一欄留白時，網站會依作者、題目、年份、arXiv／DOI 自動產生。
 - `.github/workflows/check-arxiv.yml` 每週一上午 9:15（Asia/Tokyo）執行，也可從 Actions 手動執行。
 - `tools/check_arxiv.py` 使用 arXiv 官方 API 搜尋 `Hung-Chun Tsui`，再以完整作者姓名做第二次精確比對，避免只因姓氏或相似姓名而產生通知。
@@ -132,47 +133,57 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ## 網站設定
 
-「網站設定」依序分成 **頁尾 → 聯絡表單 → SEO／OG → 流量統計 → 404 頁面**。五個區塊都沿用本機草稿、右側逐欄預覽、Batch Issue、衝突檢查與七日還原。網站設定有修改時，也會在主「草稿」分頁顯示一筆管理列，可直接修改、預覽或移除。
+「網站設定」依序分成 **一般設定 → 聯絡表單 → SEO／OG → 流量統計**。四個區塊都沿用本機草稿、右側逐欄預覽、Batch Issue、衝突檢查與七日還原；網站設定草稿會和內容草稿一起顯示在主「草稿」分頁。
 
-### 頁尾
+### 一般設定
 
-- 頁尾可新增多個中英文項目，設定超連結、是否開新分頁、靠左／置中／靠右及上下順序。
-- 預覽分成英文與中文兩列，使用固定高對比配色，不會因公開網站的頁尾顏色而看不清楚。
-- 小圖標選單順序為：無圖標、版權、連結、地點、書籍、日曆、其他。
-- 選擇「其他」時，必須填入已放在 repository 中的圖檔相對路徑，例如 `assets/icons/my-icon.svg`；也可使用完整 `https://` 網址。
-- 頁尾文字支援 `{year}` 與 `{updated}`，分別代入目前年份和網站最後更新日期。
+進入一般設定後，先選擇與「新增活動」相同形式的功能按鈕：
 
+- **封面照片編輯**：選擇首頁封面、備用圖片、雙語替代文字、說明文字及圖片對齊位置。圖片欄位會搜尋 `assets/images/` 的媒體索引並提供可點選候選。
+- **導覽列調整**：啟用或關閉頂部搜尋框、設定中英文 placeholder、管理聯絡表單捷徑，並可直接前往頁面順序及「顯示於導覽列」設定。
+- **頁尾設定**：新增中英文項目、超連結、圖標、開新分頁、對齊方式及順序。選擇自訂圖標時，建議放在 `assets/images/`，並可從媒體候選選取。
+- **404 頁面設計**：沿用原本完整的 404 文字、按鈕、倒數、頁尾及配色接口。404 現在與一般頁面共用完全相同的網站導覽列、搜尋框、語言切換及選單行為。
+- **網站識別**：設定導覽列品牌名稱及行動版選單文字。
+
+頁面本身是否顯示在導覽列與順序，仍在「頁面與類別／排序」管理；一般設定的「導覽列調整」提供入口與搜尋功能設定，不建立第二份頁面清單。
+
+### 頂部搜尋
+
+- 搜尋框會出現在所有公開頁面的頂部導覽列，包含 404。
+- 搜尋資料由 `tools/build_search_index.py` 從目前的頁面、類別與項目生成至 `content/search-index.json`。
+- 搜尋結果依目前語言顯示，並可直接前往對應頁面或項目錨點。
+- 關閉搜尋後，所有頁面會同步隱藏搜尋框，不需要逐頁修改 HTML。
+
+### 圖片與媒體檔案
+
+- 公開圖片統一放在 `assets/images/`。現有封面與 favicon 已遷移到該資料夾，建置器會把舊路徑轉成新路徑以維持相容。
+- OG 預設圖片、各頁 OG 圖片、封面照片及自訂圖標欄位會讀取 `content/media.json`，輸入檔名關鍵字即可選取 repository 內的圖片。
+- 演講投影片統一放在 `files/slides/`；論文 PDF 統一放在 `files/papers/`。
+- 連結欄位會依欄位用途與目前項目的標題、年份等資料，從媒體索引顯示相似檔名候選。點選候選只填入路徑，不會自動發布或覆蓋檔案。
+- `tools/build_media_manifest.py` 每次建置會重新產生 `content/media.json`；新增檔案後不需要手動編輯索引。
 
 ### 聯絡表單
 
-- 首頁不再直接嵌入完整表單。聯絡區會新增一個與 Email、Affiliation 相同格式的 **Contact Form／聯絡表單** 項目，連結文字為 **Fill out／填寫**。
-- 聯絡區固定排列為：第一列兩個 Email；第二列 Affiliation 與 Contact Form；Address & office 橫跨最下方兩欄。
+- 首頁不直接嵌入完整表單。聯絡區會顯示 **Contact Form／聯絡表單** 項目，連結文字為 **Fill out／填寫**。
 - 點「Fill out／填寫」會開啟獨立的 `contact.html` 或 `zh/contact.html`。
-- Admin 的「網站設定 → 聯絡表單」先顯示 **表單設定** 與 **頁面設計** 兩個選項。表單設定管理傳送方式與欄位文字；頁面設計管理小標、標題、說明、導覽列、頁尾與配色，並提供即時預覽。
-- 可選擇 **Web3Forms Email** 或 **Cloudflare Worker 橋接**。「通知信固定主旨」會用於每一封信，訪客填寫的主旨只放在信件內容中。
-- Email 模式只需要 Web3Forms Access Key；Worker 模式會另外建立不含個資的匿名 Admin 通知。
+- Admin 先顯示 **表單設定** 與 **頁面設計**。表單設定管理傳送方式、固定 Email 主旨與欄位文字；頁面設計管理雙語標題、導覽列、頁尾與配色。
+- 可選 **Web3Forms Email** 或 **Cloudflare Worker 橋接**。固定通知主旨會套用到每一封信，訪客填寫的主旨只放在信件內容中。
+- Email 模式只需要 Web3Forms Access Key；Worker 模式會另外建立不含個資的匿名 Admin 通知。GitHub Actions 與 Pages 發布可能造成短暫延遲。
 - 完整姓名、Email、訪客主旨與訊息不會寫入公開 repository。
 - 詳細步驟見 `integrations/CONTACT-FORM-SETUP.md`。
 
 ### SEO／OG
 
 - 可設定基準網址、網站名稱、預設分享圖片，以及每頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。
+- 圖片欄位可直接搜尋並選擇 `assets/images/` 中的圖片。
 - 建置時自動產生 canonical、Open Graph、Twitter Card、中文／英文 hreflang 與 x-default。
 
-### Cloudflare Web Analytics
+### 流量統計
 
-- 流量統計預設關閉；啟用後填入 Cloudflare Web Analytics 的 32 字元 Site Token。
-- 產生器只把 Cloudflare beacon 加入公開頁面與 `404.html`，不會加入 `/admin/`。
-- 關閉功能或清空 Token 後，下一次建置會移除先前由系統加入的 beacon。
-
-### 404 頁面
-
-- 「項目 → 頁面」會列出「404 頁面」；按「編輯」會直接開啟「網站設定 → 404 頁面」。
-- GitHub Pages 使用 repository 根目錄的 `404.html` 顯示自訂錯誤頁面。
-- 可編輯中英文小標、標題、說明、首頁按鈕、次要按鈕與次要網址。
-- 可選擇是否顯示導覽列、共用頁尾，以及是否在 1–300 秒後自動返回相同語言的首頁。
-- 可調整背景、卡片、強調色、主要文字、說明文字、按鈕及按鈕文字顏色，Admin 會即時預覽。
-- 404 頁固定輸出 `noindex,nofollow`，不會被當作正常內容建立索引。
+- 可選 Cloudflare Web Analytics 或 Google Analytics 4，同一時間只啟用一個，避免重複計數。
+- Cloudflare 使用 32 字元 Site Token；Google 使用 `G-...` Measurement ID。既有 Cloudflare Token 會自動沿用。
+- 追蹤碼只加入公開頁面與 `404.html`，不加入 `/admin/`。
+- Admin 不直接保存私密報表憑證；請使用設定頁中的按鈕開啟官方儀表板。
 
 ### 網站設定草稿與預覽
 
@@ -191,16 +202,21 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - `content/translations.json`：中英字詞與標籤。
 - `content/people.json`：中英文姓名、其他拼法與學術網址。
 - `content/arxiv-suggestions.json`：arXiv 查詢設定、待處理候選與忽略清單。
+- `content/media.json`：由 repository 圖片、投影片與論文 PDF 自動生成的媒體索引。
+- `content/search-index.json`：公開網站雙語搜尋索引。
 - `404.html`：由網站設定產生的雙語自訂錯誤頁。
 - `admin/index.html`：內容編輯介面。
 - `admin/layout.js`：頁面、類別與統一排序管理。
-- `admin/people.js`：資料庫的人名連結管理與作者候選建議。
+- `admin/people.js`：資料庫的人名連結管理、作者候選建議與人名一致性檢查。
 - `admin/arxiv-notifications.js`：頁首論文通知、加入草稿與忽略操作。
-- `admin/site-settings.js`：頁尾、SEO／OG、Cloudflare 流量統計與 404 管理。
+- `admin/site-settings.js`：一般設定、聯絡表單、SEO／OG、流量統計及網站設定草稿。
 - `admin/homepage.js`：首頁雙欄、一般內容風格編輯與 Admin 相容修正。
+- `admin/media.js`：圖片、投影片與論文 PDF 的 repository 媒體候選。
 - `admin/guide.html`：完整操作手冊。
 - `tools/process_batch_request.py`：批次套用、衝突檢查與七日還原。
-- `tools/build_site.py`：中英文網站、頁尾、SEO／OG、分析 beacon 與 404 生成。
+- `tools/build_site.py`：中英文網站、共用導覽、搜尋、封面、SEO／OG、分析 beacon 與 404 生成。
+- `tools/build_media_manifest.py`：掃描 `assets/images/`、`files/slides/`、`files/papers/` 並生成媒體索引。
+- `tools/build_search_index.py`：生成公開網站雙語搜尋索引。
 - `tools/check_arxiv.py`：查詢 arXiv 官方 API 並更新候選通知。
 - `tools/site_settings_config.py`：網站設定的預設值、正規化與驗證。
 - `tools/build_cv.py`：中英文 LaTeX 履歷生成。

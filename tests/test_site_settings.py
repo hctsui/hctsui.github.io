@@ -101,7 +101,7 @@ class SiteSettingsTests(unittest.TestCase):
         settings = current_site_settings(data)
         settings["footer"]["items"] = [
             {"id": "left", "text": {"en": "{year} Hung-Chun Tsui", "zh": ""}, "url": "", "icon": "copyright", "custom_icon": "", "alignment": "left", "new_tab": False},
-            {"id": "center", "text": {"en": "Project", "zh": ""}, "url": "https://example.com", "icon": "other", "custom_icon": "assets/icons/project.svg", "alignment": "center", "new_tab": True},
+            {"id": "center", "text": {"en": "Project", "zh": ""}, "url": "https://example.com", "icon": "other", "custom_icon": "assets/images/project.svg", "alignment": "center", "new_tab": True},
             {"id": "right", "text": {"en": "Updated {updated}", "zh": ""}, "url": "", "icon": "none", "custom_icon": "", "alignment": "right", "new_tab": False},
         ]
         data["settings"].update(settings)
@@ -110,7 +110,7 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertIn("footer-center", rendered)
         self.assertIn("footer-right", rendered)
         self.assertIn('class="footer-custom-icon"', rendered)
-        self.assertIn('src="https://hctsui.github.io/assets/icons/project.svg"', rendered)
+        self.assertIn('src="https://hctsui.github.io/assets/images/project.svg"', rendered)
         self.assertIn('target="_blank"', rendered)
         self.assertIn("2026 Hung-Chun Tsui", rendered)
         self.assertIn("Updated 2026/8/1", rendered)

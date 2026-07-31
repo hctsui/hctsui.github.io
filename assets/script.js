@@ -1,22 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.querySelector(".menu-button");
-  const nav = document.querySelector(".site-nav");
-
-  const closeMenu = () => {
-    if (!button || !nav) return;
-    nav.classList.remove("open");
-    button.setAttribute("aria-expanded", "false");
-  };
-
-  if (button && nav) {
+  document.querySelectorAll(".menu-button").forEach((button) => {
+    const navId = button.getAttribute("aria-controls");
+    const nav = navId ? document.getElementById(navId) : button.closest(".nav-wrap")?.querySelector(".site-nav");
+    if (!nav) return;
+    const closeMenu = () => {
+      nav.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    };
     button.addEventListener("click", () => {
       const open = nav.classList.toggle("open");
       button.setAttribute("aria-expanded", String(open));
     });
-
     nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && nav.classList.contains("open")) {
         closeMenu();
         button.focus();
       }
@@ -24,17 +21,77 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (event) => {
       if (!nav.contains(event.target) && !button.contains(event.target)) closeMenu();
     });
-  }
+  });
 
   const page = document.body.dataset.page;
-  const active = document.querySelector(`[data-nav="${page}"]`);
-  if (active) {
+  document.querySelectorAll(`[data-nav="${CSS.escape(page || "")}"]`).forEach((active) => {
     active.classList.add("active");
     active.setAttribute("aria-current", "page");
-  }
+  });
 
   const year = document.querySelector("#year");
   if (year) year.textContent = new Date().getFullYear();
+
+  const indexCache = new Map();
+  const normalize = (value) => String(value || "").normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
+  const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[char]));
+  const loadIndex = async (url) => {
+    if (!indexCache.has(url)) {
+      indexCache.set(url, fetch(url, { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      }).then((data) => Array.isArray(data.items) ? data.items : []));
+    }
+    return indexCache.get(url);
+  };
+  document.querySelectorAll("[data-site-search]").forEach((shell) => {
+    const input = shell.querySelector("input[data-search-index]");
+    const results = shell.querySelector("[data-search-results]");
+    if (!input || !results) return;
+    let activeIndex = -1;
+    const close = () => { results.hidden = true; results.innerHTML = ""; activeIndex = -1; };
+    const move = (delta) => {
+      const links = [...results.querySelectorAll("a")];
+      if (!links.length) return;
+      activeIndex = (activeIndex + delta + links.length) % links.length;
+      links.forEach((link, index) => link.classList.toggle("active", index === activeIndex));
+      links[activeIndex].scrollIntoView({ block: "nearest" });
+    };
+    input.addEventListener("input", async () => {
+      const query = normalize(input.value);
+      if (query.length < 2) return close();
+      try {
+        const lang = input.dataset.searchLanguage || document.documentElement.lang || "en";
+        const items = (await loadIndex(input.dataset.searchIndex)).filter((item) => item.language === lang);
+        const matched = items.map((item) => {
+          const title = normalize(item.title), description = normalize(item.description);
+          let score = 99;
+          if (title === query) score = 0;
+          else if (title.startsWith(query)) score = 1;
+          else if (title.includes(query)) score = 2;
+          else if (description.includes(query)) score = 3;
+          return { item, score };
+        }).filter((row) => row.score < 99).sort((a, b) => a.score - b.score || a.item.title.localeCompare(b.item.title)).slice(0, 8);
+        activeIndex = -1;
+        if (!matched.length) {
+          results.innerHTML = `<div class="site-search-empty">${lang.startsWith("zh") ? "找不到結果" : "No results"}</div>`;
+        } else {
+          results.innerHTML = matched.map(({ item }) => `<a href="${escapeHtml(item.url)}"><strong>${escapeHtml(item.title)}</strong>${item.description ? `<span>${escapeHtml(item.description)}</span>` : ""}</a>`).join("");
+        }
+        results.hidden = false;
+      } catch {
+        results.innerHTML = `<div class="site-search-empty">${document.documentElement.lang.startsWith("zh") ? "搜尋索引暫時無法讀取" : "Search is temporarily unavailable"}</div>`;
+        results.hidden = false;
+      }
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") { event.preventDefault(); move(1); }
+      else if (event.key === "ArrowUp") { event.preventDefault(); move(-1); }
+      else if (event.key === "Enter" && activeIndex >= 0) { event.preventDefault(); results.querySelectorAll("a")[activeIndex]?.click(); }
+      else if (event.key === "Escape") close();
+    });
+    document.addEventListener("click", (event) => { if (!shell.contains(event.target)) close(); });
+  });
 
   /* Load MathJax only on pages that actually contain inline TeX delimiters. */
   const text = document.body.textContent || "";

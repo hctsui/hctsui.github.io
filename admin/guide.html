@@ -26,7 +26,7 @@
       <li><a href="#home-profile">首頁內容</a></li>
       <li><a href="#homepage">首頁精選</a></li>
       <li><a href="#database">資料庫</a></li>
-      <li><a href="#site-settings">頁尾、SEO／OG、流量統計與 404</a></li>
+      <li><a href="#site-settings">一般設定、聯絡表單、SEO／OG 與流量統計</a></li>
       <li><a href="#drafts">草稿與預覽</a></li>
       <li><a href="#submit">GitHub 送出</a></li>
       <li><a href="#preflight">送出前檢查</a></li>
@@ -102,7 +102,7 @@
         </ul>
         <h3>頁面與類別</h3>
         <p>頁面與類別從「新增」建立，也會出現在「項目」清單。頁面可選雙語、僅中文或僅英文，並可設定是否顯示於導覽列；類別可編輯中英文標題、簡介、所在頁面，以及網站／PDF 顯示狀態。</p>
-        <ul><li>關閉「顯示於導覽列」只會隱藏導覽按鈕，不會刪除頁面或使網址失效。</li><li>一般網站與 404 頁面共用同一份導覽設定；新增頁面或調整順序後，重建網站會自動同步所有頁面。</li><li>「聯絡表單頁面」與「404 頁面」是不可刪除的系統頁面；在「項目」按編輯會直接跳到對應的網站設定。</li><li>語言切換按鈕固定顯示「中文」或「English」。</li></ul>
+        <ul><li>關閉「顯示於導覽列」只會隱藏導覽按鈕，不會刪除頁面或使網址失效。</li><li>一般網站與 404 頁面共用同一份導覽設定；新增頁面或調整順序後，重建網站會自動同步所有頁面。</li><li>「聯絡表單頁面」與「404 頁面」是不可刪除的系統頁面；404 的編輯入口會開啟「網站設定 → 一般設定 → 404 頁面設計」。</li><li>語言切換按鈕固定顯示「中文」或「English」。</li></ul>
         <p>類別表單中的用途說明會以一般小字顯示，不會使用佔版面的大型提示框。類別的顯示風格建立後固定；需要另一種排版時，新增對應風格的類別，再透過項目編輯或排序中的「搬移」轉移項目。</p>
         <h3>PDF 履歷的主標題與子標題</h3>
         <p>PDF 履歷的主區段使用較粗的完整橫線；作品類別（例如 Preprints、Journal Articles）與教學機構（例如 National Tsing Hua University）使用較小標題與較淡的右側橫線。橫線使用可在一般段落中穩定顯示的水平填滿線，而不是只在 section 標題環境有效的命令。這是共用的子標題樣式，日後新增作品類別或其他教學學校時會自動沿用。</p>
@@ -144,15 +144,15 @@
           <li>編輯論文作者時，只在輸入框下方顯示可能人名；必須手動點選才會填入，不會自動替換相似姓名。</li>
           <li>一般雙語欄位使用自動補齊時，會先精確查詢人名連結，再查一般中英對照；只有完整姓名或別名唯一匹配時才會補入另一語言。</li>
           <li>建置網站時，人名資料會套用到整個公開網站，包括首頁說明、指導教授、活動、教學與論文作者。共同作者連結使用一般字重和細底線，publication 中你的姓名仍維持粗體；既有超連結、程式碼與 BibTeX 不會被重複包覆。</li>
-          <li>人名網址集中保存在 <code>content/people.json</code>；沒有匹配或沒有網址時仍顯示普通文字，PDF CV 不加入人名連結。</li>
+          <li>人名網址集中保存在 <code>content/people.json</code>；沒有匹配或沒有網址時仍顯示普通文字，PDF CV 不加入人名連結。</li><li>「人名一致性檢查」會掃描論文作者的中英文姓名配對，找出與人名資料庫標準姓名不一致的資料；可逐筆套用、全部套用、忽略或清除忽略，修正仍先進入草稿。</li>
           <li>每篇論文可分別貼入正式 BibTeX 與 LaTeX <code>\bibitem</code>；留白時系統會自動產生基本引用。</li>
           <li>自動引用 key 使用作者姓氏首字母大寫連接，再加年份後兩碼，例如 <code>T26</code>、<code>CCHT25</code>；同組作者同一年有多篇時會加 <code>a</code>、<code>b</code>、<code>c</code>。兩種格式共用同一個 key。</li>
           <li>arXiv 預設使用相容 BibTeX／biblatex 的 <code>@misc</code>，包含 arXiv ID、<code>archivePrefix</code>、可取得時的 <code>primaryClass</code> 與網址。</li>
           <li>題目可用 <code>[i]...[/i]</code>、<code>[b]...[/b]</code> 和 <code>$...$</code>；常見數論符號以靜態方式渲染。</li>
         </ul>
-        <h3>BibTeX 與 arXiv 論文通知</h3>
+        <h3>引用與 arXiv 論文通知</h3>
         <ul>
-          <li>公開網站的 BibTeX 與 arXiv、PDF 使用相同的膠囊按鈕樣式；展開後可切換 BibTeX 或 LaTeX <code>\bibitem</code>，並各自複製。</li>
+          <li>公開網站的引用入口顯示為 <strong>Cite</strong>，並與 arXiv、PDF 使用相同的膠囊按鈕樣式；展開後可切換 biblatex 或 LaTeX <code>\bibitem</code>，並各自複製。</li>
           <li>頁首「通知」位於「開啟完整使用手冊」左側；數字是尚未處理的 arXiv 候選論文。</li>
           <li>系統每週依作者 <code>Hung-Chun Tsui</code> 查詢 arXiv，再以完整作者姓名精確比對；結果不會自動公開。</li>
           <li>按「加入新增草稿」會建立一般論文草稿並直接開啟編輯表單。請補上或確認中文題目、中文作者、PDF 與期刊資訊。</li>
@@ -163,46 +163,50 @@
       </section>
 
       <section id="site-settings">
-        <h2>網站設定：頁尾、聯絡表單、SEO／OG、流量統計與 404</h2>
-        <p>「網站設定」依序分成「頁尾」、「聯絡表單」、「SEO／OG」、「流量統計」、「404 頁面」。子分頁和上方主分頁之間保留明顯間距；五個區塊都沿用本機草稿、逐欄預覽、Batch Issue、衝突檢查與七日還原。網站設定有修改時，也會出現在主「草稿」分頁。</p>
-        <h3>頁尾</h3>
+        <h2>網站設定：一般設定、聯絡表單、SEO／OG 與流量統計</h2>
+        <p>上方依序為「一般設定」、「聯絡表單」、「SEO／OG」、「流量統計」。所有區塊共用本機草稿、逐欄預覽、Batch Issue、衝突檢查與七日還原；網站設定變更也會列在主「草稿」分頁。</p>
+        <h3>一般設定</h3>
+        <p>先從功能按鈕選擇要編輯的區塊，操作方式與「新增活動」及聯絡表單子功能一致。</p>
         <ul>
-          <li>英文與中文預覽分開顯示，採固定高對比配色，不受公開網站頁尾顏色影響。</li>
-          <li>每個項目可輸入中英文文字、設定超連結、是否開新分頁、靠左／置中／靠右，以及上下順序。</li>
-          <li>圖標選單順序為：無圖標、版權、連結、地點、書籍、日曆、其他。</li>
-          <li>選擇「其他」後，填入 repository 內的圖檔路徑，例如 <code>assets/icons/my-icon.svg</code>；也可填完整 https 網址。</li>
-          <li>頁尾文字支援 <code>{year}</code> 與 <code>{updated}</code>。</li>
+          <li><strong>封面照片編輯：</strong>選擇首頁封面、備用圖片、雙語替代文字、說明及圖片對齊。輸入檔名時會從 <code>assets/images/</code> 顯示可點選候選。</li>
+          <li><strong>導覽列調整：</strong>啟用公開網站頂部搜尋框、設定中英文 placeholder、管理聯絡表單捷徑，並可前往頁面順序及「顯示於導覽列」設定。</li>
+          <li><strong>頁尾設定：</strong>管理中英文項目、網址、圖標、開新分頁、對齊方式與順序。自訂圖標建議放在 <code>assets/images/</code>。</li>
+          <li><strong>404 頁面設計：</strong>沿用原本的雙語文字、按鈕、倒數、頁尾及配色接口；404 現在與其他頁面使用完全相同的導覽列、搜尋框、語言切換及行動版選單。</li>
+          <li><strong>網站識別：</strong>設定導覽列品牌文字及行動版選單文字。</li>
         </ul>
-
+        <h3>頂部搜尋</h3>
+        <ul>
+          <li>搜尋框顯示於所有公開頁面的頂部導覽列，包含 404。</li>
+          <li>結果依目前語言搜尋頁面、類別與項目，並可直接跳到項目錨點。</li>
+          <li>索引由 <code>tools/build_search_index.py</code> 自動生成至 <code>content/search-index.json</code>。</li>
+        </ul>
+        <h3>圖片與 repository 媒體</h3>
+        <ul>
+          <li>所有公開圖片統一放在 <code>assets/images/</code>；封面、OG 圖片及自訂圖標欄位皆可搜尋並點選該資料夾中的圖片。</li>
+          <li>演講投影片放在 <code>files/slides/</code>，論文 PDF 放在 <code>files/papers/</code>。</li>
+          <li>網址欄位會依輸入關鍵字及目前項目的標題、年份等資料，顯示相似檔名候選。</li>
+          <li><code>tools/build_media_manifest.py</code> 會在建置時重新生成 <code>content/media.json</code>，不需手動維護索引。</li>
+        </ul>
         <h3>聯絡表單</h3>
         <ul>
-          <li>首頁聯絡區只顯示一個與其他聯絡資料同格式的「Contact Form／聯絡表單」入口；按「Fill out／填寫」開啟獨立表單頁面。</li>
-          <li>首頁排列為兩個 Email、Affiliation／Contact Form 兩欄，以及最下方橫跨兩欄的 Address &amp; office。</li>
-          <li>進入聯絡表單設定後，先選「表單設定」或「頁面設計」。頁面設計可調整雙語頁首、導覽列、頁尾、背景、卡片、文字與按鈕顏色。</li>
-          <li>「通知信固定主旨」會套用到每一封信；訪客填寫的主旨保留在信件內容裡。</li>
-          <li>Email 模式只需 Web3Forms Access Key；Worker 模式會寄信並建立匿名通知。</li>
+          <li>首頁聯絡區只顯示 Contact Form／聯絡表單入口；按 Fill out／填寫開啟獨立表單頁。</li>
+          <li>進入設定後，先選「表單設定」或「頁面設計」。固定通知信主旨會套用到每一封信，訪客主旨只放在信件內容。</li>
+          <li>Email 模式只需 Web3Forms Access Key；Worker 模式會寄信並建立不含個資的匿名通知。GitHub Actions 與 Pages 發布可能造成短暫延遲。</li>
           <li>完整設定步驟見 <code>integrations/CONTACT-FORM-SETUP.md</code>。</li>
         </ul>
         <h3>SEO／OG</h3>
         <ul>
-          <li>可設定網站基準網址、網站名稱、預設分享圖片，以及各頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。</li>
+          <li>可設定網站基準網址、網站名稱、預設分享圖片，以及各頁中英文 SEO 與 OG 欄位。</li>
+          <li>預設分享圖片與各頁 OG 圖片可直接搜尋 <code>assets/images/</code> 的媒體候選。</li>
           <li>建置時自動生成 canonical、Open Graph、Twitter Card、中英文 hreflang 與 x-default。</li>
         </ul>
         <h3>流量統計</h3>
         <ul>
           <li>可選 Cloudflare Web Analytics 或 Google Analytics 4，同一時間只啟用一個。</li>
           <li>Cloudflare 使用 32 字元 Site Token；Google 使用 <code>G-...</code> Measurement ID。既有 Cloudflare Token 會自動沿用。</li>
-          <li>追蹤碼只會加入公開網站與 <code>404.html</code>，不會追蹤 <code>/admin/</code>；切換提供者時會移除另一家的追蹤碼。</li>
-          <li>Admin 不直接顯示報表，因為靜態公開頁面無法安全保存報表 API 憑證。請使用分頁中的按鈕開啟 Cloudflare 或 Google 官方儀表板。</li>
+          <li>追蹤碼只加入公開網站與 <code>404.html</code>，不加入 <code>/admin/</code>。</li>
         </ul>
-        <h3>404 頁面</h3>
-        <ul>
-          <li>可編輯中英文小標、標題、說明、首頁按鈕、次要按鈕與網址。</li>
-          <li>可選擇是否顯示導覽列、共用頁尾，以及是否在 1–300 秒後自動返回相同語言的首頁。</li><li>404 導覽列會依各頁面的「顯示於導覽列」設定自動更新，不必另外維護。</li>
-          <li>可調整背景、卡片、強調色、主要文字、說明文字、按鈕與按鈕文字顏色，並在 Admin 即時預覽。</li>
-          <li>404 固定輸出 <code>noindex,nofollow</code>。</li>
-        </ul>
-        <div class="callout success"><strong>網站設定改回原值時會自動取消修改狀態。</strong>右側預覽會逐欄列出真正的修改前後值，不再只顯示頁面數或項目數。</div>
+        <div class="callout success"><strong>網站設定改回原值時會自動取消修改狀態。</strong>右側預覽會逐欄列出真正的修改前後值；主「草稿」分頁也會顯示網站設定草稿。</div>
       </section>
 
       <section id="drafts">

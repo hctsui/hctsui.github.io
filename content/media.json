@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "images": [
+    {
+      "path": "assets/images/favicon.svg",
+      "name": "favicon.svg",
+      "label": "favicon",
+      "extension": ".svg",
+      "size": 226,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/photo-1440.webp",
+      "name": "photo-1440.webp",
+      "label": "photo 1440",
+      "extension": ".webp",
+      "size": 170914,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/photo-640.webp",
+      "name": "photo-640.webp",
+      "label": "photo 640",
+      "extension": ".webp",
+      "size": 40610,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/photo-960.webp",
+      "name": "photo-960.webp",
+      "label": "photo 960",
+      "extension": ".webp",
+      "size": 82432,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/photo.jpg",
+      "name": "photo.jpg",
+      "label": "photo",
+      "extension": ".jpg",
+      "size": 3983664,
+      "kind": "images"
+    }
+  ],
+  "slides": [],
+  "papers": []
+}

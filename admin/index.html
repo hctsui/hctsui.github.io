@@ -1007,7 +1007,7 @@
         delete: "刪除",
         undo: "還原",
         reorder: "排序",
-        translations: "中英對照表",
+        translations: "中英對照",
         layout: "頁面與類別",
         homepage: "首頁精選",
         people: "人名連結",
@@ -1133,7 +1133,7 @@
           localStorage.setItem(STALE_TRANSLATION_KEY, JSON.stringify(saved));
           localStorage.removeItem(TRANSLATION_DRAFT_KEY);
           translationDraftNotice =
-            "遠端中英對照表已更新；為避免覆蓋新資料，舊草稿已另存為備份但未自動套用。";
+            "遠端中英對照已更新；為避免覆蓋新資料，舊草稿已另存為備份但未自動套用。";
           return clone(remote);
         } catch {
           localStorage.removeItem(TRANSLATION_DRAFT_KEY);
@@ -1185,7 +1185,7 @@
       function historyTitle(h) {
         if (!h) return "未命名";
         if (h.request_action === "translations" || h.action === "translations")
-          return "中英對照表";
+          return "中英對照";
         if (h.request_action === "people" || h.action === "people")
           return "人名連結資料";
         if (h.request_action === "site_settings" || h.action === "site_settings")
@@ -1882,7 +1882,7 @@
       }
       function authorFields(value = {}) {
         let rows = authorPairs(value);
-        return `<div class="field"><label>作者</label><div class="authors-editor" data-authors-editor><div data-author-rows>${rows.map((p, i) => authorRowHtml(p, i)).join("")}</div><div class="author-actions"><button class="button" type="button" data-add-author>＋ 新增作者</button></div><p class="field-hint">每位作者分開填寫，才能逐一使用中英對照表。英文會自動排成 A, B, and C；中文會排成 A, B, C。</p></div></div>`;
+        return `<div class="field"><label>作者</label><div class="authors-editor" data-authors-editor><div data-author-rows>${rows.map((p, i) => authorRowHtml(p, i)).join("")}</div><div class="author-actions"><button class="button" type="button" data-add-author>＋ 新增作者</button></div><p class="field-hint">每位作者分開填寫，才能逐一使用中英對照。英文會自動排成 A, B, and C；中文會排成 A, B, C。</p></div></div>`;
       }
       function formatEnglishAuthors(names) {
         let a = names.map((x) => String(x || "").trim()).filter(Boolean);
@@ -3478,7 +3478,7 @@
           .map((o) => {
             if (o.op === "headings") return headingPreviewHtml(o);
             if (o.op === "translations")
-              return `<details class="diff"><summary><strong>中英對照表</strong>：${o.before.pairs.length} → ${o.after.pairs.length} 組</summary><div class="preview-columns"><div class="preview-card"><h4>修改前</h4><div class="preview-value">${o.before.pairs.length} 組</div></div><div class="preview-card"><h4>修改後</h4><div class="preview-value">${o.after.pairs.length} 組</div></div></div></details>`;
+              return `<details class="diff"><summary><strong>中英對照</strong>：${o.before.pairs.length} → ${o.after.pairs.length} 組</summary><div class="preview-columns"><div class="preview-card"><h4>修改前</h4><div class="preview-value">${o.before.pairs.length} 組</div></div><div class="preview-card"><h4>修改後</h4><div class="preview-value">${o.after.pairs.length} 組</div></div></div></details>`;
             if (o.op === "people" && typeof peoplePreviewHtml === "function")
               return peoplePreviewHtml(o);
             if (o.op === "arxiv_suggestions" && typeof arxivSuggestionsPreviewHtml === "function")
@@ -3528,7 +3528,7 @@
                 )}${items.length > 40 ? `<div class="muted">另有 ${items.length - 40} 組未展開</div>` : ""}</div>`
             : `<p class="muted">${empty}</p>`;
         }
-        return `<div class="preview-card"><div class="order-diff-summary"><strong>中英對照表變更</strong><span class="tag">${before.length} → ${after.length} 組</span></div><div class="preview-columns"><div><h4>移除／修改前</h4>${rows(removed, "沒有移除的對照")}</div><div><h4>新增／修改後</h4>${rows(added, "沒有新增的對照")}</div></div></div>`;
+        return `<div class="preview-card"><div class="order-diff-summary"><strong>中英對照變更</strong><span class="tag">${before.length} → ${after.length} 組</span></div><div class="preview-columns"><div><h4>移除／修改前</h4>${rows(removed, "沒有移除的對照")}</div><div><h4>新增／修改後</h4>${rows(added, "沒有新增的對照")}</div></div></div>`;
       }
       function historyOperationPreviewHtml(h) {
         if (!h) return '<p class="muted">找不到歷史資料。</p>';
@@ -3703,7 +3703,7 @@
               ? validateHeadingsDraft()
               : [],
           p = payload();
-        if (errs.length) return flash("請先修正中英對照表衝突");
+        if (errs.length) return flash("請先修正中英對照衝突");
         if (peopleErrors.length)
           return flash("請先修正人名連結資料：" + peopleErrors[0]);
         if (siteSettingsErrors.length)
@@ -3955,6 +3955,7 @@
     <script src="homepage.js?v=20260801-1"></script>
     <script src="people.js?v=20260801-2"></script>
     <script src="notifications.js?v=20260801-1"></script>
+    <script src="media.js"></script>
     <script src="site-settings.js?v=20260801-2"></script>
   </body>
 </html>
