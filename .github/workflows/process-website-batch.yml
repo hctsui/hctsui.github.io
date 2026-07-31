@@ -50,7 +50,6 @@ jobs:
             python3 tools/build_site.py
             python3 tools/build_cv.py
             python3 tools/render_grouped_sections.py
-            python3 tools/build_dynamic_forms.py
             python3 tools/update_cv_links.py
             python3 tools/build_catalog.py
             python3 tools/validate_translations.py
@@ -58,8 +57,7 @@ jobs:
 
             git add content/site.json content/translations.json content/change-history.json \
               CONTENT-CATALOG.md cv/*.tex \
-              '*.html' \
-              zh .github/ISSUE_TEMPLATE
+              '*.html' zh
 
             if git diff --cached --quiet; then
               echo "No file change was required; treating this Issue as already applied."
@@ -112,7 +110,6 @@ jobs:
           gh issue close "${{ github.event.issue.number }}" \
             --repo "${{ github.repository }}" \
             || echo "::warning::資料已寫入，但無法自動關閉 Issue。"
-
 
   deploy-site:
     if: needs.update-site.result == 'success'
