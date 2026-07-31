@@ -182,6 +182,9 @@ class PeopleAndBibtexContracts(unittest.TestCase):
         ):
             self.assertIn(marker, people)
         self.assertNotIn("datalist", people)
+        self.assertIn("peopleExactCounterpart", people)
+        self.assertIn("applyPersonPair", ADMIN_PAGE)
+        self.assertIn('method = found.method || "人名連結"', ADMIN_PAGE)
 
     def test_publication_editor_has_optional_bibtex_field(self) -> None:
         for marker in (
@@ -191,6 +194,9 @@ class PeopleAndBibtexContracts(unittest.TestCase):
             "data-copy-bibtex",
             "data-copy-citation",
             "data-citation-format",
+            "publication-action",
+            "citation-panel",
+            "data-citation-close",
         ):
             self.assertIn(marker, ADMIN_PAGE + read("assets/script.js") + read("tools/build_site.py"))
 
@@ -241,7 +247,12 @@ class SiteSettingsContracts(unittest.TestCase):
         for marker in (
             "Cloudflare Web Analytics",
             "Cloudflare Site Token",
+            "Google Analytics 4",
+            "Google Analytics Measurement ID",
+            "開啟 Cloudflare 儀表板",
+            "開啟 Google Analytics 儀表板",
             "不會追蹤 <code>/admin/</code>",
+            "為什麼 Admin 不直接顯示統計數字？",
             "自動返回首頁",
             "幾秒後返回首頁",
             "恢復預設顏色",
@@ -252,6 +263,7 @@ class SiteSettingsContracts(unittest.TestCase):
             self.assertIn(marker, settings)
         self.assertIn("const equal=(a,b)=>JSON.stringify(stable(a))===JSON.stringify(stable(b))", settings)
         self.assertNotIn("draft=normalize(draft,siteDataCache)", settings)
+        self.assertNotIn("網站設定尚未修改。", settings)
 
     def test_seo_editor_exposes_page_specific_meta_and_og_fields(self) -> None:
         settings = read("admin/site-settings.js")

@@ -1,4 +1,4 @@
-/* Editable footer, SEO/Open Graph, Cloudflare analytics, and 404 page. */
+/* Editable footer, SEO/Open Graph, analytics providers, and 404 page. */
 (function installSiteSettingsManager(){
   const DRAFT_KEY='hctsui-site-settings-draft';
   const PAGE_LABELS={home:'首頁',cv:'履歷',publications:'論文',activities:'學術活動',teaching:'教學'};
@@ -63,7 +63,7 @@
         {id:'last-updated',text:{en:'Last updated: {updated}',zh:'最後更新：{updated}'},url:'',icon:'none',custom_icon:'',alignment:'right',new_tab:false},
       ]},
       seo:{schema_version:1,base_url:'https://hctsui.github.io',site_name:{en:'Hung-Chun Tsui',zh:'崔鴻竣'},default_image:'assets/photo-1440.webp',pages},
-      analytics:{schema_version:1,enabled:false,token:''},
+      analytics:{schema_version:2,enabled:false,provider:'cloudflare',cloudflare_token:'',google_measurement_id:''},
       error_page:{schema_version:1,
         eyebrow:{en:'Page not found',zh:'找不到頁面'},title:{en:'This page does not exist.',zh:'這個頁面不存在。'},
         description:{en:'The address may be outdated or mistyped. You can return to the homepage or continue browsing the website.',zh:'網址可能已更新或輸入有誤。你可以返回首頁，或繼續瀏覽網站內容。'},
@@ -93,7 +93,7 @@
     return {
       footer:{schema_version:2,items},
       seo:{schema_version:1,base_url:safeWebUrl(own(seoSource,'base_url')?seoSource.base_url:defaults.seo.base_url)||defaults.seo.base_url,site_name:pair(seoSource.site_name,defaults.seo.site_name,120),default_image:safeWebUrl(own(seoSource,'default_image')?seoSource.default_image:defaults.seo.default_image,{relative:true})||defaults.seo.default_image,pages},
-      analytics:{schema_version:1,enabled:Boolean(analyticsSource.enabled),token:text(analyticsSource.token,80)},
+      analytics:{schema_version:2,enabled:Boolean(analyticsSource.enabled),provider:['cloudflare','google'].includes(String(analyticsSource.provider||'cloudflare').toLowerCase())?String(analyticsSource.provider||'cloudflare').toLowerCase():'cloudflare',cloudflare_token:text(own(analyticsSource,'cloudflare_token')?analyticsSource.cloudflare_token:analyticsSource.token,80),google_measurement_id:text(analyticsSource.google_measurement_id,40).toUpperCase()},
       error_page:{schema_version:1,eyebrow:pair(errorSource.eyebrow,defaults.error_page.eyebrow,120),title:pair(errorSource.title,defaults.error_page.title,180),description:pair(errorSource.description,defaults.error_page.description,600),home_label:pair(errorSource.home_label,defaults.error_page.home_label,100),secondary_label:pair(errorSource.secondary_label,defaults.error_page.secondary_label,100),secondary_url:{en:safeWebUrl(errorSource.secondary_url?.en,{relative:true})||defaults.error_page.secondary_url.en,zh:safeWebUrl(errorSource.secondary_url?.zh,{relative:true})||defaults.error_page.secondary_url.zh},show_navigation:own(errorSource,'show_navigation')?Boolean(errorSource.show_navigation):true,show_footer:own(errorSource,'show_footer')?Boolean(errorSource.show_footer):true,auto_redirect:{enabled:Boolean(redirect.enabled),seconds},colors:Object.fromEntries(Object.entries(defaults.error_page.colors).map(([key,fallback])=>[key,hex(colors[key],fallback)]))},
     };
   }
@@ -114,7 +114,8 @@
       if(item.url&&!safeWebUrl(item.url,{relative:true,mailto:true}))errors.push(`頁尾第 ${index+1} 項網址格式不正確`);
       if(item.icon==='other'&&!item.custom_icon)errors.push(`頁尾第 ${index+1} 項選擇「其他」時必須填圖標檔案路徑`);
     });
-    if(value.analytics.enabled&&!/^[0-9a-f]{32}$/i.test(value.analytics.token))errors.push('Cloudflare Site Token 必須是 32 個十六進位字元');
+    if(value.analytics.enabled&&value.analytics.provider==='cloudflare'&&!/^[0-9a-f]{32}$/i.test(value.analytics.cloudflare_token))errors.push('Cloudflare Site Token 必須是 32 個十六進位字元');
+    if(value.analytics.enabled&&value.analytics.provider==='google'&&!/^G-[A-Z0-9]{4,20}$/i.test(value.analytics.google_measurement_id))errors.push('Google Analytics Measurement ID 必須是 G- 開頭的代碼');
     for(const field of ['eyebrow','title','description','home_label'])for(const lang of ['en','zh'])if(!value.error_page[field][lang])errors.push(`404 頁面的${lang==='en'?'英文':'中文'}欄位不可空白`);
     return [...new Set(errors)];
   }
@@ -146,8 +147,10 @@
     for(const [id,page] of Object.entries(after.seo.pages)){const old=before.seo.pages[id]||{};for(const [path,label] of SEO_PAGE_FIELDS){const a=valueAt(old,path),b=valueAt(page,path);if(!equal(a,b))seo.push(changeItem(`${PAGE_LABELS[id]||id}：${label}`,a,b));}}
     if(seo.length)sections.push(['SEO／OG',seo]);
     const analytics=[];
-    if(before.analytics.enabled!==after.analytics.enabled)analytics.push(changeItem('Cloudflare Web Analytics',before.analytics.enabled,after.analytics.enabled));
-    if(before.analytics.token!==after.analytics.token)analytics.push('<li><strong>Cloudflare Site Token</strong><span class="settings-new">已更新（內容隱藏）</span></li>');
+    if(before.analytics.enabled!==after.analytics.enabled)analytics.push(changeItem('啟用流量統計',before.analytics.enabled,after.analytics.enabled));
+    if(before.analytics.provider!==after.analytics.provider)analytics.push(changeItem('統計提供者',before.analytics.provider==='google'?'Google Analytics 4':'Cloudflare Web Analytics',after.analytics.provider==='google'?'Google Analytics 4':'Cloudflare Web Analytics'));
+    if(before.analytics.cloudflare_token!==after.analytics.cloudflare_token)analytics.push('<li><strong>Cloudflare Site Token</strong><span class="settings-new">已更新（內容隱藏）</span></li>');
+    if(before.analytics.google_measurement_id!==after.analytics.google_measurement_id)analytics.push(changeItem('Google Measurement ID',before.analytics.google_measurement_id,after.analytics.google_measurement_id));
     if(analytics.length)sections.push(['流量統計',analytics]);
     const error=[];
     for(const [path,label] of [
@@ -189,7 +192,13 @@
   }
   function renderAnalytics(){
     const root=document.querySelector('#analyticsSettingsPane');if(!root)return;
-    root.innerHTML=`<div class="settings-intro"><strong>Cloudflare Web Analytics</strong><span>只會加入公開網站與 404 頁面，不會追蹤 <code>/admin/</code>。關閉時不載入任何分析程式。</span></div><div class="site-settings-card analytics-card"><label class="switch"><input type="checkbox" data-analytics-field="enabled" ${draft.analytics.enabled?'checked':''}>啟用 Cloudflare Web Analytics</label><div class="field"><label>Cloudflare Site Token</label><input data-analytics-field="token" value="${esc(draft.analytics.token)}" autocomplete="off" spellcheck="false" placeholder="32 個十六進位字元"><p class="field-hint">在 Cloudflare Web Analytics 的 Manage site 複製 JavaScript snippet；只需貼上其中 <code>token</code> 的值，不要貼整段 script。</p></div><div class="analytics-status ${draft.analytics.enabled?'enabled':'disabled'}"><strong>${draft.analytics.enabled?'將啟用流量統計':'目前關閉'}</strong><span>${draft.analytics.enabled?(draft.analytics.token?'送出後會在所有公開頁面載入 Cloudflare beacon。':'請先填 Site Token。'):'網站不會載入 Cloudflare beacon。'}</span></div></div>`;
+    const provider=draft.analytics.provider==='google'?'google':'cloudflare';
+    const providerName=provider==='google'?'Google Analytics 4':'Cloudflare Web Analytics';
+    const readyForProvider=provider==='google'?/^G-[A-Z0-9]{4,20}$/i.test(draft.analytics.google_measurement_id):/^[0-9a-f]{32}$/i.test(draft.analytics.cloudflare_token);
+    const providerFields=provider==='google'
+      ? `<div class="field"><label>Google Analytics Measurement ID</label><input data-analytics-field="google_measurement_id" value="${esc(draft.analytics.google_measurement_id)}" autocomplete="off" spellcheck="false" placeholder="G-XXXXXXXXXX"><p class="field-hint">從 GA4 的網頁資料串流複製 Measurement ID。Google Analytics 的追蹤與隱私設定較複雜，啟用前請確認是否需要 cookie／consent 說明。</p></div><div class="analytics-actions"><a class="button" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener">開啟 Google Analytics 儀表板</a></div>`
+      : `<div class="field"><label>Cloudflare Site Token</label><input data-analytics-field="cloudflare_token" value="${esc(draft.analytics.cloudflare_token)}" autocomplete="off" spellcheck="false" placeholder="32 個十六進位字元"><p class="field-hint">在 Cloudflare Web Analytics 的 Manage site 複製 JavaScript snippet；只需貼上其中 <code>token</code> 的值，不要貼整段 script。</p></div><div class="analytics-actions"><a class="button" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">開啟 Cloudflare 儀表板</a></div>`;
+    root.innerHTML=`<div class="settings-intro"><strong>流量統計</strong><span>可選 Cloudflare Web Analytics 或 Google Analytics 4；一次只啟用一個，避免重複計數。追蹤碼只加入公開網站與 404 頁面，不會追蹤 <code>/admin/</code>。</span></div><div class="site-settings-card analytics-card"><label class="switch"><input type="checkbox" data-analytics-field="enabled" ${draft.analytics.enabled?'checked':''}>啟用流量統計</label><div class="field"><label>統計提供者</label><select data-analytics-field="provider"><option value="cloudflare" ${provider==='cloudflare'?'selected':''}>Cloudflare Web Analytics</option><option value="google" ${provider==='google'?'selected':''}>Google Analytics 4</option></select></div>${providerFields}<div class="analytics-status ${draft.analytics.enabled&&readyForProvider?'enabled':'disabled'}"><strong>${draft.analytics.enabled?`${providerName} ${readyForProvider?'已可送出':'尚未設定完成'}`:'目前關閉'}</strong><span>${draft.analytics.enabled?(readyForProvider?'送出後會在所有公開頁面載入對應追蹤碼。':'請先填寫有效的識別碼。'):'網站不會載入任何分析程式。'}</span></div><div class="analytics-report-note"><strong>為什麼 Admin 不直接顯示統計數字？</strong><span>這個 Admin 是公開的靜態頁面；若直接讀取報表，就必須暴露 Cloudflare／Google 的私密 API 憑證。這裡只負責設定追蹤碼，實際數據請由上方按鈕開啟官方儀表板查看。</span></div></div>`;
   }
   function colorEditor(key,label){const value=draft.error_page.colors[key];return `<div class="field color-field"><label>${esc(label)}</label><div class="color-control"><input type="color" data-error-color-picker="${key}" value="${esc(value)}"><input data-error-color="${key}" value="${esc(value)}" maxlength="7" spellcheck="false"></div></div>`;}
   function currentNavigationPages(){
@@ -210,8 +219,9 @@
   }
   function renderStatus(){
     const root=document.querySelector('#siteSettingsStatus');if(!root)return;const errors=validate(),sections=dirty()?changeSections(normalizedRemote(),normalizedDraft()):[];
-    root.className='notice '+(errors.length?'error':dirty()?'success':'');
-    root.innerHTML=errors.length?`<strong>不能送出：</strong>${errors.map(esc).join('；')}`:dirty()?`<strong>網站設定有 ${sections.reduce((n,x)=>n+x[1].length,0)} 項實際變更。</strong> 改回原值後會自動清除修改狀態；右側預覽會逐欄列出真正改了什麼。`:'網站設定尚未修改。';
+    if(!errors.length&&!dirty()){root.className='notice hidden';root.innerHTML='';return;}
+    root.className='notice '+(errors.length?'error':'success');
+    root.innerHTML=errors.length?`<strong>不能送出：</strong>${errors.map(esc).join('；')}`:`<strong>網站設定有 ${sections.reduce((n,x)=>n+x[1].length,0)} 項實際變更。</strong> 改回原值後會自動清除修改狀態；右側預覽會逐欄列出真正改了什麼。`;
   }
   function render(){
     if(!ready)return;
@@ -223,7 +233,7 @@
   function updatePath(target,path,value){const parts=path.split('.');let obj=target;while(parts.length>1)obj=obj[parts.shift()];obj[parts[0]]=value;}
   function installPanel(){
     const tabs=document.querySelector('#tabs'),dictionary=document.querySelector('[data-tab="dictionary"]');if(tabs&&!document.querySelector('[data-tab="siteSettings"]'))dictionary?.insertAdjacentHTML('afterend','<button class="tab" data-tab="siteSettings">網站設定</button>');
-    const dictionaryTab=document.querySelector('#dictionaryTab');if(dictionaryTab&&!document.querySelector('#siteSettingsTab'))dictionaryTab.insertAdjacentHTML('afterend',`<div id="siteSettingsTab" hidden><div class="site-settings-nav-shell"><div class="site-settings-tabs"><button class="button active" type="button" data-site-settings-section="footer">頁尾</button><button class="button" type="button" data-site-settings-section="seo">SEO／OG</button><button class="button" type="button" data-site-settings-section="analytics">流量統計</button><button class="button" type="button" data-site-settings-section="errorPage">404 頁面</button></div><p class="field-hint">網站設定依序管理頁尾、搜尋與分享資訊、Cloudflare 流量統計及錯誤頁面。</p></div><div id="siteSettingsStatus" class="notice"></div><div id="footerSettingsPane"></div><div id="seoSettingsPane" hidden></div><div id="analyticsSettingsPane" hidden></div><div id="errorPageSettingsPane" hidden></div><div class="actions settings-reset-actions"><button class="button" type="button" id="resetSiteSettings">放棄全部網站設定修改</button></div></div>`);
+    const dictionaryTab=document.querySelector('#dictionaryTab');if(dictionaryTab&&!document.querySelector('#siteSettingsTab'))dictionaryTab.insertAdjacentHTML('afterend',`<div id="siteSettingsTab" hidden><div class="site-settings-nav-shell"><div class="site-settings-tabs"><button class="button active" type="button" data-site-settings-section="footer">頁尾</button><button class="button" type="button" data-site-settings-section="seo">SEO／OG</button><button class="button" type="button" data-site-settings-section="analytics">流量統計</button><button class="button" type="button" data-site-settings-section="errorPage">404 頁面</button></div><p class="field-hint">網站設定依序管理頁尾、搜尋與分享資訊、流量統計及錯誤頁面。</p></div><div id="siteSettingsStatus" class="notice hidden"></div><div id="footerSettingsPane"></div><div id="seoSettingsPane" hidden></div><div id="analyticsSettingsPane" hidden></div><div id="errorPageSettingsPane" hidden></div><div class="actions settings-reset-actions"><button class="button" type="button" id="resetSiteSettings">放棄全部網站設定修改</button></div></div>`);
     const panel=document.querySelector('#siteSettingsTab');
     panel?.addEventListener('click',event=>{
       const section=event.target.closest('[data-site-settings-section]');if(section){currentSection=section.dataset.siteSettingsSection;render();return;}
@@ -261,7 +271,7 @@
       .footer-preview-zones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:15px}.footer-preview-zones>div{display:flex;gap:9px;flex-wrap:wrap;align-items:center;min-height:28px}.footer-preview-zones>div:nth-child(2){justify-content:center}.footer-preview-zones>div:nth-child(3){justify-content:flex-end}
       .footer-preview-item{display:inline-flex;gap:6px;align-items:center;color:#fff!important;font-weight:700}.footer-preview-icon{display:inline-flex;padding:2px 6px;border-radius:999px;background:#f3e5dd;color:#3c2d27!important;font-size:.7rem}.footer-preview-item img{width:18px;height:18px;object-fit:contain;background:#fff;border-radius:4px;padding:1px}
       .custom-icon-field{padding:10px;border-radius:10px;background:#fff4df;border:1px solid #e8c98d}
-      .analytics-status{display:grid;gap:3px;margin-top:14px;padding:12px;border-radius:10px}.analytics-status.enabled{background:#eef8f1;border-left:4px solid #247a46}.analytics-status.disabled{background:#f3efec;border-left:4px solid #8b7a70}.analytics-status span{color:#6c625c}
+      .analytics-status{display:grid;gap:3px;margin-top:14px;padding:12px;border-radius:10px}.analytics-status.enabled{background:#eef8f1;border-left:4px solid #247a46}.analytics-status.disabled{background:#f3efec;border-left:4px solid #8b7a70}.analytics-status span{color:#6c625c}.analytics-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.analytics-report-note{display:grid;gap:4px;margin-top:14px;padding:12px;border-radius:10px;background:#f7f0eb;border-left:4px solid #8d493d}.analytics-report-note span{color:#6c625c}
       .color-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.color-control{display:grid;grid-template-columns:48px 1fr;gap:8px}.color-control input[type=color]{padding:2px;height:42px}
       .disabled-field{opacity:.55}.error-page-preview{margin:14px 0 18px;padding:14px;border-radius:14px;background:var(--p-bg);color:var(--p-text);border:1px solid color-mix(in srgb,var(--p-text) 15%,transparent)}
       .error-preview-nav{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:4px 4px 12px;color:var(--p-text)}.error-preview-nav span{flex:1;text-align:right;color:var(--p-muted);font-size:.78rem}.error-preview-nav b{border:1px solid color-mix(in srgb,var(--p-text) 20%,transparent);border-radius:999px;padding:4px 8px;font-size:.76rem}.error-preview-card{text-align:center;padding:28px;border-radius:14px;background:var(--p-surface);box-shadow:0 10px 28px color-mix(in srgb,var(--p-text) 10%,transparent)}

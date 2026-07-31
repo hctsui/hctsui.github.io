@@ -66,14 +66,31 @@ document.querySelectorAll("img[data-photo-candidates]").forEach((image) => {
 
 /* Publication citation panels, format tabs, and clipboard copy. */
 document.addEventListener("click", async (event) => {
-  const toggle = event.target.closest("[data-bibtex-toggle]");
+  const toggle = event.target.closest("[data-citation-toggle], [data-bibtex-toggle]");
   if (toggle) {
-    const panel = document.getElementById(toggle.dataset.bibtexToggle || "");
+    const panelId = toggle.dataset.citationToggle || toggle.dataset.bibtexToggle || "";
+    const panel = document.getElementById(panelId);
     if (!panel) return;
     const opening = panel.hidden;
+    document.querySelectorAll(".citation-panel:not([hidden])").forEach((other) => {
+      if (other === panel) return;
+      other.hidden = true;
+      document.querySelector(`[data-citation-toggle="${CSS.escape(other.id)}"], [data-bibtex-toggle="${CSS.escape(other.id)}"]`)?.setAttribute("aria-expanded", "false");
+    });
     panel.hidden = !opening;
     toggle.setAttribute("aria-expanded", String(opening));
     if (opening) panel.querySelector(".citation-format-tab.active")?.focus({ preventScroll: true });
+    return;
+  }
+
+  const closeButton = event.target.closest("[data-citation-close]");
+  if (closeButton) {
+    const panelId = closeButton.dataset.citationClose || "";
+    const panel = document.getElementById(panelId);
+    if (panel) panel.hidden = true;
+    const trigger = document.querySelector(`[data-citation-toggle="${CSS.escape(panelId)}"], [data-bibtex-toggle="${CSS.escape(panelId)}"]`);
+    trigger?.setAttribute("aria-expanded", "false");
+    trigger?.focus({ preventScroll: true });
     return;
   }
 
@@ -113,8 +130,7 @@ document.addEventListener("click", async (event) => {
     area.select();
     try { copied = document.execCommand("copy"); } finally { area.remove(); }
   }
-  if (copied) {
-    copyButton.textContent = copyButton.dataset.copiedLabel || "Copied";
-    setTimeout(() => { copyButton.textContent = original; }, 1800);
-  }
+  copyButton.textContent = copied ? (copyButton.dataset.copiedLabel || "Copied") : (document.documentElement.lang === "zh" ? "複製失敗；請手動選取" : "Copy failed; select manually");
+  if (!copied) target.querySelector("pre")?.focus({ preventScroll: true });
+  setTimeout(() => { copyButton.textContent = original; }, copied ? 1800 : 2600);
 });

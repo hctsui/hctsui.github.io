@@ -123,6 +123,14 @@
     const q=normalizeKey(query);if(!q)return [];
     return normalizePeople(peopleDraft).people.map(person=>({person,score:candidateScore(person,q)})).filter(x=>x.score<99).sort((a,b)=>a.score-b.score||(a.person.name.en||a.person.name.zh).localeCompare(b.person.name.en||b.person.name.zh)).slice(0,8).map(x=>x.person);
   }
+  function exactPersonCounterpart(value,sourceLang){
+    const query=normalizeKey(value);if(!query||!peopleReady)return null;
+    const matches=normalizePeople(peopleDraft).people.filter(person=>[person.name.en,person.name.zh,...person.aliases].some(name=>normalizeKey(name)===query));
+    if(matches.length!==1)return null;
+    const person=matches[0],target=sourceLang==='zh'?person.name.en:person.name.zh;
+    if(!normalizeSpace(target))return null;
+    return {value:target,method:'人名連結',person_id:person.id};
+  }
   function closeSuggestions(except){document.querySelectorAll('[data-author-suggestions]').forEach(x=>{if(x!==except)x.hidden=true;});}
   function showSuggestions(input){
     const row=input.closest('[data-author-row]');if(!row)return;
@@ -203,6 +211,7 @@
   document.addEventListener('click',event=>{const choice=event.target.closest('[data-person-id]');if(choice){chooseSuggestion(choice);return;}if(!event.target.closest('[data-author-row]'))closeSuggestions();});
   document.addEventListener('keydown',event=>{if(event.key==='Escape')closeSuggestions();});
 
+  window.peopleExactCounterpart=exactPersonCounterpart;
   window.peopleDirty=peopleDirty;
   window.peopleOperation=peopleOperation;
   window.peoplePreviewHtml=peoplePreviewHtml;

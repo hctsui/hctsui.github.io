@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from build_site import (  # noqa: E402
+    apply_analytics,
     apply_cloudflare_analytics,
     apply_seo_metadata,
     render_404_page,
@@ -89,6 +90,38 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(rendered_again.count("static.cloudflareinsights.com/beacon.min.js"), 1)
         data["settings"]["analytics"] = {"enabled": False, "token": ""}
         self.assertNotIn("cloudflare-web-analytics", apply_cloudflare_analytics(rendered_again, data))
+
+
+    def test_google_analytics_is_added_and_switching_provider_removes_cloudflare(self) -> None:
+        data = site_data()
+        source = '<html><head></head><body><main></main></body></html>'
+        data["settings"]["analytics"] = {
+            "enabled": True,
+            "provider": "cloudflare",
+            "cloudflare_token": "c" * 32,
+            "google_measurement_id": "",
+        }
+        cloudflare = apply_analytics(source, data)
+        self.assertIn("static.cloudflareinsights.com/beacon.min.js", cloudflare)
+        data["settings"]["analytics"] = {
+            "enabled": True,
+            "provider": "google",
+            "cloudflare_token": "c" * 32,
+            "google_measurement_id": "G-ABCD1234",
+        }
+        google = apply_analytics(cloudflare, data)
+        self.assertNotIn("static.cloudflareinsights.com/beacon.min.js", google)
+        self.assertIn("googletagmanager.com/gtag/js?id=G-ABCD1234", google)
+        self.assertIn('gtag("config", "G-ABCD1234")', google)
+        self.assertEqual(google.count("managed:google-analytics"), 2)
+
+    def test_legacy_cloudflare_token_normalizes_without_reentry(self) -> None:
+        data = site_data()
+        data["settings"]["analytics"] = {"enabled": True, "token": "d" * 32}
+        analytics = current_site_settings(data)["analytics"]
+        self.assertEqual(analytics["provider"], "cloudflare")
+        self.assertEqual(analytics["cloudflare_token"], "d" * 32)
+        validate_site_settings(current_site_settings(data), data)
 
     def test_404_page_supports_colors_bilingual_content_and_redirect(self) -> None:
         data = site_data()

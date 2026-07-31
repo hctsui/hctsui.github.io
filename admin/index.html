@@ -1277,6 +1277,36 @@
           method = "";
         if (!options.autoFill || (!en && !zh))
           return { en, zh, changed: false, method };
+        function applyPersonPair() {
+          if (!options.useDictionary || typeof window.peopleExactCounterpart !== "function")
+            return false;
+          if (en && !zh) {
+            let found = window.peopleExactCounterpart(en, "en");
+            if (found?.value) {
+              zh = found.value;
+              method = found.method || "人名連結";
+              return true;
+            }
+          } else if (zh && !en) {
+            let found = window.peopleExactCounterpart(zh, "zh");
+            if (found?.value) {
+              en = found.value;
+              method = found.method || "人名連結";
+              return true;
+            }
+          } else if (en && zh && en === zh) {
+            let looksChinese = /[\u3400-\u9fff]/.test(en),
+              found = window.peopleExactCounterpart(en, looksChinese ? "zh" : "en");
+            if (found?.value) {
+              if (looksChinese) en = found.value;
+              else zh = found.value;
+              method = found.method || "人名連結";
+              return true;
+            }
+          }
+          return false;
+        }
+        applyPersonPair();
         if (en && zh && en === zh) {
           if (options.isTerm) {
             let fromEn = termPair(en, ""),
@@ -1295,10 +1325,10 @@
               toEn = idx.zh.get(dictNorm(zh));
             if (toZh) {
               zh = toZh;
-              method = "中英對照表";
+              method = "中英對照";
             } else if (toEn) {
               en = toEn;
-              method = "中英對照表";
+              method = "中英對照";
             }
           }
           return {
@@ -1308,7 +1338,7 @@
             method,
           };
         }
-        if (en && zh) return { en, zh, changed: false, method };
+        if (en && zh) return { en, zh, changed: before.en !== en || before.zh !== zh, method };
         if (options.isTerm) {
           let term = termPair(en, zh);
           if (term.en !== en || term.zh !== zh) {
@@ -1318,19 +1348,20 @@
           }
         }
         if ((en && !zh) || (zh && !en)) {
-          if (options.useDictionary) {
+          applyPersonPair();
+          if (options.useDictionary && ((en && !zh) || (zh && !en))) {
             let idx = dictionaryIndex();
             if (en && !zh) {
               let found = idx.en.get(dictNorm(en));
               if (found) {
                 zh = found;
-                method = "中英對照表";
+                method = "中英對照";
               }
             } else if (zh && !en) {
               let found = idx.zh.get(dictNorm(zh));
               if (found) {
                 en = found;
-                method = "中英對照表";
+                method = "中英對照";
               }
             }
           }
@@ -2043,7 +2074,7 @@
             localStorage.getItem("hctsui-autofill-default") !== "false",
           visitAutoDefault =
             localStorage.getItem("hctsui-visit-description-auto") !== "false",
-          html = `<div class="form-options"><label class="switch"><input id="dictionaryToggle" type="checkbox" ${dictDefault ? "checked" : ""}>套用中英對照表</label><label class="switch"><input id="autoFillToggle" type="checkbox" ${autoDefault ? "checked" : ""}>自動填寫另一語言</label>${type === "visit" ? `<label class="switch"><input id="visitAutoDescriptionToggle" type="checkbox" ${visitAutoDefault ? "checked" : ""}>自動生成說明</label>` : ""}</div><p class="field-hint">離開欄位時會精確查找另一語言，只補空白或系統產生的內容；不覆蓋手動文字，查不到也不直接複製。${type === "visit" ? "訪問說明可由資助資料優先產生。" : ""}</p>`;
+          html = `<div class="form-options"><label class="switch"><input id="dictionaryToggle" type="checkbox" ${dictDefault ? "checked" : ""}>套用資料庫</label><label class="switch"><input id="autoFillToggle" type="checkbox" ${autoDefault ? "checked" : ""}>自動填寫另一語言</label>${type === "visit" ? `<label class="switch"><input id="visitAutoDescriptionToggle" type="checkbox" ${visitAutoDefault ? "checked" : ""}>自動生成說明</label>` : ""}</div><p class="field-hint">離開欄位時會先精確查找「人名連結」，再查「中英對照」；只補空白或系統產生的內容，不覆蓋手動文字，查不到也不直接複製。${type === "visit" ? "訪問說明可由資助資料優先產生。" : ""}</p>`;
         if (type === "conference") {
           let roleEn = s.role?.en || "",
             roleKey =
@@ -2191,8 +2222,8 @@
           bilingualStatus(
             group,
             options.useDictionary
-              ? "中英對照表沒有這段文字；未改動另一欄。可自行填寫，或先把整段中英文加入對照表。"
-              : "未啟用中英對照表，因此不會直接複製到另一語言。",
+              ? "人名連結與中英對照都沒有這段文字；未改動另一欄。可自行填寫，或先加入資料庫。"
+              : "未啟用資料庫，因此不會自動填入另一語言。",
           );
           return;
         }
@@ -2205,7 +2236,7 @@
         target.setAttribute("data-auto-value", result.value);
         bilingualStatus(
           group,
-          `已由${result.method || "中英對照表"}自動填入${sourceIsEnglish ? "中文" : "英文"}。`,
+          `已由${result.method || "資料庫"}自動填入${sourceIsEnglish ? "中文" : "英文"}。`,
         );
       }
       function fillBilingualGroup(group, root) {

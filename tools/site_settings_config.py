@@ -26,6 +26,8 @@ ICONS = {
 PAGE_IDS = ("home", "cv", "publications", "activities", "teaching")
 HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 CLOUDFLARE_TOKEN = re.compile(r"^[0-9a-fA-F]{32}$")
+GOOGLE_MEASUREMENT_ID = re.compile(r"^G-[A-Z0-9]{4,20}$", re.I)
+ANALYTICS_PROVIDERS = {"cloudflare", "google"}
 
 
 def _text(value: Any, limit: int = 500, *, collapse: bool = True) -> str:
@@ -148,9 +150,11 @@ def default_footer() -> dict[str, Any]:
 
 def default_analytics() -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "enabled": False,
-        "token": "",
+        "provider": "cloudflare",
+        "cloudflare_token": "",
+        "google_measurement_id": "",
     }
 
 
@@ -251,10 +255,19 @@ def normalize_footer(value: Any) -> dict[str, Any]:
 
 def normalize_analytics(value: Any) -> dict[str, Any]:
     source = value if isinstance(value, dict) else {}
+    provider = str(source.get("provider") or "cloudflare").strip().lower()
+    if provider not in ANALYTICS_PROVIDERS:
+        provider = "cloudflare"
+    # Backward compatibility: schema v1 stored Cloudflare's token as ``token``.
+    cloudflare_token = source.get("cloudflare_token")
+    if cloudflare_token is None:
+        cloudflare_token = source.get("token")
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "enabled": bool(source.get("enabled")),
-        "token": _text(source.get("token"), 80),
+        "provider": provider,
+        "cloudflare_token": _text(cloudflare_token, 80),
+        "google_measurement_id": _text(source.get("google_measurement_id"), 40).upper(),
     }
 
 
@@ -340,8 +353,12 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
         if item["icon"] == "other" and not item["custom_icon"]:
             raise ValueError(f"Footer item {item['id']} needs a custom icon path.")
     analytics = normalized["analytics"]
-    if analytics["enabled"] and not CLOUDFLARE_TOKEN.fullmatch(analytics["token"]):
-        raise ValueError("Cloudflare Web Analytics token must be 32 hexadecimal characters.")
+    if analytics["enabled"] and analytics["provider"] == "cloudflare":
+        if not CLOUDFLARE_TOKEN.fullmatch(analytics["cloudflare_token"]):
+            raise ValueError("Cloudflare Web Analytics token must be 32 hexadecimal characters.")
+    if analytics["enabled"] and analytics["provider"] == "google":
+        if not GOOGLE_MEASUREMENT_ID.fullmatch(analytics["google_measurement_id"]):
+            raise ValueError("Google Analytics measurement ID must look like G-XXXXXXXXXX.")
     error_page = normalized["error_page"]
     for field in ("eyebrow", "title", "description", "home_label"):
         for lang in ("en", "zh"):

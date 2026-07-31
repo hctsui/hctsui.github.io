@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from build_site import publication_bibitem, publication_bibtex, render_publication_article, replace_main, rich_html  # noqa: E402
+from build_site import assign_citation_keys, publication_bibitem, publication_bibtex, render_publication_article, replace_main, rich_html  # noqa: E402
 from people_config import link_author_html, link_people_html, normalized_people, validate_people  # noqa: E402
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
 
@@ -133,11 +133,25 @@ class BibtexTests(unittest.TestCase):
         }
 
     def test_auto_generated_bibtex_contains_core_fields(self) -> None:
-        text = publication_bibtex(self.publication())
-        self.assertIn("@misc{", text)
+        item = self.publication()
+        item["primary_category"] = "math.NT"
+        text = publication_bibtex(item)
+        self.assertIn("@misc{CT26,", text)
+        self.assertIn("title = {Algebra Structures of Multiple Eisenstein Series}", text)
         self.assertIn("author = {Ting-Wei Chang and Hung-Chun Tsui}", text)
         self.assertIn("eprint = {2603.10376}", text)
         self.assertIn("archivePrefix = {arXiv}", text)
+        self.assertIn("primaryClass = {math.NT}", text)
+
+    def test_duplicate_author_year_keys_receive_letter_suffixes(self) -> None:
+        first = self.publication()
+        second = self.publication() | {"id": "publication-example-2", "date": "2026-04-01", "title": {"en": "Second paper", "zh": ""}}
+        data = {"publications": [second, first]}
+        assign_citation_keys(data)
+        self.assertEqual(first["_citation_key"], "CT26a")
+        self.assertEqual(second["_citation_key"], "CT26b")
+        self.assertIn("@misc{CT26a,", publication_bibtex(first))
+        self.assertIn(r"\bibitem{CT26b}", publication_bibitem(second))
 
     def test_manual_bibtex_wins(self) -> None:
         item = self.publication()
@@ -170,15 +184,22 @@ class BibtexTests(unittest.TestCase):
         replaced = replace_main(page, r'<pre>\bibitem{x} \emph{Title}</pre>')
         self.assertIn(r'\bibitem{x} \emph{Title}', replaced)
 
-    def test_publication_html_has_expand_format_and_copy_controls(self) -> None:
+    def test_publication_html_has_matching_action_buttons_and_working_citation_controls(self) -> None:
         rendered = render_publication_article(self.publication(), "en")
+        self.assertIn('<a class="publication-action"', rendered)
+        self.assertIn('class="publication-action pub-citation-toggle"', rendered)
         self.assertIn("data-bibtex-toggle", rendered)
+        self.assertIn("data-citation-toggle", rendered)
+        self.assertIn("data-citation-close", rendered)
         self.assertIn("data-copy-bibtex", rendered)
         self.assertIn("data-copy-citation", rendered)
         self.assertIn('data-citation-format="bibtex"', rendered)
         self.assertIn('data-citation-format="bibitem"', rendered)
+        self.assertIn('class="citation-panel"', rendered)
         self.assertIn("Copy BibTeX", rendered)
         self.assertIn(r"Copy \bibitem", rendered)
+        self.assertIn(r"LaTeX \bibitem", rendered)
+        self.assertNotIn("\b", rendered)
 
 
 class StaticMathTests(unittest.TestCase):

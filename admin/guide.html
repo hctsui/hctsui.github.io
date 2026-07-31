@@ -142,9 +142,12 @@
           <li><strong>中英對照：</strong>保留原本字詞、標籤、匯入、匯出與精確補填功能。</li>
           <li><strong>人名連結：</strong>集中管理中英文姓名、其他拼法與學術網址。其他拼法每行一個，例如 <code>Tsui, Hung-Chun</code>。</li>
           <li>編輯論文作者時，只在輸入框下方顯示可能人名；必須手動點選才會填入，不會自動替換相似姓名。</li>
-          <li>建置網站時，人名資料會套用到整個公開網站，包括首頁說明、指導教授、活動、教學與論文作者；既有超連結、粗體姓名、程式碼與 BibTeX 不會被重複包覆。</li>
+          <li>一般雙語欄位使用自動補齊時，會先精確查詢人名連結，再查一般中英對照；只有完整姓名或別名唯一匹配時才會補入另一語言。</li>
+          <li>建置網站時，人名資料會套用到整個公開網站，包括首頁說明、指導教授、活動、教學與論文作者。共同作者連結使用一般字重和細底線，publication 中你的姓名仍維持粗體；既有超連結、程式碼與 BibTeX 不會被重複包覆。</li>
           <li>人名網址集中保存在 <code>content/people.json</code>；沒有匹配或沒有網址時仍顯示普通文字，PDF CV 不加入人名連結。</li>
           <li>每篇論文可分別貼入正式 BibTeX 與 LaTeX <code>\bibitem</code>；留白時系統會自動產生基本引用。</li>
+          <li>自動引用 key 使用作者姓氏首字母大寫連接，再加年份後兩碼，例如 <code>T26</code>、<code>CCHT25</code>；同組作者同一年有多篇時會加 <code>a</code>、<code>b</code>、<code>c</code>。兩種格式共用同一個 key。</li>
+          <li>arXiv 預設使用相容 BibTeX／biblatex 的 <code>@misc</code>，包含 arXiv ID、<code>archivePrefix</code>、可取得時的 <code>primaryClass</code> 與網址。</li>
           <li>題目可用 <code>[i]...[/i]</code>、<code>[b]...[/b]</code> 和 <code>$...$</code>；常見數論符號以靜態方式渲染。</li>
         </ul>
         <h3>BibTeX 與 arXiv 論文通知</h3>
@@ -175,11 +178,12 @@
           <li>可設定網站基準網址、網站名稱、預設分享圖片，以及各頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。</li>
           <li>建置時自動生成 canonical、Open Graph、Twitter Card、中英文 hreflang 與 x-default。</li>
         </ul>
-        <h3>Cloudflare Web Analytics</h3>
+        <h3>流量統計</h3>
         <ul>
-          <li>預設關閉。啟用後，只需填入 Cloudflare Web Analytics 的 32 字元 Site Token，不要貼整段 script。</li>
-          <li>beacon 只會加入公開網站與 <code>404.html</code>，不會加入 <code>/admin/</code>。</li>
-          <li>關閉功能後，下一次建置會移除系統管理的 beacon。</li>
+          <li>可選 Cloudflare Web Analytics 或 Google Analytics 4，同一時間只啟用一個。</li>
+          <li>Cloudflare 使用 32 字元 Site Token；Google 使用 <code>G-...</code> Measurement ID。既有 Cloudflare Token 會自動沿用。</li>
+          <li>追蹤碼只會加入公開網站與 <code>404.html</code>，不會追蹤 <code>/admin/</code>；切換提供者時會移除另一家的追蹤碼。</li>
+          <li>Admin 不直接顯示報表，因為靜態公開頁面無法安全保存報表 API 憑證。請使用分頁中的按鈕開啟 Cloudflare 或 Google 官方儀表板。</li>
         </ul>
         <h3>404 頁面</h3>
         <ul>

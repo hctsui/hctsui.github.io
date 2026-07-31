@@ -135,6 +135,7 @@ function arxivSuggestionPublication(item) {
     year: Number(date.slice(0, 4)),
     order: 999,
     arxiv: item.arxiv_id,
+    primary_category: item.primary_category || '',
     title: { en: item.title, zh: '' },
     authors: { en: englishAuthorLine(item.authors), zh: '' },
     venue: {

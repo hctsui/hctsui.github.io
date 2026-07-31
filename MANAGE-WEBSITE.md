@@ -115,13 +115,16 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - **中英對照**：新增、修改、刪除、合併與排序詞條和標籤，也可匯入／匯出 JSON。大型字詞庫會自動 gzip 壓縮，避免 GitHub Issue 欄位長度限制。
 - **人名連結**：集中管理英文姓名、中文姓名、其他拼法與學術網址。其他拼法每行一個，例如 `Tsui, Hung-Chun`。
 - 編輯論文作者時，輸入框下方只會列出可能的人名；必須手動點選才會填入，不會因相似姓名自動替換。
-- 人名精確比對會套用到整個公開網站，包括首頁說明、指導教授、活動、教學及論文作者。既有超連結、粗體、程式碼、數學標記與 BibTeX 不會被重複包覆。
+- 一般雙語欄位使用「自動補齊另一語言」時，會先精確查詢人名連結，再查一般中英對照。只有完整姓名或別名唯一匹配時才會補入另一語言；部分姓名不會自動選人。
+- 人名精確比對會套用到整個公開網站，包括首頁說明、指導教授、活動、教學及論文作者。共同作者連結使用一般字重與細底線；publication 中你的姓名仍維持粗體。既有超連結、程式碼、數學標記與 BibTeX 不會被重複包覆。
 - 人名資料保存於 `content/people.json`；沒有匹配或沒有網址時維持普通文字，PDF CV 不加入人名連結。
 
 ## 論文 BibTeX 與 arXiv 通知
 
 - 公開網站的 BibTeX 使用和 arXiv、PDF 相同的膠囊按鈕樣式；點擊後可在 **BibTeX** 與 **LaTeX `\bibitem`** 間切換，兩種格式都有獨立複製按鈕。
 - 論文表單可分別手動覆寫 BibTeX 與 `\bibitem`；任一欄留白時，網站會依作者、題目、年份、arXiv／DOI 自動產生。
+- 自動引用 key 使用「每位作者姓氏首字母大寫連接＋年份後兩碼」，例如單一作者 Hung-Chun Tsui 的 2026 論文為 `T26`，Chang／Chen／Huang／Tsui 的 2025 論文為 `CCHT25`；同一組作者同一年有多篇時自動加 `a`、`b`、`c`。BibTeX 與 `\bibitem` 共用同一個 key。
+- arXiv 論文預設產生相容 BibTeX／biblatex 的 `@misc`，包含 `eprint`、`archivePrefix = {arXiv}`、可取得時的 `primaryClass` 與文章網址。
 - `.github/workflows/check-arxiv.yml` 每週一上午 9:15（Asia/Tokyo）執行，也可從 Actions 手動執行。
 - `tools/check_arxiv.py` 使用 arXiv 官方 API 搜尋 `Hung-Chun Tsui`，再以完整作者姓名做第二次精確比對，避免只因姓氏或相似姓名而產生通知。
 - 新結果保存在 `content/arxiv-suggestions.json`，不會直接寫入公開論文列表。
@@ -147,11 +150,13 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - 可設定基準網址、網站名稱、預設分享圖片，以及每頁中英文 SEO 標題、Meta description、OG 標題、OG 描述與個別分享圖片。
 - 建置時自動產生 canonical、Open Graph、Twitter Card、中文／英文 hreflang 與 x-default。
 
-### Cloudflare Web Analytics
+### 流量統計
 
-- 流量統計預設關閉；啟用後填入 Cloudflare Web Analytics 的 32 字元 Site Token。
-- 產生器只把 Cloudflare beacon 加入公開頁面與 `404.html`，不會加入 `/admin/`。
-- 關閉功能或清空 Token 後，下一次建置會移除先前由系統加入的 beacon。
+- 可選 **Cloudflare Web Analytics** 或 **Google Analytics 4**，同一時間只啟用一個，避免重複計數。
+- 原本的 Cloudflare 32 字元 Site Token 會自動沿用，不需重新輸入；選 Google 時填入 `G-...` Measurement ID。
+- 產生器只把所選追蹤碼加入公開頁面與 `404.html`，不會追蹤 `/admin/`。切換提供者時會先移除另一家的舊追蹤碼。
+- Admin 是公開的靜態頁面，不會直接讀取或顯示私密報表；流量統計分頁提供 Cloudflare 與 Google 官方儀表板按鈕。若直接在 Admin 讀報表，必須暴露私密 API 憑證，因此不採用。
+- 關閉功能後，下一次建置會移除先前由系統加入的分析程式。
 
 ### 404 頁面
 
@@ -163,7 +168,7 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ### 網站設定草稿與預覽
 
-- 草稿採正規化後的語意比較；欄位改回原值時會立即恢復「尚未修改」，並自動清除對應的本機草稿。
+- 草稿採正規化後的語意比較；欄位改回原值時會立即清除對應的本機草稿。沒有修改時不再顯示「網站設定尚未修改」提示。
 - 右側預覽不再只顯示「0 個頁面變更」或「2 → 2 個項目」，而會逐項列出真正變動的欄位、修改前值與修改後值。
 
 ## GitHub Issue 與自動流程
@@ -183,7 +188,7 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - `admin/layout.js`：頁面、類別與統一排序管理。
 - `admin/people.js`：資料庫的人名連結管理與作者候選建議。
 - `admin/arxiv-notifications.js`：頁首論文通知、加入草稿與忽略操作。
-- `admin/site-settings.js`：頁尾、SEO／OG、Cloudflare 流量統計與 404 管理。
+- `admin/site-settings.js`：頁尾、SEO／OG、Cloudflare／Google 流量統計與 404 管理。
 - `admin/homepage.js`：首頁雙欄、一般內容風格編輯與 Admin 相容修正。
 - `admin/guide.html`：完整操作手冊。
 - `tools/process_batch_request.py`：批次套用、衝突檢查與七日還原。

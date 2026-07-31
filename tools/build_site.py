@@ -139,14 +139,43 @@ def _split_english_authors(value: str) -> list[str]:
     ]
 
 
-def _bibtex_key(entry: dict[str, Any]) -> str:
+def _author_surname_initial(author: str) -> str:
+    """Return a stable Latin initial for one display-form author name."""
+    text = re.sub(r"<[^>]+>", "", str(author or "")).strip()
+    if not text:
+        return ""
+    # Support both ``Hung-Chun Tsui`` and ``Tsui, Hung-Chun``.
+    surname = text.split(",", 1)[0].strip() if "," in text else text.split()[-1]
+    match = re.search(r"[A-Za-z0-9]", surname)
+    return match.group(0).upper() if match else ""
+
+
+def _citation_key_base(entry: dict[str, Any]) -> str:
     authors = _split_english_authors(plain_value(entry, "authors", "en"))
-    surname = re.sub(r"[^A-Za-z0-9]+", "", (authors[-1] if authors else "tsui").split()[-1]).lower() or "tsui"
-    year = str(entry.get("year") or str(entry.get("date") or "")[:4] or "nd")
-    words = re.findall(r"[A-Za-z0-9]+", plain_value(entry, "title", "en"))
-    stop = {"a", "an", "and", "of", "on", "the", "in", "for", "to", "with"}
-    keyword = next((word.lower() for word in words if word.lower() not in stop), "work")
-    return f"{surname}{year}{keyword}"
+    initials = "".join(filter(None, (_author_surname_initial(author) for author in authors))) or "T"
+    year = re.sub(r"\D+", "", str(entry.get("year") or str(entry.get("date") or "")[:4] or ""))
+    year_suffix = year[-2:] if year else "ND"
+    return f"{initials}{year_suffix}"
+
+
+def assign_citation_keys(data: dict[str, Any]) -> None:
+    """Assign deterministic in-memory keys, adding a/b/c only for collisions."""
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for entry in data.get("publications", []):
+        groups.setdefault(_citation_key_base(entry), []).append(entry)
+    for base, entries in groups.items():
+        ordered = sorted(entries, key=lambda item: (str(item.get("date") or ""), str(item.get("id") or "")))
+        if len(ordered) == 1:
+            ordered[0]["_citation_key"] = base
+            continue
+        for index, entry in enumerate(ordered):
+            # a-z is ample for a single author group/year; continue as a1, a2 if ever exceeded.
+            suffix = chr(ord("a") + index) if index < 26 else f"a{index - 25}"
+            entry["_citation_key"] = f"{base}{suffix}"
+
+
+def _bibtex_key(entry: dict[str, Any]) -> str:
+    return str(entry.get("_citation_key") or _citation_key_base(entry))
 
 
 def _bibtex_escape(value: Any) -> str:
@@ -167,13 +196,18 @@ def publication_bibtex(entry: dict[str, Any]) -> str:
     venue = plain_value(entry, "venue", "en")
     journal_like = bool(doi or entry.get("journal_url") or entry.get("group_id") == "journal-articles")
     entry_type = "article" if journal_like else "misc"
-    fields: list[tuple[str, str]] = [("author", authors), ("title", title), ("year", year)]
+    # Field order mirrors the compact arXiv/BibTeX export style commonly used
+    # in mathematics: title/author/year first, then arXiv metadata.
+    fields: list[tuple[str, str]] = [("title", title), ("author", authors), ("year", year)]
     if journal_like and venue and not venue.lower().startswith("arxiv"):
         fields.append(("journal", venue))
-    if doi:
-        fields.append(("doi", doi))
     if arxiv:
         fields.extend((("eprint", arxiv), ("archivePrefix", "arXiv")))
+        primary_class = str(entry.get("primary_category") or entry.get("primary_class") or "").strip()
+        if primary_class:
+            fields.append(("primaryClass", primary_class))
+    if doi:
+        fields.append(("doi", doi))
     url = str(entry.get("journal_url") or entry.get("arxiv_url") or entry.get("pdf_url") or "").strip()
     if url:
         fields.append(("url", url))
@@ -255,29 +289,42 @@ def bibtex_controls(entry: dict[str, Any], lang: str) -> str:
     copied_label = "已複製" if lang == "zh" else "Copied"
     copy_bibtex = "複製 BibTeX" if lang == "zh" else "Copy BibTeX"
     copy_bibitem = r"複製 \bibitem" if lang == "zh" else r"Copy \bibitem"
+    dialog_label = "引用格式" if lang == "zh" else "Citation formats"
+    choose_label = "選擇格式後可直接複製" if lang == "zh" else "Choose a format, then copy it."
+    close_label = "關閉" if lang == "zh" else "Close"
+    bibtex_format_label = "BibTeX"
+    bibitem_format_label = r"LaTeX \bibitem"
     return (
-        f'<button class="pub-bibtex-toggle" type="button" data-bibtex-toggle="{esc(identifier)}" '
-        f'aria-expanded="false">BibTeX</button>'
-        f'<div class="bibtex-panel" id="{esc(identifier)}" hidden>'
-        f'<div class="citation-format-tabs" role="tablist" aria-label="Citation format">'
+        f'<button class="publication-action pub-citation-toggle" type="button" '
+        f'data-bibtex-toggle="{esc(identifier)}" data-citation-toggle="{esc(identifier)}" '
+        f'aria-controls="{esc(identifier)}" aria-expanded="false">BibTeX</button>'
+        f'<div class="citation-panel" id="{esc(identifier)}" hidden>'
+        f'<div class="citation-panel-header"><div><strong>{esc(dialog_label)}</strong>'
+        f'<span>{esc(choose_label)}</span></div>'
+        f'<button type="button" class="citation-close" data-citation-close="{esc(identifier)}" '
+        f'aria-label="{esc(close_label)}">&times;</button></div>'
+        f'<div class="citation-format-tabs" role="tablist" aria-label="{esc(dialog_label)}">'
         f'<button type="button" class="citation-format-tab active" role="tab" aria-selected="true" '
-        f'data-citation-panel="{esc(identifier)}" data-citation-format="bibtex">BibTeX</button>'
+        f'aria-controls="{esc(bibtex_id)}" data-citation-panel="{esc(identifier)}" '
+        f'data-citation-format="bibtex"><span>BibTeX</span><small>.bib</small></button>'
         f'<button type="button" class="citation-format-tab" role="tab" aria-selected="false" '
-        f'data-citation-panel="{esc(identifier)}" data-citation-format="bibitem">\\bibitem</button></div>'
+        f'aria-controls="{esc(bibitem_id)}" data-citation-panel="{esc(identifier)}" '
+        f'data-citation-format="bibitem"><span>LaTeX \\bibitem</span><small>thebibliography</small></button></div>'
         f'<section class="citation-format-view" data-citation-view="bibtex" id="{esc(bibtex_id)}">'
-        f'<div class="bibtex-panel-actions"><button type="button" class="bibtex-copy" '
-        f'data-copy-citation="{esc(bibtex_id)}" data-copy-bibtex="{esc(bibtex_id)}" '
-        f'data-copied-label="{esc(copied_label)}">{copy_bibtex}</button></div>'
-        f'<pre><code>{esc(bibtex)}</code></pre></section>'
+        f'<div class="citation-toolbar"><strong>{esc(bibtex_format_label)}</strong>'
+        f'<button type="button" class="citation-copy" data-copy-citation="{esc(bibtex_id)}" '
+        f'data-copy-bibtex="{esc(bibtex_id)}" data-copied-label="{esc(copied_label)}">{copy_bibtex}</button></div>'
+        f'<pre tabindex="0"><code>{esc(bibtex)}</code></pre></section>'
         f'<section class="citation-format-view" data-citation-view="bibitem" id="{esc(bibitem_id)}" hidden>'
-        f'<div class="bibtex-panel-actions"><button type="button" class="bibtex-copy" '
-        f'data-copy-citation="{esc(bibitem_id)}" data-copied-label="{esc(copied_label)}">{copy_bibitem}</button></div>'
-        f'<pre><code>{esc(bibitem)}</code></pre></section></div>'
+        f'<div class="citation-toolbar"><strong>{esc(bibitem_format_label)}</strong>'
+        f'<button type="button" class="citation-copy" data-copy-citation="{esc(bibitem_id)}" '
+        f'data-copied-label="{esc(copied_label)}">{copy_bibitem}</button></div>'
+        f'<pre tabindex="0"><code>{esc(bibitem)}</code></pre></section></div>'
     )
 
 def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool = False) -> str:
     links_html = "".join(
-        f'<a href="{esc(link.get("url", ""))}" rel="noopener" target="_blank">{esc((link.get("label") or {}).get(lang) or (link.get("label") or {}).get("en") or "Link")}</a>'
+        f'<a class="publication-action" href="{esc(link.get("url", ""))}" rel="noopener" target="_blank">{esc((link.get("label") or {}).get(lang) or (link.get("label") or {}).get("en") or "Link")}</a>'
         for link in entry.get("links", []) if link.get("url")
     )
     bibtex = bibtex_controls(entry, lang)
@@ -692,25 +739,61 @@ def apply_seo_metadata(text: str, data: dict[str, Any], page: dict[str, Any], la
     return text.replace("</head>", block + "\n</head>", 1)
 
 
-_ANALYTICS_START = "<!-- managed:cloudflare-web-analytics -->"
-_ANALYTICS_END = "<!-- /managed:cloudflare-web-analytics -->"
+_CLOUDFLARE_ANALYTICS_START = "<!-- managed:cloudflare-web-analytics -->"
+_CLOUDFLARE_ANALYTICS_END = "<!-- /managed:cloudflare-web-analytics -->"
+_GOOGLE_ANALYTICS_START = "<!-- managed:google-analytics -->"
+_GOOGLE_ANALYTICS_END = "<!-- /managed:google-analytics -->"
+
+
+def _remove_managed_analytics(text: str) -> str:
+    for start, end in (
+        (_CLOUDFLARE_ANALYTICS_START, _CLOUDFLARE_ANALYTICS_END),
+        (_GOOGLE_ANALYTICS_START, _GOOGLE_ANALYTICS_END),
+    ):
+        pattern = re.escape(start) + r".*?" + re.escape(end) + r"\s*"
+        text = re.sub(pattern, "", text, flags=re.S)
+    return text
+
+
+def apply_analytics(text: str, data: dict[str, Any]) -> str:
+    """Insert the selected analytics provider only in generated public pages."""
+    text = _remove_managed_analytics(text)
+    analytics = current_site_settings(data)["analytics"]
+    if not analytics.get("enabled"):
+        return text
+    provider = analytics.get("provider")
+    if provider == "cloudflare" and analytics.get("cloudflare_token"):
+        payload = json.dumps({"token": analytics["cloudflare_token"]}, separators=(",", ":"))
+        block = (
+            f"{_CLOUDFLARE_ANALYTICS_START}\n"
+            '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
+            f"data-cf-beacon='{esc(payload)}'></script>\n"
+            f"{_CLOUDFLARE_ANALYTICS_END}"
+        )
+        return text.replace("</body>", block + "\n</body>", 1)
+    if provider == "google" and analytics.get("google_measurement_id"):
+        measurement_id = esc(analytics["google_measurement_id"])
+        block = (
+            f"{_GOOGLE_ANALYTICS_START}\n"
+            f'<script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>\n'
+            '<script>\n'
+            '  window.dataLayer = window.dataLayer || [];\n'
+            '  function gtag(){dataLayer.push(arguments); }\n'
+            '  gtag("js", new Date());\n'
+            f'  gtag("config", "{measurement_id}");\n'
+            '</script>\n'
+            f"{_GOOGLE_ANALYTICS_END}"
+        )
+        match = re.search(r"<head\b[^>]*>", text, flags=re.I)
+        if match:
+            return text[: match.end()] + "\n" + block + text[match.end() :]
+        return text
+    return text
 
 
 def apply_cloudflare_analytics(text: str, data: dict[str, Any]) -> str:
-    """Insert the Cloudflare beacon only in generated public pages."""
-    pattern = re.escape(_ANALYTICS_START) + r".*?" + re.escape(_ANALYTICS_END) + r"\s*"
-    text = re.sub(pattern, "", text, flags=re.S)
-    analytics = current_site_settings(data)["analytics"]
-    if not analytics.get("enabled") or not analytics.get("token"):
-        return text
-    payload = json.dumps({"token": analytics["token"]}, separators=(",", ":"))
-    block = (
-        f"{_ANALYTICS_START}\n"
-        '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
-        f"data-cf-beacon='{esc(payload)}'></script>\n"
-        f"{_ANALYTICS_END}"
-    )
-    return text.replace("</body>", block + "\n</body>", 1)
+    """Backward-compatible alias for the site analytics injector."""
+    return apply_analytics(text, data)
 
 
 _FOOTER_ICONS = {
@@ -945,6 +1028,7 @@ def site_today(data: dict[str, Any], override: str | None = None) -> date:
 
 def build(today: date, update_date: bool = True) -> list[Path]:
     data = load_data()
+    assign_citation_keys(data)
     pages = {p["id"]: p for p in normalized_pages(data)}
     changed: list[Path] = []
     for page_id, page in pages.items():
