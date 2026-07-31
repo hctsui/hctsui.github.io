@@ -47967,6 +47967,63 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-66-op-1",
+      "batch_issue": 66,
+      "applied_at": "2026-07-31T21:22:26.898338Z",
+      "expires_at": "2026-08-07T21:22:26.898338Z",
+      "reverted_by": null,
+      "request_digest": "01e1b37c9e8c6d56f6404ced96efc4d5b647bfd724e50388a46eb7968b330ca9",
+      "request_action": "notifications",
+      "action": "notifications",
+      "type": "notifications",
+      "entry_id": "notifications",
+      "label": {
+        "en": "Notification center",
+        "zh": "通知中心"
+      },
+      "before": {
+        "schema_version": 1,
+        "retention_days": 60,
+        "notifications": [
+          {
+            "id": "contact-6eaf1717-8c53-43ff-be5f-d303b01e197f-e2254697d9",
+            "key": "contact:6eaf1717-8c53-43ff-be5f-d303b01e197f",
+            "type": "contact",
+            "title": "收到新的網站聯絡訊息",
+            "message": "完整內容已由 Web3Forms 私下寄到 Email；公開通知資料不保存訪客姓名、信箱或留言內容。",
+            "created_at": "2026-07-31T19:20:33.945Z",
+            "updated_at": "2026-07-31T19:20:33.945Z",
+            "starred": false,
+            "read": false,
+            "status": "open",
+            "source_url": "",
+            "payload": {
+              "event_id": "6eaf1717-8c53-43ff-be5f-d303b01e197f",
+              "received_at": "2026-07-31T19:20:33.945Z"
+            },
+            "actions": [
+              {
+                "id": "inbox",
+                "label": "開啟 Email 收件匣"
+              },
+              {
+                "id": "handled",
+                "label": "標記為已處理"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "schema_version": 1,
+        "retention_days": 60,
+        "notifications": []
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
