@@ -82,7 +82,7 @@ class CvSubtitlePatchTests(unittest.TestCase):
         patcher = (ROOT / "apply-update.py").read_text(encoding="utf-8")
         self.assertIn(r"\newcommand{\cvgroup}[1]", patcher)
         self.assertIn(r"primaryColor!28", patcher)
-        self.assertIn(r"\leaders\hrule height 0.45pt\hfill", patcher)
+        self.assertIn(r"\leaders\hrule height 0.45pt depth 0pt\hfill", patcher)
         for target in (
             "Hung-Chun-Tsui-CV.template.tex",
             "Hung-Chun-Tsui-CV-zh.template.tex",
@@ -309,18 +309,48 @@ class V10UrlAndCvVisibilityTests(unittest.TestCase):
 
     def test_cv_rule_uses_horizontal_leaders_not_titlesec_titlerule(self) -> None:
         patcher = (ROOT / "apply-update.py").read_text(encoding="utf-8")
-        self.assertIn(r'\leaders\hrule height 0.45pt\hfill\kern0pt', patcher)
+        self.assertIn(r'\leaders\hrule height 0.45pt depth 0pt\hfill\kern0pt', patcher)
         self.assertIn('PREVIOUS_V9_MACRO', patcher)
         new_macro = patcher.split('NEW_MACRO =', 1)[1].split('CV_TARGETS', 1)[0]
         self.assertNotIn(r'\titlerule', new_macro)
 
 
 
-class V11PackageConsistencyTests(unittest.TestCase):
+class V12PackageConsistencyTests(unittest.TestCase):
     def test_patcher_declares_v11_and_self_checks_required_markers(self):
-        self.assertIn('PACKAGE_VERSION = "v11"', PATCHER)
+        self.assertIn('PACKAGE_VERSION = "v12"', PATCHER)
         self.assertIn('更新腳本版本：{PACKAGE_VERSION}', PATCHER)
         self.assertIn('required_markers = (', PATCHER)
+
+
+class V12DirectFileTests(unittest.TestCase):
+    def test_admin_identity_is_installed_by_loaded_javascript(self) -> None:
+        for marker in (
+            "installAdminIdentityRuntime",
+            "admin-icon.svg?v=12",
+            "dataset.adminFavicon",
+            "dataset.returnSite",
+            "返回網站",
+            "admin-title-row",
+        ):
+            self.assertIn(marker, SCRIPT)
+
+    def test_cv_templates_are_direct_replacements_with_visible_rule(self) -> None:
+        for name in (
+            "Hung-Chun-Tsui-CV.template.tex",
+            "Hung-Chun-Tsui-CV-zh.template.tex",
+        ):
+            text=(ROOT / "cv" / name).read_text(encoding="utf-8")
+            self.assertIn(r"\newcommand{\cvgroup}[1]", text)
+            self.assertIn(r"\noindent\hbox to \linewidth", text)
+            self.assertIn(r"\leaders\hrule height 0.45pt depth 0pt\hfill\kern0pt", text)
+            macro=text.split(r"\newcommand{\cvgroup}[1]",1)[1].split("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",1)[0]
+            self.assertNotIn(r"\titlerule", macro)
+
+    def test_docs_say_no_patcher_is_required(self) -> None:
+        manage=(ROOT / "MANAGE-WEBSITE.md").read_text(encoding="utf-8")
+        self.assertIn("不再依賴 `apply-update.py`", manage)
+        self.assertIn("直接覆蓋", manage)
 
 
 if __name__ == "__main__":

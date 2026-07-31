@@ -1,20 +1,19 @@
 \documentclass[10pt, letterpaper]{article}
 \usepackage[
-    ignoreheadfoot, % set margins without considering header and footer
-    top=2 cm, % seperation between body and page edge from the top
-    bottom=2 cm, % seperation between body and page edge from the bottom
-    left=2 cm, % seperation between body and page edge from the left
-    right=2 cm, % seperation between body and page edge from the right
-    footskip=1.0 cm, % seperation between body and footer
-    % showframe % for debugging 
-]{geometry} % for adjusting page geometry
+    ignoreheadfoot,
+    top=2 cm,
+    bottom=2 cm,
+    left=2 cm,
+    right=2 cm,
+    footskip=1.0 cm
+]{geometry}
 \usepackage[explicit]{titlesec}
-\usepackage{tabularx} 
+\usepackage{tabularx}
 \usepackage{array}
-\usepackage[dvipsnames]{xcolor} 
-\definecolor{primaryColor}{RGB}{0, 0, 0} 
+\usepackage[dvipsnames]{xcolor}
+\definecolor{primaryColor}{RGB}{0, 0, 0}
 \definecolor{secondaryColor}{RGB}{0, 0, 170}
-\usepackage{enumitem} 
+\usepackage{enumitem}
 \usepackage{fontawesome5}
 \usepackage{amsmath}
 \usepackage[
@@ -23,16 +22,16 @@
     pdfcreator={LaTeX with RenderCV},
     colorlinks=true,
     urlcolor=secondaryColor
-]{hyperref} 
+]{hyperref}
 \usepackage[pscoord]{eso-pic}
-\usepackage{calc} 
+\usepackage{calc}
 \usepackage{bookmark}
-\usepackage{lastpage} 
+\usepackage{lastpage}
 \usepackage{changepage}
-\usepackage{paracol} 
+\usepackage{paracol}
 \usepackage{ifthen}
-\usepackage{needspace} 
-\usepackage{iftex} 
+\usepackage{needspace}
+\usepackage{iftex}
 \ifPDFTeX
     \input{glyphtounicode}
     \pdfgentounicode=1
@@ -40,56 +39,47 @@
     \usepackage[utf8]{inputenc}
     \usepackage{lmodern}
 \fi
-%\usepackage{newpxtext,newpxmath}
 \usepackage[osf,sc]{mathpazo} \usepackage{euscript} \usepackage{calrsfs}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\AtBeginEnvironment{adjustwidth}{\partopsep0pt} 
-\pagestyle{empty} 
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt}
+\pagestyle{empty}
 \setcounter{secnumdepth}{0}
-\setlength{\parindent}{0pt} 
-\setlength{\topskip}{0pt} 
+\setlength{\parindent}{0pt}
+\setlength{\topskip}{0pt}
 \setlength{\columnsep}{0.15cm}
 \makeatletter
-\let\ps@customFooterStyle\ps@plain 
+\let\ps@customFooterStyle\ps@plain
 \patchcmd{\ps@customFooterStyle}{\thepage}{
     \color{gray}\textit{\small Hung-Chun Tsui - Page \thepage{} of \pageref*{LastPage}}
-}{}{} 
+}{}{}
 \makeatother
 \pagestyle{customFooterStyle}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \titleformat{\section}{
     \needspace{4\baselineskip}
     \Large\color{primaryColor}
-}{
-}{
-}{
+}{}{}{
     \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
-}[] 
+}[]
 
-\titlespacing{\section}{
-    -1pt
-}{
-    0.3 cm
-}{
-    0.2 cm
-}
+\titlespacing{\section}{-1pt}{0.3 cm}{0.2 cm}
 \newcommand{\cvgroup}[1]{%
     \needspace{3\baselineskip}%
     \vspace{0.08cm}%
-    {\large\bfseries #1}\par%
+    \noindent\hbox to \linewidth{%
+        {\large\bfseries #1}%
+        \hspace{0.16cm}%
+        {\color{primaryColor!28}\leaders\hrule height 0.45pt depth 0pt\hfill\kern0pt}%
+    }\par%
     \vspace{0.08cm}%
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{one}{
-    \begin{adjustwidth}{
-        0.2 cm + 0.00001 cm
-    }{
-        0.2 cm + 0.00001 cm
-    }
+    \begin{adjustwidth}{0.2 cm + 0.00001 cm}{0.2 cm + 0.00001 cm}
 }{
     \end{adjustwidth}
     \vspace{0.1cm}
-} 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{conf}[2][]{
     \one
@@ -101,7 +91,7 @@
     \end{paracol}
     \endone
     \vspace{0.1cm}
-} 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{pub}[2][]{
     \one
@@ -113,7 +103,7 @@
     \end{paracol}
     \endone
     \vspace{0.1cm}
-} 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{edu}[3][]{
     \one
@@ -126,7 +116,7 @@
     \end{paracol}
     \endone
     \vspace{0.1cm}
-} 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{teaching}[3][]{
     \one
@@ -139,17 +129,17 @@
     \end{paracol}
     \endone
     \vspace{0.1cm}
-} 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newenvironment{header}{
     \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
 }{
     \par\kern\topsep
-} 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\CVLastUpdated}{__CV_LAST_UPDATED__}
-\newcommand{\placelastupdatedtext}{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
-  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+\newcommand{\placelastupdatedtext}{%
+  \AddToShipoutPictureFG*{%
     \put(
         \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
         \LenToUnit{\paperheight-1.0 cm}

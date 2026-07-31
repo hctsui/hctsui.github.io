@@ -101,7 +101,7 @@ GitHub connector 可讀取 repository，但建立工作分支仍回傳 `403 Reso
 - 風格卡片區仍使用 `<details>`，保留左側收合箭頭。
 - Admin 頁首在「開啟完整使用手冊」旁加入「返回網站」按鈕。
 - 新增 `admin/admin-icon.svg`，用於 Admin 分頁 favicon、主標題圖示與使用手冊 favicon。
-- `apply-update.py` 會安全且可重複地更新 `admin/index.html`，加入圖示、返回網站按鈕與必要樣式。
+- 舊版曾由 `apply-update.py` 修改 `admin/index.html`；v12 已改由正式載入的 `homepage-v1.js` 直接建立圖示與返回網站按鈕，不再依賴額外執行腳本。
 - 完整使用手冊與 repository 管理說明已同步更新。
 
 
@@ -121,3 +121,11 @@ GitHub connector 可讀取 repository，但建立工作分支仍回傳 `403 Reso
 - CV 子標題使用 `\leaders\hrule height 0.45pt\hfill\kern0pt`，不再使用可能無法顯示的 `\titlerule`。
 - URL 驗證保留 `http:`、`https:`，並允許格式正確的 `mailto:`。
 
+
+## v12：改為直接檔案更新
+
+- 修正先前效果依賴 `apply-update.py`、但單純上傳 ZIP 不會執行腳本的問題。
+- Admin favicon、標題圖示與「返回網站」改由 `homepage-v1.js` 在載入時直接建立。
+- favicon 使用版本參數，避免瀏覽器繼續顯示舊快取。
+- 更新包直接包含中英文 CV 模板；`Preprints`、`Journal Articles`、教學學校等所有 `\cvgroup` 子標題使用實際編譯可見的淡色橫線。
+- `apply-update.py` 僅保留作為舊 repository 的備用工具，不再是正常套用步驟。
