@@ -229,6 +229,62 @@ def page_href(data: dict[str, Any], page_id: str, lang: str) -> str:
     return path
 
 
+def _counterpart_href(page: dict[str, Any], lang: str) -> str:
+    target_lang = "zh" if lang == "en" else "en"
+    path = str((page.get("path") or {}).get(target_lang) or "")
+    if not path:
+        return ""
+    return path if lang == "en" else f"../{path}"
+
+
+def render_site_navigation(data: dict[str, Any], current_page_id: str, lang: str) -> str:
+    pages = normalized_pages(data)
+    links: list[str] = []
+    for page in pages:
+        if page.get("show_in_navigation", True) is False:
+            continue
+        if not str((page.get("path") or {}).get(lang) or ""):
+            continue
+        href = page_href(data, str(page.get("id") or ""), lang)
+        if not href:
+            continue
+        label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
+        active = str(page.get("id") or "") == current_page_id
+        attrs = ' class="active" aria-current="page"' if active else ""
+        links.append(
+            f'<a{attrs} data-nav="{esc(page.get("id"))}" href="{esc(href)}">{esc(label)}</a>'
+        )
+
+    home_href = page_href(data, "home", lang)
+    if home_href:
+        contact_label = "聯絡" if lang == "zh" else "Contact"
+        links.append(f'<a data-nav="contact" href="{esc(home_href)}#contact">{contact_label}</a>')
+
+    current = next((page for page in pages if page.get("id") == current_page_id), None)
+    counterpart = _counterpart_href(current, lang) if current else ""
+    if counterpart:
+        label = "中文" if lang == "en" else "English"
+        aria = "切換至中文版" if lang == "en" else "Switch to English"
+        links.append(
+            f'<a aria-label="{aria}" class="language-toggle" href="{esc(counterpart)}">{label}</a>'
+        )
+    return '<nav aria-label="Primary navigation" class="site-nav" id="site-nav">' + "".join(links) + "</nav>"
+
+
+def replace_navigation(text: str, data: dict[str, Any], current_page_id: str, lang: str) -> str:
+    navigation = render_site_navigation(data, current_page_id, lang)
+    updated, count = re.subn(
+        r'<nav\b(?=[^>]*\bclass="[^"]*\bsite-nav\b[^"]*")[^>]*>.*?</nav>',
+        navigation,
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count != 1:
+        raise RuntimeError("Could not replace site navigation")
+    return updated
+
+
 def render_teaching(data: dict[str, Any], entry: dict[str, Any], lang: str) -> str:
     term = rich_html(plain_value(entry, "term", lang))
     course = rich_html(plain_value(entry, "course", lang))
@@ -668,11 +724,20 @@ def apply_page_theme(text: str, page: dict[str, Any]) -> str:
 def _not_found_navigation(data: dict[str, Any], lang: str, base_url: str) -> str:
     links = []
     for page in normalized_pages(data):
+        if page.get("show_in_navigation", True) is False:
+            continue
         path = str((page.get("path") or {}).get(lang) or "")
         if not path:
             continue
         label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
         links.append(f'<a href="{esc(_absolute_url(base_url, path))}">{esc(label)}</a>')
+    home_path = next(
+        (str((page.get("path") or {}).get(lang) or "") for page in normalized_pages(data) if page.get("id") == "home"),
+        "",
+    )
+    if home_path:
+        contact_label = "聯絡" if lang == "zh" else "Contact"
+        links.append(f'<a href="{esc(_absolute_url(base_url, home_path))}#contact">{contact_label}</a>')
     return '<nav class="not-found-nav" aria-label="Website navigation">' + "".join(links) + "</nav>"
 
 
@@ -712,7 +777,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
             )
         footer = render_footer(data, lang, today) if error["show_footer"] else ""
         nav = _not_found_navigation(data, lang, base) if error["show_navigation"] else ""
-        switch_label = "中文" if lang == "en" else "EN"
+        switch_label = "中文" if lang == "en" else "English"
         return f'''<div class="not-found-language" data-language="{lang}" hidden>
           <header class="not-found-header">
             <a class="not-found-brand" href="{esc(home[lang])}">{esc(seo["site_name"][lang])}</a>
@@ -822,6 +887,7 @@ def build(today: date, update_date: bool = True) -> list[Path]:
                 sections = "".join(x for x in rendered if x)
                 content = page_header(data, page_id, lang) + sections
             new = replace_main(old, content)
+            new = replace_navigation(new, data, page_id, lang)
             new = apply_page_theme(new, page)
             new = apply_seo_metadata(new, data, page, lang)
             updated_value = f"{today.year}/{today.month}/{today.day}" if update_date else _existing_updated(old, lang, today)

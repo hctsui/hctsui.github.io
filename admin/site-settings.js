@@ -44,11 +44,12 @@
       teaching:{title:{en:'Teaching | Hung-Chun Tsui',zh:'教學｜崔鴻竣'},description:{en:'Teaching experience of Hung-Chun Tsui.',zh:'崔鴻竣的教學與課程助教經歷。'}},
     };
     for(const page of siteData?.settings?.pages||[]){
-      if(!defaults[page.id]||page.id==='home')continue;
+      if(page.id==='home')continue;
+      if(!defaults[page.id])defaults[page.id]={title:{en:'',zh:''},description:{en:'',zh:''}};
       for(const lang of ['en','zh']){
-        const title=page.header?.title?.[lang],intro=page.header?.intro?.[lang];
-        if(title)defaults[page.id].title[lang]=lang==='en'?`${title} | Hung-Chun Tsui`:`${title}｜崔鴻竣`;
-        if(intro)defaults[page.id].description[lang]=intro;
+        const title=page.header?.title?.[lang]||page.name?.[lang]||page.id,intro=page.header?.intro?.[lang]||'';
+        defaults[page.id].title[lang]=lang==='en'?`${title} | Hung-Chun Tsui`:`${title}｜崔鴻竣`;
+        defaults[page.id].description[lang]=intro;
       }
     }
     return defaults;
@@ -191,9 +192,17 @@
     root.innerHTML=`<div class="settings-intro"><strong>Cloudflare Web Analytics</strong><span>只會加入公開網站與 404 頁面，不會追蹤 <code>/admin/</code>。關閉時不載入任何分析程式。</span></div><div class="site-settings-card analytics-card"><label class="switch"><input type="checkbox" data-analytics-field="enabled" ${draft.analytics.enabled?'checked':''}>啟用 Cloudflare Web Analytics</label><div class="field"><label>Cloudflare Site Token</label><input data-analytics-field="token" value="${esc(draft.analytics.token)}" autocomplete="off" spellcheck="false" placeholder="32 個十六進位字元"><p class="field-hint">在 Cloudflare Web Analytics 的 Manage site 複製 JavaScript snippet；只需貼上其中 <code>token</code> 的值，不要貼整段 script。</p></div><div class="analytics-status ${draft.analytics.enabled?'enabled':'disabled'}"><strong>${draft.analytics.enabled?'將啟用流量統計':'目前關閉'}</strong><span>${draft.analytics.enabled?(draft.analytics.token?'送出後會在所有公開頁面載入 Cloudflare beacon。':'請先填 Site Token。'):'網站不會載入 Cloudflare beacon。'}</span></div></div>`;
   }
   function colorEditor(key,label){const value=draft.error_page.colors[key];return `<div class="field color-field"><label>${esc(label)}</label><div class="color-control"><input type="color" data-error-color-picker="${key}" value="${esc(value)}"><input data-error-color="${key}" value="${esc(value)}" maxlength="7" spellcheck="false"></div></div>`;}
+  function currentNavigationPages(){
+    let source=siteDataCache;
+    try{if(typeof effectiveSite==='function')source=effectiveSite();}catch{}
+    return (source?.settings?.pages||[]).filter(page=>page&&page.show_in_navigation!==false&&page.path?.en);
+  }
   function renderErrorPreview(){
-    const e=draft.error_page,c=e.colors;
-    return `<div class="error-page-preview" style="--p-bg:${esc(c.background)};--p-surface:${esc(c.surface)};--p-accent:${esc(c.accent)};--p-text:${esc(c.text)};--p-muted:${esc(c.muted)};--p-button:${esc(c.button)};--p-button-text:${esc(c.button_text)}"><div class="error-preview-nav"><strong>Hung-Chun Tsui</strong><span>${e.show_navigation?'Home　CV　Publications':'（不顯示導覽列）'}</span></div><div class="error-preview-card"><div class="error-preview-code">404</div><small>${esc(e.eyebrow.en)}</small><h3>${esc(e.title.en)}</h3><p>${esc(e.description.en)}</p>${e.auto_redirect.enabled?`<div class="error-preview-redirect">${esc(e.auto_redirect.seconds)} 秒後返回首頁</div>`:''}<div class="error-preview-actions"><span>${esc(e.home_label.en)}</span>${e.secondary_label.en?`<span class="secondary">${esc(e.secondary_label.en)}</span>`:''}</div></div>${e.show_footer?'<div class="error-preview-footer">頁尾會使用「頁尾」分頁中的設定</div>':'<div class="error-preview-footer muted-preview">不顯示頁尾</div>'}</div>`;
+    const e=draft.error_page,c=e.colors,pages=currentNavigationPages();
+    const labels=pages.map(page=>page.name?.en||page.name?.zh||page.id).filter(Boolean);
+    labels.push('Contact');
+    const navigation=e.show_navigation?labels.map(esc).join('　'):'（不顯示導覽列）';
+    return `<div class="error-page-preview" style="--p-bg:${esc(c.background)};--p-surface:${esc(c.surface)};--p-accent:${esc(c.accent)};--p-text:${esc(c.text)};--p-muted:${esc(c.muted)};--p-button:${esc(c.button)};--p-button-text:${esc(c.button_text)}"><div class="error-preview-nav"><strong>Hung-Chun Tsui</strong><span>${navigation}</span><b>中文</b></div><div class="error-preview-card"><div class="error-preview-code">404</div><small>${esc(e.eyebrow.en)}</small><h3>${esc(e.title.en)}</h3><p>${esc(e.description.en)}</p>${e.auto_redirect.enabled?`<div class="error-preview-redirect">${esc(e.auto_redirect.seconds)} 秒後返回首頁</div>`:''}<div class="error-preview-actions"><span>${esc(e.home_label.en)}</span>${e.secondary_label.en?`<span class="secondary">${esc(e.secondary_label.en)}</span>`:''}</div></div>${e.show_footer?'<div class="error-preview-footer">頁尾會使用「頁尾」分頁中的設定</div>':'<div class="error-preview-footer muted-preview">不顯示頁尾</div>'}</div>`;
   }
   function renderErrorPage(){
     const root=document.querySelector('#errorPageSettingsPane');if(!root)return;const e=draft.error_page;
@@ -255,7 +264,7 @@
       .analytics-status{display:grid;gap:3px;margin-top:14px;padding:12px;border-radius:10px}.analytics-status.enabled{background:#eef8f1;border-left:4px solid #247a46}.analytics-status.disabled{background:#f3efec;border-left:4px solid #8b7a70}.analytics-status span{color:#6c625c}
       .color-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.color-control{display:grid;grid-template-columns:48px 1fr;gap:8px}.color-control input[type=color]{padding:2px;height:42px}
       .disabled-field{opacity:.55}.error-page-preview{margin:14px 0 18px;padding:14px;border-radius:14px;background:var(--p-bg);color:var(--p-text);border:1px solid color-mix(in srgb,var(--p-text) 15%,transparent)}
-      .error-preview-nav{display:flex;justify-content:space-between;gap:10px;padding:4px 4px 12px;color:var(--p-text)}.error-preview-nav span{color:var(--p-muted);font-size:.78rem}.error-preview-card{text-align:center;padding:28px;border-radius:14px;background:var(--p-surface);box-shadow:0 10px 28px color-mix(in srgb,var(--p-text) 10%,transparent)}
+      .error-preview-nav{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:4px 4px 12px;color:var(--p-text)}.error-preview-nav span{flex:1;text-align:right;color:var(--p-muted);font-size:.78rem}.error-preview-nav b{border:1px solid color-mix(in srgb,var(--p-text) 20%,transparent);border-radius:999px;padding:4px 8px;font-size:.76rem}.error-preview-card{text-align:center;padding:28px;border-radius:14px;background:var(--p-surface);box-shadow:0 10px 28px color-mix(in srgb,var(--p-text) 10%,transparent)}
       .error-preview-code{font:800 3.5rem/.9 Georgia,serif;color:color-mix(in srgb,var(--p-accent) 25%,transparent)}.error-preview-card small{color:var(--p-accent);font-weight:900;text-transform:uppercase;letter-spacing:.1em}.error-preview-card h3{color:var(--p-text);margin:.4rem 0}.error-preview-card p{color:var(--p-muted);margin:.4rem auto;max-width:520px}.error-preview-redirect{color:var(--p-accent);font-weight:800;margin-top:8px}
       .error-preview-actions{display:flex;justify-content:center;gap:8px;margin-top:16px}.error-preview-actions span{padding:8px 12px;border-radius:999px;background:var(--p-button);color:var(--p-button-text);font-weight:800}.error-preview-actions span.secondary{background:transparent;color:var(--p-button);border:1px solid var(--p-button)}.error-preview-footer{text-align:center;margin-top:10px;color:var(--p-muted);font-size:.78rem}.muted-preview{opacity:.7}
       .settings-diff{color:#2d2926}.settings-diff-section{margin:12px 0;padding:12px;border:1px solid #dfd3ca;border-radius:10px;background:#fff;color:#2d2926}.settings-diff-section h4{margin:0 0 8px}.settings-diff-section ul{list-style:none;padding:0;margin:0;display:grid;gap:7px}.settings-diff-section li{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:start;padding:8px;border-radius:8px;background:#f8f4f0;color:#2d2926}.settings-old,.settings-new{display:block;padding:5px 7px;border-radius:7px;overflow-wrap:anywhere}.settings-old{background:#fff0ee;color:#7d2f28}.settings-new{background:#eaf7ed;color:#1f6539}.settings-arrow{font-weight:900;color:#766c65}

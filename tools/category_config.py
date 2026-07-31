@@ -7,11 +7,11 @@ import re
 from typing import Any
 
 PAGE_DEFAULTS: list[dict[str, Any]] = [
-    {"id": "home", "name": {"en": "Home", "zh": "首頁"}, "path": {"en": "index.html", "zh": "zh/index.html"}, "header": None, "color": "#a34f3b", "order": 0},
-    {"id": "cv", "name": {"en": "CV", "zh": "履歷"}, "path": {"en": "cv.html", "zh": "zh/cv.html"}, "header": {"label": {"en": "Academic profile", "zh": "學術資料"}, "title": {"en": "Curriculum Vitae", "zh": "履歷"}, "intro": {"en": "Education, research interests, and honors.", "zh": "學歷、研究領域與獎項"}}, "color": "#8b5a2b", "order": 1},
-    {"id": "publications", "name": {"en": "Publications", "zh": "論文"}, "path": {"en": "publications.html", "zh": "zh/publications.html"}, "header": {"label": {"en": "Research record", "zh": "研究紀錄"}, "title": {"en": "Publications and Preprints", "zh": "論文與預印本"}, "intro": {"en": "A complete list of current papers and preprints.", "zh": "論文與預印本的完整列表"}}, "color": "#315f9b", "order": 2},
-    {"id": "activities", "name": {"en": "Activities", "zh": "學術活動"}, "path": {"en": "activities.html", "zh": "zh/activities.html"}, "header": {"label": {"en": "Academic record", "zh": "學術紀錄"}, "title": {"en": "Activities", "zh": "學術活動"}, "intro": {"en": "Academic visits, presentations, conferences and workshops.", "zh": "學術訪問、學術報告、會議與工作坊"}}, "color": "#176b52", "order": 3},
-    {"id": "teaching", "name": {"en": "Teaching", "zh": "教學"}, "path": {"en": "teaching.html", "zh": "zh/teaching.html"}, "header": {"label": {"en": "Teaching record", "zh": "教學紀錄"}, "title": {"en": "Teaching Experience", "zh": "教學經歷"}, "intro": {"en": "Teaching and course-assistant experience.", "zh": "教學與課程助教經歷"}}, "color": "#b14b86", "order": 4},
+    {"id": "home", "name": {"en": "Home", "zh": "首頁"}, "path": {"en": "index.html", "zh": "zh/index.html"}, "header": None, "color": "#a34f3b", "show_in_navigation": True, "order": 0},
+    {"id": "cv", "name": {"en": "CV", "zh": "履歷"}, "path": {"en": "cv.html", "zh": "zh/cv.html"}, "header": {"label": {"en": "Academic profile", "zh": "學術資料"}, "title": {"en": "Curriculum Vitae", "zh": "履歷"}, "intro": {"en": "Education, research interests, and honors.", "zh": "學歷、研究領域與獎項"}}, "color": "#8b5a2b", "show_in_navigation": True, "order": 1},
+    {"id": "publications", "name": {"en": "Publications", "zh": "論文"}, "path": {"en": "publications.html", "zh": "zh/publications.html"}, "header": {"label": {"en": "Research record", "zh": "研究紀錄"}, "title": {"en": "Publications and Preprints", "zh": "論文與預印本"}, "intro": {"en": "A complete list of current papers and preprints.", "zh": "論文與預印本的完整列表"}}, "color": "#315f9b", "show_in_navigation": True, "order": 2},
+    {"id": "activities", "name": {"en": "Activities", "zh": "學術活動"}, "path": {"en": "activities.html", "zh": "zh/activities.html"}, "header": {"label": {"en": "Academic record", "zh": "學術紀錄"}, "title": {"en": "Activities", "zh": "學術活動"}, "intro": {"en": "Academic visits, presentations, conferences and workshops.", "zh": "學術訪問、學術報告、會議與工作坊"}}, "color": "#176b52", "show_in_navigation": True, "order": 3},
+    {"id": "teaching", "name": {"en": "Teaching", "zh": "教學"}, "path": {"en": "teaching.html", "zh": "zh/teaching.html"}, "header": {"label": {"en": "Teaching record", "zh": "教學紀錄"}, "title": {"en": "Teaching Experience", "zh": "教學經歷"}, "intro": {"en": "Teaching and course-assistant experience.", "zh": "教學與課程助教經歷"}}, "color": "#b14b86", "show_in_navigation": True, "order": 4},
 ]
 
 CATEGORY_KIND_LABELS: dict[str, dict[str, str]] = {
@@ -102,6 +102,7 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
         item["languages"] = ["en", "zh"]
         item["order"] = int(source.get("order", default["order"]))
         item["color"] = str(source.get("color") or default["color"]).strip().lower()
+        item["show_in_navigation"] = source.get("show_in_navigation") is not False
         if default["header"] is not None:
             old_key = OLD_PAGE_HEADING_KEYS.get(default["id"])
             old = settings.get("headings", {}).get(old_key, {}) if old_key else {}
@@ -134,6 +135,7 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
                 "intro": pair(header.get("intro")),
             },
             "color": str(source.get("color") or "#8b3d2e").strip().lower(),
+            "show_in_navigation": source.get("show_in_navigation") is not False,
             "order": int(source.get("order", len(PAGE_DEFAULTS) + index)),
         })
     return sorted(pages, key=lambda p: (int(p.get("order", 999)), p["id"]))
