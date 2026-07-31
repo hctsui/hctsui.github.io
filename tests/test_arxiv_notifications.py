@@ -139,7 +139,7 @@ class StaticArxivUiTests(unittest.TestCase):
         admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
         self.assertIn('timezone: "Asia/Tokyo"', workflow)
         self.assertIn("python3 tools/check_arxiv.py", workflow)
-        self.assertIn('<script src="notifications.js"></script>', admin)
+        self.assertIn('<script src="notifications.js?v=20260801-1"></script>', admin)
 
 
 if __name__ == "__main__":

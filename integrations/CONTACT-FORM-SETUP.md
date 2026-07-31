@@ -184,3 +184,14 @@ Email 是主要操作；即使 GitHub 通知建立失敗，Worker 仍可能回�
 - Worker 中的任何私密 Secret
 
 公開頁面只包含 Web3Forms Access Key、Worker URL 與 Turnstile Site Key。
+
+
+### Batch 顯示 Worker URL 缺失
+
+若 GitHub Action 顯示 `Worker URL is missing or invalid`，代表聯絡表單已勾選啟用且傳送模式是 Cloudflare Worker，但尚未填入完整 Worker URL。請回到 Admin → 網站設定 → 聯絡表單，選擇其中一種處理方式：
+
+1. 填入完整的 `https://...workers.dev` 網址；
+2. 改選 Web3Forms Email 並填入 Access Key；
+3. 尚未設定完成時，先取消「啟用聯絡表單」。
+
+修改後需建立新的 Batch Issue；原本失敗的 Issue 仍保留舊 payload，不會自動更新。新版 Admin 會強制刷新 JavaScript，並在建立 Issue 前直接標示缺失欄位。

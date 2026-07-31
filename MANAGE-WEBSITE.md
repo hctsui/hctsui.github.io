@@ -232,3 +232,24 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 Admin 頁首使用專用管理圖示作為分頁 favicon 與標題圖示。「開啟完整使用手冊」右側提供「返回網站」按鈕，可直接回到網站首頁。一般內容的顯示風格可直接點選卡片；六張卡片，卡片區仍可用左側箭頭收合。
 
 Admin 外框會在 `admin/homepage.js` 載入時優先建立；即使後續管理功能發生錯誤，favicon、標題圖示與「返回網站」仍會先出現。
+
+
+### Batch 顯示 Worker URL 缺失
+
+若 GitHub Action 顯示 `Worker URL is missing or invalid`，代表聯絡表單已勾選啟用且傳送模式是 Cloudflare Worker，但尚未填入完整 Worker URL。請回到 Admin → 網站設定 → 聯絡表單，選擇其中一種處理方式：
+
+1. 填入完整的 `https://...workers.dev` 網址；
+2. 改選 Web3Forms Email 並填入 Access Key；
+3. 尚未設定完成時，先取消「啟用聯絡表單」。
+
+修改後需建立新的 Batch Issue；原本失敗的 Issue 仍保留舊 payload，不會自動更新。新版 Admin 會強制刷新 JavaScript，並在建立 Issue 前直接標示缺失欄位。
+
+### 「網站設定已變更」衝突誤判
+
+若舊版本在第一次啟用聯絡表單時出現：
+
+```
+Conflict: website settings changed after Admin loaded.
+```
+
+可能不是 Worker URL 遺失，而是舊版 Admin 與後端對尚未儲存的聯絡表單預設文字不一致。新版已統一前後端預設值。更新後可重新執行原本失敗的 Batch；只有網站設定確實在 Admin 載入後被另一個 Batch 修改時，才會繼續阻止覆蓋。

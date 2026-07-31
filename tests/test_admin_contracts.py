@@ -25,14 +25,14 @@ class AdminLoadingContracts(unittest.TestCase):
             with self.subTest(relative=relative):
                 node_check(relative)
 
-    def test_admin_loads_only_canonical_unversioned_scripts(self) -> None:
+    def test_admin_loads_canonical_scripts_with_cache_busting(self) -> None:
         expected = (
-            '<script src="tags.js"></script>',
-            '<script src="layout.js"></script>',
-            '<script src="homepage.js"></script>',
-            '<script src="people.js"></script>',
-            '<script src="notifications.js"></script>',
-            '<script src="site-settings.js"></script>',
+            '<script src="tags.js?v=20260801-1"></script>',
+            '<script src="layout.js?v=20260801-1"></script>',
+            '<script src="homepage.js?v=20260801-1"></script>',
+            '<script src="people.js?v=20260801-1"></script>',
+            '<script src="notifications.js?v=20260801-1"></script>',
+            '<script src="site-settings.js?v=20260801-1"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -45,6 +45,16 @@ class AdminLoadingContracts(unittest.TestCase):
             "headings-v1.js",
         ):
             self.assertNotIn(obsolete, ADMIN_PAGE)
+
+
+    def test_admin_disables_stale_browser_cache(self) -> None:
+        for marker in (
+            'http-equiv="Cache-Control"',
+            'no-cache, no-store, must-revalidate',
+            'http-equiv="Pragma"',
+            'http-equiv="Expires"',
+        ):
+            self.assertIn(marker, ADMIN_PAGE)
 
     def test_admin_shell_is_installed_before_feature_wrappers(self) -> None:
         self.assertLess(

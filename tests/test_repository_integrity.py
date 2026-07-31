@@ -128,11 +128,11 @@ class CanonicalFilenameTests(unittest.TestCase):
     def test_admin_shell_references_canonical_scripts(self) -> None:
         page = read("admin/index.html")
         for marker in (
-            '<script src="tags.js"></script>',
-            '<script src="layout.js"></script>',
-            '<script src="homepage.js"></script>',
-            '<script src="people.js"></script>',
-            '<script src="notifications.js"></script>',
+            '<script src="tags.js?v=20260801-1"></script>',
+            '<script src="layout.js?v=20260801-1"></script>',
+            '<script src="homepage.js?v=20260801-1"></script>',
+            '<script src="people.js?v=20260801-1"></script>',
+            '<script src="notifications.js?v=20260801-1"></script>',
         ):
             self.assertIn(marker, page)
 

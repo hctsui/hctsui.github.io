@@ -606,9 +606,9 @@ class AdminCompatibilityTests(unittest.TestCase):
         self.assertNotIn("Lecture Notes 標題", page)
         for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
             self.assertIn(f'"{item_type}"', page)
-        self.assertIn('<script src="tags.js"></script>', page)
-        self.assertIn('<script src="layout.js"></script>', page)
-        self.assertIn('<script src="homepage.js"></script>', page)
+        self.assertIn('<script src="tags.js?v=20260801-1"></script>', page)
+        self.assertIn('<script src="layout.js?v=20260801-1"></script>', page)
+        self.assertIn('<script src="homepage.js?v=20260801-1"></script>', page)
         homepage = (ROOT / "admin" / "homepage.js").read_text(encoding="utf-8")
         for mode in ("latest", "oldest", "manual", "soonest", "farthest"):
             self.assertIn(f"'{mode}'", homepage)

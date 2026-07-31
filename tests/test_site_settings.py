@@ -44,6 +44,38 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(settings["error_page"]["auto_redirect"]["seconds"], 8)
         validate_site_settings(settings, data)
 
+    def test_admin_and_python_contact_defaults_match_for_conflict_check(self) -> None:
+        data = site_data()
+        before = current_site_settings(data)
+        self.assertEqual(
+            before["contact_form"]["privacy_note"],
+            {
+                "en": "Your message will be delivered privately by Web3Forms.",
+                "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。",
+            },
+        )
+        # This mirrors the Admin payload when site.json has no stored contact_form yet.
+        admin_before = copy.deepcopy(before)
+        after = copy.deepcopy(admin_before)
+        after["contact_form"].update({
+            "enabled": True,
+            "mode": "worker",
+            "worker_url": "https://hctsui-contact.example.workers.dev",
+        })
+        action, entry = apply_special(
+            data,
+            {"schema_version": 1, "pairs": []},
+            empty_history(),
+            {"op": "site_settings", "before": admin_before, "after": after},
+            "issue-default-parity-op-1",
+            1,
+            datetime.now(timezone.utc),
+            "digest-default-parity",
+            people={"schema_version": 1, "people": []},
+        )
+        self.assertEqual((action, entry), ("site_settings", "site-settings"))
+        self.assertEqual(current_site_settings(data)["contact_form"]["worker_url"], "https://hctsui-contact.example.workers.dev")
+
     def test_seo_metadata_contains_canonical_og_twitter_and_alternates(self) -> None:
         data = site_data()
         page = data["settings"]["pages"][1]
@@ -148,6 +180,15 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertNotIn("TURNSTILE_SECRET", rendered)
         self.assertNotIn("GITHUB_TOKEN", rendered)
 
+
+    def test_incomplete_worker_mode_is_rejected_but_disabled_draft_is_allowed(self) -> None:
+        data = site_data()
+        settings = current_site_settings(data)
+        settings["contact_form"].update({"enabled": False, "mode": "worker", "worker_url": ""})
+        validate_site_settings(settings, data)
+        settings["contact_form"]["enabled"] = True
+        with self.assertRaisesRegex(ValueError, "Worker URL is missing or invalid"):
+            validate_site_settings(settings, data)
 
     def test_email_only_contact_form_uses_fixed_subject_and_separate_visitor_subject(self) -> None:
         data = site_data()

@@ -179,7 +179,7 @@ def default_contact_form() -> dict[str, Any]:
         "message_label": {"en": "Message", "zh": "訊息"},
         "submit_label": {"en": "Send message", "zh": "送出訊息"},
         "success_message": {"en": "Thank you. Your message has been sent.", "zh": "謝謝，訊息已送出。"},
-        "privacy_note": {"en": "Your message will be delivered by Web3Forms.", "zh": "訊息將透過 Web3Forms 傳送。"},
+        "privacy_note": {"en": "Your message will be delivered privately by Web3Forms.", "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。"},
     }
 
 
@@ -416,9 +416,9 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
         raise ValueError("A fixed contact-form email subject is required.")
     if contact["enabled"] and contact["mode"] == "email_only":
         if not re.fullmatch(r"[0-9a-fA-F-]{20,80}", contact["web3forms_access_key"]):
-            raise ValueError("Web3Forms access key is required when the contact form uses email-only mode.")
+            raise ValueError("Contact form is enabled in Web3Forms Email mode, but the Access Key is missing or invalid. Fill the Access Key, switch modes, or disable the contact form.")
     if contact["enabled"] and contact["mode"] == "worker" and not contact["worker_url"]:
-        raise ValueError("A complete Cloudflare Worker URL is required for Admin notification mode.")
+        raise ValueError("Contact form is enabled in Cloudflare Worker notification mode, but the Worker URL is missing or invalid. Fill the Worker URL, switch to Web3Forms Email mode, or disable the contact form.")
     error_page = normalized["error_page"]
     for field in ("eyebrow", "title", "description", "home_label"):
         for lang in ("en", "zh"):
