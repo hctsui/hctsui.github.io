@@ -74,6 +74,7 @@ jobs:
           test -f admin/admin-icon.svg
           test -f assets/script.js
           test -f assets/style.css
+          test -f 404.html
 
       - name: Rebuild website and both LaTeX CVs
         run: |
@@ -142,7 +143,7 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site
-          cp index.html cv.html publications.html activities.html teaching.html photo.jpg _site/
+          cp index.html cv.html publications.html activities.html teaching.html 404.html photo.jpg _site/
           cp -R assets zh admin content files _site/
           touch _site/.nojekyll
 
