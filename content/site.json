@@ -2080,9 +2080,17 @@
       "order": 0,
       "title": {
         "en": "Function Field Arithmetic",
-        "zh": "函數體算術"
+        "zh": "函數體上的算術"
       },
       "description": {
+        "en": "",
+        "zh": ""
+      },
+      "title_html": {
+        "en": "Function Field Arithmetic",
+        "zh": "函數體上的算術"
+      },
+      "description_html": {
         "en": "",
         "zh": ""
       }
@@ -2262,7 +2270,16 @@
       },
       "description": {
         "en": "Department of Mathematics, National Tsing Hua University, Taiwan",
-        "zh": "臺灣國立清華大學數學系"
+        "zh": "臺灣 · 國立清華大學數學系"
+      },
+      "url": "",
+      "title_html": {
+        "en": "Affiliation",
+        "zh": "所屬單位"
+      },
+      "description_html": {
+        "en": "Department of Mathematics, National Tsing Hua University, Taiwan",
+        "zh": "臺灣 · 國立清華大學數學系"
       }
     },
     {
@@ -2276,7 +2293,16 @@
       },
       "description": {
         "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
-        "zh": "國立清華大學第三綜合大樓 6 樓 628 室；300044 臺灣新竹市東區光復路二段 101 號"
+        "zh": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號"
+      },
+      "url": "",
+      "title_html": {
+        "en": "Address &amp; office",
+        "zh": "地址與辦公室"
+      },
+      "description_html": {
+        "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+        "zh": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號"
       }
     }
   ]

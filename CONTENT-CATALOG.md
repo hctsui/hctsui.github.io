@@ -19,7 +19,7 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| interest | Function Field Arithmetic | 函數體算術 | `interest-function-field-arithmetic` |
+| interest | Function Field Arithmetic | 函數體上的算術 | `interest-function-field-arithmetic` |
 | interest | Multiple Zeta Values and Multiple Eisenstein Series in Positive Characteristic | 正特徵下的多重 zeta 值與多重 Eisenstein 級數 | `interest-positive-characteristic-mzv-mes` |
 
 ### Education / 學歷

@@ -46849,6 +46849,173 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-57-op-1",
+      "batch_issue": 57,
+      "applied_at": "2026-07-31T06:42:11.631280Z",
+      "expires_at": "2026-08-07T06:42:11.631280Z",
+      "reverted_by": null,
+      "request_digest": "b4fc700e9744d9574d34eb518e1008e8feae1ddac0ffe0195f07ad028e69aee4",
+      "request_action": "update",
+      "action": "update",
+      "type": "contact",
+      "entry_id": "contact-affiliation",
+      "label": {
+        "en": "Affiliation",
+        "zh": "所屬單位"
+      },
+      "before": {
+        "id": "contact-affiliation",
+        "type": "contact",
+        "category_id": "home-contact",
+        "order": 2,
+        "title": {
+          "en": "Affiliation",
+          "zh": "所屬單位"
+        },
+        "description": {
+          "en": "Department of Mathematics, National Tsing Hua University, Taiwan",
+          "zh": "臺灣國立清華大學數學系"
+        }
+      },
+      "after": {
+        "id": "contact-affiliation",
+        "type": "contact",
+        "category_id": "home-contact",
+        "order": 2,
+        "title": {
+          "en": "Affiliation",
+          "zh": "所屬單位"
+        },
+        "description": {
+          "en": "Department of Mathematics, National Tsing Hua University, Taiwan",
+          "zh": "臺灣 · 國立清華大學數學系"
+        },
+        "url": "",
+        "title_html": {
+          "en": "Affiliation",
+          "zh": "所屬單位"
+        },
+        "description_html": {
+          "en": "Department of Mathematics, National Tsing Hua University, Taiwan",
+          "zh": "臺灣 · 國立清華大學數學系"
+        }
+      },
+      "index_before": 11,
+      "index_after": 11,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-57-op-2",
+      "batch_issue": 57,
+      "applied_at": "2026-07-31T06:42:11.631280Z",
+      "expires_at": "2026-08-07T06:42:11.631280Z",
+      "reverted_by": null,
+      "request_digest": "59c6226f2723524f574e5161a8149ef9792d55b845d35cee02bdabeae32d7472",
+      "request_action": "update",
+      "action": "update",
+      "type": "contact",
+      "entry_id": "contact-address-office",
+      "label": {
+        "en": "Address & office",
+        "zh": "地址與辦公室"
+      },
+      "before": {
+        "id": "contact-address-office",
+        "type": "contact",
+        "category_id": "home-contact",
+        "order": 3,
+        "title": {
+          "en": "Address & office",
+          "zh": "地址與辦公室"
+        },
+        "description": {
+          "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+          "zh": "國立清華大學第三綜合大樓 6 樓 628 室；300044 臺灣新竹市東區光復路二段 101 號"
+        }
+      },
+      "after": {
+        "id": "contact-address-office",
+        "type": "contact",
+        "category_id": "home-contact",
+        "order": 3,
+        "title": {
+          "en": "Address & office",
+          "zh": "地址與辦公室"
+        },
+        "description": {
+          "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+          "zh": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號"
+        },
+        "url": "",
+        "title_html": {
+          "en": "Address &amp; office",
+          "zh": "地址與辦公室"
+        },
+        "description_html": {
+          "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+          "zh": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號"
+        }
+      },
+      "index_before": 12,
+      "index_after": 12,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-57-op-3",
+      "batch_issue": 57,
+      "applied_at": "2026-07-31T06:42:11.631280Z",
+      "expires_at": "2026-08-07T06:42:11.631280Z",
+      "reverted_by": null,
+      "request_digest": "aa3dc7c04785bfe557d3fb288e394f2b658a42cc2bf724ab2dd6be37ed9d04a5",
+      "request_action": "update",
+      "action": "update",
+      "type": "interest",
+      "entry_id": "interest-function-field-arithmetic",
+      "label": {
+        "en": "Function Field Arithmetic",
+        "zh": "函數體上的算術"
+      },
+      "before": {
+        "id": "interest-function-field-arithmetic",
+        "type": "interest",
+        "category_id": "cv-research",
+        "order": 0,
+        "title": {
+          "en": "Function Field Arithmetic",
+          "zh": "函數體算術"
+        },
+        "description": {
+          "en": "",
+          "zh": ""
+        }
+      },
+      "after": {
+        "id": "interest-function-field-arithmetic",
+        "type": "interest",
+        "category_id": "cv-research",
+        "order": 0,
+        "title": {
+          "en": "Function Field Arithmetic",
+          "zh": "函數體上的算術"
+        },
+        "description": {
+          "en": "",
+          "zh": ""
+        },
+        "title_html": {
+          "en": "Function Field Arithmetic",
+          "zh": "函數體上的算術"
+        },
+        "description_html": {
+          "en": "",
+          "zh": ""
+        }
+      },
+      "index_before": 0,
+      "index_after": 0,
+      "undo_of": null
     }
   ]
 }
