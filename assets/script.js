@@ -63,3 +63,41 @@ document.querySelectorAll("img[data-photo-candidates]").forEach((image) => {
     }
   });
 });
+
+/* Publication BibTeX panels and clipboard copy. */
+document.addEventListener("click", async (event) => {
+  const toggle = event.target.closest("[data-bibtex-toggle]");
+  if (toggle) {
+    const panel = document.getElementById(toggle.dataset.bibtexToggle || "");
+    if (!panel) return;
+    const opening = panel.hidden;
+    panel.hidden = !opening;
+    toggle.setAttribute("aria-expanded", String(opening));
+    if (opening) panel.querySelector(".bibtex-copy")?.focus({ preventScroll: true });
+    return;
+  }
+
+  const copyButton = event.target.closest("[data-copy-bibtex]");
+  if (!copyButton) return;
+  const panel = document.getElementById(copyButton.dataset.copyBibtex || "");
+  const text = panel?.querySelector("code")?.textContent || "";
+  if (!text) return;
+  const original = copyButton.textContent;
+  let copied = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    copied = true;
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.append(area);
+    area.select();
+    try { copied = document.execCommand("copy"); } finally { area.remove(); }
+  }
+  if (copied) {
+    copyButton.textContent = copyButton.dataset.copiedLabel || "Copied";
+    setTimeout(() => { copyButton.textContent = original; }, 1800);
+  }
+});

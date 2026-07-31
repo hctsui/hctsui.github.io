@@ -18,6 +18,7 @@ class AdminLoadingContracts(unittest.TestCase):
             "admin/tags.js",
             "admin/layout.js",
             "admin/homepage.js",
+            "admin/people.js",
         ):
             with self.subTest(relative=relative):
                 node_check(relative)
@@ -27,6 +28,7 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="tags.js"></script>',
             '<script src="layout.js"></script>',
             '<script src="homepage.js"></script>',
+            '<script src="people.js"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -159,6 +161,29 @@ class HomepageEditorContracts(unittest.TestCase):
             "filter(item=>String(item?.id)!==HOME_PROFILE_ITEM_ID)",
         ):
             self.assertIn(marker, MAIN)
+
+
+class PeopleAndBibtexContracts(unittest.TestCase):
+    def test_shared_author_manager_uses_click_only_suggestions(self) -> None:
+        people = read("admin/people.js")
+        for marker in (
+            "共同作者",
+            "可能的共同作者（點選後才會填入）",
+            "data-person-id",
+            "chooseSuggestion",
+            "peopleOperation",
+            "validatePeopleDraft",
+        ):
+            self.assertIn(marker, people)
+        self.assertNotIn("datalist", people)
+
+    def test_publication_editor_has_optional_bibtex_field(self) -> None:
+        for marker in (
+            "BibTeX（選填；留白時自動產生）",
+            "data-bibtex-toggle",
+            "data-copy-bibtex",
+        ):
+            self.assertIn(marker, ADMIN_PAGE + read("assets/script.js") + read("tools/build_site.py"))
 
 
 class DocumentationContracts(unittest.TestCase):

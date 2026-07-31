@@ -8,8 +8,10 @@ from translation_validation import normalize_translation_tags, validate_translat
 from heading_config import normalized_headings, validate_headings
 from category_config import migrate_category_data, validate_category_data, all_items
 from homepage_config import apply_homepage_config, normalized_homepage_config, validate_homepage_config
+from people_config import empty_people, normalized_people, validate_people
+from markup_config import rich_html
 from process_request import strip_invisible_chars
-ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
+ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; PEOPLE=ROOT/'content/people.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
 def parse_body(body):
  m=re.search(r'### Batch payload / 批次資料\s+(.+)',body,re.S);raw=(m.group(1) if m else body).strip();f=re.search(r'```(?:json)?\s*(.*?)```',raw,re.S);text=(f.group(1) if f else raw).strip()
@@ -31,7 +33,9 @@ def clean(s):return html.escape(str(s or '').strip(),quote=False)
 def normalize_item(x):
  x=copy.deepcopy(x);t=x['type']
  for k in ('title','description','organization','authors','venue','role','organization_kind','date_label'):
-  if isinstance(x.get(k),dict):x[k+'_html']={l:clean(v) for l,v in x[k].items()}
+  if isinstance(x.get(k),dict):
+   formatter=rich_html if k in {'title','description','organization','venue','organization_kind','date_label'} else clean
+   x[k+'_html']={l:formatter(v) for l,v in x[k].items()}
  if t=='publication':x['year']=int(str(x.get('date',''))[:4] or x.get('year') or 0)
  return x
 def empty_history():return {'schema_version':2,'retention_days':RETENTION,'operations':[]}
@@ -230,7 +234,8 @@ def layout_expected_matches(current,expected):
   if str(left.get('category_id') or '')!=str(right.get('category_id') or ''):return False
   if int(left.get('order',999999))!=int(right.get('order',999999)):return False
  return True
-def apply_special(data,trans,h,op,hid,issue,n,rd):
+def apply_special(data,trans,h,op,hid,issue,n,rd,people=None):
+ if people is None:people=empty_people()
  if op['op']=='homepage':
   before=normalized_homepage_config(data);expected=op.get('before')
   if expected and before!=normalized_homepage_config(data,expected):raise ValueError('Conflict: homepage settings changed after Admin loaded.')
@@ -250,10 +255,15 @@ def apply_special(data,trans,h,op,hid,issue,n,rd):
   before=normalized_heading_bundle(data,{'headings':data.get('settings',{}).get('headings',{}),'group_labels':current_group_labels(data)});expected=op.get('before')
   if expected and before!=normalized_heading_bundle(data,expected):raise ValueError('Conflict: website headings changed after Admin loaded.')
   after=normalized_heading_bundle(data,copy.deepcopy(op['after']));apply_heading_bundle(data,after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='headings',action='headings',type='headings',entry_id='headings',label={'en':'Website headings','zh':'網站標題'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'headings','headings'
+ if op['op']=='people':
+  before=normalized_people(people);expected=op.get('before')
+  if expected and before!=normalized_people(expected):raise ValueError('Conflict: shared-author directory changed after Admin loaded.')
+  after=normalized_people(copy.deepcopy(op['after']));validate_people(after);people.clear();people.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='people',action='people',type='people',entry_id='people',label={'en':'Shared authors','zh':'共同作者'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'people','people'
  before=copy.deepcopy(trans);expected=op.get('before')
  if expected and before!=expected:raise ValueError('Conflict: translations changed after Admin loaded.')
  after=copy.deepcopy(op['after']);normalize_translation_tags(after);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照表'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
-def apply_undo(data,trans,h,op,hid,issue,n,rd):
+def apply_undo(data,trans,h,op,hid,issue,n,rd,people=None):
+ if people is None:people=empty_people()
  tid=op.get('history_id');target=next((x for x in h['operations'] if x.get('history_id')==tid),None)
  if not target:raise ValueError(f'Undo target unavailable or expired: {tid}')
  if target.get('reverted_by'):raise ValueError(f'{tid} was already undone.')
@@ -280,6 +290,10 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
  elif act=='translations':
   if trans!=target['after']:raise ValueError('Cannot undo translations: dictionary changed later.')
   before=copy.deepcopy(trans);trans.clear();trans.update(copy.deepcopy(target['before']));new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='translations',type='translations',entry_id='translations',label=target['label'],before=before,after=copy.deepcopy(trans),index_before=None,index_after=None,undo_of=tid)
+ elif act=='people':
+  cur=normalized_people(people)
+  if cur!=normalized_people(target['after']):raise ValueError('Cannot undo shared authors: directory changed later.')
+  restored=normalized_people(target['before']);validate_people(restored);people.clear();people.update(copy.deepcopy(restored));new=append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='undo',action='people',type='people',entry_id='people',label=target['label'],before=cur,after=copy.deepcopy(restored),index_before=None,index_after=None,undo_of=tid)
  else:
   a,i=find(data,t,eid)
   if act=='add':
@@ -296,13 +310,16 @@ def apply_undo(data,trans,h,op,hid,issue,n,rd):
 def validate_operation(op):
  if not isinstance(op,dict):raise ValueError('Every batch operation must be an object.')
  action=op.get('op')
- if action not in {'add','update','delete','undo','reorder','translations','headings','layout','homepage'}:raise ValueError(f'Unsupported batch operation: {action}')
+ if action not in {'add','update','delete','undo','reorder','translations','people','headings','layout','homepage'}:raise ValueError(f'Unsupported batch operation: {action}')
  if action=='undo':
   if not str(op.get('history_id') or '').strip():raise ValueError('Undo operation is missing history_id.')
   return
  if action=='translations':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Translations operation requires before and after objects.')
   validate_translation_data(op['after']);return
+ if action=='people':
+  if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('People operation requires before and after objects.')
+  validate_people(normalized_people(op['after']));return
  if action=='layout':
   if not isinstance(op.get('before'),dict) or not isinstance(op.get('after'),dict):raise ValueError('Layout operation requires before and after objects.')
   return
@@ -325,16 +342,16 @@ def validate_operation(op):
 def main():
  p=argparse.ArgumentParser();p.add_argument('event');p.add_argument('--result-file',required=True);a=p.parse_args();ev=json.load(open(a.event));issue=int(ev['issue']['number']);payload=parse_body(ev['issue']['body']);ops=payload.get('operations',[])
  if payload.get('schema_version')!=2 or not isinstance(ops,list):raise ValueError('Invalid batch payload.')
- data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','headings','layout','homepage','replayed')};ids=[]
+ data=migrate_category_data(json.load(open(SITE,encoding='utf-8')));trans=json.load(open(TRANS,encoding='utf-8'));normalize_translation_tags(trans);people=normalized_people(json.load(open(PEOPLE,encoding='utf-8')) if PEOPLE.exists() else empty_people());validate_people(people);h=load_history();n=now();prune(h,n);existing={x['history_id']:x for x in h['operations']};counts={k:0 for k in ('add','update','delete','undo','reorder','translations','people','headings','layout','homepage','replayed')};ids=[]
  for i,op in enumerate(ops,1):
   validate_operation(op);hid=f'issue-{issue}-op-{i}';rd=digest(op)
   if hid in existing:
    if existing[hid].get('request_digest')!=rd:raise ValueError(f'{hid} exists with different content.')
    counts['replayed']+=1;continue
-  if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd)
-  elif op['op'] in ('reorder','translations','headings','layout','homepage'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd)
+  if op['op']=='undo':act,eid=apply_undo(data,trans,h,op,hid,issue,n,rd,people=people)
+  elif op['op'] in ('reorder','translations','people','headings','layout','homepage'):act,eid=apply_special(data,trans,h,op,hid,issue,n,rd,people=people)
   else:act,eid=apply_content(data,h,op,hid,issue,n,rd)
   counts[act]+=1;ids.append(eid);existing[hid]=h['operations'][-1]
- normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);h=strip_invisible_chars(h);validate_category_data(data);validate_homepage_config(data,normalized_homepage_config(data));validate_trans(trans);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
- summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','headings','layout','homepage') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
+ normalize_groups(data);data=strip_invisible_chars(migrate_category_data(data));trans=strip_invisible_chars(trans);people=strip_invisible_chars(normalized_people(people));h=strip_invisible_chars(h);validate_category_data(data);validate_homepage_config(data,normalized_homepage_config(data));validate_trans(trans);validate_people(people);SITE.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');TRANS.write_text(json.dumps(trans,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');PEOPLE.write_text(json.dumps(people,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');HISTORY.write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ summary='批次完成：'+ '、'.join(f'{k} {counts[k]}' for k in ('add','update','delete','undo','reorder','translations','people','headings','layout','homepage') if counts[k]);res={'action':summary or '沒有新操作','entry_id':', '.join(ids[:8]),'notes':['每筆操作已保存七天，可在 Admin 單筆 Undo。'],'warnings':[]};Path(a.result_file).write_text(json.dumps(res,ensure_ascii=False),encoding='utf-8')
 if __name__=='__main__':main()

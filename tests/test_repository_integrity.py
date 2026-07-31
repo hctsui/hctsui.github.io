@@ -27,6 +27,7 @@ class RequiredFileTests(unittest.TestCase):
             "admin/index.html",
             "admin/guide.html",
             "admin/homepage.js",
+            "admin/people.js",
             "admin/layout.js",
             "admin/tags.js",
             "admin/admin-icon.svg",
@@ -42,6 +43,9 @@ class RequiredFileTests(unittest.TestCase):
             "tools/build_site.py",
             "tools/build_cv.py",
             "tools/homepage_config.py",
+            "tools/people_config.py",
+            "tools/markup_config.py",
+            "content/people.json",
             "tools/render_grouped_sections.py",
             "tools/update_cv_links.py",
             "tools/validate_site.py",
@@ -120,6 +124,7 @@ class CanonicalFilenameTests(unittest.TestCase):
             '<script src="tags.js"></script>',
             '<script src="layout.js"></script>',
             '<script src="homepage.js"></script>',
+            '<script src="people.js"></script>',
         ):
             self.assertIn(marker, page)
 
@@ -149,6 +154,7 @@ class CanonicalFilenameTests(unittest.TestCase):
         workflow = read(".github/workflows/deploy-cms-pages.yml")
         for relative in (
             "admin/homepage.js",
+            "admin/people.js",
             "admin/layout.js",
             "admin/tags.js",
             "assets/script.js",

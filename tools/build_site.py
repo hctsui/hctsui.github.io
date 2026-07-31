@@ -15,10 +15,13 @@ from zoneinfo import ZoneInfo
 import process_request as core
 from category_config import categories_for_page, items_for_category, migrate_category_data, normalized_pages
 from homepage_config import homepage_activities, homepage_publications
+from markup_config import rich_html as safe_rich_html
+from people_config import link_author_html, load_people
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
 PAGE_FILES = [ROOT / p for p in ("index.html", "cv.html", "publications.html", "activities.html", "teaching.html", "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html", "zh/teaching.html")]
+PEOPLE = load_people()
 
 
 def load_data() -> dict[str, Any]:
@@ -30,12 +33,8 @@ def esc(value: Any) -> str:
 
 
 def rich_html(value: Any) -> str:
-    """Small safe heading/item markup: [i]x[/i], [b]x[/b], and $x$."""
-    text = html.escape(str(core.strip_invisible_chars(str(value or ""))), quote=False)
-    text = re.sub(r"\[i\](.+?)\[/i\]", r"<em>\1</em>", text, flags=re.I | re.S)
-    text = re.sub(r"\[b\](.+?)\[/b\]", r"<strong>\1</strong>", text, flags=re.I | re.S)
-    text = re.sub(r"\$([^$\n]+)\$", r"<em>\1</em>", text)
-    return text
+    """Render the site's safe, dependency-free inline markup."""
+    return safe_rich_html(core.strip_invisible_chars(str(value or "")))
 
 
 def plain_value(entry: dict[str, Any], field: str, lang: str) -> str:
@@ -127,16 +126,88 @@ def render_honor(entry: dict[str, Any], lang: str) -> str:
     return f'<article class="timeline-item" data-entry-id="{esc(entry.get("id"))}"><time>{esc(entry.get("year"))}</time><div><h3>{title}</h3>{f"<p>{org}</p>" if org else ""}</div></article>'
 
 
+
+def _split_english_authors(value: str) -> list[str]:
+    text = str(value or "").strip()
+    if not text:
+        return []
+    return [
+        item.strip()
+        for item in re.sub(r"\s*,?\s+and\s+", ", ", text, flags=re.I).split(",")
+        if item.strip()
+    ]
+
+
+def _bibtex_key(entry: dict[str, Any]) -> str:
+    authors = _split_english_authors(plain_value(entry, "authors", "en"))
+    surname = re.sub(r"[^A-Za-z0-9]+", "", (authors[-1] if authors else "tsui").split()[-1]).lower() or "tsui"
+    year = str(entry.get("year") or str(entry.get("date") or "")[:4] or "nd")
+    words = re.findall(r"[A-Za-z0-9]+", plain_value(entry, "title", "en"))
+    stop = {"a", "an", "and", "of", "on", "the", "in", "for", "to", "with"}
+    keyword = next((word.lower() for word in words if word.lower() not in stop), "work")
+    return f"{surname}{year}{keyword}"
+
+
+def _bibtex_escape(value: Any) -> str:
+    text = str(value or "").strip()
+    return text.replace("\\", r"\textbackslash{}")
+
+
+def publication_bibtex(entry: dict[str, Any]) -> str:
+    manual = str(entry.get("bibtex") or "").strip()
+    if manual:
+        return manual
+    authors = " and ".join(_split_english_authors(plain_value(entry, "authors", "en")))
+    title = plain_value(entry, "title", "en")
+    year = str(entry.get("year") or str(entry.get("date") or "")[:4] or "")
+    arxiv = str(entry.get("arxiv") or "").strip()
+    doi_url = str(entry.get("doi_url") or "").strip()
+    doi = re.sub(r"^https?://(?:dx\.)?doi\.org/", "", doi_url, flags=re.I) if doi_url else ""
+    venue = plain_value(entry, "venue", "en")
+    journal_like = bool(doi or entry.get("journal_url") or entry.get("group_id") == "journal-articles")
+    entry_type = "article" if journal_like else "misc"
+    fields: list[tuple[str, str]] = [("author", authors), ("title", title), ("year", year)]
+    if journal_like and venue and not venue.lower().startswith("arxiv"):
+        fields.append(("journal", venue))
+    if doi:
+        fields.append(("doi", doi))
+    if arxiv:
+        fields.extend((("eprint", arxiv), ("archivePrefix", "arXiv")))
+    url = str(entry.get("journal_url") or entry.get("arxiv_url") or entry.get("pdf_url") or "").strip()
+    if url:
+        fields.append(("url", url))
+    rows = [f"  {name} = {{{_bibtex_escape(value)}}}" for name, value in fields if value]
+    return f"@{entry_type}{{{_bibtex_key(entry)},\n" + ",\n".join(rows) + "\n}"
+
+
+def bibtex_controls(entry: dict[str, Any], lang: str) -> str:
+    bibtex = publication_bibtex(entry)
+    if not bibtex:
+        return ""
+    identifier = "bibtex-" + re.sub(r"[^A-Za-z0-9_-]+", "-", str(entry.get("id") or "publication"))
+    copy_label = "複製 BibTeX" if lang == "zh" else "Copy BibTeX"
+    copied_label = "已複製" if lang == "zh" else "Copied"
+    return (
+        f'<button class="pub-bibtex-toggle" type="button" data-bibtex-toggle="{esc(identifier)}" '
+        f'aria-expanded="false">BibTeX</button>'
+        f'<div class="bibtex-panel" id="{esc(identifier)}" hidden>'
+        f'<div class="bibtex-panel-actions"><button type="button" class="bibtex-copy" '
+        f'data-copy-bibtex="{esc(identifier)}" data-copied-label="{esc(copied_label)}">{copy_label}</button></div>'
+        f'<pre><code>{esc(bibtex)}</code></pre></div>'
+    )
+
 def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool = False) -> str:
     links_html = "".join(
         f'<a href="{esc(link.get("url", ""))}" rel="noopener" target="_blank">{esc((link.get("label") or {}).get(lang) or (link.get("label") or {}).get("en") or "Link")}</a>'
         for link in entry.get("links", []) if link.get("url")
     )
-    links = f'<div class="pub-links">{links_html}</div>' if links_html else ""
+    bibtex = bibtex_controls(entry, lang)
+    links = f'<div class="pub-links">{links_html}{bibtex}</div>' if links_html or bibtex else ""
     title = (entry.get("homepage_title_html", {}) or {}).get(lang) if homepage else ""
     authors = (entry.get("homepage_authors_html", {}) or {}).get(lang) if homepage else ""
     title = title or inline_value(entry, "title", lang)
     authors = authors or inline_value(entry, "authors", lang)
+    authors = link_author_html(authors, PEOPLE, lang)
     venue = inline_value(entry, "venue", lang)
     return (
         f'<article class="publication" data-entry-id="{esc(entry.get("id"))}"><div class="pub-year">{esc(entry.get("year"))}</div><div>'

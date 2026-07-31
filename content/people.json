@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "people": [
+    {
+      "id": "ting-wei-chang",
+      "name": {
+        "en": "Ting-Wei Chang",
+        "zh": "張庭瑋"
+      },
+      "aliases": [],
+      "url": ""
+    },
+    {
+      "id": "song-yun-chen",
+      "name": {
+        "en": "Song-Yun Chen",
+        "zh": "陳松筠"
+      },
+      "aliases": [],
+      "url": ""
+    },
+    {
+      "id": "fei-jun-huang",
+      "name": {
+        "en": "Fei-Jun Huang",
+        "zh": "黃斐浚"
+      },
+      "aliases": [],
+      "url": ""
+    }
+  ]
+}

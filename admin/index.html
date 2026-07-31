@@ -995,6 +995,7 @@
         headings: "頁面與類別",
         layout: "頁面與類別",
         homepage: "首頁精選",
+        people: "共同作者",
       };
       const ACTION_LABEL = {
         add: "新增",
@@ -1005,6 +1006,7 @@
         translations: "中英對照表",
         layout: "頁面與類別",
         homepage: "首頁精選",
+        people: "共同作者",
       };
       const SECTION = {
         conference: "activities",
@@ -1179,6 +1181,8 @@
         if (!h) return "未命名";
         if (h.request_action === "translations" || h.action === "translations")
           return "中英對照表";
+        if (h.request_action === "people" || h.action === "people")
+          return "共同作者資料";
         if (h.action === "reorder") return `${LABEL[h.type] || h.type}排序`;
         return (
           rawTitle(h.after) ||
@@ -1590,6 +1594,7 @@
           ["doi_url", "DOI 連結", "url"],
           ["journal_url", "期刊頁連結", "url"],
           ["code_url", "程式碼連結", "url"],
+          ["bibtex", "BibTeX（選填；留白時自動產生）", "textarea"],
         ],
         teaching: [
           ["term", "學期", "pair-term"],
@@ -1834,7 +1839,7 @@
         }));
       }
       function authorRowHtml(pair = {}, index = 0) {
-        return `<div class="author-row" data-author-row data-bilingual-group><div class="author-row-head"><span class="author-row-title">作者 ${index + 1}</span><button class="button danger" type="button" data-remove-author>移除</button></div><div class="pair-grid"><div class="field"><label>英文姓名</label><input data-bilingual-en data-author-en value="${esc(pair.en || "")}"></div><div class="field"><label>中文姓名</label><input data-bilingual-zh data-author-zh value="${esc(pair.zh || "")}"></div></div></div>`;
+        return `<div class="author-row" data-author-row data-bilingual-group><div class="author-row-head"><span class="author-row-title">作者 ${index + 1}</span><button class="button danger" type="button" data-remove-author>移除</button></div><div class="pair-grid"><div class="field"><label>英文姓名</label><input data-bilingual-en data-author-en autocomplete="off" spellcheck="false" value="${esc(pair.en || "")}"></div><div class="field"><label>中文姓名</label><input data-bilingual-zh data-author-zh autocomplete="off" spellcheck="false" value="${esc(pair.zh || "")}"></div></div></div>`;
       }
       function authorFields(value = {}) {
         let rows = authorPairs(value);
@@ -1916,6 +1921,8 @@
         if (type === "checkbox")
           return `<label class="switch"><input data-path="${path}" type="checkbox" ${value ? "checked" : ""}>${label}</label>`;
         if (type === "date") return dateField(path, label, value);
+        if (type === "textarea")
+          return `<div class="field bibtex-editor"><label>${label}</label><textarea data-path="${path}" placeholder="留白時由題目、作者、年份、arXiv／DOI 等資料自動產生">${esc(value || "")}</textarea><p class="field-hint">適合貼入正式期刊提供的 BibTeX；未填寫時網站仍會自動建立可引用版本。</p></div>`;
         let attrs = type === "number" ? ' inputmode="numeric" step="1"' : "",
           hint = inputHint(path);
         return `<div class="field"><label>${label}</label><input data-path="${path}" type="${type}"${attrs} value="${esc(value || "")}">${hint ? `<p class="field-hint">${hint}</p>` : ""}</div>`;
@@ -3343,6 +3350,10 @@
             before: originalTranslations,
             after: translations,
           });
+        if (typeof peopleOperation === "function") {
+          let peopleOp = peopleOperation();
+          if (peopleOp) ops.push(peopleOp);
+        }
         if (typeof headingsDirty === "function" && headingsDirty())
           ops.push(headingOperation());
         return {
@@ -3372,21 +3383,29 @@
             reorder: 0,
             translations: 0,
             headings: 0,
+            people: 0,
           };
         ops.forEach((x) => (c[x.op] = (c[x.op] || 0) + 1));
-        let errs = validateDictionary();
+        let errs = validateDictionary(),
+          peopleErrors =
+            typeof validatePeopleDraft === "function"
+              ? validatePeopleDraft()
+              : [];
+        errs.push(...peopleErrors);
         $("#summary").className =
           "notice " + (errs.length ? "error" : ops.length ? "success" : "");
         $("#summary").textContent = errs.length
-          ? "對照表有衝突，請先修正。"
+          ? "資料有衝突，請先修正。"
           : ops.length
-            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.headings ? "、網站標題 1" : ""}`
+            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.people ? "、共同作者 1" : ""}${c.headings ? "、網站標題 1" : ""}`
             : "尚無變更。";
         $("#preview").innerHTML = ops
           .map((o) => {
             if (o.op === "headings") return headingPreviewHtml(o);
             if (o.op === "translations")
               return `<details class="diff"><summary><strong>中英對照表</strong>：${o.before.pairs.length} → ${o.after.pairs.length} 組</summary><div class="preview-columns"><div class="preview-card"><h4>修改前</h4><div class="preview-value">${o.before.pairs.length} 組</div></div><div class="preview-card"><h4>修改後</h4><div class="preview-value">${o.after.pairs.length} 組</div></div></div></details>`;
+            if (o.op === "people" && typeof peoplePreviewHtml === "function")
+              return peoplePreviewHtml(o);
             if (o.op === "reorder")
               return `<details class="diff"><summary><strong>${esc(orderDraftName(o))}</strong></summary>${orderDiffHtml(o.before, o.after, o.type)}</details>`;
             if (o.op === "undo") {
@@ -3441,6 +3460,11 @@
           h.action === "translations"
         )
           body = translationHistoryPreviewHtml(h);
+        else if (
+          (h.request_action === "people" || h.action === "people") &&
+          typeof peopleHistoryPreviewHtml === "function"
+        )
+          body = peopleHistoryPreviewHtml(h);
         else if (h.action === "reorder")
           body = orderDiffHtml(h.before, h.after, h.type);
         else if (h.action === "add")
@@ -3462,6 +3486,11 @@
           return changePreviewHtml(h.type, null, h.before);
         if (h.action === "reorder")
           return orderDiffHtml(h.after, h.before, h.type);
+        if (h.action === "people" && typeof peoplePreviewHtml === "function")
+          return peoplePreviewHtml({
+            before: h.after,
+            after: h.before,
+          });
         if (h.action === "headings")
           return headingPreviewHtml({
             op: "headings",
@@ -3473,6 +3502,7 @@
       function renderAll() {
         renderPreview();
         if (typeof renderHeadings === "function") renderHeadings();
+        if (typeof renderPeopleManager === "function") renderPeopleManager();
       }
       function switchTab(name) {
         document
@@ -3485,6 +3515,7 @@
           "order",
           "trash",
           "dictionary",
+          "people",
         ])
           $(`#${n}Tab`).hidden = n !== name;
       }
@@ -3521,6 +3552,7 @@
         localStorage.removeItem(DRAFT_KEY);
         localStorage.removeItem(TRANSLATION_DRAFT_KEY);
         localStorage.removeItem("hctsui-headings-draft-v1");
+        if (typeof clearPeopleDraft === "function") clearPeopleDraft(false);
         sessionStorage.removeItem("hctsui-submission-pending");
         location.reload();
       }
@@ -3551,12 +3583,18 @@
       }
       async function submit() {
         let errs = validateDictionary(),
+          peopleErrors =
+            typeof validatePeopleDraft === "function"
+              ? validatePeopleDraft()
+              : [],
           headingErrors =
             typeof validateHeadingsDraft === "function"
               ? validateHeadingsDraft()
               : [],
           p = payload();
         if (errs.length) return flash("請先修正中英對照表衝突");
+        if (peopleErrors.length)
+          return flash("請先修正共同作者資料：" + peopleErrors[0]);
         if (headingErrors.length)
           return flash("請先修正標題欄位：" + headingErrors[0]);
         if (!p.operations.length) return flash("尚無變更");
@@ -3794,5 +3832,6 @@
     <script src="tags.js"></script>
     <script src="layout.js"></script>
     <script src="homepage.js"></script>
+    <script src="people.js"></script>
   </body>
 </html>
