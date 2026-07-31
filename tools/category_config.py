@@ -99,6 +99,7 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
         item = copy.deepcopy(default)
         item["name"] = pair(source.get("name"), default["name"])
         item["path"] = copy.deepcopy(default["path"])
+        item["languages"] = ["en", "zh"]
         item["order"] = int(source.get("order", default["order"]))
         item["color"] = str(source.get("color") or default["color"]).strip().lower()
         if default["header"] is not None:
@@ -118,10 +119,15 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
         if not page_id or page_id in default_ids:
             continue
         header = source.get("header") if isinstance(source.get("header"), dict) else {}
+        source_languages = source.get("languages", ["en", "zh"])
+        languages = [lang for lang in ("en", "zh") if lang in source_languages]
+        if not languages:
+            languages = ["en", "zh"]
         pages.append({
             "id": page_id,
             "name": pair(source.get("name"), {"en": page_id.replace("-", " ").title(), "zh": page_id}),
-            "path": {"en": f"{page_id}.html", "zh": f"zh/{page_id}.html"},
+            "path": {"en": f"{page_id}.html" if "en" in languages else "", "zh": f"zh/{page_id}.html" if "zh" in languages else ""},
+            "languages": languages,
             "header": {
                 "label": pair(header.get("label"), {"en": "Academic profile", "zh": "學術資料"}),
                 "title": pair(header.get("title"), pair(source.get("name"), {"en": page_id.replace("-", " ").title(), "zh": page_id})),
@@ -353,20 +359,22 @@ def validate_category_data(data: dict[str, Any]) -> None:
     for page in pages:
         if not re.fullmatch(r"#[0-9a-fA-F]{6}", str(page.get("color") or "")):
             raise ValueError(f"Page {page['id']} has an invalid color.")
+        languages = page.get("languages") or ["en", "zh"]
         for field in ("name",):
-            for lang in ("en", "zh"):
+            for lang in languages:
                 if not str(page.get(field, {}).get(lang) or "").strip():
                     raise ValueError(f"Page {page['id']} {field}.{lang} cannot be blank.")
         if page.get("header"):
             for field in ("label", "title"):
-                for lang in ("en", "zh"):
+                for lang in languages:
                     if not str(page["header"].get(field, {}).get(lang) or "").strip():
                         raise ValueError(f"Page {page['id']} header.{field}.{lang} cannot be blank.")
         for lang in ("en", "zh"):
             path = str(page.get("path", {}).get(lang) or "")
-            if not path or path in paths:
+            if lang in languages and (not path or path in paths):
                 raise ValueError(f"Page {page['id']} has a missing or duplicate path.")
-            paths.add(path)
+            if path:
+                paths.add(path)
     categories = normalized_categories(data)
     category_ids = [c["id"] for c in categories]
     if len(category_ids) != len(set(category_ids)):
