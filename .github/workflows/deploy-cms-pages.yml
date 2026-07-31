@@ -164,7 +164,7 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site
-          cp index.html cv.html publications.html activities.html teaching.html contact.html 404.html photo.jpg _site/
+          cp index.html cv.html publications.html activities.html teaching.html contact.html 404.html _site/
           cp -R assets zh admin content files _site/
           touch _site/.nojekyll
 
