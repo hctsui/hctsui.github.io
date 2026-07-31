@@ -1,7 +1,7 @@
 {
   "repository": "hctsui/hctsui.github.io",
   "base_branch": "cms",
-  "base_commit": "84eac784d5d91b1f4386457364bda159a96a1b8f",
+  "base_commit_observed": "e5c1c2d3dfb1309241916fd7500372669fec49c5",
   "created_date": "2026-07-31",
   "files": [
     "admin/homepage-v1.js",
@@ -10,10 +10,25 @@
     "tests/test_admin_hotfix.py",
     "UPDATE-NOTES.md"
   ],
+  "changes": [
+    "homepage manager is permanently visible inside the order tab",
+    "add menu groups four academic activity forms under one 活動 entry",
+    "activity forms include a back-to-chooser button",
+    "organization label is renamed 學術籌辦",
+    "catalog filtering keeps conference, talk, visit, and organization separate",
+    "long order titles wrap only in the content column while controls stay on one row"
+  ],
   "validation": {
     "javascript_syntax": "passed",
-    "admin_smoke_test": "passed",
     "documentation_required_headings": "passed",
-    "admin_hotfix_tests": "5 passed"
+    "admin_hotfix_tests": "python3 -m unittest discover -s tests: 9 passed",
+    "full_repository_test_suite": "not run locally (repository not available in container)"
+  },
+  "sha256": {
+    "admin/homepage-v1.js": "0870308e7affce113c3c10d3a3b3642a9c62bbaefeef4ab47967d8c3da193f0d",
+    "admin/guide.html": "8186a46a71e5901745bd0a009a5fa6c85a8ac96ea08bf9dd5f7f7f9fec93f9b9",
+    "MANAGE-WEBSITE.md": "68f9327ef9a7b942e933c54f36fba9ac5336034c29c765ceb5a4a6692f1049bc",
+    "tests/test_admin_hotfix.py": "7de5f7706d579a5d0fd4a0aa37efc83e50c672b69e1c018783e2941e2008c130",
+    "UPDATE-NOTES.md": "2d48bd07c828acad7d16122173d62343ccdf857ef63bbff22a0cf057e1514c57"
   }
 }

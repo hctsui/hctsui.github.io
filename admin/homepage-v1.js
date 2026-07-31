@@ -88,8 +88,16 @@ function homepageSectionHtml(data,section){
 }
 function ensureHomepagePanel(){
   const tab=$('#orderTab');if(!tab)return null;
-  let box=$('#homepageManager');
-  if(!box){tab.insertAdjacentHTML('beforeend','<details class="order-homepage-panel"><summary><strong>首頁精選與近期活動</strong></summary><div id="homepageManager"></div></details>');box=$('#homepageManager')}
+  let panel=tab.querySelector('.order-homepage-panel');
+  if(!panel||panel.tagName==='DETAILS'){
+    const section=document.createElement('section');
+    section.className='order-homepage-panel';
+    section.innerHTML='<div class="order-homepage-panel-head"><div><span class="eyebrow">首頁內容</span><h3>首頁精選與近期活動</h3></div><span class="tag">排序頁內固定顯示</span></div><div id="homepageManager"></div>';
+    if(panel)panel.replaceWith(section);else tab.append(section);
+    panel=section;
+  }
+  let box=panel.querySelector('#homepageManager');
+  if(!box){box=document.createElement('div');box.id='homepageManager';panel.append(box)}
   return box;
 }
 function renderHomepageManager(){
@@ -134,7 +142,7 @@ renderDrafts=function(){
 };
 $('#drafts').addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button)return;
-  if(button.hasAttribute('data-edit-homepage-draft')){switchTab('order');document.querySelector('.order-homepage-panel')?.setAttribute('open','');document.querySelector('.order-homepage-panel')?.scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(button.hasAttribute('data-edit-homepage-draft')){switchTab('order');renderHomepageManager();document.querySelector('.order-homepage-panel')?.scrollIntoView({behavior:'smooth',block:'start'});return}
   if(button.hasAttribute('data-preview-homepage-draft')){$('#editorPreview').innerHTML=`<div class="notice"><strong>草稿預覽 · 首頁設定</strong></div>${homepagePreviewHtml(homepageOperation())}`;return}
   if(button.hasAttribute('data-drop-homepage-draft'))clearHomepageDraft();
 });
@@ -154,7 +162,7 @@ historyOperationPreviewHtml=function(h){if(h?.action==='homepage')return`<div cl
 const homepageBaseUndoPreview=undoPreviewHtml;
 undoPreviewHtml=function(h){if(h?.action==='homepage')return homepagePreviewHtml({before:h.after,after:h.before});return homepageBaseUndoPreview(h)};
 const homepageBaseRenderAll=renderAll;
-renderAll=function(){homepageBaseRenderAll();if(site)renderHomepageManager()};
+renderAll=function(){homepageBaseRenderAll();configureAddTypeMenu();if(site)renderHomepageManager()};
 const homepageBaseClearSubmittedDraft=clearSubmittedDraft;
 clearSubmittedDraft=function(){localStorage.removeItem(HOMEPAGE_DRAFT_KEY);homepageBaseClearSubmittedDraft()};
 
@@ -257,12 +265,56 @@ function saveGeneralCurrent(){
   }
   switchTab('draft');flash(isDraft?'草稿變更已儲存':'已加入批次草稿');
 }
+function configureActivityLabels(){
+  LABEL.academic_event='活動';LABEL.organization='學術籌辦';
+  if(typeof CATEGORY_KIND_LABELS==='object')CATEGORY_KIND_LABELS.organization='學術籌辦';
+}
+function configureAddTypeMenu(){
+  configureActivityLabels();
+  const add=$('#addType');if(add){
+    const selected=add.value;
+    const types=['page','category','publication','academic_event','teaching','generic'];
+    add.innerHTML=types.map(type=>`<option value="${type}" ${type===selected?'selected':''}>${esc(LABEL[type]||type)}</option>`).join('');
+    if(!types.includes(add.value))add.value='academic_event';
+  }
+  const filter=$('#filter');if(filter){
+    const selected=filter.value,types=['page','category',...TYPES];
+    filter.innerHTML='<option value="">全部</option>'+types.map(type=>`<option value="${type}" ${type===selected?'selected':''}>${esc(LABEL[type]||type)}</option>`).join('');
+    if(selected&&!types.includes(selected))filter.value='';
+  }
+  const order=$('#orderType');if(order)for(const option of order.options)option.textContent=LABEL[option.value]||option.textContent;
+}
+function openAcademicEventChooser(){
+  initLayoutState();configureActivityLabels();
+  const box=document.createElement('div');
+  const choices=[
+    ['conference','學術會議','會議、工作坊與參與身分'],
+    ['talk','學術報告','報告題目、場合與投影片連結'],
+    ['visit','學術訪問','訪問機構、地點與資助資訊'],
+    ['organization','學術籌辦','主辦、協辦、召集或籌辦的活動']
+  ];
+  box.innerHTML=`<div class="activity-chooser-head"><div><span class="eyebrow">新增項目</span><h3>新增活動</h3></div></div><p class="field-hint">請選擇活動種類，接著會開啟對應表單。選錯時可從表單上方返回這一頁。</p><div class="academic-event-choices activity-four-choices">${choices.map(([type,label,description])=>`<button class="button academic-event-choice" data-academic-event-type="${type}"><strong>${label}</strong><span>${description}</span></button>`).join('')}</div>`;
+  $('#addEditor').replaceChildren(box);currentEditor={type:'academic_event',record:null,root:box};
+  box.onclick=event=>{const button=event.target.closest('[data-academic-event-type]');if(button)openEditor(button.dataset.academicEventType,null,{fromActivityChooser:true})};
+}
+function installActivityBackButton(root){
+  if(!root||root.querySelector('[data-back-to-activity-chooser]'))return;
+  const bar=document.createElement('div');bar.className='activity-form-nav';
+  bar.innerHTML='<button type="button" class="button" data-back-to-activity-chooser>← 返回活動類型</button>';
+  bar.onclick=event=>{if(event.target.closest('[data-back-to-activity-chooser]'))openAcademicEventChooser()};
+  root.prepend(bar);
+}
 const homepageBaseOpenEditor=openEditor;
-openEditor=function(type,record,options={}){homepageBaseOpenEditor(type,record,options);decorateGeneralEditor(type,record)};
+openEditor=function(type,record,options={}){
+  homepageBaseOpenEditor(type,record,options);
+  decorateGeneralEditor(type,record);
+  if(options.fromActivityChooser&&!record)installActivityBackButton(currentEditor?.root);
+};
 
 function installHomepageAndStyleCss(){const style=document.createElement('style');style.textContent=`
-.homepage-card{border:1px solid #ded3ca;border-radius:12px;padding:14px;margin:12px 0;background:#fcfaf8}.homepage-card h3{margin-top:0}.homepage-card h4{margin:14px 0 8px}.homepage-selected-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px;border-top:1px solid #e7ddd5;background:#fff}.homepage-selected-row>div:first-child{display:grid;gap:3px;min-width:0}.homepage-choice-list{display:grid;gap:7px}.homepage-choice{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;padding:9px 11px;border:1px solid #d9cec5;border-radius:9px;background:#fff;color:inherit;cursor:pointer}.homepage-choice:hover{border-color:#8f6f59}.homepage-choice span{font-weight:700;color:#79543d}.homepage-choice small{color:#70665e}.homepage-card ol{margin-bottom:0}.homepage-dirty-tag{background:#f2dfb8;color:#68420b}.move-category-select:disabled{opacity:.5;cursor:not-allowed;background:#eee9e5}.general-style-guide{margin:12px 0;border:1px solid #ded3ca;border-radius:12px;background:#fcfaf8}.general-style-guide>summary{cursor:pointer;padding:12px}.general-style-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 12px 12px}.general-style-card{border:1px solid #ddd2c9;border-radius:11px;padding:10px;background:#fff;transition:.15s}.general-style-card.selected{border-color:#8d493d;box-shadow:inset 4px 0 #8d493d;background:#fff8f4}.general-style-card-head{display:flex;justify-content:space-between;gap:8px}.general-style-card-head span{font:11px ui-monospace,monospace;color:#81766e}.general-style-card p{font-size:.78rem;color:#6f655e;margin:.55rem 0 0}.general-style-sample{min-height:58px;margin-top:9px;padding:9px;border-radius:8px;background:#f5f0ec;display:flex;gap:9px;align-items:flex-start}.general-style-sample>span{display:grid;gap:3px}.general-style-sample small{display:block;color:#776c64}.general-style-sample.interest{display:block}.general-style-sample.contact{display:block}.general-style-sample.personal{align-items:center}.style-date{min-width:58px;font-weight:800;color:#8d493d}.style-card{padding:7px 9px;border:1px solid #d8cdc5;border-radius:8px;background:#fff}.style-pill{display:inline-flex!important;padding:3px 8px;border-radius:999px;background:#e8dfd8;font-weight:800}@media(max-width:700px){.homepage-selected-row{align-items:flex-start;flex-direction:column}.homepage-selected-row .actions{width:100%}.homepage-choice{grid-template-columns:auto 1fr}.homepage-choice small{grid-column:2}.general-style-grid{grid-template-columns:1fr}}
+.order-homepage-panel{display:block;margin-top:20px;padding:16px;border:2px solid #cdbbb0;border-radius:16px;background:#fffaf6;box-shadow:0 8px 20px #3d2b230d}.order-homepage-panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding-bottom:10px;border-bottom:1px solid #e4d8cf}.order-homepage-panel-head h3{margin:.2rem 0 0}.homepage-card{border:1px solid #ded3ca;border-radius:12px;padding:14px;margin:12px 0;background:#fcfaf8}.homepage-card h3{margin-top:0}.homepage-card h4{margin:14px 0 8px}.homepage-selected-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px;border-top:1px solid #e7ddd5;background:#fff}.homepage-selected-row>div:first-child{display:grid;gap:3px;min-width:0}.homepage-choice-list{display:grid;gap:7px}.homepage-choice{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;padding:9px 11px;border:1px solid #d9cec5;border-radius:9px;background:#fff;color:inherit;cursor:pointer}.homepage-choice:hover{border-color:#8f6f59}.homepage-choice span{font-weight:700;color:#79543d}.homepage-choice small{color:#70665e}.homepage-card ol{margin-bottom:0}.homepage-dirty-tag{background:#f2dfb8;color:#68420b}.layout-order-item{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:10px;align-items:center}.layout-order-item>div:first-child{min-width:0}.layout-order-item>div:first-child strong{display:block;overflow-wrap:anywhere}.layout-order-item-actions{display:flex;flex-wrap:nowrap;gap:6px;align-items:center;white-space:nowrap}.move-category-select{min-width:180px;max-width:260px}.move-category-select:disabled{opacity:.5;cursor:not-allowed;background:#eee9e5}.activity-form-nav{display:flex;margin:0 0 12px}.activity-four-choices{grid-template-columns:repeat(2,minmax(0,1fr))!important}.activity-chooser-head h3{margin:.2rem 0 0}.general-style-guide{margin:12px 0;border:1px solid #ded3ca;border-radius:12px;background:#fcfaf8}.general-style-guide>summary{cursor:pointer;padding:12px}.general-style-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 12px 12px}.general-style-card{border:1px solid #ddd2c9;border-radius:11px;padding:10px;background:#fff;transition:.15s}.general-style-card.selected{border-color:#8d493d;box-shadow:inset 4px 0 #8d493d;background:#fff8f4}.general-style-card-head{display:flex;justify-content:space-between;gap:8px}.general-style-card-head span{font:11px ui-monospace,monospace;color:#81766e}.general-style-card p{font-size:.78rem;color:#6f655e;margin:.55rem 0 0}.general-style-sample{min-height:58px;margin-top:9px;padding:9px;border-radius:8px;background:#f5f0ec;display:flex;gap:9px;align-items:flex-start}.general-style-sample>span{display:grid;gap:3px}.general-style-sample small{display:block;color:#776c64}.general-style-sample.interest{display:block}.general-style-sample.contact{display:block}.general-style-sample.personal{align-items:center}.style-date{min-width:58px;font-weight:800;color:#8d493d}.style-card{padding:7px 9px;border:1px solid #d8cdc5;border-radius:8px;background:#fff}.style-pill{display:inline-flex!important;padding:3px 8px;border-radius:999px;background:#e8dfd8;font-weight:800}@media(max-width:700px){.order-homepage-panel-head{align-items:flex-start;flex-direction:column}.layout-order-item{grid-template-columns:1fr}.layout-order-item-actions{justify-content:flex-end;overflow-x:auto;padding-bottom:2px}.move-category-select{min-width:170px}.activity-four-choices{grid-template-columns:1fr!important}.homepage-selected-row{align-items:flex-start;flex-direction:column}.homepage-selected-row .actions{width:100%}.homepage-choice{grid-template-columns:auto 1fr}.homepage-choice small{grid-column:2}.general-style-grid{grid-template-columns:1fr}}
 `;document.head.append(style)}
 installHomepageAndStyleCss();
+configureAddTypeMenu();
 bindModernRecordControls();
 if(site)renderAll();

@@ -1,6 +1,6 @@
 # Admin 修正更新包
 
-基底版本：`cms` commit `84eac784d5d91b1f4386457364bda159a96a1b8f`（2026-07-31）。
+基底版本：目前 `cms`（包含 2026-07-31 已上傳的前一版修正）；本包可直接覆蓋同名檔案。
 
 將本壓縮檔內容解壓到 repository 根目錄並覆蓋同名檔案：
 
@@ -22,7 +22,17 @@
 
 - `node --check admin/homepage-v1.js`
 - Node VM smoke test：新版搜尋／篩選事件綁定、停用搬移選單輸出。
-- 更新包靜態回歸測試：`tests/test_admin_hotfix.py`（5 項通過）
+- `python3 -m unittest discover -s tests`（更新包內 9 項通過）
 - `tests/test_cms.py` 的手冊固定章節字串檢查：通過
 
-GitHub connector 在本次工作中可讀取 repository，但建立分支、更新 ref 與寫入檔案均回傳權限／安全層拒絕，因此此包尚未由助理推送至 GitHub。
+GitHub connector 可讀取 repository，但建立工作分支仍回傳 `403 Resource not accessible by integration`，因此此包尚未由助理推送至 GitHub。
+
+## 2026-07-31 第二次修正
+
+- 首頁精選與近期活動改為「排序」頁內固定顯示，不再因排序重繪後收合而看似消失。
+- 「新增項目類型」將學術會議、學術報告、學術訪問、學術籌辦合併成「活動」入口，進入後四選一。
+- 四種活動表單新增「返回活動類型」按鈕。
+- 原項目類型「學術活動」更名為「學術籌辦」。
+- 排序列改為左側長標題自行換行、右側上下箭頭與搬移選單不換行。
+
+- 「項目」頁的項目類型篩選仍保留四個獨立選項：學術會議、學術報告、學術訪問、學術籌辦。
