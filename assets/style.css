@@ -1154,7 +1154,10 @@ html body[data-page="activities"] .page-hero{
   border-radius:999px;
   background:var(--surface);
   color:var(--accent-dark);
-  font:800 1rem/1 inherit;
+  font-family:inherit;
+  font-size:1rem;
+  font-weight:800;
+  line-height:1;
   letter-spacing:0;
   text-decoration:none!important;
   cursor:pointer;
@@ -1203,7 +1206,10 @@ html body[data-page="activities"] .page-hero{
   border-radius:50%;
   background:var(--surface);
   color:var(--muted);
-  font:700 1.25rem/1 inherit;
+  font-family:inherit;
+  font-size:1.25rem;
+  font-weight:700;
+  line-height:1;
   cursor:pointer;
 }
 .citation-close:hover,.citation-close:focus-visible{border-color:var(--accent);color:var(--accent-dark);outline:none}
@@ -1256,7 +1262,10 @@ html body[data-page="activities"] .page-hero{
   border-radius:999px;
   background:var(--surface);
   color:var(--accent-dark);
-  font:800 .82rem/1 inherit;
+  font-family:inherit;
+  font-size:.82rem;
+  font-weight:800;
+  line-height:1;
   cursor:pointer;
 }
 .citation-copy:hover,.citation-copy:focus-visible{background:var(--accent);color:#fff;outline:none}

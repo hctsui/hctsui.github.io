@@ -211,6 +211,7 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn('data-tab="siteSettings">網站設定', settings)
         order = [
             settings.index('data-site-settings-section="footer">頁尾'),
+            settings.index('data-site-settings-section="contactForm">聯絡表單'),
             settings.index('data-site-settings-section="seo">SEO／OG'),
             settings.index('data-site-settings-section="analytics">流量統計'),
             settings.index('data-site-settings-section="errorPage">404 頁面'),
@@ -274,6 +275,40 @@ class SiteSettingsContracts(unittest.TestCase):
             "本頁 OG 圖片（留白沿用預設）",
         ):
             self.assertIn(marker, settings)
+
+
+    def test_site_settings_draft_is_listed_in_common_drafts(self) -> None:
+        for marker in (
+            "siteSettingsDraftRow",
+            'data-edit-special-draft="site_settings"',
+            'data-preview-special-draft="site_settings"',
+            'data-drop-special-draft="site_settings"',
+            "previewSpecialDraft",
+        ):
+            self.assertIn(marker, ADMIN_PAGE)
+
+    def test_contact_form_has_fixed_email_subject(self) -> None:
+        settings = read("admin/site-settings.js")
+        builder = read("tools/build_site.py")
+        worker = read("integrations/contact-worker.js")
+        self.assertIn("通知信固定主旨", settings)
+        self.assertIn("email_subject", settings + builder)
+        self.assertIn('name="visitor_subject"', builder)
+        self.assertIn("EMAIL_SUBJECT", worker)
+        self.assertIn("Visitor subject", worker)
+
+    def test_notification_star_control_is_explicit(self) -> None:
+        notifications = read("admin/notifications.js")
+        self.assertIn("☆ 加星號", notifications)
+        self.assertIn("★ 已加星號", notifications)
+        self.assertIn("notification-star-button", notifications)
+
+    def test_publication_action_uses_explicit_bold_font_properties(self) -> None:
+        css = read("assets/style.css")
+        block = css[css.index(".pub-links > .publication-action{"):css.index(".pub-links > .publication-action:hover")]
+        self.assertIn("font-family:inherit", block)
+        self.assertIn("font-weight:800", block)
+        self.assertNotIn("font:800 1rem/1 inherit", block)
 
 
 class DocumentationContracts(unittest.TestCase):

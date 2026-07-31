@@ -129,6 +129,7 @@ class SiteSettingsTests(unittest.TestCase):
         data = site_data()
         settings = current_site_settings(data)
         self.assertFalse(settings["contact_form"]["enabled"])
+        self.assertEqual(settings["contact_form"]["email_subject"], "[hctsui.github.io] New contact message")
         self.assertEqual(render_contact_form(data, "en"), "")
         settings["contact_form"].update({
             "enabled": True,
@@ -141,8 +142,28 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertIn('action="https://contact.example.workers.dev"', rendered)
         self.assertIn('class="cf-turnstile"', rendered)
         self.assertIn('data-sitekey="site-key-public"', rendered)
+        self.assertIn('name="email_subject" value="[hctsui.github.io] New contact message"', rendered)
+        self.assertIn('name="visitor_subject"', rendered)
+        self.assertNotIn('<input name="subject"', rendered)
         self.assertNotIn("TURNSTILE_SECRET", rendered)
         self.assertNotIn("GITHUB_TOKEN", rendered)
+
+
+    def test_email_only_contact_form_uses_fixed_subject_and_separate_visitor_subject(self) -> None:
+        data = site_data()
+        settings = current_site_settings(data)
+        settings["contact_form"].update({
+            "enabled": True,
+            "mode": "email_only",
+            "web3forms_access_key": "a" * 32,
+            "email_subject": "[Website] Contact form",
+        })
+        data["settings"].update(settings)
+        rendered = render_contact_form(data, "en")
+        self.assertIn('name="subject" value="[Website] Contact form"', rendered)
+        self.assertIn('name="visitor_subject"', rendered)
+        self.assertIn('name="from_name" value="hctsui.github.io contact form"', rendered)
+        self.assertNotIn('<input name="subject" maxlength=', rendered)
 
     def test_404_page_supports_colors_bilingual_content_and_redirect(self) -> None:
         data = site_data()

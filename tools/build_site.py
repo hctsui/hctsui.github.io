@@ -565,8 +565,13 @@ def render_contact_form(data: dict[str, Any], lang: str) -> str:
     intro = esc(config.get("intro", {}).get(lang) or "")
     labels = {key: esc(config.get(key, {}).get(lang) or "") for key in ("name_label", "email_label", "subject_label", "message_label", "submit_label", "success_message", "privacy_note")}
     hidden = ''
+    fixed_subject = str(config.get("email_subject") or "[hctsui.github.io] New contact message").strip()
     if mode == "email_only":
         hidden += f'<input type="hidden" name="access_key" value="{esc(config.get("web3forms_access_key") or "")}">'
+        hidden += f'<input type="hidden" name="subject" value="{esc(fixed_subject)}">'
+        hidden += '<input type="hidden" name="from_name" value="hctsui.github.io contact form">'
+    else:
+        hidden += f'<input type="hidden" name="email_subject" value="{esc(fixed_subject)}">'
     hidden += '<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="contact-botcheck" aria-hidden="true">'
     turnstile = ""
     if mode == "worker" and config.get("turnstile_site_key"):
@@ -578,7 +583,7 @@ def render_contact_form(data: dict[str, Any], lang: str) -> str:
         f'<form class="contact-form" method="post" action="{esc(endpoint)}" data-contact-form data-contact-mode="{esc(mode)}" data-success-message="{labels["success_message"]}">'
         f'{hidden}<div class="contact-form-grid"><label>{labels["name_label"]}<input name="name" required maxlength="160" autocomplete="name"></label>'
         f'<label>{labels["email_label"]}<input type="email" name="email" required maxlength="320" autocomplete="email"></label></div>'
-        f'<label>{labels["subject_label"]}<input name="subject" maxlength="240"></label>'
+        f'<label>{labels["subject_label"]}<input name="visitor_subject" maxlength="240"></label>'
         f'<label>{labels["message_label"]}<textarea name="message" required maxlength="8000" rows="6"></textarea></label>'
         f'{turnstile}<button class="button primary contact-submit" type="submit">{labels["submit_label"]}</button>'
         f'<p class="contact-form-status" role="status" aria-live="polite"></p>{privacy_html}'

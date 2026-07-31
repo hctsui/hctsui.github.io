@@ -163,8 +163,8 @@
       </section>
 
       <section id="site-settings">
-        <h2>網站設定：頁尾、SEO／OG、流量統計與 404</h2>
-        <p>「網站設定」依序分成「頁尾」、「SEO／OG」、「流量統計」、「404 頁面」。子分頁和上方主分頁之間保留明顯間距；四個區塊都沿用本機草稿、逐欄預覽、Batch Issue、衝突檢查與七日還原。</p>
+        <h2>網站設定：頁尾、聯絡表單、SEO／OG、流量統計與 404</h2>
+        <p>「網站設定」依序分成「頁尾」、「聯絡表單」、「SEO／OG」、「流量統計」、「404 頁面」。子分頁和上方主分頁之間保留明顯間距；五個區塊都沿用本機草稿、逐欄預覽、Batch Issue、衝突檢查與七日還原。網站設定有修改時，也會出現在主「草稿」分頁。</p>
         <h3>頁尾</h3>
         <ul>
           <li>英文與中文預覽分開顯示，採固定高對比配色，不受公開網站頁尾顏色影響。</li>
@@ -172,6 +172,15 @@
           <li>圖標選單順序為：無圖標、版權、連結、地點、書籍、日曆、其他。</li>
           <li>選擇「其他」後，填入 repository 內的圖檔路徑，例如 <code>assets/icons/my-icon.svg</code>；也可填完整 https 網址。</li>
           <li>頁尾文字支援 <code>{year}</code> 與 <code>{updated}</code>。</li>
+        </ul>
+
+        <h3>聯絡表單</h3>
+        <ul>
+          <li>表單顯示在首頁聯絡區，可選 Web3Forms Email 或 Cloudflare Worker 橋接。</li>
+          <li>「通知信固定主旨」會套用到每一封信；訪客填寫的主旨會保留在信件內容裡，不會改變 Email 主旨。</li>
+          <li>Email 模式只需 Web3Forms Access Key，不會建立 Admin 通知。</li>
+          <li>Worker 模式會寄信並建立匿名通知；建議在 Worker 變數設定相同的 <code>EMAIL_SUBJECT</code>。</li>
+          <li>完整設定步驟見本手冊後段「聯絡表單」與 <code>integrations/CONTACT-FORM-SETUP.md</code>。</li>
         </ul>
         <h3>SEO／OG</h3>
         <ul>
@@ -201,6 +210,7 @@
           <li>新增、修改、刪除、頁面／類別、排序、搬移、首頁設定、arXiv 忽略與還原都會列入草稿。</li>
           <li>頁面、類別與項目排序會在「草稿」中顯示獨立管理列，可回到排序修改、查看預覽或按「重設」放棄這組變更。</li>
           <li>首頁精選與近期活動也有獨立草稿管理列。</li>
+          <li>網站設定草稿會在此顯示獨立管理列，可按「修改草稿」、「預覽」或「移除」。</li>
           <li>按「預覽」查看單筆修改前後；新增與修改草稿可再次編輯。開啟的右側預覽右上角有與其他操作一致的「關閉」按鈕，只收起目前預覽，不會刪除草稿。</li>
           <li>右側預覽採一致的卡片與修改前／修改後樣式。頁面和類別會逐欄列出實際變更，例如中英文標題、簡介、所在頁面、顯示狀態與順序，不再只顯示概略資訊。</li>
           <li>「清空內容草稿」會清除內容、排序、首頁精選與還原草稿，但不會修改正式網站，也不會清除資料庫或網站設定草稿。</li>
@@ -264,7 +274,7 @@
 
 <section id="notifications">
   <h2>通知中心與自動檢查</h2>
-  <p>Admin 頂部的「通知」整合 arXiv、Crossref 正式出版候選、外部死鏈、匿名聯絡提醒與 GitHub Pages 部署狀態。每筆通知可搜尋、加星號、標記已讀、刪除或標記已處理；修改會和其他草稿一起透過 Batch Issue 送出並支援七日 Undo。</p>
+  <p>Admin 頂部的「通知」整合 arXiv、Crossref 正式出版候選、外部死鏈、匿名聯絡提醒與 GitHub Pages 部署狀態。每筆通知可搜尋，右上角會直接顯示「☆ 加星號／★ 已加星號」與已讀按鈕，也可刪除或標記已處理；修改會和其他草稿一起透過 Batch Issue 送出並支援七日 Undo。</p>
   <ul>
     <li>arXiv：每週一查詢，新結果只建立候選，不自動公開。</li>
     <li>Crossref：每週三比對尚無 DOI 的 Preprints；「轉為 Published」只建立修改草稿，必須人工確認。</li>
@@ -275,8 +285,15 @@
   <div class="callout warning"><strong>公開 repository 不保存聯絡表單個資。</strong>完整留言只會寄到 Email；Admin 的聯絡通知僅包含匿名事件 ID 與收到時間。</div>
 </section>
 <section id="contact-form">
-  <h2>聯絡表單</h2>
-  <p>在「網站設定 → 聯絡表單」啟用。Email 模式直接使用 Web3Forms；Cloudflare Worker 橋接模式可在寄信後建立匿名 Admin 通知。Worker Secrets、GitHub token 與 Turnstile Secret 絕不可填進 Admin 或提交到 repository。完整步驟見 <code>integrations/CONTACT-FORM-SETUP.md</code>。</p>
+  <h2>聯絡表單：快速設定</h2>
+  <ol>
+    <li>先到 Web3Forms 建立 Access Key，並完成驗證。</li>
+    <li>只需要 Email 時：到「網站設定 → 聯絡表單」，選 Web3Forms Email、填入 Access Key、設定固定通知信主旨、啟用後送出 Batch。</li>
+    <li>需要 Admin 匿名通知時：另外建立 Cloudflare Worker、Turnstile 與 GitHub fine-grained token，再選 Worker 模式並填入 Worker URL 與 Turnstile Site Key。</li>
+    <li>Worker 的 <code>WEB3FORMS_ACCESS_KEY</code>、<code>GITHUB_TOKEN</code>、<code>TURNSTILE_SECRET</code> 必須存為 Secret；<code>SITE_ORIGIN</code>、<code>GITHUB_REPOSITORY</code>、<code>EMAIL_SUBJECT</code> 存為變數。</li>
+    <li>送出後用無痕視窗測試一次，確認 Email 到達；Worker 模式再確認 Admin 出現匿名聯絡通知。</li>
+  </ol>
+  <div class="callout warning"><strong>不要把 Secret 填進 Admin 或提交到 repository。</strong>完整逐步流程見 <code>integrations/CONTACT-FORM-SETUP.md</code>。</div>
 </section>
 </main>
 </body>

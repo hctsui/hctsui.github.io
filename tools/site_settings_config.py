@@ -161,12 +161,13 @@ def default_analytics() -> dict[str, Any]:
 
 def default_contact_form() -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "enabled": False,
         "mode": "email_only",
         "web3forms_access_key": "",
         "worker_url": "",
         "turnstile_site_key": "",
+        "email_subject": "[hctsui.github.io] New contact message",
         "title": {"en": "Send a message", "zh": "傳送訊息"},
         "intro": {
             "en": "For academic invitations or research correspondence, you may use this form.",
@@ -189,12 +190,13 @@ def normalize_contact_form(value: Any) -> dict[str, Any]:
     if mode not in {"email_only", "worker"}:
         mode = defaults["mode"]
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "enabled": bool(source.get("enabled")),
         "mode": mode,
         "web3forms_access_key": _text(source.get("web3forms_access_key"), 80),
         "worker_url": _safe_http_url(source.get("worker_url")),
         "turnstile_site_key": _text(source.get("turnstile_site_key"), 120),
+        "email_subject": _text(source.get("email_subject") or defaults["email_subject"], 160),
         "title": _pair(source.get("title"), defaults["title"], 160),
         "intro": _pair(source.get("intro"), defaults["intro"], 500),
         "name_label": _pair(source.get("name_label"), defaults["name_label"], 80),
@@ -410,6 +412,8 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
         if not GOOGLE_MEASUREMENT_ID.fullmatch(analytics["google_measurement_id"]):
             raise ValueError("Google Analytics measurement ID must look like G-XXXXXXXXXX.")
     contact = normalized["contact_form"]
+    if contact["enabled"] and not contact["email_subject"]:
+        raise ValueError("A fixed contact-form email subject is required.")
     if contact["enabled"] and contact["mode"] == "email_only":
         if not re.fullmatch(r"[0-9a-fA-F-]{20,80}", contact["web3forms_access_key"]):
             raise ValueError("Web3Forms access key is required when the contact form uses email-only mode.")

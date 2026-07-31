@@ -125,14 +125,14 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - `.github/workflows/check-arxiv.yml` 每週一上午 9:15（Asia/Tokyo）執行，也可從 Actions 手動執行。
 - `tools/check_arxiv.py` 使用 arXiv 官方 API 搜尋 `Hung-Chun Tsui`，再以完整作者姓名做第二次精確比對，避免只因姓氏或相似姓名而產生通知。
 - 新結果保存在 `content/arxiv-suggestions.json`，不會直接寫入公開論文列表。
-- Admin 頁首的「通知」按鈕位於「開啟完整使用手冊」左側，數字表示目前尚未處理的候選論文。
+- Admin 頁首的「通知」按鈕位於「開啟完整使用手冊」左側。每張通知右上角都有明確的「☆ 加星號／★ 已加星號」按鈕；星號、已讀與刪除狀態會和其他草稿一起送出。
 - 按「加入新增草稿」只會建立一般論文草稿並開啟編輯表單；請確認中文題目、中文作者、PDF 與正式刊登資訊後，再和其他草稿一起送出。
 - 按「忽略」只會先加入本機忽略草稿；送出 Batch Issue 後才會永久寫入忽略清單。忽略操作同樣支援衝突檢查與七日還原。
 - 已存在於網站或已加入本機論文草稿的 arXiv ID 不會重複顯示。
 
 ## 網站設定
 
-「網站設定」依序分成 **頁尾 → SEO／OG → 流量統計 → 404 頁面**。四個區塊都沿用本機草稿、右側逐欄預覽、Batch Issue、衝突檢查與七日還原。
+「網站設定」依序分成 **頁尾 → 聯絡表單 → SEO／OG → 流量統計 → 404 頁面**。五個區塊都沿用本機草稿、右側逐欄預覽、Batch Issue、衝突檢查與七日還原。網站設定有修改時，也會在主「草稿」分頁顯示一筆管理列，可直接修改、預覽或移除。
 
 ### 頁尾
 
@@ -141,6 +141,17 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - 小圖標選單順序為：無圖標、版權、連結、地點、書籍、日曆、其他。
 - 選擇「其他」時，必須填入已放在 repository 中的圖檔相對路徑，例如 `assets/icons/my-icon.svg`；也可使用完整 `https://` 網址。
 - 頁尾文字支援 `{year}` 與 `{updated}`，分別代入目前年份和網站最後更新日期。
+
+
+### 聯絡表單
+
+- 表單位於首頁聯絡區，可選擇 **Web3Forms Email** 或 **Cloudflare Worker 橋接**。
+- 「通知信固定主旨」會用於每一封聯絡表單信件，預設為 `[hctsui.github.io] New contact message`，方便在 Gmail 等信箱建立篩選器。
+- 訪客填寫的「主旨」不會取代固定 Email 主旨，而會保留在信件內容中。
+- Email 模式只需要 Web3Forms Access Key；完整留言直接寄到 Email，不建立 Admin 通知。
+- Worker 模式會寄信並建立匿名 Admin 通知；完整姓名、Email、訪客主旨與訊息不會寫入公開 repository。
+- Worker 模式建議設定 `EMAIL_SUBJECT` 變數，內容與 Admin 的固定主旨一致。
+- 詳細步驟見 `integrations/CONTACT-FORM-SETUP.md`。
 
 ### SEO／OG
 
@@ -163,8 +174,8 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ### 網站設定草稿與預覽
 
-- 草稿採正規化後的語意比較；欄位改回原值時會立即恢復「尚未修改」，並自動清除對應的本機草稿。
-- 右側預覽不再只顯示「0 個頁面變更」或「2 → 2 個項目」，而會逐項列出真正變動的欄位、修改前值與修改後值。
+- 草稿採正規化後的語意比較；欄位改回原值時會自動清除對應的本機草稿。沒有變更時不顯示多餘提示。
+- 右側預覽不再只顯示「0 個頁面變更」或「2 → 2 個項目」，而會逐項列出真正變動的欄位、修改前值與修改後值。主「草稿」分頁也會列出網站設定草稿。
 
 ## GitHub Issue 與自動流程
 
@@ -221,54 +232,3 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 Admin 頁首使用專用管理圖示作為分頁 favicon 與標題圖示。「開啟完整使用手冊」右側提供「返回網站」按鈕，可直接回到網站首頁。一般內容的顯示風格可直接點選卡片；六張卡片，卡片區仍可用左側箭頭收合。
 
 Admin 外框會在 `admin/homepage.js` 載入時優先建立；即使後續管理功能發生錯誤，favicon、標題圖示與「返回網站」仍會先出現。
-
-## 通知中心與自動檢查
-
-Admin 頂部的「通知」按鈕位於完整使用手冊左側。通知中心整合：
-
-- arXiv 新論文候選：每週一 09:15（Asia/Tokyo）查詢；加入草稿或忽略都由你決定。
-- 正式出版候選：每週三 09:35 以 Crossref 比對尚無 DOI 的 Preprints。按「轉為 Published」只會建立修改草稿，仍需人工確認期刊、卷期、頁碼與 DOI。
-- 外部連結失效：每月 1 日 10:20 檢查管理資料中的外部網址；只對確認回傳 404/410 的網址建立通知，暫時性網路錯誤、403、429 或 5xx 不直接判定為死鏈。
-- 聯絡表單：完整留言只寄到 Email。若啟用 Cloudflare Worker 橋接，Admin 僅保存匿名事件 ID 與收到時間，不保存訪客個資或留言內容。
-- 部署狀態：通知面板開啟時讀取 GitHub 公開 Actions 狀態，顯示 ⏳／✅／❌。失敗時可開啟 Log 與 GitHub 重新執行頁面。
-
-通知可搜尋、加星號、標記已讀、刪除或標記已處理。所有狀態調整先成為本機草稿，與其他修改一起透過 Batch Issue 送出，並支援七日 Undo。每週清理排程會刪除超過 60 天且未加星號的通知；加星號的通知不會被自動清除。
-
-### 為什麼不能在 Admin 直接重新執行部署？
-
-重新執行 GitHub Actions 需要 Actions write 權限。Admin 是公開靜態頁面，不能安全存放這種 token，因此只提供「前往 GitHub 重新執行」按鈕。
-
-## 聯絡表單
-
-位置：`網站設定 → 聯絡表單`。表單顯示在首頁聯絡區，支援中英文文字設定。
-
-### Web3Forms Email 模式
-
-填入 Web3Forms Access Key 後即可使用。訊息直接寄到 Email，不在 Admin 建立通知。
-
-### Cloudflare Worker 橋接模式
-
-此模式會在寄信成功後，以匿名事件建立 Admin 通知。完整設定步驟請看 `integrations/CONTACT-FORM-SETUP.md`。
-
-安全原則：
-
-- `WEB3FORMS_ACCESS_KEY`、`GITHUB_TOKEN`、`TURNSTILE_SECRET` 只放 Cloudflare Worker Secrets。
-- GitHub token 只授予此 repository 的 Contents write，用於觸發 `repository_dispatch`。
-- 公開 repository 永遠不保存訪客姓名、Email、主旨或留言全文。
-- 建議啟用 Cloudflare Turnstile；Site Key 可填入 Admin，Secret Key 不可填入 Admin。
-
-## 流量統計
-
-位置：`網站設定 → 流量統計`。可選 Cloudflare Web Analytics 或 Google Analytics 4，一次只啟用一個。既有 Cloudflare Site Token 會自動沿用；GA4 使用 `G-...` Measurement ID。
-
-Admin 不直接顯示訪客統計數字，因為讀取 Cloudflare／Google 報表需要私密 API 憑證，而 Admin 是公開靜態頁面。請使用該分頁的按鈕開啟官方儀表板。
-
-## 人名自動補齊與顯示
-
-一般雙語欄位在啟用「自動填寫另一語言」時，會先精確查詢 `資料庫 → 人名連結`，再查一般中英對照。只有完整姓名或別名唯一匹配時才會補入另一語言，因此不必在兩種資料庫重複建立同一個人。
-
-公開網站的人名連結使用一般字重與 1px 細底線；論文中網站主人的 `<strong>` 粗體仍會保留，讓作者重點清楚。
-
-## 引用格式
-
-公開論文頁的 arXiv、PDF、BibTeX 使用同一款按鈕。展開 BibTeX 後可切換 BibTeX 或 LaTeX `\\bibitem`，並分別複製。自動引用 key 採作者姓氏首字母大寫連接＋年份後兩碼，例如 `T26`、`CCHT25`；同組作者同一年多篇時依序加 `a`、`b`、`c`。

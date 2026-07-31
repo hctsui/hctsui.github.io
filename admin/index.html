@@ -3117,17 +3117,28 @@
               : "排序沒有改變";
         return `<div class="preview-card"><div class="order-diff-summary"><strong>${esc(LABEL[type] || type || "內容")}排序差異</strong><span class="tag">${esc(summary)}</span><span class="muted">有底色的列為位置或所屬${esc(noun)}有變動。</span></div><div class="preview-columns"><div><h4>排序前</h4>${orderDiffSideHtml(before, after, "before")}</div><div><h4>排序後</h4>${orderDiffSideHtml(after, before, "after")}</div></div></div>`;
       }
+      function siteSettingsDraftRow() {
+        if (typeof siteSettingsOperation !== "function") return "";
+        const op = siteSettingsOperation();
+        if (!op) return "";
+        return `<div class="row draft-row"><span class="tag">網站設定</span><strong>頁尾、聯絡表單、SEO／OG、流量統計或 404</strong><span class="muted">與內容草稿共用同一次 Batch 送出。</span><div class="actions"><button class="button" data-edit-special-draft="site_settings">修改草稿</button><button class="button" data-preview-special-draft="site_settings">預覽</button><button class="button danger" data-drop-special-draft="site_settings">移除</button></div></div>`;
+      }
       function renderDrafts() {
         let ops = contentOps();
-        $("#drafts").innerHTML = ops.length
-          ? ops
-              .map((o, i) => {
-                let editable = ["add", "update"].includes(o.op),
-                  name = draftOperationName(o);
-                return `<div class="row draft-row"><span class="tag">${esc(actionLabel(o.op))}</span><strong>${esc(name)}</strong><span class="muted">${o.notes?.join("；") || ""}</span><div class="actions">${editable ? `<button class="button" data-edit-draft="${i}">修改草稿</button>` : ""}<button class="button" data-preview-draft="${i}">預覽</button><button class="button danger" data-drop="${i}">移除</button></div></div>`;
-              })
-              .join("")
-          : '<p class="muted">尚無內容草稿。</p>';
+        const contentHtml = ops.map((o, i) => {
+          let editable = ["add", "update"].includes(o.op),
+            name = draftOperationName(o);
+          return `<div class="row draft-row"><span class="tag">${esc(actionLabel(o.op))}</span><strong>${esc(name)}</strong><span class="muted">${o.notes?.join("；") || ""}</span><div class="actions">${editable ? `<button class="button" data-edit-draft="${i}">修改草稿</button>` : ""}<button class="button" data-preview-draft="${i}">預覽</button><button class="button danger" data-drop="${i}">移除</button></div></div>`;
+        }).join("");
+        const specialHtml = siteSettingsDraftRow();
+        $("#drafts").innerHTML = contentHtml + specialHtml || '<p class="muted">尚無草稿。</p>';
+      }
+      function previewSpecialDraft(kind) {
+        if (kind !== "site_settings" || typeof siteSettingsOperation !== "function") return;
+        const op = siteSettingsOperation();
+        if (!op) return;
+        const body = typeof siteSettingsPreviewHtml === "function" ? siteSettingsPreviewHtml(op) : "";
+        $("#editorPreview").innerHTML = `<div class="notice"><strong>草稿預覽 · 網站設定</strong><div>這筆會和其他內容草稿在同一次 Batch 送出。</div></div>${body}`;
       }
       function previewDraftOperation(o) {
         if (!o) return;
@@ -3751,6 +3762,12 @@
       $("#drafts").onclick = (e) => {
         let b = e.target.closest("button");
         if (!b) return;
+        const special = b.dataset.editSpecialDraft ?? b.dataset.previewSpecialDraft ?? b.dataset.dropSpecialDraft;
+        if (special === "site_settings") {
+          if (b.dataset.editSpecialDraft !== undefined) { switchTab("siteSettings"); return; }
+          if (b.dataset.previewSpecialDraft !== undefined) { previewSpecialDraft(special); return; }
+          if (b.dataset.dropSpecialDraft !== undefined && typeof clearSiteSettingsDraft === "function") { clearSiteSettingsDraft(true); renderPreview(false); return; }
+        }
         let ops = contentOps(),
           rawIndex =
             b.dataset.editDraft ?? b.dataset.previewDraft ?? b.dataset.drop,

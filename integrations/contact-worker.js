@@ -9,6 +9,7 @@
  *   TURNSTILE_SECRET      - strongly recommended
  *   SITE_ORIGIN           - e.g. https://hctsui.github.io
  *   GITHUB_REPOSITORY     - defaults to hctsui/hctsui.github.io
+ *   EMAIL_SUBJECT         - fixed notification subject used for every message
  */
 const json = (data, status = 200, origin = "*") => new Response(JSON.stringify(data), {
   status,
@@ -57,7 +58,8 @@ export default {
 
     const name = clean(raw.name, 160);
     const email = clean(raw.email, 320);
-    const subject = clean(raw.subject, 240) || "Website message";
+    const visitorSubject = clean(raw.visitor_subject || raw.subject, 240);
+    const fixedSubject = clean(env.EMAIL_SUBJECT || raw.email_subject, 240) || "[hctsui.github.io] New contact message";
     const message = clean(raw.message, 8000);
     if (!name || !emailOk(email) || !message) return json({ success: false, message: "Please complete the required fields." }, 400, corsOrigin);
 
@@ -70,8 +72,9 @@ export default {
     privateMail.set("access_key", env.WEB3FORMS_ACCESS_KEY);
     privateMail.set("name", name);
     privateMail.set("email", email);
-    privateMail.set("subject", subject);
-    privateMail.set("message", message);
+    privateMail.set("subject", fixedSubject);
+    privateMail.set("Visitor subject", visitorSubject || "(none)");
+    privateMail.set("message", visitorSubject ? `Visitor subject: ${visitorSubject}\n\n${message}` : message);
     privateMail.set("from_name", "hctsui.github.io contact form");
     const mailResponse = await fetch("https://api.web3forms.com/submit", { method: "POST", body: privateMail, headers: { Accept: "application/json" } });
     const mailResult = await mailResponse.json().catch(() => ({}));
