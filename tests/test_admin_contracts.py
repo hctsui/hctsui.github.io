@@ -195,6 +195,24 @@ class PeopleAndBibtexContracts(unittest.TestCase):
         self.assertIn("applyPersonPair", ADMIN_PAGE)
         self.assertIn('method = found.method || "人名連結"', ADMIN_PAGE)
 
+    def test_people_loading_waits_for_remote_data_without_empty_fallback(self) -> None:
+        people = read("admin/people.js")
+        aliases = read("admin/people-aliases.js")
+        for marker in (
+            "peopleLoadPromise",
+            "await peopleLoadPromise",
+            "fetchPeopleRemote",
+            "peopleLoadState='loading'",
+            "[person.id,person.name.en",
+            "系統沒有以空資料取代正式檔案",
+            "mergeSavedPeople",
+            "PEOPLE_RECOVERY_KEY",
+        ):
+            self.assertIn(marker, people)
+        self.assertNotIn(".catch(()=>empty())", people)
+        self.assertNotIn("location.replace", aliases)
+        self.assertNotIn("for(let attempt=0;attempt<45", aliases)
+
     def test_publication_editor_has_optional_bibtex_field(self) -> None:
         for marker in (
             "BibTeX（選填；留白時自動產生）",

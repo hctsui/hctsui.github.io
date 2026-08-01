@@ -1,12 +1,17 @@
 /* Person-link database and click-only author suggestions. */
 (function installPeopleManager(){
   const PEOPLE_DRAFT_KEY='hctsui-people-draft';
+  const PEOPLE_RECOVERY_KEY='hctsui-people-draft-recovery-v1';
   const PEOPLE_AUDIT_IGNORE_KEY='hctsui-people-audit-ignore-v1';
   let peopleAuditItems=[];
   let ignoredPeopleAudits=new Set(JSON.parse(localStorage.getItem(PEOPLE_AUDIT_IGNORE_KEY)||'[]'));
   let peopleRemote={schema_version:1,people:[]};
   let peopleDraft={schema_version:1,people:[]};
   let peopleReady=false;
+  let peopleLoadState='loading';
+  let peopleLoadError='';
+  let peopleLookupError='';
+  let peopleLoadPromise=null;
 
   function copy(value){return structuredClone(value);}
   function normalizeSpace(value){return String(value||'').trim().replace(/\s+/g,' ');}
@@ -42,13 +47,40 @@
     return {schema_version:1,people};
   }
   function peopleEqual(a,b){return JSON.stringify(normalizePeople(a))===JSON.stringify(normalizePeople(b));}
+  function personEqual(left,right){return JSON.stringify(left??null)===JSON.stringify(right??null);}
+  function mergeSavedPeople(remote,saved){
+    const base=normalizePeople(saved.base),draft=normalizePeople(saved.data),result=copy(remote);
+    if(peopleEqual(base,remote))return draft;
+    if(peopleEqual(draft,remote))return copy(remote);
+    const baseMap=new Map(base.people.map(person=>[person.id,person]));
+    const draftMap=new Map(draft.people.map(person=>[person.id,person]));
+    const remoteMap=new Map(result.people.map(person=>[person.id,person]));
+    const changedIds=new Set([...baseMap.keys(),...draftMap.keys()].filter(id=>!personEqual(baseMap.get(id),draftMap.get(id))));
+    const conflicts=[];
+    let applied=0;
+    for(const id of changedIds){
+      const before=baseMap.get(id),after=draftMap.get(id),current=remoteMap.get(id);
+      if(personEqual(current,after))continue;
+      if(!personEqual(current,before)){conflicts.push(id);continue;}
+      const index=result.people.findIndex(person=>person.id===id);
+      if(after){
+        if(index>=0)result.people[index]=copy(after);else result.people.push(copy(after));
+        remoteMap.set(id,copy(after));
+      }else if(index>=0){result.people.splice(index,1);remoteMap.delete(id);}
+      applied+=1;
+    }
+    if(conflicts.length){
+      localStorage.setItem(PEOPLE_RECOVERY_KEY,JSON.stringify({saved_at:new Date().toISOString(),conflicts,base,draft}));
+      if(typeof flash==='function')flash(`人名連結有 ${conflicts.length} 筆舊草稿與正式資料衝突；已安全保留復原副本，沒有覆蓋正式資料。`);
+    }else localStorage.removeItem(PEOPLE_RECOVERY_KEY);
+    if(applied&&typeof flash==='function')flash(`已把 ${applied} 筆未衝突的人名連結草稿接到最新正式資料。`);
+    return normalizePeople(result);
+  }
   function loadSaved(remote){
     try{
       const saved=JSON.parse(localStorage.getItem(PEOPLE_DRAFT_KEY)||'null');
       if(!saved?.base||!saved?.data)return copy(remote);
-      if(peopleEqual(saved.base,remote))return normalizePeople(saved.data);
-      localStorage.removeItem(PEOPLE_DRAFT_KEY);
-      if(typeof flash==='function')flash('人名連結資料已在其他地方更新；舊草稿未自動套用。');
+      return mergeSavedPeople(remote,saved);
     }catch{localStorage.removeItem(PEOPLE_DRAFT_KEY);}
     return copy(remote);
   }
@@ -102,8 +134,20 @@
     return `<div class="person-manager-row" data-person-index="${index}"><div class="person-manager-head"><strong>${esc(person.name.en||person.name.zh||'未命名作者')}</strong><button class="button danger" type="button" data-remove-person="${index}">刪除</button></div><div class="pair-grid"><div class="field"><label>英文姓名</label><input data-person-field="name.en" value="${esc(person.name.en)}"></div><div class="field"><label>中文姓名</label><input data-person-field="name.zh" value="${esc(person.name.zh)}"></div></div><div class="field"><label>學術網頁 URL</label><input data-person-field="url" type="url" placeholder="https://..." value="${esc(person.url)}"></div><div class="field"><label>其他拼法</label><textarea data-person-field="aliases" placeholder="每行一個，例如 Tsui, Hung-Chun">${esc(person.aliases.join('\n'))}</textarea><p class="field-hint">只用於搜尋與精確比對，不會改變論文中實際顯示的姓名。</p></div></div>`;
   }
   function renderPeopleStatus(){
-    const errors=validatePeopleDraft();
     const status=document.querySelector('#peopleStatus');
+    if(peopleLoadState==='loading'){
+      if(status){status.className='notice';status.textContent='正在讀取目前的人名連結資料…';}
+      return;
+    }
+    if(peopleLoadState==='error'){
+      if(status){status.className='notice error';status.innerHTML=`<strong>人名連結資料讀取失敗。</strong>${esc(peopleLoadError)}`;}
+      return;
+    }
+    if(peopleLookupError){
+      if(status){status.className='notice error';status.innerHTML=`<strong>找不到指定的人名。</strong>${esc(peopleLookupError)}`;}
+      return;
+    }
+    const errors=validatePeopleDraft();
     if(status){status.className='notice '+(errors.length?'error':peopleDirty()?'success':'');status.innerHTML=errors.length?`<strong>不能送出：</strong>${errors.map(esc).join('；')}`:peopleDirty()?`已修改人名連結資料；目前 ${peopleDraft.people.length} 人，會和本次批次一起送出。`:`目前 ${peopleDraft.people.length} 人；尚未修改。`;}
   }
   function exactPerson(value){
@@ -141,10 +185,11 @@
   function renderPeopleManager(){
     const root=document.querySelector('#peopleDatabasePane');if(!root)return;
     const q=normalizeKey(document.querySelector('#peopleSearch')?.value);
-    const rows=normalizePeople(peopleDraft).people.map((person,index)=>({person,index})).filter(({person})=>!q||[person.name.en,person.name.zh,person.url,...person.aliases].some(v=>normalizeKey(v).includes(q)));
+    const rows=normalizePeople(peopleDraft).people.map((person,index)=>({person,index})).filter(({person})=>!q||[person.id,person.name.en,person.name.zh,person.url,...person.aliases].some(v=>normalizeKey(v).includes(q)));
     renderPeopleStatus();
-    renderPeopleAudit();
-    const list=document.querySelector('#peopleRows');if(list)list.innerHTML=rows.length?rows.map(({person,index})=>personRowHtml(person,index)).join(''):'<p class="muted">沒有符合的人名。</p>';
+    if(peopleReady)renderPeopleAudit();
+    const list=document.querySelector('#peopleRows');
+    if(list)list.innerHTML=peopleLoadState==='loading'?'<p class="muted">正在載入…</p>':peopleLoadState==='error'?'<p class="muted">目前無法顯示人名資料；系統沒有以空資料取代正式檔案。</p>':rows.length?rows.map(({person,index})=>personRowHtml(person,index)).join(''):'<p class="muted">沒有符合的人名。</p>';
   }
   function addPerson(){
     const used=new Set(peopleDraft.people.map(p=>p.id));let base='new-person',id=base,n=2;while(used.has(id))id=`${base}-${n++}`;
@@ -227,7 +272,7 @@
     }
     if(!document.querySelector('#peopleDatabasePane'))dictionaryTab.insertAdjacentHTML('beforeend',`<div id="peopleDatabasePane" hidden><p class="muted">集中管理中英文姓名、其他拼法與學術網址。整個網站的可見文字都會精確比對；作者欄位只顯示候選，必須手動點選才會填入。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增人名</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleAudit"></div><div id="peopleRows" class="scroll"></div></div>`);
     document.querySelector('#databaseTypeTabs')?.addEventListener('click',event=>{const button=event.target.closest('[data-database-type]');if(button)setDatabaseType(button.dataset.databaseType);});
-    document.querySelector('#peopleSearch')?.addEventListener('input',renderPeopleManager);
+    document.querySelector('#peopleSearch')?.addEventListener('input',()=>{peopleLookupError='';renderPeopleManager();});
     document.querySelector('#addPerson')?.addEventListener('click',addPerson);
     document.querySelector('#resetPeople')?.addEventListener('click',()=>{if(confirm('放棄尚未送出的人名連結修改？')){peopleDraft=copy(peopleRemote);savePeopleLocal();}});
     document.querySelector('#peopleRows')?.addEventListener('input',event=>{
@@ -255,17 +300,41 @@
   window.validatePeopleDraft=validatePeopleDraft;
   window.clearPeopleDraft=clearPeopleDraft;
   window.renderPeopleManager=renderPeopleManager;
-  window.openPeopleRecord=function(personId){
+  window.openPeopleRecord=async function(personId){
     setDatabaseType('people');
+    try{await peopleLoadPromise;}catch{return false;}
     const person=normalizePeople(peopleDraft).people.find(row=>row.id===personId);
+    peopleLookupError=person?'':`正式檔案中找不到 ID「${personId}」。`;
     const search=document.querySelector('#peopleSearch');
     if(search){search.value=person?.name?.en||person?.name?.zh||personId;renderPeopleManager();}
     requestAnimationFrame(()=>document.querySelector('#peopleRows input')?.focus());
+    if(!person)return false;
+    return true;
   };
+  window.peopleWhenReady=()=>peopleLoadPromise;
   window.peopleHistoryPreviewHtml=function(history){return peoplePreviewHtml({before:history.before,after:history.after});};
 
-  installStyles();installPanel();
-  fetch('../content/people.json',{cache:'no-store'}).then(response=>response.ok?response.json():empty()).catch(()=>empty()).then(remote=>{
-    peopleRemote=normalizePeople(remote);peopleDraft=loadSaved(peopleRemote);peopleReady=true;renderPeopleManager();
+  async function fetchPeopleRemote(){
+    let lastError=null;
+    for(let attempt=0;attempt<3;attempt+=1){
+      try{
+        const url=new URL('../content/people.json',location.href);
+        url.searchParams.set('_',`${Date.now()}-${attempt}`);
+        const response=await fetch(url,{cache:'no-store'});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        const remote=await response.json();
+        if(!remote||!Array.isArray(remote.people))throw new Error('people.json 格式不正確');
+        return normalizePeople(remote);
+      }catch(error){lastError=error;if(attempt<2)await new Promise(resolve=>setTimeout(resolve,250*(attempt+1)));}
+    }
+    throw lastError||new Error('無法讀取 people.json');
+  }
+
+  installStyles();installPanel();renderPeopleManager();
+  peopleLoadPromise=fetchPeopleRemote().then(remote=>{
+    peopleRemote=remote;peopleDraft=loadSaved(peopleRemote);peopleReady=true;peopleLoadState='ready';peopleLoadError='';savePeopleLocal(false);renderPeopleManager();return copy(peopleDraft);
+  }).catch(error=>{
+    peopleReady=false;peopleLoadState='error';peopleLoadError=String(error?.message||error);renderPeopleManager();throw error;
   });
+  peopleLoadPromise.catch(()=>{});
 })();
