@@ -6,6 +6,9 @@
   const PENDING_KEY='hctsui-github-submit-pending-v1';
   const AUTO_KEY='hctsui-github-submit-after-login-v1';
   const DEFAULT_API='https://hctsui-website-worker.hctsui-math.workers.dev';
+  const STATUS_POLL_MS=5000;
+  let statusTimer=0;
+  let clearingCompletedDraft=false;
   const button=document.querySelector('#submitBatch');
   const manualButton=document.querySelector('#manualSubmitBatch');
   const loginButton=document.querySelector('#githubLogin');
@@ -22,6 +25,9 @@
   const session=()=>readJson(SESSION_KEY);
   const setStatus=(message,kind='')=>{status.className=`github-submit-status ${kind}`.trim();status.textContent=message};
   const showIssue=(html,kind='')=>{if(!issueStatus)return;issueStatus.className=`github-issue-status ${kind}`.trim();issueStatus.innerHTML=html;issueStatus.hidden=!html};
+  const stopStatusPolling=()=>{if(statusTimer)clearTimeout(statusTimer);statusTimer=0};
+  const scheduleStatusRefresh=(delay=STATUS_POLL_MS)=>{stopStatusPolling();if(readJson(PENDING_KEY)?.issue?.number)statusTimer=setTimeout(refreshIssueStatus,delay)};
+  const issueLink=(pending)=>`<a href="${esc(pending.issue.url)}" target="_blank" rel="noopener">GitHub #${esc(pending.issue.number)}</a>`;
   const operationFingerprint=async(batch)=>{
     const bytes=new TextEncoder().encode(JSON.stringify({schema_version:batch.schema_version,operations:batch.operations}));
     const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
@@ -122,11 +128,11 @@
       if(!response.ok||!result.success)throw new Error(result.message||'送出失敗，請稍後重試');
       pending.issue=result.issue;pending.submitted_at=new Date().toISOString();
       localStorage.setItem(PENDING_KEY,JSON.stringify(pending));
-      markSubmissionPending();
-      document.querySelector('#confirmSubmitted')?.classList.remove('hidden');
-      showIssue(`已建立修改請求 <a href="${esc(result.issue.url)}" target="_blank" rel="noopener">GitHub #${esc(result.issue.number)}</a>；系統正在檢查並更新網站。`,'success');
+      sessionStorage.setItem('hctsui-submission-pending','1');
+      document.querySelector('#confirmSubmitted')?.classList.add('hidden');
+      showIssue(`已建立修改請求 ${issueLink(pending)}；等待 GitHub 開始處理。狀態每 5 秒自動更新。`,'success');
       flash(result.duplicate?'這份修改先前已送出，已接回原本的處理進度':'修改已安全送出，不必再貼到 GitHub');
-      setTimeout(()=>refreshIssueStatus(),2500);
+      scheduleStatusRefresh(1000);
     }catch(reason){
       showIssue(`${esc(reason.message||String(reason))}；草稿仍完整保留，可重試或改用手動 Issue。`,'error');
       flash(reason.message||String(reason));
@@ -137,26 +143,44 @@
 
   async function refreshIssueStatus(){
     const pending=readJson(PENDING_KEY);
-    if(!pending?.issue?.number)return;
+    if(!pending?.issue?.number){stopStatusPolling();return}
     try{
-      const response=await fetch(`https://api.github.com/repos/hctsui/hctsui.github.io/issues/${pending.issue.number}`,{headers:{Accept:'application/vnd.github+json'},cache:'no-store'});
-      if(!response.ok)throw new Error();
-      const issue=await response.json(),labels=(issue.labels||[]).map(label=>typeof label==='string'?label:label.name);
-      const applied=labels.includes('website-form-applied');
-      if(!applied&&issue.state!=='closed'){
-        showIssue(`修改請求 <a href="${esc(pending.issue.url)}" target="_blank" rel="noopener">GitHub #${esc(pending.issue.number)}</a> 正在處理；本機草稿會先保留。`);
+      const saved=session();
+      if(!saved?.token)throw new Error('登入已過期，請重新登入 GitHub');
+      const response=await fetch(`${apiBase()}/cms/status?issue=${encodeURIComponent(pending.issue.number)}`,{headers:{Authorization:`Bearer ${saved.token}`},cache:'no-store'});
+      const result=await response.json().catch(()=>({}));
+      if(response.status===401){localStorage.removeItem(SESSION_KEY);throw new Error('登入已過期，請重新登入 GitHub')}
+      if(!response.ok||!result.success)throw new Error(result.message||'暫時讀不到處理狀態');
+      const actionLink=result.action_url?` <a href="${esc(result.action_url)}" target="_blank" rel="noopener">查看進度</a>`:'';
+      if(result.stage==='failed'){
+        stopStatusPolling();
+        const logUrl=result.log_url||pending.issue.url;
+        showIssue(`${esc(result.message||'自動處理失敗，草稿已保留')}：${issueLink(pending)}。<a href="${esc(logUrl)}" target="_blank" rel="noopener">查看錯誤日誌</a>`,'error');
+        return;
+      }
+      if(result.stage!=='completed'){
+        showIssue(`${esc(result.message||'正在處理')}：${issueLink(pending)}。狀態每 5 秒自動更新。${actionLink}`);
+        scheduleStatusRefresh();
         return;
       }
       const current=await operationFingerprint(payload());
       if(current!==pending.fingerprint){
-        showIssue(`GitHub #${esc(pending.issue.number)} 已完成；但你送出後又有新草稿，因此不會自動清除。請先送出新的修改。`,'success');
+        stopStatusPolling();
+        localStorage.removeItem(PENDING_KEY);
+        sessionStorage.removeItem('hctsui-submission-pending');
+        showIssue(`${issueLink(pending)} 已完成並發布；你送出後另有新草稿，因此只保留新草稿，不會誤刪。${actionLink}`,'success');
         document.querySelector('#confirmSubmitted')?.classList.add('hidden');
         return;
       }
-      showIssue(`GitHub #${esc(pending.issue.number)} 已完成，網站正在部署。現在可以安全清除這批本機草稿。`,'success');
-      const confirmButton=document.querySelector('#confirmSubmitted');
-      if(confirmButton){confirmButton.classList.remove('hidden');confirmButton.textContent='處理完成：清除這批本機草稿'}
-    }catch{showIssue(`已送出 GitHub #${esc(pending.issue.number)}；目前暫時讀不到處理狀態，本機草稿仍有保留。`)}
+      stopStatusPolling();
+      if(clearingCompletedDraft)return;
+      clearingCompletedDraft=true;
+      showIssue(`${issueLink(pending)} 已完成並發布；正在自動清除這批本機草稿。${actionLink}`,'success');
+      setTimeout(()=>clearSubmittedDraft(),700);
+    }catch(reason){
+      showIssue(`${issueLink(pending)} 已送出；${esc(reason.message||'目前暫時讀不到處理狀態')}，草稿仍有保留。5 秒後重試。`);
+      scheduleStatusRefresh();
+    }
   }
 
   const baseClearSubmittedDraft=clearSubmittedDraft;
@@ -171,16 +195,11 @@
   loginButton.onclick=()=>beginLogin(false);
   logoutButton.onclick=()=>{localStorage.removeItem(SESSION_KEY);localStorage.removeItem(AUTO_KEY);checkSession();flash('已在這台裝置登出 GitHub 送出功能')};
   document.querySelector('#confirmSubmitted').onclick=async()=>{
-    const pending=readJson(PENDING_KEY);
-    if(!pending?.issue)return finishSuccessfulSubmission();
     await refreshIssueStatus();
-    const current=await operationFingerprint(payload());
-    if(current!==pending.fingerprint)return flash('送出後另有新草稿，為避免誤刪，請先送出新的修改');
-    if(!confirm('確認清除已完成的這批本機草稿？'))return;
-    clearSubmittedDraft();
   };
 
   const loggedIn=consumeLoginResult();
+  document.querySelector('#confirmSubmitted')?.classList.add('hidden');
   checkSession().then(async()=>{
     await refreshIssueStatus();
     if(loggedIn&&localStorage.getItem(AUTO_KEY)==='1'){

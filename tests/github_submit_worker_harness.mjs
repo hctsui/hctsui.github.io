@@ -75,6 +75,20 @@ assert.equal(duplicate.status,200);
 assert.equal((await duplicate.json()).duplicate,true);
 assert.equal(createCount,1);
 
+globalThis.fetch=async(url)=>{
+  const target=String(url);
+  if(target.endsWith('/issues/77'))return Response.json({number:77,title:'[Website: Batch] status test',html_url:'https://github.com/hctsui/hctsui.github.io/issues/77'});
+  if(target.includes('/actions/workflows/process-website-batch.yml/runs'))return Response.json({workflow_runs:[{status:'completed',conclusion:'success',display_title:'[Website: Batch] status test',html_url:'https://github.com/hctsui/hctsui.github.io/actions/runs/100',created_at:'2026-08-01T00:00:00Z',updated_at:'2026-08-01T00:00:30Z'}]});
+  if(target.includes('/commits?sha=cms'))return Response.json([{sha:'batch-commit',commit:{message:'Apply website batch from issue #77'}}]);
+  if(target.includes('/actions/workflows/deploy-cms-pages.yml/runs'))return Response.json({workflow_runs:[{status:'completed',conclusion:'success',head_sha:'batch-commit',html_url:'https://github.com/hctsui/hctsui.github.io/actions/runs/101',created_at:'2026-08-01T00:00:31Z'}]});
+  throw new Error(`Unexpected status fetch: ${target}`);
+};
+const statusResponse=await worker.fetch(new Request('https://worker.example/cms/status?issue=77',{headers:{origin:env.SITE_ORIGIN,authorization:`Bearer ${session}`}}),env);
+assert.equal(statusResponse.status,200);
+const statusData=await statusResponse.json();
+assert.equal(statusData.stage,'completed');
+assert.match(statusData.action_url,/actions\/runs\/101/);
+
 const unauthorized=await worker.fetch(new Request('https://worker.example/cms/submit',{method:'POST',headers:{origin:env.SITE_ORIGIN,'content-type':'application/json'},body:JSON.stringify(submission)}),env);
 assert.equal(unauthorized.status,401);
 
