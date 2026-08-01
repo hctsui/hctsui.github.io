@@ -147,6 +147,49 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ---
 
+## C. Admin 手機直接送出（GitHub 登入）
+
+這個功能沿用同一個 Cloudflare Worker。GitHub OAuth 只確認登入者是 repository owner；建立 Batch Issue 使用 Worker Secret 中的 fine-grained token。任何 GitHub Token 都不得放進 Admin 或公開 repository。
+
+### 步驟 1：替 fine-grained token 加上 Issue 權限
+
+原本的 `GITHUB_TOKEN` 除了 **Contents: Read and write**，還要加入 **Issues: Read and write**。Token 必須由 `hctsui` 帳號建立，並且只允許 `hctsui/hctsui.github.io`，才能通過既有 Workflow 的 owner 檢查。
+
+### 步驟 2：建立 GitHub OAuth App
+
+在 GitHub → Settings → Developer settings → OAuth Apps 建立一個 OAuth App：
+
+| 欄位 | 值 |
+|---|---|
+| Application name | `hctsui CMS Submit` |
+| Homepage URL | `https://hctsui.github.io/admin/` |
+| Authorization callback URL | `https://hctsui-website-worker.hctsui-math.workers.dev/cms/auth/callback` |
+
+建立後取得 Client ID，並產生一個 Client Secret。Client Secret 只能放進 Cloudflare Worker Secret。
+
+### 步驟 3：加入 Worker Secrets 與 Variables
+
+新增下列 **Secret**：
+
+| 名稱 | 內容 |
+|---|---|
+| `GITHUB_OAUTH_CLIENT_SECRET` | OAuth App Client Secret |
+
+目前網站的公開 OAuth Client ID 已寫入 Worker。`CMS_SESSION_SECRET` 可選填；未設定時 Worker 會從 OAuth Client Secret 衍生簽章金鑰，不會把 Secret 傳到瀏覽器。
+
+新增下列普通 **Variables**：
+
+| 名稱 | 值 |
+|---|---|
+| `ADMIN_URL` | `https://hctsui.github.io/admin/` |
+| `CMS_ALLOWED_GITHUB_LOGIN` | `hctsui` |
+
+### 步驟 4：更新並測試 Worker
+
+部署最新版 `integrations/contact-worker.js`。在手機開啟 Admin，按「直接送出修改」：第一次登入 GitHub，成功後應自動回到 Admin 並建立修改請求；14 天內不需再次登入。「改用 GitHub Issue 手動送出」應始終可用。
+
+---
+
 ## 常見問題
 
 ### Email 有收到，但 Admin 沒通知

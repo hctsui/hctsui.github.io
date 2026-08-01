@@ -160,11 +160,11 @@ PDF 履歷」的編輯
         <ol class="steps">
           <li>在「項目」「新增」「排序」「資料庫」或「網站設定」建立修改。</li>
           <li>到「草稿」和右側預覽確認修改前後差異。</li>
-          <li>按「前往 GitHub 送出批次」，建立一張批次 Issue。</li>
+          <li>按「直接送出修改」。第一次會前往 GitHub 驗證帳號；同一台裝置的登入可保留 14 天。</li>
           <li>等待 GitHub Actions 完成測試、重建網站並部署。</li>
           <li>確認成功後，再清除已送出的本機草稿。</li>
         </ol>
-        <div class="callout warning"><strong>不要在 Issue 剛建立後立刻清空草稿。</strong>建立 Issue 只代表請求已送出，不代表自動流程已成功。</div>
+        <div class="callout warning"><strong>不要在修改剛送出後立刻清空草稿。</strong>Admin 會等待 GitHub 顯示處理完成，再開放安全清除；送出後若又有新草稿，系統不會誤刪。</div>
       </section>
 
       <section id="data-model">
@@ -418,12 +418,13 @@ PDF 履歷」的編輯
         <h2>18. 送出批次與部署</h2>
         <ol class="steps">
           <li>在右側預覽確認沒有意外刪除、錯誤搬移或異常大量變更。</li>
-          <li>按「前往 GitHub 送出批次」。</li>
-          <li>建立標題以 <code>[Website: Batch]</code> 開頭的 Issue。</li>
+          <li>按「直接送出修改」。第一次使用時登入 GitHub；驗證成功後會自動接續送出。</li>
+          <li>Cloudflare Worker 會代為建立標題以 <code>[Website: Batch]</code> 開頭的 Issue，不需要進入 GitHub 畫面，也不使用手機剪貼簿。</li>
           <li>GitHub Actions 會驗證資料、執行測試、生成網站、搜尋索引、PDF 履歷與審查資料。</li>
           <li>成功後會提交產生結果、關閉 Issue 並部署 GitHub Pages。</li>
           <li>最後回到 Admin 清除已成功送出的本機草稿。</li>
         </ol>
+        <div class="callout"><strong>備用方式：</strong>「改用 GitHub Issue 手動送出」會保留原本流程；只有直接送出服務暫時無法使用時才需要它。</div>
         <div class="callout warning"><strong>Actions 失敗時：</strong>先保留草稿，查看第一個失敗步驟。不要因為後面顯示部署未執行，就忽略前面真正的測試錯誤。</div>
       </section>
 

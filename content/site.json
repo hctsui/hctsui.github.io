@@ -934,7 +934,7 @@
       "enabled": true,
       "mode": "worker",
       "web3forms_access_key": "",
-      "worker_url": "https://hctsui-contact-bridge.hctsui-math.workers.dev",
+      "worker_url": "https://hctsui-website-worker.hctsui-math.workers.dev",
       "turnstile_site_key": "0x4AAAAAAEDAWfBne1jtRv8u",
       "email_subject": "[hctsui.github.io] New contact message",
       "title": {
