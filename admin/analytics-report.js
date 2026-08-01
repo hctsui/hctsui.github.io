@@ -60,7 +60,10 @@
       const data=await response.json().catch(()=>({}));
       if(sequence!==state.sequence||root!==panel())return;
       if(response.status===401){localStorage.removeItem(SESSION_KEY);root.innerHTML=loginHtml();return}
-      if(!response.ok||!data.success){root.innerHTML=setupText(data.message||'目前無法讀取流量報表');return}
+      if(!response.ok||!data.success){
+        const message=response.status===404?'Worker 尚未更新到流量報表版本，請先部署最新的 Worker 程式。':data.message||'目前無法讀取流量報表';
+        root.innerHTML=setupText(message);return
+      }
       root.innerHTML=reportHtml(data);
     }catch{
       if(sequence!==state.sequence||root!==panel())return;

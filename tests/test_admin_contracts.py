@@ -85,6 +85,7 @@ class AdminLoadingContracts(unittest.TestCase):
             "國家／地區",
             "裝置",
             "瀏覽器",
+            "Worker 尚未更新到流量報表版本",
         ):
             self.assertIn(marker, settings + report)
         self.assertIn("requireSession(request, env)", worker)
