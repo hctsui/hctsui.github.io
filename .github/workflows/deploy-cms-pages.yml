@@ -105,6 +105,8 @@ jobs:
           test -f assets/images/photo.jpg
           test -f assets/images/favicon.svg
           test -f 404.html
+          test -f robots.txt
+          test -f sitemap.xml
           test -f contact.html
           test -f zh/contact.html
 
@@ -128,6 +130,8 @@ jobs:
           python3 tools/run_validate_site.py
           test -s dossier.html
           test -s zh/dossier.html
+          test -s robots.txt
+          test -s sitemap.xml
           test -s cv/Hung-Chun-Tsui-CV.tex
           test -s cv/Hung-Chun-Tsui-CV-zh.tex
 
@@ -186,7 +190,7 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site
-          cp index.html cv.html publications.html activities.html teaching.html contact.html dossier.html 404.html _site/
+          cp index.html cv.html publications.html activities.html teaching.html contact.html dossier.html 404.html robots.txt sitemap.xml _site/
           cp -R assets zh admin content files _site/
           touch _site/.nojekyll
 
