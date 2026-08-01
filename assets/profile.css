@@ -1,0 +1,14 @@
+.category-mixed .mixed-content {
+  display: grid;
+  gap: 1rem;
+}
+.category-mixed .mixed-block {
+  margin: 0;
+}
+.category-mixed .mixed-block + .mixed-block {
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent, #8d493d) 18%, #ddd);
+}
+.category-mixed .mixed-block .contact-grid {
+  margin-top: 0;
+}

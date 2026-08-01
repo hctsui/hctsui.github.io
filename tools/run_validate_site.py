@@ -7,6 +7,9 @@ import runpy
 import urllib.parse
 from pathlib import Path
 
+import cms_extensions
+cms_extensions.install()
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "tools" / "validate_site.py"
 _original_urlparse = urllib.parse.urlparse

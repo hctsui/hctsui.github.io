@@ -1,0 +1,143 @@
+from __future__ import annotations
+
+import copy
+import sys
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+TOOLS = ROOT / "tools"
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
+import cms_extensions as extensions
+
+
+class PersonalProfileExtensionTests(unittest.TestCase):
+    def sample_data(self) -> dict:
+        return {
+            "settings": {
+                "categories": [
+                    {
+                        "id": "home-contact",
+                        "page_id": "home",
+                        "kind": "contact",
+                        "label": {"en": "Contact", "zh": "聯絡"},
+                        "title": {"en": "Contact", "zh": "聯絡"},
+                        "intro": {"en": "", "zh": ""},
+                        "order": 0,
+                        "show_on_web": True,
+                        "show_on_cv": False,
+                    },
+                    {
+                        "id": "cv-personal",
+                        "page_id": "cv",
+                        "kind": "personal",
+                        "label": {"en": "Details", "zh": "資料"},
+                        "title": {"en": "Personal Information", "zh": "個人資料"},
+                        "intro": {"en": "", "zh": ""},
+                        "order": 0,
+                        "show_on_web": False,
+                        "show_on_cv": True,
+                    },
+                ],
+                "cv_category_order": ["cv-personal"],
+            },
+            "profile_items": [
+                {
+                    "id": "contact-affiliation",
+                    "type": "contact",
+                    "category_id": "home-contact",
+                    "order": 2,
+                    "title": {"en": "Affiliation", "zh": "所屬單位"},
+                    "description": {"en": "Old University", "zh": "舊大學"},
+                },
+                {
+                    "id": "contact-institutional-email",
+                    "type": "contact",
+                    "category_id": "home-contact",
+                    "order": 0,
+                    "title": {"en": "Email", "zh": "信箱"},
+                    "description": {"en": "old@example.edu", "zh": "old@example.edu"},
+                },
+            ],
+        }
+
+    def test_profile_sync_uses_one_primary_category_and_references(self) -> None:
+        data = self.sample_data()
+        extensions.sync_personal_profile(
+            data,
+            {
+                "name": {"en": "Example Name", "zh": "範例姓名"},
+                "affiliation": {"en": "Example University", "zh": "範例大學"},
+                "position": {"en": "Researcher", "zh": "研究員"},
+                "institutional_email": "name@example.edu",
+                "personal_email": "",
+                "website": "https://example.edu",
+                "orcid": "",
+                "address": {"en": "", "zh": ""},
+                "office": {"en": "Office 1", "zh": "辦公室 1"},
+                "languages": {"en": "English", "zh": "英文"},
+            },
+        )
+        categories = {row["id"]: row for row in data["settings"]["categories"]}
+        self.assertEqual(categories["personal-profile"]["kind"], "mixed")
+        items = {row["id"]: row for row in data["profile_items"]}
+        for item_id in ("profile-name", "contact-affiliation", "profile-position"):
+            self.assertEqual(items[item_id]["category_id"], "personal-profile")
+        self.assertNotIn(
+            "home-contact",
+            {row["category_id"] for row in items["contact-affiliation"]["display_placements"]},
+        )
+        self.assertIn(
+            "home-contact",
+            {row["category_id"] for row in items["contact-institutional-email"]["display_placements"]},
+        )
+
+    def test_normalize_placements_removes_primary_and_duplicates(self) -> None:
+        rows = extensions.normalize_placements(
+            [
+                {"category_id": "primary", "order": 0},
+                {"category_id": "other", "order": 3},
+                {"category_id": "other", "order": 9},
+            ],
+            primary="primary",
+            known={"primary", "other"},
+        )
+        self.assertEqual(rows, [{"category_id": "other", "order": 3}])
+
+
+class SourceContractTests(unittest.TestCase):
+    def read(self, relative: str) -> str:
+        return (ROOT / relative).read_text(encoding="utf-8")
+
+    def test_admin_supports_dossier_order_mixed_style_and_profile_form(self) -> None:
+        layout = self.read("admin/dossier-category.js")
+        profile = self.read("admin/personal-profile.js")
+        self.assertIn("dossier_category_order", layout)
+        self.assertIn("一般內容（不限風格）", layout)
+        self.assertIn("data-category-style-preview", layout)
+        self.assertIn("放進審查資料", layout)
+        self.assertIn("額外顯示位置", layout)
+        self.assertIn("個人資料編輯", profile)
+        self.assertIn("個人資料顯示位置", profile)
+        self.assertIn("op:'personal_profile'", profile)
+
+    def test_dossier_profile_and_print_contracts(self) -> None:
+        builder = self.read("tools/build_dossier.py")
+        css = self.read("assets/dossier.css")
+        self.assertIn('for key in ("name", "affiliation", "position")', builder)
+        self.assertIn('excluded = {"name", "affiliation", "position"}', builder)
+        self.assertIn("column-count: 2", css)
+        self.assertIn("display: contents !important", css)
+        self.assertIn("break-inside: auto", css)
+        self.assertIn("module.apply_home_cover = apply_home_cover", self.read("tools/cms_extensions.py"))
+
+    def test_batch_backend_persists_new_structures(self) -> None:
+        backend = self.read("tools/run_process_batch_request.py")
+        for marker in ("dossier_category_order", "display_placements", 'op.get("op") != "personal_profile"'):
+            self.assertIn(marker, backend)
+
+
+if __name__ == "__main__":
+    unittest.main()

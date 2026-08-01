@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import cms_extensions
+cms_extensions.install()
 import process_request as core
 from category_config import categories_for_page, migrate_category_data, normalized_pages
 
@@ -95,6 +97,15 @@ def build_index() -> dict[str, Any]:
 
     for item in all_records(data):
         category = category_by_id.get(str(item.get("category_id") or ""))
+        anchor_id = str(item.get("id") or "")
+        if not category or category.get("show_on_web") is False:
+            for placement in item.get("display_placements", []):
+                placement_id = str((placement or {}).get("category_id") or "")
+                candidate = category_by_id.get(placement_id)
+                if candidate and candidate.get("show_on_web", True):
+                    category = candidate
+                    anchor_id = f"{anchor_id}--at--{placement_id}"
+                    break
         page_id = str((category or {}).get("page_id") or "")
         if not page_id:
             item_type = str(item.get("type") or "")
@@ -105,7 +116,7 @@ def build_index() -> dict[str, Any]:
         for lang in ("en", "zh"):
             path = str((page.get("path") or {}).get(lang) or "")
             if path:
-                add(lang, entry_title(item, lang), description(item, lang), f"{path}#{item.get('id')}", str(item.get("type") or "item"))
+                add(lang, entry_title(item, lang), description(item, lang), f"{path}#{anchor_id}", str(item.get("type") or "item"))
 
     rows.sort(key=lambda row: (row["language"], row["kind"], row["title"].casefold()))
     return {"schema_version": 1, "items": rows}
