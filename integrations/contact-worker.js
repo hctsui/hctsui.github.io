@@ -4,8 +4,12 @@
  * Required contact secrets:
  *   WEB3FORMS_ACCESS_KEY, GITHUB_TOKEN
  *
- * Required CMS secrets:
- *   GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET, CMS_SESSION_SECRET
+ * Required CMS secret:
+ *   GITHUB_OAUTH_CLIENT_SECRET
+ *
+ * GITHUB_OAUTH_CLIENT_ID defaults to this site's public OAuth App client ID.
+ * CMS_SESSION_SECRET is optional; when omitted, the Worker derives the signing
+ * key from GITHUB_OAUTH_CLIENT_SECRET without exposing it to the browser.
  *
  * GITHUB_TOKEN must be a fine-grained token owned by the repository owner and
  * limited to this repository. It needs Contents: write for repository_dispatch
@@ -23,10 +27,13 @@ const utf8 = new TextEncoder();
 const decoder = new TextDecoder();
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const OAUTH_SECONDS = 10 * 60;
+const DEFAULT_OAUTH_CLIENT_ID = "Ov23liuhyCd8KNHvlDLA";
 
 const clean = (value, max) => String(value || "").replace(/[\u0000-\u001f]/g, "").trim().slice(0, max);
 const emailOk = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const nowSeconds = () => Math.floor(Date.now() / 1000);
+const oauthClientId = (env) => clean(env.GITHUB_OAUTH_CLIENT_ID, 200) || DEFAULT_OAUTH_CLIENT_ID;
+const cmsSessionSecret = (env) => clean(env.CMS_SESSION_SECRET, 500) || clean(env.GITHUB_OAUTH_CLIENT_SECRET, 500);
 
 function base64UrlEncode(value) {
   const bytes = typeof value === "string" ? utf8.encode(value) : new Uint8Array(value);
@@ -131,16 +138,17 @@ async function parsePayload(request) {
 }
 
 async function oauthStart(request, env) {
-  if (!env.GITHUB_OAUTH_CLIENT_ID || !env.GITHUB_OAUTH_CLIENT_SECRET || !env.CMS_SESSION_SECRET) {
+  const sessionSecret = cmsSessionSecret(env);
+  if (!env.GITHUB_OAUTH_CLIENT_SECRET || !sessionSecret) {
     return adminRedirect(env, { github_error: "GitHub 登入服務尚未設定完成" });
   }
   const url = new URL(request.url);
   const state = randomToken(24);
   const verifier = randomToken(48);
   const challenge = base64UrlEncode(await crypto.subtle.digest("SHA-256", utf8.encode(verifier)));
-  const oauthState = await signedToken({ kind: "oauth", state, verifier, exp: nowSeconds() + OAUTH_SECONDS }, env.CMS_SESSION_SECRET);
+  const oauthState = await signedToken({ kind: "oauth", state, verifier, exp: nowSeconds() + OAUTH_SECONDS }, sessionSecret);
   const authorize = new URL("https://github.com/login/oauth/authorize");
-  authorize.searchParams.set("client_id", env.GITHUB_OAUTH_CLIENT_ID);
+  authorize.searchParams.set("client_id", oauthClientId(env));
   authorize.searchParams.set("redirect_uri", `${url.origin}/cms/auth/callback`);
   authorize.searchParams.set("state", state);
   authorize.searchParams.set("login", clean(env.CMS_ALLOWED_GITHUB_LOGIN, 100) || "hctsui");
@@ -152,11 +160,12 @@ async function oauthStart(request, env) {
 }
 
 async function oauthCallback(request, env) {
-  if (!env.GITHUB_OAUTH_CLIENT_ID || !env.GITHUB_OAUTH_CLIENT_SECRET || !env.CMS_SESSION_SECRET) {
+  const sessionSecret = cmsSessionSecret(env);
+  if (!env.GITHUB_OAUTH_CLIENT_SECRET || !sessionSecret) {
     return adminRedirect(env, { github_error: "GitHub 登入服務尚未設定完成" });
   }
   const url = new URL(request.url);
-  const stored = await verifySignedToken(parseCookies(request).cms_oauth, env.CMS_SESSION_SECRET, "oauth");
+  const stored = await verifySignedToken(parseCookies(request).cms_oauth, sessionSecret, "oauth");
   if (!stored || !url.searchParams.get("code") || stored.state !== url.searchParams.get("state")) {
     return adminRedirect(env, { github_error: "登入驗證已過期，請再試一次" });
   }
@@ -164,7 +173,7 @@ async function oauthCallback(request, env) {
     method: "POST",
     headers: { accept: "application/json", "content-type": "application/json", "user-agent": "hctsui-cms-submit" },
     body: JSON.stringify({
-      client_id: env.GITHUB_OAUTH_CLIENT_ID,
+      client_id: oauthClientId(env),
       client_secret: env.GITHUB_OAUTH_CLIENT_SECRET,
       code: url.searchParams.get("code"),
       redirect_uri: `${url.origin}/cms/auth/callback`,
@@ -187,15 +196,16 @@ async function oauthCallback(request, env) {
     return adminRedirect(env, { github_error: "這個 GitHub 帳號沒有網站送出權限" });
   }
   const expires = nowSeconds() + SESSION_SECONDS;
-  const session = await signedToken({ kind: "session", sub: user.login, exp: expires }, env.CMS_SESSION_SECRET);
+  const session = await signedToken({ kind: "session", sub: user.login, exp: expires }, sessionSecret);
   return adminRedirect(env, { github_session: session, github_login: user.login, github_expires: String(expires) });
 }
 
 async function requireSession(request, env) {
-  if (!env.CMS_SESSION_SECRET) return null;
+  const sessionSecret = cmsSessionSecret(env);
+  if (!sessionSecret) return null;
   const header = request.headers.get("authorization") || "";
   const match = header.match(/^Bearer\s+(.+)$/i);
-  const session = await verifySignedToken(match?.[1], env.CMS_SESSION_SECRET, "session");
+  const session = await verifySignedToken(match?.[1], sessionSecret, "session");
   const allowed = (clean(env.CMS_ALLOWED_GITHUB_LOGIN, 300) || "hctsui").split(",").map((login) => login.trim().toLowerCase()).filter(Boolean);
   return session && allowed.includes(String(session.sub || "").toLowerCase()) ? session : null;
 }

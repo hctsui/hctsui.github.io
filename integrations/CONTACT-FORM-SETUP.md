@@ -169,13 +169,13 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ### 步驟 3：加入 Worker Secrets 與 Variables
 
-新增下列 **Secrets**：
+新增下列 **Secret**：
 
 | 名稱 | 內容 |
 |---|---|
-| `GITHUB_OAUTH_CLIENT_ID` | OAuth App Client ID |
 | `GITHUB_OAUTH_CLIENT_SECRET` | OAuth App Client Secret |
-| `CMS_SESSION_SECRET` | 至少 32 bytes 的隨機密鑰 |
+
+目前網站的公開 OAuth Client ID 已寫入 Worker。`CMS_SESSION_SECRET` 可選填；未設定時 Worker 會從 OAuth Client Secret 衍生簽章金鑰，不會把 Secret 傳到瀏覽器。
 
 新增下列普通 **Variables**：
 

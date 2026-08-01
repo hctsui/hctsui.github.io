@@ -9,9 +9,7 @@ const env={
   ADMIN_URL:'https://hctsui.github.io/admin/',
   GITHUB_REPOSITORY:'hctsui/hctsui.github.io',
   CMS_ALLOWED_GITHUB_LOGIN:'hctsui',
-  GITHUB_OAUTH_CLIENT_ID:'client-id',
   GITHUB_OAUTH_CLIENT_SECRET:'client-secret',
-  CMS_SESSION_SECRET:'a-test-secret-that-is-longer-than-thirty-two-bytes',
   GITHUB_TOKEN:'github-token',
 };
 
@@ -19,6 +17,7 @@ const start=await worker.fetch(new Request('https://worker.example/cms/auth/star
 assert.equal(start.status,302);
 const authorization=new URL(start.headers.get('location'));
 assert.equal(authorization.origin,'https://github.com');
+assert.equal(authorization.searchParams.get('client_id'),'Ov23liuhyCd8KNHvlDLA');
 assert.equal(authorization.searchParams.get('code_challenge_method'),'S256');
 const cookie=start.headers.get('set-cookie').match(/^cms_oauth=([^;]+)/)[1];
 

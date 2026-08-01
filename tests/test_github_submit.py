@@ -28,6 +28,8 @@ class GitHubSubmitWorkerContracts(unittest.TestCase):
         for marker in (
             "GITHUB_OAUTH_CLIENT_SECRET",
             "CMS_SESSION_SECRET",
+            "DEFAULT_OAUTH_CLIENT_ID",
+            "cmsSessionSecret",
             "CMS_ALLOWED_GITHUB_LOGIN",
             'kind: "session"',
             'Path=/cms/auth',
