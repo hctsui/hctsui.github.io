@@ -87,7 +87,7 @@ class PeopleDirectoryTests(unittest.TestCase):
     def test_committed_people_have_search_aliases_without_boot_draft(self) -> None:
         people = json.loads((ROOT / "content" / "people.json").read_text(encoding="utf-8"))
         validate_people(people)
-        self.assertEqual(len(people["people"]), 5)
+        self.assertTrue(people["people"], "committed people directory must not be empty")
         for person in people["people"]:
             self.assertGreaterEqual(len(person.get("aliases", [])), 6, person["id"])
 

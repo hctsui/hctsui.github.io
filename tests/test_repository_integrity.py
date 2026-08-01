@@ -169,7 +169,7 @@ class CanonicalFilenameTests(unittest.TestCase):
     def test_admin_shell_references_canonical_scripts(self) -> None:
         page = read("admin/index.html")
         for marker in (
-            '<script src="tags.js?v=20260801-1"></script>',
+            '<script src="tags.js?v=20260802-2"></script>',
             '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
             '<script src="people.js?v=20260802-3"></script>',

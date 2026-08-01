@@ -3503,13 +3503,13 @@
         $("#summary").textContent = errs.length
           ? "資料有衝突，請先修正。"
           : ops.length
-            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、對照表 1" : ""}${c.people ? "、人名連結 1" : ""}${c.arxiv_suggestions ? "、arXiv 通知 1" : ""}${c.notifications ? "、通知中心 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
+            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、中英對照 1" : ""}${c.people ? "、人名連結 1" : ""}${c.arxiv_suggestions ? "、arXiv 通知 1" : ""}${c.notifications ? "、通知中心 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
             : "尚無變更。";
         $("#preview").innerHTML = ops
           .map((o) => {
             if (o.op === "headings") return headingPreviewHtml(o);
             if (o.op === "translations")
-              return `<details class="diff"><summary><strong>中英對照</strong>：${o.before.pairs.length} → ${o.after.pairs.length} 組</summary><div class="preview-columns"><div class="preview-card"><h4>修改前</h4><div class="preview-value">${o.before.pairs.length} 組</div></div><div class="preview-card"><h4>修改後</h4><div class="preview-value">${o.after.pairs.length} 組</div></div></div></details>`;
+              return `<details class="diff" data-preview-operation="translations"><summary><strong>中英對照</strong>：${o.before.pairs.length} → ${o.after.pairs.length} 組</summary><div class="preview-columns"><div class="preview-card"><h4>修改前</h4><div class="preview-value">${o.before.pairs.length} 組</div></div><div class="preview-card"><h4>修改後</h4><div class="preview-value">${o.after.pairs.length} 組</div></div></div></details>`;
             if (o.op === "people" && typeof peoplePreviewHtml === "function")
               return peoplePreviewHtml(o);
             if (o.op === "arxiv_suggestions" && typeof arxivSuggestionsPreviewHtml === "function")
@@ -3981,7 +3981,7 @@
           $("#summary").textContent = "讀取資料失敗：" + e;
         });
     </script>
-    <script src="tags.js?v=20260801-1"></script>
+    <script src="tags.js?v=20260802-2"></script>
     <script src="layout.js?v=20260801-2"></script>
     <script src="homepage.js?v=20260801-1"></script>
     <script src="people.js?v=20260802-3"></script>
