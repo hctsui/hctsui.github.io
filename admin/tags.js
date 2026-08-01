@@ -532,9 +532,9 @@
     const tagsChanged = otherPair && !translationDiffSameTags(pair, otherPair);
     return `<div class="translation-diff-side">
       <div class="translation-diff-side-title">${esc(label)}</div>
-      <div class="translation-diff-field ${enChanged ? 'changed' : ''}"><strong>英文</strong><span>${esc(pair?.en || '—')}</span></div>
-      <div class="translation-diff-field ${zhChanged ? 'changed' : ''}"><strong>中文</strong><span>${esc(pair?.zh || '—')}</span></div>
-      <div class="translation-diff-field ${tagsChanged ? 'changed' : ''}"><strong>標籤</strong>${translationDiffTagChips(data, pair)}</div>
+      <div class="translation-diff-field ${enChanged ? 'changed' : ''}"><strong>英文</strong><div class="translation-diff-value"><span>${esc(pair?.en || '—')}</span>${enChanged ? '<em class="translation-diff-change-label">已修改</em>' : ''}</div></div>
+      <div class="translation-diff-field ${zhChanged ? 'changed' : ''}"><strong>中文</strong><div class="translation-diff-value"><span>${esc(pair?.zh || '—')}</span>${zhChanged ? '<em class="translation-diff-change-label">已修改</em>' : ''}</div></div>
+      <div class="translation-diff-field ${tagsChanged ? 'changed' : ''}"><strong>標籤</strong><div class="translation-diff-value">${translationDiffTagChips(data, pair)}${tagsChanged ? '<em class="translation-diff-change-label">已修改</em>' : ''}</div></div>
     </div>`;
   }
 
@@ -579,7 +579,7 @@
       + diff.removedPairs.length + diff.addedPairs.length + diff.addedTags.length
       + diff.removedTags.length + diff.renamedTags.length + (diff.tagOrderChanged ? 1 : 0);
     const summary = `<div class="order-diff-summary">
-      <strong>中英對照表與標籤變更</strong>
+      <strong>中英對照與標籤變更</strong>
       <span class="tag">詞條 ${diff.beforePairs.length} → ${diff.afterPairs.length}</span>
       <span class="tag">標籤 ${diff.beforeTags.length} → ${diff.afterTags.length}</span>
       <span class="tag">共 ${totalChanges} 類／筆變更</span>
@@ -612,7 +612,7 @@
     </div>` : '';
 
     const openAll = totalChanges <= 30;
-    return `<div class="preview-card translation-diff-preview">${summary}
+    return `<div class="preview-card translation-diff-preview">${summary}<p class="translation-diff-guide">逐欄比較修改前後內容；黃色欄位與「已修改」標記就是實際變動的位置。新增與刪除會分開列出。</p>
       ${translationDiffSection('詞條文字修改', textChangeHtml, diff.textChanges.length, openAll)}
       ${translationDiffSection('詞條標籤修改', pairTagChangeHtml, diff.pairTagChanges.length, openAll)}
       ${translationDiffSection('新增詞條', addedPairHtml, diff.addedPairs.length, openAll)}
@@ -658,7 +658,10 @@
       .translation-diff-field:first-of-type{border-top:0}
       .translation-diff-field.changed{background:#fff7dc;margin:0 -5px;padding:5px;border-radius:6px}
       .translation-diff-field strong{font-size:.75rem;color:#6e625a}
-      .translation-diff-field span{overflow-wrap:anywhere;min-width:0}
+      .translation-diff-value{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0}
+      .translation-diff-value>span{overflow-wrap:anywhere;min-width:0}
+      .translation-diff-change-label{flex:0 0 auto;border-radius:999px;background:#9a6700;color:#fff;padding:2px 7px;font-size:.67rem;font-style:normal;font-weight:900}
+      .translation-diff-guide{margin:0;padding:9px 11px;border-radius:8px;background:#fff7dc;color:#654b10;font-size:.78rem}
       .translation-diff-chips{display:flex;gap:4px;flex-wrap:wrap}
       .translation-diff-order{margin:0;padding-left:22px;display:grid;gap:4px}
       .translation-diff-item code,.translation-diff-order code{font-size:.72rem;color:#766c65}
@@ -680,11 +683,9 @@
     renderPreviewWithoutDetailedTranslationDiff(refreshDictionary);
     const operation = payload().operations.find((item) => item.op === 'translations');
     if (!operation) return;
-    const details = [...$('#preview').querySelectorAll('details')].find((item) => (
-      item.querySelector('summary strong')?.textContent.trim() === '中英對照表'
-    ));
+    const details = $('#preview').querySelector('[data-preview-operation="translations"]');
     if (!details) return;
-    details.innerHTML = `<summary><strong>中英對照表與標籤</strong>：${esc(translationDiffSummaryText(operation.before, operation.after))}</summary>${translationDetailedDiffHtml(operation.before, operation.after)}`;
+    details.innerHTML = `<summary><strong>中英對照</strong>：${esc(translationDiffSummaryText(operation.before, operation.after))}</summary>${translationDetailedDiffHtml(operation.before, operation.after)}`;
   };
 
   // Replace the legacy category handlers with the tag UI handlers.

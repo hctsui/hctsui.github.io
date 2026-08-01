@@ -29,7 +29,7 @@ class AdminLoadingContracts(unittest.TestCase):
 
     def test_admin_loads_canonical_scripts_with_cache_busting(self) -> None:
         expected = (
-            '<script src="tags.js?v=20260801-1"></script>',
+            '<script src="tags.js?v=20260802-2"></script>',
             '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
             '<script src="people.js?v=20260802-3"></script>',
@@ -304,6 +304,21 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertEqual(order, sorted(order))
         self.assertIn("site-settings-nav-shell,.database-type-shell", settings)
         self.assertIn("margin-top:20px", settings)
+
+    def test_translation_preview_names_and_highlights_exact_changes(self) -> None:
+        self.assertIn('"、中英對照 1"', ADMIN_PAGE)
+        self.assertNotIn('"、對照表 1"', ADMIN_PAGE)
+        self.assertIn('data-preview-operation="translations"', ADMIN_PAGE)
+        self.assertIn("querySelector('[data-preview-operation=\"translations\"]')", TAGS)
+        for marker in (
+            "逐欄比較修改前後內容",
+            "translation-diff-change-label",
+            "已修改",
+            "詞條文字修改",
+            "新增詞條",
+            "刪除詞條",
+        ):
+            self.assertIn(marker, TAGS)
 
     def test_footer_editor_supports_icon_link_alignment_and_custom_paths(self) -> None:
         settings = read("admin/site-settings.js")
