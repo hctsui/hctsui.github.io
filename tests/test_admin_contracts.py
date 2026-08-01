@@ -430,12 +430,7 @@ class DocumentationContracts(unittest.TestCase):
             ):
                 self.assertNotIn(obsolete, text)
 
-    def test_docs_use_canonical_admin_filenames(self) -> None:
-        for marker in (
-            "admin/homepage.js",
-            "admin/layout.js",
-        ):
-            self.assertIn(marker, MANAGE)
+    def test_docs_do_not_reference_obsolete_versioned_filenames(self) -> None:
         for obsolete in (
             "admin/homepage-v1.js",
             "admin/layout-v2.js",

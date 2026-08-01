@@ -220,9 +220,23 @@ class CanonicalFilenameTests(unittest.TestCase):
             "contact.html",
             "zh/contact.html",
             "404.html",
+            "robots.txt",
+            "sitemap.xml",
             "admin/admin-icon.svg",
         ):
             self.assertIn(f"test -f {relative}", workflow)
+
+    def test_private_pages_are_excluded_from_search_indexing(self) -> None:
+        robots = read("robots.txt")
+        sitemap = read("sitemap.xml")
+        for path in ("/admin/", "/dossier.html", "/zh/dossier.html", "/content/"):
+            self.assertIn(f"Disallow: {path}", robots)
+        for relative in ("admin/index.html", "admin/guide.html", "dossier.html", "zh/dossier.html", "404.html"):
+            self.assertIn('name="robots" content="noindex,nofollow"', read(relative), relative)
+        for excluded in ("/admin/", "/dossier.html", "/zh/dossier.html", "/content/"):
+            self.assertNotIn(excluded, sitemap)
+        workflow = read(".github/workflows/deploy-cms-pages.yml")
+        self.assertIn("404.html robots.txt sitemap.xml _site/", workflow)
 
 
 

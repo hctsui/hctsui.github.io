@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
 PAGE_FILES = [ROOT / p for p in ("index.html", "cv.html", "publications.html", "activities.html", "teaching.html", "contact.html", "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html", "zh/teaching.html", "zh/contact.html")]
 PEOPLE = load_people()
+INDEXABLE_PAGE_IDS = {"home", "cv", "publications", "activities", "teaching", "contact"}
 
 
 def load_data() -> dict[str, Any]:
@@ -878,6 +879,58 @@ def _replace_or_insert_head(text: str, pattern: str, replacement: str) -> str:
     return text.replace("</head>", replacement + "\n</head>", 1)
 
 
+def render_robots_txt(data: dict[str, Any]) -> str:
+    base_url = current_site_settings(data)["seo"]["base_url"].rstrip("/")
+    return "\n".join(
+        (
+            "User-agent: *",
+            "Allow: /",
+            "Disallow: /admin/",
+            "Disallow: /dossier.html",
+            "Disallow: /zh/dossier.html",
+            "Disallow: /content/",
+            "Disallow: /cv/",
+            "Disallow: /integrations/",
+            "Disallow: /tests/",
+            "Disallow: /tools/",
+            f"Sitemap: {base_url}/sitemap.xml",
+            "",
+        )
+    )
+
+
+def render_sitemap_xml(data: dict[str, Any]) -> str:
+    settings = current_site_settings(data)["seo"]
+    pages = [*normalized_pages(data), contact_system_page()]
+    urls: list[str] = []
+    for page in pages:
+        if str(page.get("id") or "") not in INDEXABLE_PAGE_IDS:
+            continue
+        for lang in ("en", "zh"):
+            rel_path = str((page.get("path") or {}).get(lang) or "")
+            if not rel_path:
+                continue
+            canonical_path = rel_path[:-10] if rel_path.endswith("index.html") else rel_path
+            url = _absolute_url(settings["base_url"], "", canonical_path)
+            if url not in urls:
+                urls.append(url)
+    body = "\n".join(f"  <url><loc>{esc(url)}</loc></url>" for url in urls)
+    return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
+
+
+def write_search_engine_files(data: dict[str, Any]) -> list[Path]:
+    changed: list[Path] = []
+    for path, content in (
+        (ROOT / "robots.txt", render_robots_txt(data)),
+        (ROOT / "sitemap.xml", render_sitemap_xml(data)),
+    ):
+        old = path.read_text(encoding="utf-8") if path.exists() else ""
+        if old != content:
+            path.write_text(content, encoding="utf-8")
+            changed.append(path)
+    return changed
+
+
 def apply_seo_metadata(text: str, data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
     settings = current_site_settings(data)["seo"]
     page_id = str(page.get("id") or "home")
@@ -1271,6 +1324,7 @@ def build(today: date, update_date: bool = True) -> list[Path]:
     if error_new != error_old:
         error_path.write_text(error_new, encoding="utf-8")
         changed.append(error_path)
+    changed.extend(write_search_engine_files(data))
     from build_media_manifest import main as build_media_manifest
     from build_search_index import main as build_search_index
     build_media_manifest()

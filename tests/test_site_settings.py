@@ -19,6 +19,8 @@ from build_site import (  # noqa: E402
     render_contact_form,
     render_contact_page_main,
     render_footer,
+    render_robots_txt,
+    render_sitemap_xml,
 )
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
 from site_settings_config import current_site_settings, normalized_site_settings, validate_site_settings  # noqa: E402
@@ -95,6 +97,24 @@ class SiteSettingsTests(unittest.TestCase):
             'hreflang="zh"',
         ):
             self.assertIn(marker, rendered)
+
+    def test_search_engine_files_include_only_public_pages(self) -> None:
+        data = site_data()
+        robots = render_robots_txt(data)
+        sitemap = render_sitemap_xml(data)
+        for path in ("/admin/", "/dossier.html", "/zh/dossier.html", "/content/"):
+            self.assertIn(f"Disallow: {path}", robots)
+        self.assertIn("Sitemap: https://hctsui.github.io/sitemap.xml", robots)
+        for url in (
+            "https://hctsui.github.io/",
+            "https://hctsui.github.io/zh/",
+            "https://hctsui.github.io/publications.html",
+            "https://hctsui.github.io/zh/publications.html",
+            "https://hctsui.github.io/contact.html",
+        ):
+            self.assertIn(f"<loc>{url}</loc>", sitemap)
+        for excluded in ("admin", "dossier", "content"):
+            self.assertNotIn(excluded, sitemap)
 
     def test_footer_supports_custom_icon_links_alignment_and_placeholders(self) -> None:
         data = site_data()
