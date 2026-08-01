@@ -45,7 +45,7 @@ class SiteSettingsTests(unittest.TestCase):
         settings = current_site_settings(data)
         self.assertEqual(settings["seo"]["base_url"], "https://hctsui.github.io")
         self.assertEqual(len(settings["footer"]["items"]), 2)
-        self.assertFalse(settings["analytics"]["enabled"])
+        self.assertEqual(settings["analytics"]["tracking_mode"], "off")
         self.assertEqual(settings["error_page"]["auto_redirect"]["seconds"], 8)
         self.assertIn("contact", settings["seo"]["pages"])
         self.assertEqual(settings["contact_form"]["page_design"]["title"]["en"], "Contact Form")
@@ -150,20 +150,19 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertNotIn("cloudflare-web-analytics", apply_cloudflare_analytics(rendered_again, data))
 
 
-    def test_google_analytics_is_added_and_switching_provider_removes_cloudflare(self) -> None:
+    def test_analytics_supports_cloudflare_google_both_and_off(self) -> None:
         data = site_data()
         source = '<html><head></head><body><main></main></body></html>'
         data["settings"]["analytics"] = {
-            "enabled": True,
-            "provider": "cloudflare",
+            "tracking_mode": "cloudflare",
             "cloudflare_token": "c" * 32,
-            "google_measurement_id": "",
+            "google_measurement_id": "G-ABCD1234",
         }
         cloudflare = apply_analytics(source, data)
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", cloudflare)
+        self.assertNotIn("googletagmanager.com", cloudflare)
         data["settings"]["analytics"] = {
-            "enabled": True,
-            "provider": "google",
+            "tracking_mode": "google",
             "cloudflare_token": "c" * 32,
             "google_measurement_id": "G-ABCD1234",
         }
@@ -172,14 +171,23 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertIn("googletagmanager.com/gtag/js?id=G-ABCD1234", google)
         self.assertIn('gtag("config", "G-ABCD1234")', google)
         self.assertEqual(google.count("managed:google-analytics"), 2)
+        data["settings"]["analytics"]["tracking_mode"] = "both"
+        both = apply_analytics(google, data)
+        self.assertIn("static.cloudflareinsights.com/beacon.min.js", both)
+        self.assertIn("googletagmanager.com/gtag/js?id=G-ABCD1234", both)
+        self.assertEqual(both.count("static.cloudflareinsights.com/beacon.min.js"), 1)
+        self.assertEqual(both.count("googletagmanager.com/gtag/js"), 1)
+        data["settings"]["analytics"]["tracking_mode"] = "off"
+        disabled = apply_analytics(both, data)
+        self.assertNotIn("managed:cloudflare-web-analytics", disabled)
+        self.assertNotIn("managed:google-analytics", disabled)
 
-    def test_analytics_connections_survive_provider_and_enabled_switches(self) -> None:
+    def test_analytics_connections_survive_mode_switches(self) -> None:
         data = site_data()
         both_configured = current_site_settings(data)
         both_configured["analytics"] = {
-            "schema_version": 2,
-            "enabled": True,
-            "provider": "google",
+            "schema_version": 3,
+            "tracking_mode": "both",
             "cloudflare_token": "e" * 32,
             "google_measurement_id": "G-ABCD1234",
         }
@@ -187,10 +195,9 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(normalized["analytics"]["cloudflare_token"], "e" * 32)
         self.assertEqual(normalized["analytics"]["google_measurement_id"], "G-ABCD1234")
 
-        normalized["analytics"]["enabled"] = False
-        normalized["analytics"]["provider"] = "cloudflare"
+        normalized["analytics"]["tracking_mode"] = "off"
         reopened = normalized_site_settings(normalized, data)
-        self.assertFalse(reopened["analytics"]["enabled"])
+        self.assertEqual(reopened["analytics"]["tracking_mode"], "off")
         self.assertEqual(reopened["analytics"]["cloudflare_token"], "e" * 32)
         self.assertEqual(reopened["analytics"]["google_measurement_id"], "G-ABCD1234")
 
@@ -198,7 +205,7 @@ class SiteSettingsTests(unittest.TestCase):
         data = site_data()
         data["settings"]["analytics"] = {"enabled": True, "token": "d" * 32}
         analytics = current_site_settings(data)["analytics"]
-        self.assertEqual(analytics["provider"], "cloudflare")
+        self.assertEqual(analytics["tracking_mode"], "cloudflare")
         self.assertEqual(analytics["cloudflare_token"], "d" * 32)
         validate_site_settings(current_site_settings(data), data)
 
@@ -322,7 +329,7 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual((action, entry), ("site_settings", "site-settings"))
         current = current_site_settings(data)
         self.assertEqual(current["seo"]["pages"]["home"]["title"]["en"], "Custom title")
-        self.assertTrue(current["analytics"]["enabled"])
+        self.assertEqual(current["analytics"]["tracking_mode"], "cloudflare")
         self.assertEqual(current["error_page"]["auto_redirect"]["seconds"], 9)
         apply_undo(data, translations, history, {"op": "undo", "history_id": "issue-1-op-1"}, "issue-2-op-1", 2, datetime.now(timezone.utc), "digest-2", people={"schema_version": 1, "people": []})
         self.assertEqual(current_site_settings(data), normalized_site_settings(before, data))
@@ -333,8 +340,7 @@ class SiteSettingsTests(unittest.TestCase):
         before = current_site_settings(data)
         requested = copy.deepcopy(before)
         requested["analytics"].update({
-            "enabled": True,
-            "provider": "google",
+            "tracking_mode": "google",
             "google_measurement_id": "G-ABC12345",
         })
 
@@ -350,7 +356,7 @@ class SiteSettingsTests(unittest.TestCase):
         )
         current = current_site_settings(data)
         self.assertEqual(current["seo"]["pages"]["home"]["description"]["en"], "Updated elsewhere")
-        self.assertEqual(current["analytics"]["provider"], "google")
+        self.assertEqual(current["analytics"]["tracking_mode"], "google")
         self.assertEqual(current["analytics"]["google_measurement_id"], "G-ABC12345")
 
     def test_stale_payload_null_for_unknown_page_does_not_create_null_setting(self) -> None:
@@ -359,8 +365,7 @@ class SiteSettingsTests(unittest.TestCase):
         before["seo"]["pages"]["dossier"] = None
         requested = copy.deepcopy(before)
         requested["analytics"].update({
-            "enabled": True,
-            "provider": "google",
+            "tracking_mode": "google",
             "google_measurement_id": "G-ABC12345",
         })
 
@@ -372,7 +377,7 @@ class SiteSettingsTests(unittest.TestCase):
 
         stored_pages = data["settings"]["seo"]["pages"]
         self.assertNotIn("dossier", stored_pages)
-        self.assertEqual(current_site_settings(data)["analytics"]["provider"], "google")
+        self.assertEqual(current_site_settings(data)["analytics"]["tracking_mode"], "google")
 
     def test_stale_site_settings_reject_same_field_conflict(self) -> None:
         data = site_data()

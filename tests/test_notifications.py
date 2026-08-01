@@ -107,7 +107,7 @@ class StaticNotificationIntegrationTests(unittest.TestCase):
     def test_admin_and_workflows_are_wired(self):
         admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
         script = (ROOT / "admin/notifications.js").read_text(encoding="utf-8")
-        self.assertIn('<script src="notifications.js?v=20260801-1"></script>', admin)
+        self.assertIn('<script src="notifications.js?v=20260802-2"></script>', admin)
         for token in ["通知中心", "data-general-star", "notificationSearch", "fetchDeploymentStatus", "轉為 Published", "前往修改"]:
             self.assertIn(token, script)
         for path in [

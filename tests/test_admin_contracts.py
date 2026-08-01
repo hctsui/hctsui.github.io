@@ -33,10 +33,10 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
             '<script src="people.js?v=20260802-3"></script>',
-            '<script src="notifications.js?v=20260801-1"></script>',
-            '<script src="site-settings.js?v=20260802-1"></script>',
+            '<script src="notifications.js?v=20260802-2"></script>',
+            '<script src="site-settings.js?v=20260802-2"></script>',
             '<script src="github-submit.js?v=20260802-2"></script>',
-            '<script src="analytics-report.js?v=20260802-1"></script>',
+            '<script src="analytics-report.js?v=20260802-2"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -90,6 +90,9 @@ class AdminLoadingContracts(unittest.TestCase):
             "裝置",
             "瀏覽器",
             "Worker 尚未更新到流量報表版本",
+            "Cloudflare 報表",
+            "Google 報表",
+            "data-analytics-report-provider",
         ):
             self.assertIn(marker, settings + report)
         self.assertIn("requireSession(request, env)", worker)
@@ -334,6 +337,8 @@ class SiteSettingsContracts(unittest.TestCase):
             "Google Analytics Measurement ID",
             "開啟 Cloudflare 儀表板",
             "開啟 Google Analytics 儀表板",
+            "Cloudflare＋Google 同時啟用",
+            "data-analytics-field=\"tracking_mode\"",
             "自動返回首頁",
             "幾秒後返回首頁",
             "恢復預設顏色",
@@ -412,6 +417,15 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn("☆ 加星號", notifications)
         self.assertIn("★ 已加星號", notifications)
         self.assertIn("notification-star-button", notifications)
+
+    def test_deployment_status_polls_every_five_seconds_only_while_open(self) -> None:
+        notifications = read("admin/notifications.js")
+        self.assertIn("startDeploymentPolling", notifications)
+        self.assertIn("stopDeploymentPolling", notifications)
+        self.assertIn("},5000)", notifications)
+        self.assertIn("data-deployment-card", notifications)
+        self.assertIn("renderDeploymentCard", notifications)
+        self.assertNotIn("},120000)", notifications)
 
     def test_publication_action_uses_explicit_bold_font_properties(self) -> None:
         css = read("assets/style.css")
