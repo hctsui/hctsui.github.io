@@ -220,17 +220,20 @@ for rel in ("index.html", "zh/index.html"):
 
 settings_bundle = current_site_settings(data)
 analytics = settings_bundle["analytics"]
-analytics_enabled = analytics["enabled"]
-analytics_provider = analytics["provider"]
+analytics_mode = analytics["tracking_mode"]
 cloudflare_marker = "managed:cloudflare-web-analytics"
 google_marker = "managed:google-analytics"
-expected_analytics_marker = google_marker if analytics_provider == "google" else cloudflare_marker
+expected_analytics_markers = set()
+if analytics_mode in {"cloudflare", "both"}:
+    expected_analytics_markers.add(cloudflare_marker)
+if analytics_mode in {"google", "both"}:
+    expected_analytics_markers.add(google_marker)
 for rel in [path for paths in page_files.values() for path in paths]:
     text = (ROOT / rel).read_text(encoding="utf-8")
-    if analytics_enabled and expected_analytics_marker not in text:
-        errors.append(f"{rel}: {analytics_provider} analytics is enabled but its managed script is missing")
     for marker in (cloudflare_marker, google_marker):
-        if (not analytics_enabled or marker != expected_analytics_marker) and marker in text:
+        if marker in expected_analytics_markers and marker not in text:
+            errors.append(f"{rel}: {analytics_mode} analytics is enabled but {marker} is missing")
+        if marker not in expected_analytics_markers and marker in text:
             errors.append(f"{rel}: an inactive analytics provider script remains")
 
 error_page_path = ROOT / "404.html"
@@ -241,10 +244,10 @@ else:
     for fragment in ('<meta name="robots" content="noindex,nofollow">', 'data-language="en"', 'data-language="zh"', 'data-switch-language'):
         if fragment not in error_text:
             errors.append(f"404.html: missing contract {fragment!r}")
-    if analytics_enabled and expected_analytics_marker not in error_text:
-        errors.append(f"404.html: {analytics_provider} analytics is enabled but its managed script is missing")
     for marker in (cloudflare_marker, google_marker):
-        if (not analytics_enabled or marker != expected_analytics_marker) and marker in error_text:
+        if marker in expected_analytics_markers and marker not in error_text:
+            errors.append(f"404.html: {analytics_mode} analytics is enabled but {marker} is missing")
+        if marker not in expected_analytics_markers and marker in error_text:
             errors.append("404.html: an inactive analytics provider script remains")
 
 admin_text = (ROOT / "admin/index.html").read_text(encoding="utf-8")

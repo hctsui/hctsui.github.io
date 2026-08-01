@@ -244,13 +244,17 @@ def footer(data: dict[str, Any], lang: str) -> str:
 
 def analytics(data: dict[str, Any]) -> str:
     settings = data.get("settings", {}).get("analytics", {})
-    if not settings.get("enabled"):
-        return ""
-    if settings.get("provider") == "google" and settings.get("google_measurement_id"):
+    mode = str(settings.get("tracking_mode") or "").lower()
+    if mode not in {"off", "cloudflare", "google", "both"}:
+        mode = str(settings.get("provider") or "cloudflare").lower() if settings.get("enabled") else "off"
+    blocks = []
+    if mode in {"google", "both"} and settings.get("google_measurement_id"):
         measurement = esc(settings["google_measurement_id"])
-        return f'<script async src="https://www.googletagmanager.com/gtag/js?id={measurement}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag("js",new Date());gtag("config","{measurement}");</script>'
+        blocks.append(f'<!-- managed:google-analytics --><script async src="https://www.googletagmanager.com/gtag/js?id={measurement}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag("js",new Date());gtag("config","{measurement}");</script><!-- /managed:google-analytics -->')
     token = str(settings.get("cloudflare_token") or settings.get("token") or "")
-    return f'<!-- managed:cloudflare-web-analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token":"{esc(token)}"}}\'></script><!-- /managed:cloudflare-web-analytics -->' if token else ""
+    if mode in {"cloudflare", "both"} and token:
+        blocks.append(f'<!-- managed:cloudflare-web-analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token":"{esc(token)}"}}\'></script><!-- /managed:cloudflare-web-analytics -->')
+    return "".join(blocks)
 
 
 def render(data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
