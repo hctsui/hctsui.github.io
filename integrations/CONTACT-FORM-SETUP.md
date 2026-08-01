@@ -163,7 +163,7 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 |---|---|
 | Application name | `hctsui CMS Submit` |
 | Homepage URL | `https://hctsui.github.io/admin/` |
-| Authorization callback URL | `https://hctsui-contact-bridge.hctsui-math.workers.dev/cms/auth/callback` |
+| Authorization callback URL | `https://hctsui-website-worker.hctsui-math.workers.dev/cms/auth/callback` |
 
 建立後取得 Client ID，並產生一個 Client Secret。Client Secret 只能放進 Cloudflare Worker Secret。
 

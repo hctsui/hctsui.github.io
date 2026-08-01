@@ -5,7 +5,7 @@
   const SESSION_KEY='hctsui-github-submit-session-v1';
   const PENDING_KEY='hctsui-github-submit-pending-v1';
   const AUTO_KEY='hctsui-github-submit-after-login-v1';
-  const DEFAULT_API='https://hctsui-contact-bridge.hctsui-math.workers.dev';
+  const DEFAULT_API='https://hctsui-website-worker.hctsui-math.workers.dev';
   const button=document.querySelector('#submitBatch');
   const manualButton=document.querySelector('#manualSubmitBatch');
   const loginButton=document.querySelector('#githubLogin');
