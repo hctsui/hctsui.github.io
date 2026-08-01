@@ -126,13 +126,15 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
         ):
             self.assertIn(marker, workflow)
 
-    def test_push_workflows_do_not_queue_a_second_deployment(self) -> None:
+    def test_action_created_cms_updates_explicitly_dispatch_deployment(self) -> None:
         for relative in (
             ".github/workflows/process-website-batch.yml",
             ".github/workflows/daily-upcoming.yml",
         ):
             workflow = read(relative)
             self.assertIn("git push origin HEAD:cms", workflow)
+            self.assertIn("actions: write", workflow)
+            self.assertIn("gh workflow run deploy-cms-pages.yml --ref cms", workflow)
             self.assertNotIn("uses: ./.github/workflows/deploy-cms-pages.yml", workflow)
 
 

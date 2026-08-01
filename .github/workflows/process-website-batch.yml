@@ -9,6 +9,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  actions: write
   contents: write
   issues: write
 
@@ -31,9 +32,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Apply batch safely
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
+          applied=false
 
           for attempt in 1 2 3 4 5 6 7 8 9 10; do
             echo "=== Batch update attempt ${attempt}/10 ==="
@@ -73,22 +77,30 @@ jobs:
             if git diff --cached --quiet; then
               echo "No file change was required; treating this Issue as already applied."
               cp /tmp/result.json /tmp/final-result.json
-              exit 0
+              applied=true
+              break
             fi
 
             git commit -m "Apply website batch from issue #${{ github.event.issue.number }}"
             if git push origin HEAD:cms; then
               cp /tmp/result.json /tmp/final-result.json
               echo "Batch update pushed successfully."
-              exit 0
+              applied=true
+              break
             fi
 
             echo "::warning::Another update reached cms first. Reapplying this batch to the latest data."
             sleep $((attempt * 2))
           done
 
-          echo "::error::Could not update cms after 10 retries."
-          exit 1
+          if [ "$applied" != "true" ]; then
+            echo "::error::Could not update cms after 10 retries."
+            exit 1
+          fi
+
+          # Pushes made with GITHUB_TOKEN do not trigger another workflow.
+          # Dispatch Pages explicitly so direct Admin submissions become live.
+          gh workflow run deploy-cms-pages.yml --ref cms
 
       - name: Mark batch as applied
         env:
