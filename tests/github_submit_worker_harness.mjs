@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { generateKeyPairSync } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 
 const source=await readFile(new URL('../integrations/contact-worker.js',import.meta.url),'utf8');
@@ -76,6 +77,62 @@ assert.equal(createCount,1);
 
 const unauthorized=await worker.fetch(new Request('https://worker.example/cms/submit',{method:'POST',headers:{origin:env.SITE_ORIGIN,'content-type':'application/json'},body:JSON.stringify(submission)}),env);
 assert.equal(unauthorized.status,401);
+
+const analyticsUnauthorized=await worker.fetch(new Request('https://worker.example/cms/analytics?provider=cloudflare&range=7d',{headers:{origin:env.SITE_ORIGIN}}),env);
+assert.equal(analyticsUnauthorized.status,401);
+const analyticsMissing=await worker.fetch(new Request('https://worker.example/cms/analytics?provider=cloudflare&range=7d',{headers:{origin:env.SITE_ORIGIN,authorization:`Bearer ${session}`}}),env);
+assert.equal(analyticsMissing.status,503);
+assert.equal((await analyticsMissing.json()).code,'analytics_not_configured');
+
+globalThis.fetch=async(url,options={})=>{
+  assert.equal(String(url),'https://api.cloudflare.com/client/v4/graphql');
+  assert.equal(options.headers.authorization,'Bearer analytics-token');
+  const request=JSON.parse(options.body);
+  assert.match(request.query,/rumPageloadEventsAdaptiveGroups/);
+  assert.equal(request.variables.host,'hctsui.github.io');
+  return Response.json({data:{viewer:{accounts:[{
+    totals:[{count:42,sum:{visits:21}}],
+    daily:[{dimensions:{date:'2026-08-01'},count:42,sum:{visits:21}}],
+    pages:[{dimensions:{requestPath:'/en/'},count:30}],
+    referrers:[{dimensions:{refererHost:'google.com'},count:11}],
+    countries:[{dimensions:{countryName:'Japan'},count:18}],
+    devices:[{dimensions:{deviceType:'mobile'},count:25}],
+    browsers:[{dimensions:{userAgentBrowser:'Chrome'},count:20}],
+  }]}}});
+};
+const cloudflareEnv={...env,CLOUDFLARE_ANALYTICS_API_TOKEN:'analytics-token',CLOUDFLARE_ACCOUNT_ID:'account-id'};
+const cloudflareReport=await worker.fetch(new Request('https://worker.example/cms/analytics?provider=cloudflare&range=7d',{headers:{origin:env.SITE_ORIGIN,authorization:`Bearer ${session}`}}),cloudflareEnv);
+assert.equal(cloudflareReport.status,200);
+const cloudflareData=await cloudflareReport.json();
+assert.equal(cloudflareData.summary.views,42);
+assert.equal(cloudflareData.summary.visits,21);
+assert.equal(cloudflareData.top_pages[0].label,'/en/');
+
+const {privateKey}=generateKeyPairSync('rsa',{modulusLength:2048});
+const serviceAccount=JSON.stringify({client_email:'analytics@example.iam.gserviceaccount.com',private_key:privateKey.export({type:'pkcs8',format:'pem'})});
+globalThis.fetch=async(url,options={})=>{
+  const target=String(url);
+  if(target==='https://oauth2.googleapis.com/token'){
+    assert.match(String(options.body),/jwt-bearer/);
+    return Response.json({access_token:'google-read-token',expires_in:3600});
+  }
+  if(target==='https://analyticsdata.googleapis.com/v1beta/properties/123456789:runReport'){
+    assert.equal(options.headers.authorization,'Bearer google-read-token');
+    const request=JSON.parse(options.body),dimension=request.dimensions?.[0]?.name;
+    const metricValues=[{value:'50'},{value:'24'},{value:'19'}];
+    const labels={date:'20260801',pagePath:'/zh/',sessionSource:'google',country:'Taiwan',deviceCategory:'mobile',browser:'Safari'};
+    return Response.json({rows:[dimension?{dimensionValues:[{value:labels[dimension]}],metricValues}:{metricValues}]});
+  }
+  throw new Error(`Unexpected analytics fetch: ${target}`);
+};
+const googleEnv={...env,GOOGLE_ANALYTICS_PROPERTY_ID:'123456789',GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON:serviceAccount};
+const googleReport=await worker.fetch(new Request('https://worker.example/cms/analytics?provider=google&range=30d',{headers:{origin:env.SITE_ORIGIN,authorization:`Bearer ${session}`}}),googleEnv);
+assert.equal(googleReport.status,200);
+const googleData=await googleReport.json();
+assert.equal(googleData.provider,'google');
+assert.equal(googleData.summary.users,19);
+assert.equal(googleData.trend[0].date,'2026-08-01');
+assert.equal(googleData.devices[0].label,'mobile');
 
 const contactBot=await worker.fetch(new Request('https://worker.example/',{method:'POST',headers:{origin:env.SITE_ORIGIN,'content-type':'application/json'},body:JSON.stringify({botcheck:'yes'})}),env);
 assert.equal(contactBot.status,200);

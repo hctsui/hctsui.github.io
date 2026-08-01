@@ -192,7 +192,9 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 - 可選 Cloudflare Web Analytics 或 Google Analytics 4，同一時間只啟用一個，避免重複計數。
 - Cloudflare 使用 32 字元 Site Token；Google 使用 `G-...` Measurement ID。既有 Cloudflare Token 會自動沿用。
 - 追蹤碼只加入公開頁面與 `404.html`，不加入 `/admin/`。
-- Admin 不直接保存私密報表憑證；請使用設定頁中的按鈕開啟官方儀表板。
+- Admin 可直接查看今天、7 天、30 天與 90 天的彙整報表，並保留開啟官方完整儀表板的按鈕。
+- 報表沿用 GitHub 14 天管理員登入；Cloudflare API Token 與 Google 服務帳戶只存在 Worker Secret，不會保存到 Admin 或 repository。
+- 第一次設定報表讀取權限請依照 `integrations/CONTACT-FORM-SETUP.md` 的「Admin 流量報表」段落。
 
 ### 網站設定草稿與預覽
 

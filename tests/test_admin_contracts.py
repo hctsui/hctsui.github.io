@@ -22,6 +22,7 @@ class AdminLoadingContracts(unittest.TestCase):
             "admin/notifications.js",
             "admin/site-settings.js",
             "admin/github-submit.js",
+            "admin/analytics-report.js",
         ):
             with self.subTest(relative=relative):
                 node_check(relative)
@@ -33,8 +34,9 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="homepage.js?v=20260801-1"></script>',
             '<script src="people.js?v=20260802-3"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
-            '<script src="site-settings.js?v=20260801-2"></script>',
+            '<script src="site-settings.js?v=20260802-1"></script>',
             '<script src="github-submit.js?v=20260802-1"></script>',
+            '<script src="analytics-report.js?v=20260802-1"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -65,6 +67,30 @@ class AdminLoadingContracts(unittest.TestCase):
         self.assertLess(
             ADMIN_PAGE.index('src="tags.js'),
             ADMIN_PAGE.index('src="github-submit.js'),
+        )
+
+    def test_admin_has_authenticated_cloudflare_and_google_reports(self) -> None:
+        settings = read("admin/site-settings.js")
+        report = read("admin/analytics-report.js")
+        worker = read("integrations/contact-worker.js")
+        for marker in (
+            'id="analyticsReportPanel"',
+            "Cloudflare Web Analytics",
+            "Google Analytics 4",
+            "hctsui-github-submit-session-v1",
+            "/cms/analytics?provider=",
+            "data-analytics-range",
+            "熱門頁面",
+            "流量來源",
+            "國家／地區",
+            "裝置",
+            "瀏覽器",
+        ):
+            self.assertIn(marker, settings + report)
+        self.assertIn("requireSession(request, env)", worker)
+        self.assertLess(
+            ADMIN_PAGE.index('src="github-submit.js'),
+            ADMIN_PAGE.index('src="analytics-report.js'),
         )
 
 

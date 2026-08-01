@@ -39,11 +39,20 @@ class GitHubSubmitWorkerContracts(unittest.TestCase):
             "cms-request:",
             'url.pathname === "/cms/submit"',
             'url.pathname === "/cms/session"',
+            'url.pathname === "/cms/analytics"',
+            "CLOUDFLARE_ANALYTICS_API_TOKEN",
+            "GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON",
+            "https://www.googleapis.com/auth/analytics.readonly",
+            "rumPageloadEventsAdaptiveGroups",
+            "analytics_not_configured",
         ):
             self.assertIn(marker, worker)
         admin = read("admin/github-submit.js")
         self.assertNotIn("GITHUB_TOKEN", admin)
         self.assertNotIn("GITHUB_OAUTH_CLIENT_SECRET", admin)
+        analytics = read("admin/analytics-report.js")
+        self.assertNotIn("CLOUDFLARE_ANALYTICS_API_TOKEN", analytics)
+        self.assertNotIn("GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON", analytics)
 
 
 if __name__ == "__main__":
