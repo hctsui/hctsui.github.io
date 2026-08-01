@@ -4,15 +4,6 @@
 
 ## Home / 首頁
 
-### Get in touch / 聯絡
-
-| Type | English title | 中文名稱 | Entry ID |
-|---|---|---|---|
-| contact | Institutional email | 學校信箱 | `contact-institutional-email` |
-| contact | Personal email | 個人信箱 | `contact-personal-email` |
-| contact | Affiliation | 所屬單位 | `contact-affiliation` |
-| contact | Address & office | 地址與辦公室 | `contact-address-office` |
-
 ## CV / 履歷
 
 ### Research Interests / 研究領域
@@ -37,16 +28,6 @@
 | honor | NSTC Graduate Research Fellowship | 國科會博士生研究獎學金 | `honor-2025-nstc-graduate-research-fellowship` |
 | honor | Chow Hung-Ching Scholarship | 周鴻經獎學金 | `honor-2024-chow-hung-ching-scholarship` |
 | honor | TMS Outstanding Students Prize | 中技社數學傑出大學生獎 | `honor-2024-tms-outstanding-students-prize` |
-
-### Personal Information / 個人資訊
-
-| Type | English title | 中文名稱 | Entry ID |
-|---|---|---|---|
-| personal | Language | 語言 | `personal-languages` |
-| personal | Address | 地址 | `personal-address` |
-| personal | Email | 電子郵件 | `personal-email` |
-| personal | Website | 網站 | `personal-website` |
-| personal | ORCID | ORCID | `personal-orcid` |
 
 ## Publications / 論文
 
