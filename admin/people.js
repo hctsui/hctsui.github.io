@@ -48,6 +48,7 @@
   }
   function peopleEqual(a,b){return JSON.stringify(normalizePeople(a))===JSON.stringify(normalizePeople(b));}
   function personEqual(left,right){return JSON.stringify(left??null)===JSON.stringify(right??null);}
+  function siteDataReady(){return typeof site!=='undefined'&&site&&typeof site==='object';}
   function mergeSavedPeople(remote,saved){
     const base=normalizePeople(saved.base),draft=normalizePeople(saved.data),result=copy(remote);
     if(peopleEqual(base,remote))return draft;
@@ -89,7 +90,7 @@
     // people.json and site.json load concurrently.  Rendering the full preview
     // before the main site payload exists makes unrelated preview extensions
     // throw, which used to misreport a successful people fetch as a load error.
-    if(typeof site!=='undefined'&&site&&typeof renderPreview==='function')renderPreview(false);
+    if(siteDataReady()&&typeof renderPreview==='function')renderPreview(false);
   }
   function savePeopleLocal(rerender=true){
     peopleDraft=normalizePeople(peopleDraft);
@@ -163,7 +164,7 @@
   }
   function peopleAuditSignature(recordId,index,current,expected){return [recordId,index,current.en,current.zh,expected.en,expected.zh].join('\u0001');}
   function buildPeopleAudit(){
-    const items=[];if(typeof effectiveSite!=='function'||typeof allRecords!=='function'||typeof authorPairs!=='function')return items;
+    const items=[];if(!siteDataReady()||typeof effectiveSite!=='function'||typeof allRecords!=='function'||typeof authorPairs!=='function')return items;
     for(const record of allRecords(effectiveSite())){
       if(record.type!=='publication')continue;
       authorPairs(record.authors).forEach((current,index)=>{
@@ -338,8 +339,11 @@
 
   installStyles();installPanel();renderPeopleManager();
   peopleLoadPromise=fetchPeopleRemote().then(remote=>{
-    peopleRemote=remote;peopleDraft=loadSaved(peopleRemote);peopleReady=true;peopleLoadState='ready';peopleLoadError='';savePeopleLocal(false);renderPeopleManager();return copy(peopleDraft);
-  }).catch(error=>{
+    peopleRemote=remote;peopleDraft=loadSaved(peopleRemote);peopleReady=true;peopleLoadState='ready';peopleLoadError='';
+    try{savePeopleLocal(false);}catch(error){console.error('人名連結預覽初始化失敗',error);renderPeopleStatus();}
+    try{renderPeopleManager();}catch(error){console.error('人名連結介面初始化失敗',error);renderPeopleStatus();}
+    return copy(peopleDraft);
+  },error=>{
     peopleReady=false;peopleLoadState='error';peopleLoadError=String(error?.message||error);renderPeopleManager();throw error;
   });
   peopleLoadPromise.catch(()=>{});
