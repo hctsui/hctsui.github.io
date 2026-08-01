@@ -67,11 +67,12 @@ Access Key 會放在公開網頁表單中；Web3Forms 的設計允許它出現�
 
 1. 到 GitHub Settings。
 2. 進入 Developer settings → Personal access tokens → Fine-grained tokens。
-3. 建立新 token。
+3. 建立新 token，建議名稱使用 `cloudflare-hctsui-website-worker`。
 4. Repository access 選 **Only select repositories**。
 5. 只選 `hctsui/hctsui.github.io`。
 6. Repository permissions 將 **Contents** 設為 **Read and write**。
-7. 產生 token，立刻複製保存；GitHub 之後不會完整顯示第二次。
+7. 將 **Issues** 設為 **Read and write**，**Actions** 設為 **Read-only**。
+8. 產生 token，立刻複製保存；GitHub 之後不會完整顯示第二次。
 
 這個 token 只交給 Cloudflare Worker Secret，不得貼進 Admin、程式碼或 repository。
 
@@ -153,7 +154,7 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ### 步驟 1：替 fine-grained token 加上 Issue 權限
 
-`GITHUB_TOKEN` 需要 **Contents: Read and write** 與 **Issues: Read and write**。Token 必須由 `hctsui` 帳號建立，並且只允許 `hctsui/hctsui.github.io`。
+`GITHUB_TOKEN` 需要 **Contents: Read and write**、**Issues: Read and write** 與 **Actions: Read-only**。Actions 讀取權限用來在 Admin 顯示處理及部署狀態與錯誤日誌。Token 必須由 `hctsui` 帳號建立，並且只允許 `hctsui/hctsui.github.io`。
 
 ### 步驟 2：建立 GitHub OAuth App
 
@@ -211,16 +212,23 @@ Account ID 可在 Worker 的設定頁或 Cloudflare Dashboard 網址中找到。
 
 ### Google Analytics 4
 
-1. 在 Google Cloud 啟用 **Google Analytics Data API**，建立服務帳戶並下載 JSON 金鑰。
-2. 在 GA4 Property → 存取權管理，把 JSON 內的 `client_email` 加成 **檢視者（Viewer）**。
-3. 新增下列 Worker 設定：
+這是讓 Worker 代表網站唯讀查詢 GA4 彙整報表的一次性設定；它和公開頁面使用的 `G-...` Measurement ID 是兩件不同的事。
+
+1. 開啟 [Google Cloud 的 Google Analytics Data API](https://console.cloud.google.com/apis/library/analyticsdata.googleapis.com)。選擇既有專案，或建立 `hctsui-website-analytics` 專案，再按 **Enable／啟用**。
+2. 前往 **IAM 與管理 → 服務帳戶**，按 **建立服務帳戶**，名稱可填 `hctsui-website-worker`。這個帳戶不需要 Google Cloud 專案角色，完成基本資料後即可建立。
+3. 打開剛建立的服務帳戶，進入 **Keys／金鑰 → Add key／新增金鑰 → Create new key／建立新金鑰 → JSON**。瀏覽器會下載一個 JSON 檔；這個檔案含私鑰，不可上傳 GitHub、不可貼到 Admin。
+4. 在 JSON 中找到 `client_email`，例如 `hctsui-website-worker@專案名稱.iam.gserviceaccount.com`。
+5. 回到 Google Analytics，進入 **管理 → 資源存取權管理**，按右上角 `+` → **新增使用者**。貼上 `client_email`，角色選 **檢視者（Viewer）** 後儲存。
+6. 回到 Cloudflare Worker 的 **Settings → Variables and Secrets**，新增下列設定：
 
 | 類型 | 名稱 | 內容 |
 |---|---|---|
 | Secret | `GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON` | 完整的服務帳戶 JSON |
-| Variable | `GOOGLE_ANALYTICS_PROPERTY_ID` | 純數字 GA4 Property ID；不是 `G-...` Measurement ID |
+| Variable | `GOOGLE_ANALYTICS_PROPERTY_ID` | `548063012`；這是純數字 GA4 Property ID，不是 `G-MHG45MM2N0` |
 
-完成後重新部署 Worker，開啟 Admin → 網站設定 → 流量統計，選擇提供者即可查看今天、7 天、30 天與 90 天報表。
+7. 儲存並重新部署 Worker。開啟 Admin → 網站設定 → 流量統計，選擇 Google 即可查看今天、7 天、30 天與 90 天報表。
+
+服務帳戶不需要互動式登入，也不會因關閉瀏覽器而失效；兩套報表憑證都保留在 Worker 中，因此 Cloudflare／Google 切換不需要重新設定。
 
 ---
 
