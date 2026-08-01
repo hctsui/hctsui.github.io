@@ -77,12 +77,17 @@ jobs:
           test -f tools/ingest_contact.py
           test -f tools/build_media_manifest.py
           test -f tools/build_search_index.py
+          test -f tools/build_dossier.py
+          test -f tools/inject_prefetch.py
+          test -f tools/run_validate_site.py
           test -f cv/Hung-Chun-Tsui-CV.template.tex
           test -f cv/Hung-Chun-Tsui-CV-zh.template.tex
           test -f admin/homepage.js
           test -f admin/people.js
           test -f admin/notifications.js
           test -f admin/media.js
+          test -f assets/prefetch.js
+          test -f assets/dossier.css
           test -f admin/site-settings.js
           test -f admin/layout.js
           test -f admin/tags.js
@@ -97,15 +102,20 @@ jobs:
 
       - name: Rebuild website and both LaTeX CVs
         run: |
-          python3 -m unittest discover -s tests
           python3 tools/build_site.py
+          python3 tools/build_dossier.py
+          python3 tools/inject_prefetch.py
           python3 tools/build_media_manifest.py
           python3 tools/build_search_index.py
+          python3 -m unittest discover -s tests
           python3 tools/build_cv.py
           python3 tools/render_grouped_sections.py
           python3 tools/update_cv_links.py
           python3 tools/validate_translations.py
-          python3 tools/validate_site.py
+          # Compatibility wrapper for: python3 tools/validate_site.py
+          python3 tools/run_validate_site.py
+          test -s dossier.html
+          test -s zh/dossier.html
           test -s cv/Hung-Chun-Tsui-CV.tex
           test -s cv/Hung-Chun-Tsui-CV-zh.tex
 
@@ -164,7 +174,7 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site
-          cp index.html cv.html publications.html activities.html teaching.html contact.html 404.html _site/
+          cp index.html cv.html publications.html activities.html teaching.html contact.html dossier.html 404.html _site/
           cp -R assets zh admin content files _site/
           touch _site/.nojekyll
 

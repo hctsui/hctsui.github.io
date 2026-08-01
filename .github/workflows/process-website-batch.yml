@@ -48,14 +48,19 @@ jobs:
               "$GITHUB_EVENT_PATH" \
               --result-file /tmp/result.json
             python3 tools/build_site.py
+            python3 tools/build_dossier.py
+            python3 tools/inject_prefetch.py
+            python3 tools/build_media_manifest.py
+            python3 tools/build_search_index.py
             python3 tools/build_cv.py
             python3 tools/render_grouped_sections.py
             python3 tools/update_cv_links.py
             python3 tools/build_catalog.py
             python3 tools/validate_translations.py
-            python3 tools/validate_site.py
+            # Compatibility wrapper for: python3 tools/validate_site.py
+            python3 tools/run_validate_site.py
 
-            git add content/site.json content/translations.json content/people.json content/arxiv-suggestions.json content/notifications.json content/change-history.json \
+            git add content/site.json content/translations.json content/people.json content/arxiv-suggestions.json content/notifications.json content/change-history.json content/media.json content/search-index.json \
               CONTENT-CATALOG.md cv/*.tex \
               '*.html' zh
 
