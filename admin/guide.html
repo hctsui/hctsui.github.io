@@ -344,7 +344,7 @@
             <tr><td>一般設定</td><td>個人資料、網站封面、導覽列、頁尾、404 頁面與公開資訊。</td></tr>
             <tr><td>聯絡表單</td><td>Web3Forms Email-Only 或 Cloudflare Worker 橋接模式，以及 Cloudflare Turnstile。</td></tr>
             <tr><td>SEO／OG</td><td>基準網址、網站名稱、分享圖片、各頁標題與描述。</td></tr>
-            <tr><td>流量統計</td><td>Cloudflare Web Analytics 或 Google Analytics 4 的追蹤設定與 Admin 彙整報表。</td></tr>
+            <tr><td>流量統計</td><td>Cloudflare Web Analytics 與 Google Analytics 4 可同時、單獨或全部關閉；Admin 報表可獨立切換來源。</td></tr>
           </tbody>
         </table>
         <p>設定修改與內容修改一樣先存在本機草稿。涉及金鑰或服務設定時，只填公開端允許使用的值，不要把私密金鑰直接寫進公開 repository。</p>
@@ -359,7 +359,8 @@
         <ul>
           <li>報表沿用 GitHub 管理員登入；同一台裝置登入一次後可保留 14 天。</li>
           <li>可切換今天、7 天、30 天與 90 天，查看瀏覽量、造訪、每日趨勢、熱門頁面、來源、國家、裝置與瀏覽器。</li>
-          <li>Cloudflare 與 Google 使用同一套報表介面，也可另開服務商的完整儀表板。</li>
+          <li>公開網站可同時啟用 Cloudflare 與 Google、只啟用其中一家，或全部關閉；識別碼會保留，重新開啟不必重設。</li>
+          <li>Cloudflare 與 Google 使用同一套報表介面，可直接切換資料來源，也可另開服務商的完整儀表板。</li>
           <li>報表需要部署 repository 中的 Worker 程式並設定唯讀憑證。私鑰與 API Token 不得貼進 Admin 或提交到 GitHub。</li>
           <li>Cloudflare 的公開 Site Token 只負責收集資料；讀報表另需 Account Analytics: Read Token 與 Account ID。</li>
           <li>Google 的 <code>G-...</code> Measurement ID 只負責追蹤；讀報表另需數字 Property ID，以及已被加入 GA4「檢視者」的服務帳戶。</li>
@@ -370,7 +371,7 @@
       <section id="notifications">
         <h2>16. 通知中心</h2>
         <ul>
-          <li><strong>部署：</strong>查看最近自動流程是否成功。</li>
+          <li><strong>部署：</strong>打開通知中心時會立即更新，保持開啟期間每 5 秒重新確認；關閉後停止查詢。</li>
           <li><strong>arXiv：</strong>把候選論文加入草稿、忽略、加星號或標記已讀。</li>
           <li><strong>正式出版：</strong>把預印本更新為期刊論文草稿。</li>
           <li><strong>失效連結：</strong>跳到對應內容或設定修正。</li>

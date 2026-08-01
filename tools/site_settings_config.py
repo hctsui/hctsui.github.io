@@ -27,7 +27,7 @@ PAGE_IDS = ("home", "cv", "publications", "activities", "teaching", "contact")
 HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 CLOUDFLARE_TOKEN = re.compile(r"^[0-9a-fA-F]{32}$")
 GOOGLE_MEASUREMENT_ID = re.compile(r"^G-[A-Z0-9]{4,20}$", re.I)
-ANALYTICS_PROVIDERS = {"cloudflare", "google"}
+ANALYTICS_TRACKING_MODES = {"off", "cloudflare", "google", "both"}
 
 
 def _text(value: Any, limit: int = 500, *, collapse: bool = True) -> str:
@@ -227,9 +227,8 @@ def default_footer() -> dict[str, Any]:
 
 def default_analytics() -> dict[str, Any]:
     return {
-        "schema_version": 2,
-        "enabled": False,
-        "provider": "cloudflare",
+        "schema_version": 3,
+        "tracking_mode": "off",
         "cloudflare_token": "",
         "google_measurement_id": "",
     }
@@ -415,17 +414,21 @@ def normalize_footer(value: Any) -> dict[str, Any]:
 
 def normalize_analytics(value: Any) -> dict[str, Any]:
     source = value if isinstance(value, dict) else {}
-    provider = str(source.get("provider") or "cloudflare").strip().lower()
-    if provider not in ANALYTICS_PROVIDERS:
-        provider = "cloudflare"
+    mode = str(source.get("tracking_mode") or "").strip().lower()
+    if mode not in ANALYTICS_TRACKING_MODES:
+        # Backward compatibility: schema v1/v2 stored one enabled provider.
+        if not source.get("enabled"):
+            mode = "off"
+        else:
+            provider = str(source.get("provider") or "cloudflare").strip().lower()
+            mode = provider if provider in {"cloudflare", "google"} else "cloudflare"
     # Backward compatibility: schema v1 stored Cloudflare's token as ``token``.
     cloudflare_token = source.get("cloudflare_token")
     if cloudflare_token is None:
         cloudflare_token = source.get("token")
     return {
-        "schema_version": 2,
-        "enabled": bool(source.get("enabled")),
-        "provider": provider,
+        "schema_version": 3,
+        "tracking_mode": mode,
         "cloudflare_token": _text(cloudflare_token, 80),
         "google_measurement_id": _text(source.get("google_measurement_id"), 40).upper(),
     }
@@ -526,10 +529,10 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
         if item["custom_icon"] and not item["custom_icon"].startswith("assets/images/") and not item["custom_icon"].startswith(("http://", "https://")):
             raise ValueError(f"Footer item {item['id']} custom icon must use assets/images/ or a complete web URL.")
     analytics = normalized["analytics"]
-    if analytics["enabled"] and analytics["provider"] == "cloudflare":
+    if analytics["tracking_mode"] in {"cloudflare", "both"}:
         if not CLOUDFLARE_TOKEN.fullmatch(analytics["cloudflare_token"]):
             raise ValueError("Cloudflare Web Analytics token must be 32 hexadecimal characters.")
-    if analytics["enabled"] and analytics["provider"] == "google":
+    if analytics["tracking_mode"] in {"google", "both"}:
         if not GOOGLE_MEASUREMENT_ID.fullmatch(analytics["google_measurement_id"]):
             raise ValueError("Google Analytics measurement ID must look like G-XXXXXXXXXX.")
     contact = normalized["contact_form"]

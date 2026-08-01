@@ -171,6 +171,8 @@ let generalNotificationsReady = false;
 let notificationSearch = '';
 let notificationUnreadOnly = false;
 let deploymentState = { loading: true, error: '', run: null };
+let deploymentPollTimer = null;
+let deploymentRequestInFlight = false;
 
 function normalizeGeneralNotifications(value) {
   const source = value && typeof value === 'object' ? value : {};
@@ -310,12 +312,18 @@ function openNotificationTarget(id) {
 }
 
 function deploymentHtml() {
-  if(deploymentState.loading)return '<article class="notification-item deployment-card"><h3>⏳ 正在讀取部署狀態…</h3></article>';
-  if(deploymentState.error)return `<article class="notification-item deployment-card"><h3>⚠️ 無法讀取部署狀態</h3><p class="notification-summary">${esc(deploymentState.error)}</p><div class="notification-actions"><a class="button" href="${REPO}/actions/workflows/deploy-cms-pages.yml" target="_blank" rel="noopener">開啟 GitHub Actions</a></div></article>`;
-  const run=deploymentState.run;if(!run)return '<article class="notification-item deployment-card"><h3>⚙️ 尚無部署紀錄</h3></article>';
+  if(deploymentState.loading)return '<article class="notification-item deployment-card" data-deployment-card><h3>⏳ 正在讀取部署狀態…</h3></article>';
+  if(deploymentState.error)return `<article class="notification-item deployment-card" data-deployment-card><h3>⚠️ 無法讀取部署狀態</h3><p class="notification-summary">${esc(deploymentState.error)}</p><div class="notification-actions"><a class="button" href="${REPO}/actions/workflows/deploy-cms-pages.yml" target="_blank" rel="noopener">開啟 GitHub Actions</a></div></article>`;
+  const run=deploymentState.run;if(!run)return '<article class="notification-item deployment-card" data-deployment-card><h3>⚙️ 尚無部署紀錄</h3></article>';
   const inProgress=run.status!=='completed'; const success=run.conclusion==='success';
   const title=inProgress?'⏳ 部署中…':success?'✅ 網站部署成功！':'❌ 部署失敗';
-  return `<article class="notification-item deployment-card ${success?'deployment-success':inProgress?'deployment-running':'deployment-failed'}"><h3>${title}</h3><div class="notification-meta"><span>${esc(notificationDate(run.updated_at||run.created_at))}</span><span>${esc(String(run.head_sha||'').slice(0,7))}</span></div><div class="notification-actions"><a class="button" href="${esc(run.html_url||`${REPO}/actions`)}" target="_blank" rel="noopener">檢視 Log</a>${!inProgress&&!success?`<a class="button primary" href="${esc(run.html_url||`${REPO}/actions`)}" target="_blank" rel="noopener">前往 GitHub 重新執行</a>`:''}</div></article>`;
+  return `<article class="notification-item deployment-card ${success?'deployment-success':inProgress?'deployment-running':'deployment-failed'}" data-deployment-card><h3>${title}</h3><div class="notification-meta"><span>${esc(notificationDate(run.updated_at||run.created_at))}</span><span>${esc(String(run.head_sha||'').slice(0,7))}</span></div><div class="notification-actions"><a class="button" href="${esc(run.html_url||`${REPO}/actions`)}" target="_blank" rel="noopener">檢視 Log</a>${!inProgress&&!success?`<a class="button primary" href="${esc(run.html_url||`${REPO}/actions`)}" target="_blank" rel="noopener">前往 GitHub 重新執行</a>`:''}</div></article>`;
+}
+
+function renderDeploymentCard(){
+  const current=document.querySelector('[data-deployment-card]');if(!current)return;
+  const template=document.createElement('template');template.innerHTML=deploymentHtml().trim();
+  current.replaceWith(template.content.firstElementChild);
 }
 
 function arxivCards() {
@@ -345,7 +353,7 @@ function ensureNotificationUi(){
   let button=actions.querySelector('[data-notification-button]');
   if(!button){button=document.createElement('button');button.type='button';button.className='button';button.dataset.notificationButton='';button.innerHTML='通知 <span class="notification-count" data-notification-count>0</span>';const guide=[...actions.querySelectorAll('a')].find(a=>a.getAttribute('href')==='guide.html');guide?actions.insertBefore(button,guide):actions.prepend(button);}
   let panel=document.querySelector('[data-notification-panel]');if(!panel){panel=document.createElement('section');panel.className='notification-panel panel hidden';panel.dataset.notificationPanel='';actions.after(panel);}
-  button.onclick=()=>{panel.classList.toggle('hidden');button.classList.toggle('primary',!panel.classList.contains('hidden'));if(!panel.classList.contains('hidden'))fetchDeploymentStatus();};
+  button.onclick=()=>{panel.classList.toggle('hidden');const open=!panel.classList.contains('hidden');button.classList.toggle('primary',open);if(open)startDeploymentPolling();else stopDeploymentPolling();};
   panel.onclick=event=>{const t=event.target.closest('button,a');if(!t)return;
     if(t.dataset.arxivAdd)addArxivSuggestionToDraft(t.dataset.arxivAdd);
     else if(t.dataset.arxivIgnore)ignoreArxivSuggestion(t.dataset.arxivIgnore);
@@ -386,10 +394,20 @@ function arxivSuggestionsPreviewHtml(operation){const before=normalizeArxivSugge
 function arxivSuggestionsHistoryPreviewHtml(historyItem){return arxivSuggestionsPreviewHtml({before:historyItem?.before,after:historyItem?.after});}
 
 async function fetchDeploymentStatus(){
-  deploymentState={loading:true,error:'',run:deploymentState.run};renderNotificationCenter();
+  if(deploymentRequestInFlight)return;
+  deploymentRequestInFlight=true;
+  deploymentState={loading:!deploymentState.run,error:'',run:deploymentState.run};renderDeploymentCard();
   try{const response=await fetch('https://api.github.com/repos/hctsui/hctsui.github.io/actions/workflows/deploy-cms-pages.yml/runs?branch=cms&per_page=1',{headers:{Accept:'application/vnd.github+json'},cache:'no-store'});if(!response.ok)throw new Error(`GitHub API ${response.status}`);const data=await response.json();deploymentState={loading:false,error:'',run:(data.workflow_runs||[])[0]||null};}
   catch(error){deploymentState={loading:false,error:String(error?.message||error),run:null};}
-  renderNotificationCenter();
+  finally{deploymentRequestInFlight=false;}
+  renderDeploymentCard();
+}
+
+function stopDeploymentPolling(){if(deploymentPollTimer){clearInterval(deploymentPollTimer);deploymentPollTimer=null;}}
+function startDeploymentPolling(){
+  stopDeploymentPolling();
+  fetchDeploymentStatus();
+  deploymentPollTimer=setInterval(()=>{const panel=document.querySelector('[data-notification-panel]');if(!panel||panel.classList.contains('hidden')){stopDeploymentPolling();return;}fetchDeploymentStatus();},5000);
 }
 
 Promise.all([
@@ -400,7 +418,6 @@ Promise.all([
   generalNotificationsBase=normalizeGeneralNotifications(generalRemote);generalNotificationsDraft=clone(generalNotificationsBase);
   try{const saved=JSON.parse(localStorage.getItem(ARXIV_SUGGESTIONS_DRAFT_KEY)||'null');if(saved?.base_signature===arxivSuggestionSignature(arxivSuggestionsBase)&&saved?.draft)arxivSuggestionsDraft=normalizeArxivSuggestions(saved.draft);else if(saved)localStorage.removeItem(ARXIV_SUGGESTIONS_DRAFT_KEY);}catch{localStorage.removeItem(ARXIV_SUGGESTIONS_DRAFT_KEY);}
   try{const saved=JSON.parse(localStorage.getItem(GENERAL_NOTIFICATIONS_DRAFT_KEY)||'null');if(saved?.base_signature===generalNotificationSignature(generalNotificationsBase)&&saved?.draft)generalNotificationsDraft=normalizeGeneralNotifications(saved.draft);else if(saved)localStorage.removeItem(GENERAL_NOTIFICATIONS_DRAFT_KEY);}catch{localStorage.removeItem(GENERAL_NOTIFICATIONS_DRAFT_KEY);}
-  arxivSuggestionsReady=true;generalNotificationsReady=true;renderNotificationCenter();fetchDeploymentStatus();if(typeof renderPreview==='function')renderPreview(false);
+  arxivSuggestionsReady=true;generalNotificationsReady=true;renderNotificationCenter();if(typeof renderPreview==='function')renderPreview(false);
 });
-setInterval(()=>{if(!document.querySelector('[data-notification-panel]')?.classList.contains('hidden'))fetchDeploymentStatus();},120000);
 document.addEventListener('DOMContentLoaded',renderNotificationCenter,{once:true});

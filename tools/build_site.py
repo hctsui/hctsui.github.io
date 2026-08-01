@@ -1005,22 +1005,13 @@ def _remove_managed_analytics(text: str) -> str:
 
 
 def apply_analytics(text: str, data: dict[str, Any]) -> str:
-    """Insert the selected analytics provider only in generated public pages."""
+    """Insert every enabled analytics provider in generated public pages."""
     text = _remove_managed_analytics(text)
     analytics = current_site_settings(data)["analytics"]
-    if not analytics.get("enabled"):
+    mode = analytics.get("tracking_mode", "off")
+    if mode == "off":
         return text
-    provider = analytics.get("provider")
-    if provider == "cloudflare" and analytics.get("cloudflare_token"):
-        payload = json.dumps({"token": analytics["cloudflare_token"]}, separators=(",", ":"))
-        block = (
-            f"{_CLOUDFLARE_ANALYTICS_START}\n"
-            '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
-            f"data-cf-beacon='{esc(payload)}'></script>\n"
-            f"{_CLOUDFLARE_ANALYTICS_END}"
-        )
-        return text.replace("</body>", block + "\n</body>", 1)
-    if provider == "google" and analytics.get("google_measurement_id"):
+    if mode in {"google", "both"} and analytics.get("google_measurement_id"):
         measurement_id = esc(analytics["google_measurement_id"])
         block = (
             f"{_GOOGLE_ANALYTICS_START}\n"
@@ -1035,8 +1026,16 @@ def apply_analytics(text: str, data: dict[str, Any]) -> str:
         )
         match = re.search(r"<head\b[^>]*>", text, flags=re.I)
         if match:
-            return text[: match.end()] + "\n" + block + text[match.end() :]
-        return text
+            text = text[: match.end()] + "\n" + block + text[match.end() :]
+    if mode in {"cloudflare", "both"} and analytics.get("cloudflare_token"):
+        payload = json.dumps({"token": analytics["cloudflare_token"]}, separators=(",", ":"))
+        block = (
+            f"{_CLOUDFLARE_ANALYTICS_START}\n"
+            '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
+            f"data-cf-beacon='{esc(payload)}'></script>\n"
+            f"{_CLOUDFLARE_ANALYTICS_END}"
+        )
+        text = text.replace("</body>", block + "\n</body>", 1)
     return text
 
 
