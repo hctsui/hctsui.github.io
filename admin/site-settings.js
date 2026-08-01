@@ -191,7 +191,7 @@
     return `<details class="diff settings-diff" open><summary><strong>網站設定：${total} 項實際變更</strong></summary>${sections.map(([title,items])=>`<section class="settings-diff-section"><h4>${esc(title)}</h4><ul>${items.join('')}</ul></section>`).join('')}</details>`;
   }
   function optionRows(options,selected){
-    const rows=[...options];if(LEGACY_ICON_LABELS[selected]&&!rows.some(x=>x[0]===selected))rows.push([selected,`${LEGACY_ICON_LABELS[selected]}（舊設定）`]);
+    const rows=[...options];if(LEGACY_ICON_LABELS[selected]&&!rows.some(x=>x[0]===selected))rows.push([selected,`${LEGACY_ICON_LABELS[selected]}（目前設定）`]);
     return rows.map(([value,label])=>`<option value="${value}" ${value===selected?'selected':''}>${label}</option>`).join('');
   }
   function renderSeo(){

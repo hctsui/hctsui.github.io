@@ -165,7 +165,7 @@ openEditor=function(type,record,options={}){
 function openAcademicEventChooser(){
   initLayoutState();
   const box=document.createElement('div');
-  box.innerHTML=`<h3>新增學術會議／訪問</h3><p class="field-hint">選擇資料種類後，會開啟對應欄位；兩種資料在網站與履歷中仍維持各自的類別。</p><div class="academic-event-choices"><button class="button academic-event-choice" data-academic-event-type="conference"><strong>學術會議</strong><span>會議、工作坊與參與身分</span></button><button class="button academic-event-choice" data-academic-event-type="visit"><strong>學術訪問</strong><span>訪問機構、地點與資助資訊</span></button></div>`;
+  box.innerHTML=`<h3>新增學術會議／訪問</h3><p class="field-hint">選擇資料種類後，會開啟對應欄位；兩種資料使用各自的網站與履歷類別。</p><div class="academic-event-choices"><button class="button academic-event-choice" data-academic-event-type="conference"><strong>學術會議</strong><span>會議、工作坊與參與身分</span></button><button class="button academic-event-choice" data-academic-event-type="visit"><strong>學術訪問</strong><span>訪問機構、地點與資助資訊</span></button></div>`;
   $('#addEditor').replaceChildren(box);currentEditor={type:'academic_event',record:null,root:box};
   box.onclick=event=>{const button=event.target.closest('[data-academic-event-type]');if(button)openEditor(button.dataset.academicEventType,null)};
 }

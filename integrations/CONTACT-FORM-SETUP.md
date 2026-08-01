@@ -147,13 +147,13 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ---
 
-## C. Admin 手機直接送出（GitHub 登入）
+## C. Admin 直接送出到 GitHub
 
 這個功能沿用同一個 Cloudflare Worker。GitHub OAuth 只確認登入者是 repository owner；建立 Batch Issue 使用 Worker Secret 中的 fine-grained token。任何 GitHub Token 都不得放進 Admin 或公開 repository。
 
 ### 步驟 1：替 fine-grained token 加上 Issue 權限
 
-原本的 `GITHUB_TOKEN` 除了 **Contents: Read and write**，還要加入 **Issues: Read and write**。Token 必須由 `hctsui` 帳號建立，並且只允許 `hctsui/hctsui.github.io`，才能通過既有 Workflow 的 owner 檢查。
+`GITHUB_TOKEN` 需要 **Contents: Read and write** 與 **Issues: Read and write**。Token 必須由 `hctsui` 帳號建立，並且只允許 `hctsui/hctsui.github.io`。
 
 ### 步驟 2：建立 GitHub OAuth App
 
@@ -186,7 +186,7 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ### 步驟 4：更新並測試 Worker
 
-部署最新版 `integrations/contact-worker.js`。在手機開啟 Admin，按「直接送出修改」：第一次登入 GitHub，成功後應自動回到 Admin 並建立修改請求；14 天內不需再次登入。「改用 GitHub Issue 手動送出」應始終可用。
+部署 repository 中的 `integrations/contact-worker.js`。開啟 Admin，若尚未登入 GitHub，就先完成驗證，再按「直接送出修改」。確認修改請求建立成功，並測試「改用 GitHub Issue 手動送出」備用入口。
 
 ---
 
@@ -196,7 +196,10 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ### Cloudflare Web Analytics
 
-新增下列 Worker 設定：
+1. 在 Cloudflare 右上角個人選單開啟 **My Profile → API Tokens → Create Token → Custom token**。
+2. 權限只選 **Account → Account Analytics → Read**；Account Resources 限定目前網站所在帳戶，不要加入寫入權限。
+3. 建立後立刻複製 Token。離開頁面後 Cloudflare 不會再顯示完整 Token。
+4. 回到 **Workers & Pages → hctsui-website-worker → Settings → Variables and Secrets**，新增下列設定：
 
 | 類型 | 名稱 | 內容 |
 |---|---|---|
@@ -204,7 +207,7 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 | Variable | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
 | Variable（選填） | `ANALYTICS_SITE_HOST` | `hctsui.github.io`；未填時會從 `SITE_ORIGIN` 自動取得 |
 
-公開頁面的 32 字元 Site Token 只負責送出追蹤資料，不是報表讀取憑證。報表會用網域篩選 Cloudflare Web Analytics 資料。
+Account ID 可在 Worker 的設定頁或 Cloudflare Dashboard 網址中找到。公開頁面的 32 字元 Site Token 只負責送出追蹤資料，不是報表讀取憑證。報表會用網域篩選 Cloudflare Web Analytics 資料。儲存後部署 Worker，再回 Admin 的流量統計按「重新檢查」。
 
 ### Google Analytics 4
 
@@ -268,4 +271,4 @@ Email 是主要操作；即使 GitHub 通知建立失敗，Worker 仍可能回�
 2. 改選 Web3Forms Email 並填入 Access Key；
 3. 尚未設定完成時，先取消「啟用聯絡表單」。
 
-修改後需建立新的 Batch Issue；原本失敗的 Issue 仍保留舊 payload，不會自動更新。新版 Admin 會強制刷新 JavaScript，並在建立 Issue 前直接標示缺失欄位。
+修正設定後建立新的 Batch Issue；失敗的 Issue 不會自動套用新內容。

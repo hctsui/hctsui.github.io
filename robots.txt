@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dossier.html
+Disallow: /zh/dossier.html
+Disallow: /content/
+Disallow: /cv/
+Disallow: /integrations/
+Disallow: /tests/
+Disallow: /tools/
+Sitemap: https://hctsui.github.io/sitemap.xml

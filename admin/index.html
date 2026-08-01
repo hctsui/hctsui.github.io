@@ -968,7 +968,7 @@
           </details>
           <div class="github-submit-box">
             <div class="github-submit-head">
-              <div><strong>手機直接送出</strong><div class="github-submit-status" id="githubSubmitStatus">正在確認登入狀態…</div></div>
+              <div><strong>直接送出到 GitHub</strong><div class="github-submit-status" id="githubSubmitStatus">正在確認登入狀態…</div></div>
               <div><button class="button" id="githubLogin">登入 GitHub</button><button class="button" id="githubLogout" hidden>登出</button></div>
             </div>
             <div class="actions">
@@ -978,9 +978,6 @@
             </div>
             <div class="github-issue-status" id="githubIssueStatus" hidden></div>
           </div>
-          <p class="muted">
-            第一次會前往 GitHub 驗證帳號；登入可在這台裝置保留 14 天。直接送出不使用剪貼簿，也不必開啟 Issue 畫面。手動送出與複製技術資料仍保留作為備用。
-          </p>
           <div class="actions"><button class="button" id="copyPayload">複製技術資料</button></div>
         </section>
       </div>
@@ -2118,7 +2115,7 @@
               Object.entries(CONFERENCE_ROLES).find(
                 ([, v]) => v.en === roleEn,
               )?.[0] || (!roleEn ? "participant" : "other");
-          html += `<div class="field"><label>會議中的身分</label><select id="conferenceRole"><option value="participant" ${roleKey === "participant" ? "selected" : ""}>一般參與者（不顯示標記）</option><option value="speaker" ${roleKey === "speaker" ? "selected" : ""}>講者</option><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select><p class="field-hint">一般參與者不顯示身分；其他身分會沿用 CV 原本的名稱後方樣式。首頁顯示可在「排序」下方設定。</p></div><div id="conferenceRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂會議身分", roleKey === "other" ? s.role : {})}</div>`;
+          html += `<div class="field"><label>會議中的身分</label><select id="conferenceRole"><option value="participant" ${roleKey === "participant" ? "selected" : ""}>一般參與者（不顯示標記）</option><option value="speaker" ${roleKey === "speaker" ? "selected" : ""}>講者</option><option value="organizer" ${roleKey === "organizer" ? "selected" : ""}>主辦人</option><option value="coorganizer" ${roleKey === "coorganizer" ? "selected" : ""}>協辦人</option><option value="other" ${roleKey === "other" ? "selected" : ""}>其他</option></select><p class="field-hint">一般參與者不顯示身分；其他身分會顯示在名稱後方。首頁顯示可在「排序」下方設定。</p></div><div id="conferenceRoleCustom" class="${roleKey === "other" ? "" : "hidden"}">${pairFields("role", "自訂會議身分", roleKey === "other" ? s.role : {})}</div>`;
         }
         if (type === "organization") {
           let kindEn = s.organization_kind?.en || "Seminar",

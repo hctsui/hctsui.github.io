@@ -84,7 +84,7 @@
   </div>
 
   <h1>網站管理完整使用手冊</h1>
-  <p class="intro">這份手冊依目前 CMS 的實際流程編寫。先閱讀「日常操作流程」與「資料結構」，之後遇到特定功能再從目錄查找。GitHub、PDF、SEO、OG、URL、JSON、arXiv、BibTeX、ORCID、Cloudflare Turnstile、Email-Only 等名稱保留原文。</p>
+  <p class="intro">先閱讀「日常操作流程」與「資料結構」，之後可從目錄查找各項操作。</p>
 
   <div class="layout">
     <nav class="toc" aria-label="手冊目錄">
@@ -120,7 +120,7 @@
         <ol class="steps">
           <li>在「項目」「新增」「排序」「資料庫」或「網站設定」建立修改。</li>
           <li>到「草稿」和右側預覽確認修改前後差異。</li>
-          <li>按「直接送出修改」。第一次會前往 GitHub 驗證帳號；同一台裝置的登入可保留 14 天。</li>
+          <li>按「直接送出修改」；若畫面要求登入，完成 GitHub 驗證後繼續。</li>
           <li>等待 GitHub Actions 完成測試、重建網站並部署。</li>
           <li>確認成功後，再清除已送出的本機草稿。</li>
         </ol>
@@ -333,7 +333,7 @@
         <ul>
           <li>作者欄出現候選時，必須點選候選才會套用標準姓名與連結。</li>
           <li>姓名一致性檢查可找出既有作品中可替換的作者寫法。</li>
-          <li>直接從其他模組開啟人物時，系統會等待正式人名檔載入；若失敗會顯示錯誤，而不是把空資料當成正式檔案。</li>
+          <li>若人名資料顯示載入失敗，先重新整理；資料恢復前不要儲存或完整取代。</li>
         </ul>
       </section>
 
@@ -348,12 +348,19 @@
           </tbody>
         </table>
         <p>設定修改與內容修改一樣先存在本機草稿。涉及金鑰或服務設定時，只填公開端允許使用的值，不要把私密金鑰直接寫進公開 repository。</p>
+        <h3>Google 搜尋收錄範圍</h3>
+        <ul>
+          <li>可收錄：中英文首頁、履歷、論文、學術活動、教學與聯絡頁面。</li>
+          <li>不可收錄：Admin、Admin 手冊、中英文審查資料、404、網站資料檔與管理工具。</li>
+          <li><code>robots.txt</code> 會阻擋不公開區域；不公開 HTML 另有 <code>noindex,nofollow</code>，避免誤收錄。</li>
+          <li><code>sitemap.xml</code> 只列出可公開收錄的頁面，建置網站時會自動更新。</li>
+        </ul>
         <h3>在 Admin 查看流量報表</h3>
         <ul>
           <li>報表沿用 GitHub 管理員登入；同一台裝置登入一次後可保留 14 天。</li>
           <li>可切換今天、7 天、30 天與 90 天，查看瀏覽量、造訪、每日趨勢、熱門頁面、來源、國家、裝置與瀏覽器。</li>
-          <li>Cloudflare 與 Google 會顯示成同一套介面，原本前往官方完整儀表板的按鈕仍保留。</li>
-          <li>第一次使用要先部署最新版 Worker，再在 Worker 設定唯讀報表憑證。私鑰與 API Token 不得貼進 Admin 或提交到 GitHub。</li>
+          <li>Cloudflare 與 Google 使用同一套報表介面，也可另開服務商的完整儀表板。</li>
+          <li>報表需要部署 repository 中的 Worker 程式並設定唯讀憑證。私鑰與 API Token 不得貼進 Admin 或提交到 GitHub。</li>
           <li>Cloudflare 的公開 Site Token 只負責收集資料；讀報表另需 Account Analytics: Read Token 與 Account ID。</li>
           <li>Google 的 <code>G-...</code> Measurement ID 只負責追蹤；讀報表另需數字 Property ID，以及已被加入 GA4「檢視者」的服務帳戶。</li>
         </ul>
@@ -388,29 +395,21 @@
         <h2>18. 送出批次與部署</h2>
         <ol class="steps">
           <li>在右側預覽確認沒有意外刪除、錯誤搬移或異常大量變更。</li>
-          <li>按「直接送出修改」。第一次使用時登入 GitHub；驗證成功後會自動接續送出。</li>
-          <li>Cloudflare Worker 會代為建立標題以 <code>[Website: Batch]</code> 開頭的 Issue，不需要進入 GitHub 畫面，也不使用手機剪貼簿。</li>
+          <li>按「直接送出修改」；若畫面要求登入，完成 GitHub 驗證。</li>
+          <li>Cloudflare Worker 會代為建立標題以 <code>[Website: Batch]</code> 開頭的 Issue，不需要進入 GitHub 畫面或使用剪貼簿。</li>
           <li>GitHub Actions 會驗證資料、執行測試、生成網站、搜尋索引、PDF 履歷與審查資料。</li>
           <li>成功後會提交產生結果、關閉 Issue 並部署 GitHub Pages。</li>
           <li>最後回到 Admin 清除已成功送出的本機草稿。</li>
         </ol>
-        <div class="callout"><strong>備用方式：</strong>「改用 GitHub Issue 手動送出」會保留原本流程；只有直接送出服務暫時無法使用時才需要它。</div>
+        <div class="callout"><strong>備用方式：</strong>直接送出服務無法使用時，可按「改用 GitHub Issue 手動送出」。</div>
         <div class="callout warning"><strong>Actions 失敗時：</strong>先保留草稿，查看第一個失敗步驟。不要因為後面顯示部署未執行，就忽略前面真正的測試錯誤。</div>
       </section>
 
       <section id="troubleshooting">
         <h2>19. 疑難排解</h2>
         <details class="faq" open>
-          <summary>畫面仍是舊版</summary>
-          <p>Mac 按 <kbd>Command</kbd>＋<kbd>Shift</kbd>＋<kbd>R</kbd>；Windows 按 <kbd>Ctrl</kbd>＋<kbd>Shift</kbd>＋<kbd>R</kbd>。手機可關閉分頁後重開，必要時清除該網站的快取。</p>
-        </details>
-        <details class="faq">
-          <summary>手機聯絡表單或 Turnstile 超出邊框</summary>
-          <p>確認最新 <code>assets/script.js</code> 已部署，並重新整理快取。新版會限制輸入欄位寬度並依容器縮放 Turnstile。</p>
-        </details>
-        <details class="faq">
           <summary>人名連結打不開或讀不到目前檔案</summary>
-          <p>先重新整理 Admin。新版會等待並重試載入 <code>content/people.json</code>；仍失敗時應顯示明確錯誤。不要在空白人名清單上按儲存或完整取代。</p>
+          <p>先重新整理 Admin。若仍顯示載入失敗，不要在空白人名清單上按儲存或完整取代，請保留草稿並稍後重試。</p>
         </details>
         <details class="faq">
           <summary>排序看不到某筆項目</summary>
@@ -422,7 +421,7 @@
         </details>
         <details class="faq">
           <summary>GitHub Actions 測試失敗</summary>
-          <p>看 traceback 最後一段，找到第一個 <code>FAIL</code> 或 <code>ERROR</code>。測試應檢查功能與資料結構，不應綁死可自由修改的手冊文案。</p>
+          <p>保留本機草稿，開啟失敗的流程並找第一個 <code>FAIL</code> 或 <code>ERROR</code>；修正後重新送出。</p>
         </details>
       </section>
 

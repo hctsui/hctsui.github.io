@@ -66,7 +66,7 @@
     if(!saved?.token||!saved.expires||saved.expires*1000<=Date.now()){
       localStorage.removeItem(SESSION_KEY);
       loginButton.hidden=false;logoutButton.hidden=true;
-      setStatus('尚未登入；第一次送出時會前往 GitHub 驗證');
+      setStatus('尚未登入 GitHub');
       return false;
     }
     try{
