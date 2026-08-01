@@ -21,6 +21,7 @@ class AdminLoadingContracts(unittest.TestCase):
             "admin/people.js",
             "admin/notifications.js",
             "admin/site-settings.js",
+            "admin/github-submit.js",
         ):
             with self.subTest(relative=relative):
                 node_check(relative)
@@ -33,6 +34,7 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="people.js?v=20260802-1"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
             '<script src="site-settings.js?v=20260801-2"></script>',
+            '<script src="github-submit.js?v=20260802-1"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
         self.assertEqual(positions, sorted(positions))
@@ -45,6 +47,25 @@ class AdminLoadingContracts(unittest.TestCase):
             "headings-v1.js",
         ):
             self.assertNotIn(obsolete, ADMIN_PAGE)
+
+    def test_mobile_github_submit_keeps_manual_fallback(self) -> None:
+        submit = read("admin/github-submit.js")
+        for marker in (
+            'id="submitBatch">直接送出修改',
+            'id="manualSubmitBatch">改用 GitHub Issue 手動送出',
+            'id="githubLogin">登入 GitHub',
+            "hctsui-github-submit-session-v1",
+            "/cms/auth/start",
+            "/cms/submit",
+            "validatePeopleDraft",
+            "request_id",
+            "website-form-applied",
+        ):
+            self.assertIn(marker, ADMIN_PAGE + submit)
+        self.assertLess(
+            ADMIN_PAGE.index('src="tags.js'),
+            ADMIN_PAGE.index('src="github-submit.js'),
+        )
 
 
     def test_admin_disables_stale_browser_cache(self) -> None:

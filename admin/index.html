@@ -485,6 +485,36 @@
         padding-top: 12px;
         border-top: 1px solid #eee6df;
       }
+      .github-submit-box {
+        margin-top: 14px;
+        padding: 14px;
+        border: 1px solid #d8cec6;
+        border-radius: 13px;
+        background: #fcfaf8;
+      }
+      .github-submit-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      .github-submit-status,
+      .github-issue-status {
+        color: #6e625a;
+        font-size: .88rem;
+        line-height: 1.5;
+      }
+      .github-submit-status.success,
+      .github-issue-status.success { color: #25643d; }
+      .github-submit-status.error,
+      .github-issue-status.error { color: #a23b32; }
+      .github-issue-status {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #eee6df;
+      }
+      .github-submit-box .actions { margin-top: 0; }
       .flash {
         position: fixed;
         right: 16px;
@@ -936,18 +966,22 @@
             <summary>技術資料：批次 JSON</summary>
             <pre id="payload" class="json">{}</pre>
           </details>
-          <div class="actions">
-            <button class="button" id="copyPayload">複製批次資料</button
-            ><button class="button primary" id="submitBatch">
-              前往 GitHub 送出批次</button
-            ><button class="button hidden" id="confirmSubmitted">
-              已建立 GitHub Issue：清空本機草稿
-            </button>
+          <div class="github-submit-box">
+            <div class="github-submit-head">
+              <div><strong>手機直接送出</strong><div class="github-submit-status" id="githubSubmitStatus">正在確認登入狀態…</div></div>
+              <div><button class="button" id="githubLogin">登入 GitHub</button><button class="button" id="githubLogout" hidden>登出</button></div>
+            </div>
+            <div class="actions">
+              <button class="button primary" id="submitBatch">直接送出修改</button>
+              <button class="button" id="manualSubmitBatch">改用 GitHub Issue 手動送出</button>
+              <button class="button hidden" id="confirmSubmitted">處理完成：清除這批本機草稿</button>
+            </div>
+            <div class="github-issue-status" id="githubIssueStatus" hidden></div>
           </div>
           <p class="muted">
-            小型批次會直接預填；大型批次依畫面提示貼上一次。確認 GitHub Issue
-            已建立且處理完成後，再清空本機草稿。
+            第一次會前往 GitHub 驗證帳號；登入可在這台裝置保留 14 天。直接送出不使用剪貼簿，也不必開啟 Issue 畫面。手動送出與複製技術資料仍保留作為備用。
           </p>
+          <div class="actions"><button class="button" id="copyPayload">複製技術資料</button></div>
         </section>
       </div>
     </main>
@@ -3957,5 +3991,6 @@
     <script src="notifications.js?v=20260801-1"></script>
     <script src="media.js?v=20260802-1"></script>
     <script src="site-settings.js?v=20260801-2"></script>
+    <script src="github-submit.js?v=20260802-1"></script>
   </body>
 </html>
