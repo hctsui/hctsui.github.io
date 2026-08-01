@@ -190,6 +190,37 @@ Secret 的值不能放到普通變數，也不能提交到 GitHub。
 
 ---
 
+## D. Admin 流量報表（Cloudflare＋Google）
+
+報表沿用上面的 GitHub 14 天登入。瀏覽器只收到彙整後的流量資料；API Token、服務帳戶私鑰都只放在 Worker Secret。
+
+### Cloudflare Web Analytics
+
+新增下列 Worker 設定：
+
+| 類型 | 名稱 | 內容 |
+|---|---|---|
+| Secret | `CLOUDFLARE_ANALYTICS_API_TOKEN` | 只含 **Account → Account Analytics → Read** 的 API Token |
+| Variable | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+| Variable（選填） | `ANALYTICS_SITE_HOST` | `hctsui.github.io`；未填時會從 `SITE_ORIGIN` 自動取得 |
+
+公開頁面的 32 字元 Site Token 只負責送出追蹤資料，不是報表讀取憑證。報表會用網域篩選 Cloudflare Web Analytics 資料。
+
+### Google Analytics 4
+
+1. 在 Google Cloud 啟用 **Google Analytics Data API**，建立服務帳戶並下載 JSON 金鑰。
+2. 在 GA4 Property → 存取權管理，把 JSON 內的 `client_email` 加成 **檢視者（Viewer）**。
+3. 新增下列 Worker 設定：
+
+| 類型 | 名稱 | 內容 |
+|---|---|---|
+| Secret | `GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON` | 完整的服務帳戶 JSON |
+| Variable | `GOOGLE_ANALYTICS_PROPERTY_ID` | 純數字 GA4 Property ID；不是 `G-...` Measurement ID |
+
+完成後重新部署 Worker，開啟 Admin → 網站設定 → 流量統計，選擇提供者即可查看今天、7 天、30 天與 90 天報表。
+
+---
+
 ## 常見問題
 
 ### Email 有收到，但 Admin 沒通知
