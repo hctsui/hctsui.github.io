@@ -353,6 +353,27 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(current["analytics"]["provider"], "google")
         self.assertEqual(current["analytics"]["google_measurement_id"], "G-ABC12345")
 
+    def test_stale_payload_null_for_unknown_page_does_not_create_null_setting(self) -> None:
+        data = site_data()
+        before = current_site_settings(data)
+        before["seo"]["pages"]["dossier"] = None
+        requested = copy.deepcopy(before)
+        requested["analytics"].update({
+            "enabled": True,
+            "provider": "google",
+            "google_measurement_id": "G-ABC12345",
+        })
+
+        apply_special(
+            data, {"schema_version": 1, "pairs": []}, empty_history(),
+            {"op": "site_settings", "before": before, "after": requested},
+            "issue-null-page-op-1", 4, datetime.now(timezone.utc), "digest-null-page",
+        )
+
+        stored_pages = data["settings"]["seo"]["pages"]
+        self.assertNotIn("dossier", stored_pages)
+        self.assertEqual(current_site_settings(data)["analytics"]["provider"], "google")
+
     def test_stale_site_settings_reject_same_field_conflict(self) -> None:
         data = site_data()
         before = current_site_settings(data)
