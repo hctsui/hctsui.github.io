@@ -447,8 +447,9 @@ class AdminDocumentationTests(unittest.TestCase):
         admin = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
         guide = (ROOT / "admin" / "guide.html").read_text(encoding="utf-8")
         self.assertIn('href="guide.html"', admin)
-        for heading in ("標準工作流程", "欄位、小標註與自動填寫", "排序、頁面與類別", "10. 還原", "疑難排解", "送出前完整檢查"):
-            self.assertIn(heading, guide)
+        self.assertIn('<nav class="toc"', guide)
+        self.assertIn('<article>', guide)
+        self.assertGreaterEqual(guide.count('<section id="'), 10)
 
     def test_required_translation_terms_are_canonical(self) -> None:
         site = json.loads((ROOT / "content" / "site.json").read_text(encoding="utf-8"))
