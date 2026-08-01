@@ -219,14 +219,19 @@ for rel in ("index.html", "zh/index.html"):
         errors.append(f"{rel}: disabled contact-form entry remains on the homepage")
 
 settings_bundle = current_site_settings(data)
-analytics_enabled = settings_bundle["analytics"]["enabled"]
-beacon_marker = "managed:cloudflare-web-analytics"
+analytics = settings_bundle["analytics"]
+analytics_enabled = analytics["enabled"]
+analytics_provider = analytics["provider"]
+cloudflare_marker = "managed:cloudflare-web-analytics"
+google_marker = "managed:google-analytics"
+expected_analytics_marker = google_marker if analytics_provider == "google" else cloudflare_marker
 for rel in [path for paths in page_files.values() for path in paths]:
     text = (ROOT / rel).read_text(encoding="utf-8")
-    if analytics_enabled and beacon_marker not in text:
-        errors.append(f"{rel}: Cloudflare analytics is enabled but the managed beacon is missing")
-    if not analytics_enabled and beacon_marker in text:
-        errors.append(f"{rel}: Cloudflare analytics is disabled but the managed beacon remains")
+    if analytics_enabled and expected_analytics_marker not in text:
+        errors.append(f"{rel}: {analytics_provider} analytics is enabled but its managed script is missing")
+    for marker in (cloudflare_marker, google_marker):
+        if (not analytics_enabled or marker != expected_analytics_marker) and marker in text:
+            errors.append(f"{rel}: an inactive analytics provider script remains")
 
 error_page_path = ROOT / "404.html"
 if not error_page_path.exists():
@@ -236,14 +241,15 @@ else:
     for fragment in ('<meta name="robots" content="noindex,nofollow">', 'data-language="en"', 'data-language="zh"', 'data-switch-language'):
         if fragment not in error_text:
             errors.append(f"404.html: missing contract {fragment!r}")
-    if analytics_enabled and beacon_marker not in error_text:
-        errors.append("404.html: Cloudflare analytics is enabled but the managed beacon is missing")
-    if not analytics_enabled and beacon_marker in error_text:
-        errors.append("404.html: Cloudflare analytics is disabled but the managed beacon remains")
+    if analytics_enabled and expected_analytics_marker not in error_text:
+        errors.append(f"404.html: {analytics_provider} analytics is enabled but its managed script is missing")
+    for marker in (cloudflare_marker, google_marker):
+        if (not analytics_enabled or marker != expected_analytics_marker) and marker in error_text:
+            errors.append("404.html: an inactive analytics provider script remains")
 
 admin_text = (ROOT / "admin/index.html").read_text(encoding="utf-8")
-if beacon_marker in admin_text or "static.cloudflareinsights.com/beacon.min.js" in admin_text:
-    errors.append("admin/index.html must not contain the Cloudflare analytics beacon")
+if any(marker in admin_text for marker in (cloudflare_marker, google_marker)) or "static.cloudflareinsights.com/beacon.min.js" in admin_text or "googletagmanager.com/gtag/js" in admin_text:
+    errors.append("admin/index.html must not contain a public analytics tracking script")
 
 robots_path = ROOT / "robots.txt"
 sitemap_path = ROOT / "sitemap.xml"

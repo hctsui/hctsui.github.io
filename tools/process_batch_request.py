@@ -237,6 +237,17 @@ def layout_expected_matches(current,expected):
   if str(left.get('category_id') or '')!=str(right.get('category_id') or ''):return False
   if int(left.get('order',999999))!=int(right.get('order',999999)):return False
  return True
+def merge_site_settings(current,expected,requested,path=()):
+ """Three-way merge stale Admin settings without losing newer unrelated values."""
+ if isinstance(current,dict) and isinstance(expected,dict) and isinstance(requested,dict):
+  merged={}
+  for key in current.keys()|expected.keys()|requested.keys():
+   merged[key]=merge_site_settings(current.get(key),expected.get(key),requested.get(key),path+(str(key),))
+  return merged
+ if requested==expected:return copy.deepcopy(current)
+ if current==expected or current==requested:return copy.deepcopy(requested)
+ field='.'.join(path) or 'site_settings'
+ raise ValueError(f'Conflict: website setting {field} changed after Admin loaded.')
 def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None,notifications=None):
  if people is None:people=empty_people()
  if arxiv_store is None:arxiv_store=empty_arxiv_store()
@@ -273,9 +284,9 @@ def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None,no
   if expected and before!=normalized_people(expected):raise ValueError('Conflict: person-link database changed after Admin loaded.')
   after=normalized_people(copy.deepcopy(op['after']));validate_people(after);people.clear();people.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='people',action='people',type='people',entry_id='people',label={'en':'Person links','zh':'人名連結'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'people','people'
  if op['op']=='site_settings':
-  before=current_site_settings(data);expected=op.get('before')
-  if expected and before!=normalized_site_settings(expected,data):raise ValueError('Conflict: website settings changed after Admin loaded.')
-  after=normalized_site_settings(copy.deepcopy(op['after']),data);validate_site_settings(after,data);settings=data.setdefault('settings',{});settings['general']=copy.deepcopy(after['general']);settings['seo']=copy.deepcopy(after['seo']);settings['footer']=copy.deepcopy(after['footer']);settings['analytics']=copy.deepcopy(after['analytics']);settings['contact_form']=copy.deepcopy(after['contact_form']);settings['error_page']=copy.deepcopy(after['error_page']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='site_settings',action='site_settings',type='site_settings',entry_id='site-settings',label={'en':'Website settings','zh':'網站設定'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'site_settings','site-settings'
+  before=current_site_settings(data);expected=op.get('before');requested=normalized_site_settings(copy.deepcopy(op['after']),data)
+  after=merge_site_settings(before,normalized_site_settings(expected,data),requested) if expected else requested
+  validate_site_settings(after,data);settings=data.setdefault('settings',{});settings['general']=copy.deepcopy(after['general']);settings['seo']=copy.deepcopy(after['seo']);settings['footer']=copy.deepcopy(after['footer']);settings['analytics']=copy.deepcopy(after['analytics']);settings['contact_form']=copy.deepcopy(after['contact_form']);settings['error_page']=copy.deepcopy(after['error_page']);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='site_settings',action='site_settings',type='site_settings',entry_id='site-settings',label={'en':'Website settings','zh':'網站設定'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'site_settings','site-settings'
  before=copy.deepcopy(trans);expected=op.get('before')
  if expected and before!=expected:raise ValueError('Conflict: translations changed after Admin loaded.')
  after=copy.deepcopy(op['after']);normalize_translation_tags(after);validate_trans(after);trans.clear();trans.update(after);append_history(h,history_id=hid,issue_number=issue,applied_at=n,request_digest=rd,request_action='translations',action='translations',type='translations',entry_id='translations',label={'en':'Translation dictionary','zh':'中英對照'},before=before,after=copy.deepcopy(after),index_before=None,index_after=None,undo_of=None);return 'translations','translations'
