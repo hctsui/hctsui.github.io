@@ -189,7 +189,7 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ### 流量統計
 
-- 可選 Cloudflare Web Analytics 或 Google Analytics 4，同一時間只啟用一個，避免重複計數。
+- 可同時啟用 Cloudflare Web Analytics 與 Google Analytics 4、只啟用其中一家，或全部關閉；兩邊識別碼會保留。兩家同時啟用時，兩個後台都會各自計算同一批訪客，請勿把兩邊數字相加當成總流量。
 - Cloudflare 使用 32 字元 Site Token；Google 使用 `G-...` Measurement ID。既有 Cloudflare Token 會自動沿用。
 - 追蹤碼只加入公開頁面與 `404.html`，不加入 `/admin/`。
 - Admin 可直接查看今天、7 天、30 天與 90 天的彙整報表，並保留開啟官方完整儀表板的按鈕。
