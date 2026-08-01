@@ -237,4 +237,4 @@
 (function(){if(document.getElementById("personalProfileManagerScript"))return;const s=document.createElement("script");s.id="personalProfileManagerScript";s.src="personal-profile.js?v=20260801-5";s.async=false;document.body.append(s)})();
 
 /* Add automatic search aliases after the canonical people manager. */
-(function(){if(document.getElementById("peopleAliasesScript"))return;const s=document.createElement("script");s.id="peopleAliasesScript";s.src="people-aliases.js?v=20260801-1";s.async=false;document.body.append(s)})();
+(function(){if(document.getElementById("peopleAliasesScript"))return;const s=document.createElement("script");s.id="peopleAliasesScript";s.src="people-aliases.js?v=20260802-1";s.async=false;document.body.append(s)})();
