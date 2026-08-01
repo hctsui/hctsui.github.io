@@ -642,7 +642,7 @@ def render_contact_form(data: dict[str, Any], lang: str) -> str:
     hidden += '<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="contact-botcheck" aria-hidden="true">'
     turnstile = ""
     if mode == "worker" and config.get("turnstile_site_key"):
-        turnstile = f'<div class="cf-turnstile" data-sitekey="{esc(config["turnstile_site_key"])}"></div><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>'
+        turnstile = f'<div class="cf-turnstile" data-sitekey="{esc(config["turnstile_site_key"])}" data-size="flexible"></div><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>'
     intro_html = f"<p>{intro}</p>" if intro else ""
     privacy_html = f'<p class="contact-form-privacy">{labels["privacy_note"]}</p>' if labels["privacy_note"] else ""
     return (
