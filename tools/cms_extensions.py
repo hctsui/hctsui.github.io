@@ -12,6 +12,10 @@ import json
 from typing import Any
 
 PROFILE_CATEGORY_ID = "personal-profile"
+PERSONAL_PAGE_ID = "personal-profile"
+PDF_CV_PAGE_ID = "pdf-cv"
+CV_PERSONAL_CATEGORY_ID = "cv-personal"
+VIRTUAL_PAGE_IDS = {PERSONAL_PAGE_ID, PDF_CV_PAGE_ID}
 MIXED_KIND = "mixed"
 
 PROFILE_DEFAULTS: dict[str, Any] = {
@@ -141,10 +145,10 @@ def ensure_profile_category(data: dict[str, Any]) -> dict[str, Any]:
     categories = settings.setdefault("categories", [])
     category = next((row for row in categories if isinstance(row, dict) and row.get("id") == PROFILE_CATEGORY_ID), None)
     if category is None:
-        same_page = [row for row in categories if isinstance(row, dict) and row.get("page_id") == "cv"]
+        same_page = [row for row in categories if isinstance(row, dict) and row.get("page_id") == PERSONAL_PAGE_ID]
         category = {
             "id": PROFILE_CATEGORY_ID,
-            "page_id": "cv",
+            "page_id": PERSONAL_PAGE_ID,
             "kind": MIXED_KIND,
             "label": {"en": "Profile", "zh": "個人資料"},
             "title": {"en": "Personal Information", "zh": "個人資料"},
@@ -154,15 +158,50 @@ def ensure_profile_category(data: dict[str, Any]) -> dict[str, Any]:
             "show_on_cv": False,
         }
         categories.append(category)
-    else:
-        category["kind"] = MIXED_KIND
-        category.setdefault("page_id", "cv")
-        category.setdefault("label", {"en": "Profile", "zh": "個人資料"})
-        category.setdefault("title", {"en": "Personal Information", "zh": "個人資料"})
-        category.setdefault("intro", {"en": "", "zh": ""})
-        category.setdefault("show_on_web", False)
-        category.setdefault("show_on_cv", False)
+    category["page_id"] = PERSONAL_PAGE_ID
+    category["kind"] = MIXED_KIND
+    category["label"] = _pair(category.get("label"), {"en": "Profile", "zh": "個人資料"})
+    category["title"] = _pair(category.get("title"), {"en": "Personal Information", "zh": "個人資料"})
+    category["intro"] = _pair(category.get("intro"))
+    category["show_on_web"] = False
+    category["show_on_cv"] = False
     return category
+
+
+def ensure_cv_personal_category(data: dict[str, Any]) -> dict[str, Any]:
+    settings = data.setdefault("settings", {})
+    categories = settings.setdefault("categories", [])
+    category = next((row for row in categories if isinstance(row, dict) and row.get("id") == CV_PERSONAL_CATEGORY_ID), None)
+    if category is None:
+        same_page = [row for row in categories if isinstance(row, dict) and row.get("page_id") == PDF_CV_PAGE_ID]
+        category = {
+            "id": CV_PERSONAL_CATEGORY_ID,
+            "page_id": PDF_CV_PAGE_ID,
+            "kind": "personal",
+            "label": {"en": "Details", "zh": "個人資料"},
+            "title": {"en": "Personal Information", "zh": "個人資訊"},
+            "intro": {"en": "", "zh": ""},
+            "order": len(same_page),
+            "show_on_web": False,
+            "show_on_cv": True,
+        }
+        categories.append(category)
+    category["page_id"] = PDF_CV_PAGE_ID
+    category["kind"] = "personal"
+    category["label"] = _pair(category.get("label"), {"en": "Details", "zh": "個人資料"})
+    category["title"] = _pair(category.get("title"), {"en": "Personal Information", "zh": "個人資訊"})
+    category["intro"] = _pair(category.get("intro"))
+    category["show_on_web"] = False
+    category["show_on_cv"] = True
+    order = settings.setdefault("cv_category_order", [])
+    if CV_PERSONAL_CATEGORY_ID not in order:
+        order.append(CV_PERSONAL_CATEGORY_ID)
+    return category
+
+
+def ensure_special_categories(data: dict[str, Any]) -> None:
+    ensure_profile_category(data)
+    ensure_cv_personal_category(data)
 
 
 def _upsert(profile_items: list[dict[str, Any]], item_id: str) -> dict[str, Any]:
@@ -236,7 +275,7 @@ def sync_personal_profile(data: dict[str, Any], value: Any | None = None) -> dic
     settings = data.setdefault("settings", {})
     settings["personal_profile"] = copy.deepcopy(profile)
     _sync_identity_settings(data, previous, profile)
-    ensure_profile_category(data)
+    ensure_special_categories(data)
     profile_items = data.setdefault("profile_items", [])
     if not isinstance(profile_items, list):
         profile_items = data["profile_items"] = []
@@ -317,7 +356,7 @@ def normalized_dossier_order(data: dict[str, Any]) -> list[str]:
     categories = [row for row in settings.get("categories", []) if isinstance(row, dict)]
     eligible = {
         str(row.get("id")) for row in categories
-        if row.get("id") != PROFILE_CATEGORY_ID
+        if row.get("id") not in {PROFILE_CATEGORY_ID, CV_PERSONAL_CATEGORY_ID}
         and row.get("kind") not in {"featured_publications", "upcoming", "contact"}
     }
     current = settings.get("dossier_category_order")
@@ -358,7 +397,104 @@ def install() -> None:
 
     original_migrate = cc.migrate_category_data
     original_items_for_category = cc.items_for_category
-    _ORIGINALS.update(migrate=original_migrate, items_for_category=original_items_for_category)
+    original_normalized_categories = cc.normalized_categories
+    original_validate_category_data = cc.validate_category_data
+    _ORIGINALS.update(
+        migrate=original_migrate,
+        items_for_category=original_items_for_category,
+        normalized_categories=original_normalized_categories,
+        validate_category_data=original_validate_category_data,
+    )
+
+    def normalized_categories(data: dict[str, Any]) -> list[dict[str, Any]]:
+        result = list(original_normalized_categories(data))
+        by_id = {str(row.get("id") or ""): row for row in result}
+        raw_rows = data.get("settings", {}).get("categories", [])
+        raw_map = {
+            str(row.get("id") or ""): row
+            for row in raw_rows
+            if isinstance(row, dict) and row.get("id")
+        } if isinstance(raw_rows, list) else {}
+
+        # Preserve all categories placed on the two Admin-only virtual pages.
+        for index, source in enumerate(raw_rows if isinstance(raw_rows, list) else []):
+            if not isinstance(source, dict):
+                continue
+            cid = str(source.get("id") or "").strip()
+            page_id = str(source.get("page_id") or "").strip()
+            kind = str(source.get("kind") or "generic").strip()
+            if not cid or page_id not in VIRTUAL_PAGE_IDS or kind not in cc.ALL_CATEGORY_KINDS:
+                continue
+            row = {
+                "id": cid,
+                "page_id": page_id,
+                "kind": kind,
+                "label": _pair(source.get("label"), cc.CATEGORY_KIND_LABELS.get(kind, {"en": kind, "zh": kind})),
+                "title": _pair(source.get("title"), cc.CATEGORY_KIND_LABELS.get(kind, {"en": kind, "zh": kind})),
+                "intro": _pair(source.get("intro")),
+                "order": int(source.get("order", index)),
+                "show_on_web": False,
+                "show_on_cv": page_id == PDF_CV_PAGE_ID,
+            }
+            by_id[cid] = row
+
+        profile_source = raw_map.get(PROFILE_CATEGORY_ID, {})
+        by_id[PROFILE_CATEGORY_ID] = {
+            "id": PROFILE_CATEGORY_ID,
+            "page_id": PERSONAL_PAGE_ID,
+            "kind": MIXED_KIND,
+            "label": _pair(profile_source.get("label"), {"en": "Profile", "zh": "個人資料"}),
+            "title": _pair(profile_source.get("title"), {"en": "Personal Information", "zh": "個人資料"}),
+            "intro": _pair(profile_source.get("intro")),
+            "order": int(profile_source.get("order", 0)),
+            "show_on_web": False,
+            "show_on_cv": False,
+        }
+        cv_source = raw_map.get(CV_PERSONAL_CATEGORY_ID, {})
+        by_id[CV_PERSONAL_CATEGORY_ID] = {
+            "id": CV_PERSONAL_CATEGORY_ID,
+            "page_id": PDF_CV_PAGE_ID,
+            "kind": "personal",
+            "label": _pair(cv_source.get("label"), {"en": "Details", "zh": "個人資料"}),
+            "title": _pair(cv_source.get("title"), {"en": "Personal Information", "zh": "個人資訊"}),
+            "intro": _pair(cv_source.get("intro")),
+            "order": int(cv_source.get("order", 0)),
+            "show_on_web": False,
+            "show_on_cv": True,
+        }
+
+        page_rank = {row["id"]: int(row.get("order", 999)) for row in cc.normalized_pages(data)}
+        page_rank[PDF_CV_PAGE_ID] = 9000
+        page_rank[PERSONAL_PAGE_ID] = 9001
+        return sorted(by_id.values(), key=lambda row: (page_rank.get(str(row.get("page_id") or ""), 9999), int(row.get("order", 999)), str(row.get("id") or "")))
+
+    def validate_category_data(data: dict[str, Any]) -> None:
+        # The original validator expects every category page to be an actual
+        # HTML page. Add temporary bilingual placeholders only for validation;
+        # they are never written back to content/site.json or built as pages.
+        probe = copy.deepcopy(data)
+        settings = probe.setdefault("settings", {})
+        pages = settings.setdefault("pages", [])
+        if not isinstance(pages, list):
+            pages = settings["pages"] = []
+        known = {str(row.get("id") or "") for row in pages if isinstance(row, dict)}
+        for page_id, en, zh in (
+            (PDF_CV_PAGE_ID, "PDF CV", "PDF 履歷"),
+            (PERSONAL_PAGE_ID, "Personal Information", "個人資料"),
+        ):
+            if page_id not in known:
+                pages.append({
+                    "id": page_id,
+                    "name": {"en": en, "zh": zh},
+                    "header": {"label": {"en": en, "zh": zh}, "title": {"en": en, "zh": zh}, "intro": {"en": "", "zh": ""}},
+                    "color": "#675c83",
+                    "show_in_navigation": False,
+                    "order": 9000 if page_id == PDF_CV_PAGE_ID else 9001,
+                })
+        original_validate_category_data(probe)
+
+    cc.normalized_categories = normalized_categories
+    cc.validate_category_data = validate_category_data
 
     def migrate(data: dict[str, Any]) -> dict[str, Any]:
         result = original_migrate(data)

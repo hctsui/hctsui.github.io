@@ -32,6 +32,45 @@ _original_apply_special = batch.apply_special
 _original_apply_undo = batch.apply_undo
 
 
+def virtual_page_rows() -> list[dict[str, Any]]:
+    return [
+        {
+            "id": ext.PDF_CV_PAGE_ID,
+            "name": {"en": "PDF CV", "zh": "PDF 履歷"},
+            "path": {"en": "", "zh": ""},
+            "languages": ["en", "zh"],
+            "header": None,
+            "color": "#735748",
+            "show_in_navigation": False,
+            "order": 9000,
+            "virtual": True,
+            "virtual_kind": "pdf_cv",
+        },
+        {
+            "id": ext.PERSONAL_PAGE_ID,
+            "name": {"en": "Personal Information", "zh": "個人資料"},
+            "path": {"en": "", "zh": ""},
+            "languages": ["en", "zh"],
+            "header": None,
+            "color": "#675c83",
+            "show_in_navigation": False,
+            "order": 9001,
+            "virtual": True,
+            "virtual_kind": "personal_profile",
+        },
+    ]
+
+
+def with_virtual_pages(value: Any) -> list[dict[str, Any]]:
+    rows = [copy.deepcopy(row) for row in value if isinstance(row, dict) and str(row.get("id") or "") not in ext.VIRTUAL_PAGE_IDS] if isinstance(value, list) else []
+    rows.extend(virtual_page_rows())
+    return rows
+
+
+def public_pages(value: Any) -> list[dict[str, Any]]:
+    return [copy.deepcopy(row) for row in value if isinstance(row, dict) and str(row.get("id") or "") not in ext.VIRTUAL_PAGE_IDS] if isinstance(value, list) else []
+
+
 def placements_from_data(data: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
     known = {row["id"] for row in categories.normalized_categories(data)}
     result = {}
@@ -48,7 +87,11 @@ def placements_from_data(data: dict[str, Any]) -> dict[str, list[dict[str, Any]]
 
 
 def layout_bundle(data: dict[str, Any]) -> dict[str, Any]:
+    ext.ensure_special_categories(data)
     result = _original_layout_bundle(data)
+    result["pages"] = with_virtual_pages(result.get("pages", []))
+    result["categories"] = copy.deepcopy(categories.normalized_categories(data))
+    result["cv_category_order"] = copy.deepcopy(categories.normalized_cv_order(data))
     result["dossier_category_order"] = copy.deepcopy(ext.normalized_dossier_order(data))
     result["placements"] = placements_from_data(data)
     return result
@@ -58,7 +101,7 @@ def normalized_layout_bundle(data: dict[str, Any], value: Any) -> dict[str, Any]
     if not isinstance(value, dict):
         raise ValueError("Layout operation requires an object.")
     standard = {
-        "pages": copy.deepcopy(value.get("pages", [])),
+        "pages": with_virtual_pages(value.get("pages", [])),
         "categories": copy.deepcopy(value.get("categories", [])),
         "cv_category_order": copy.deepcopy(value.get("cv_category_order", [])),
         "assignments": copy.deepcopy(value.get("assignments", {})),
@@ -98,6 +141,9 @@ def apply_layout_bundle(data: dict[str, Any], value: Any) -> dict[str, Any]:
     standard = {key: copy.deepcopy(normalized[key]) for key in ("pages", "categories", "cv_category_order", "assignments")}
     _original_apply_layout_bundle(data, standard)
     settings = data.setdefault("settings", {})
+    settings["pages"] = public_pages(settings.get("pages", []))
+    settings["categories"] = copy.deepcopy(categories.normalized_categories(data))
+    settings["cv_category_order"] = copy.deepcopy(categories.normalized_cv_order(data))
     settings["dossier_category_order"] = copy.deepcopy(normalized["dossier_category_order"])
     by_id = {str(item.get("id") or ""): item for item in categories.all_items(data)}
     for iid, rows in normalized["placements"].items():

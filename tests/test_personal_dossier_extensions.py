@@ -82,6 +82,9 @@ class PersonalProfileExtensionTests(unittest.TestCase):
         )
         categories = {row["id"]: row for row in data["settings"]["categories"]}
         self.assertEqual(categories["personal-profile"]["kind"], "mixed")
+        self.assertEqual(categories["personal-profile"]["page_id"], "personal-profile")
+        self.assertEqual(categories["cv-personal"]["page_id"], "pdf-cv")
+        self.assertIn("cv-personal", data["settings"]["cv_category_order"])
         items = {row["id"]: row for row in data["profile_items"]}
         for item_id in ("profile-name", "contact-affiliation", "profile-position"):
             self.assertEqual(items[item_id]["category_id"], "personal-profile")
@@ -125,10 +128,25 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("data-placement-add-select", layout)
         self.assertIn("data-profile-placement-select", profile)
         self.assertIn("#generalSettingsPane", profile)
-        self.assertIn("option.value==='dossier'||option.value==='__dossier__'", layout)
+        self.assertIn("data-personal-profile-general-choice", profile)
+        self.assertIn("showGeneralProfilePanel", profile)
+        self.assertIn("persistProfilePlacementGroup", profile)
+        self.assertIn("filter(category=>category.id!==PROFILE_CATEGORY_ID", profile)
+        self.assertIn("['dossier','__dossier__',PDF_CV_PAGE_ID]", layout)
         self.assertIn("bindDossierOrderControls", layout)
         self.assertIn("['featured_publications','upcoming'].includes(category.kind)", layout)
         self.assertIn("decorateRecordPageBadges", layout)
+        self.assertIn("VIRTUAL_PAGES", layout)
+        self.assertIn("PDF 履歷", layout)
+
+    def test_people_draft_safety_contract(self) -> None:
+        safety = self.read("admin/people-safety.js")
+        media = self.read("admin/media.js")
+        self.assertIn("GitHub 正式", safety)
+        self.assertIn("重新載入正式資料", safety)
+        self.assertIn("shouldBlockSubmission", safety)
+        self.assertIn("#submitBatch", safety)
+        self.assertIn("people-safety.js", media)
 
     def test_dossier_profile_and_print_contracts(self) -> None:
         builder = self.read("tools/build_dossier.py")

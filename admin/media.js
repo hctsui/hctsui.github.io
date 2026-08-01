@@ -276,6 +276,8 @@
 })();
 
 /* Load Dossier/category controls after the current layout manager. */
-(function(){if(document.getElementById("dossierCategoryManagerScript"))return;const s=document.createElement("script");s.id="dossierCategoryManagerScript";s.src="dossier-category.js?v=20260801-2";s.async=false;document.body.append(s)})();
+(function(){if(document.getElementById("dossierCategoryManagerScript"))return;const s=document.createElement("script");s.id="dossierCategoryManagerScript";s.src="dossier-category.js?v=20260801-3";s.async=false;document.body.append(s)})();
 /* Load canonical personal-profile controls. */
-(function(){if(document.getElementById("personalProfileManagerScript"))return;const s=document.createElement("script");s.id="personalProfileManagerScript";s.src="personal-profile.js?v=20260801-2";s.async=false;document.body.append(s)})();
+(function(){if(document.getElementById("personalProfileManagerScript"))return;const s=document.createElement("script");s.id="personalProfileManagerScript";s.src="personal-profile.js?v=20260801-3";s.async=false;document.body.append(s)})();
+/* Protect the person-link database from incomplete browser drafts. */
+(function(){if(document.getElementById("peopleSafetyScript"))return;const s=document.createElement("script");s.id="peopleSafetyScript";s.src="people-safety.js?v=20260801-1";s.async=false;document.body.append(s)})();

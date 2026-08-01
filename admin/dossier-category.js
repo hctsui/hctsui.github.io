@@ -7,11 +7,34 @@
 
   CATEGORY_KIND_LABELS.mixed='一般內容';
   const PROFILE_CATEGORY_ID='personal-profile';
+  const PERSONAL_PAGE_ID='personal-profile';
+  const PDF_CV_PAGE_ID='pdf-cv';
+  const CV_PERSONAL_CATEGORY_ID='cv-personal';
+  const VIRTUAL_PAGE_IDS=new Set([PDF_CV_PAGE_ID,PERSONAL_PAGE_ID]);
+  const VIRTUAL_PAGES=[
+    {id:PDF_CV_PAGE_ID,name:{en:'PDF CV',zh:'PDF 履歷'},path:{en:'',zh:''},languages:['en','zh'],header:null,color:'#735748',show_in_navigation:false,order:9000,virtual:true,virtual_kind:'pdf_cv'},
+    {id:PERSONAL_PAGE_ID,name:{en:'Personal Information',zh:'個人資料'},path:{en:'',zh:''},languages:['en','zh'],header:null,color:'#675c83',show_in_navigation:false,order:9001,virtual:true,virtual_kind:'personal_profile'},
+  ];
   const EXCLUDED_KINDS=new Set(['featured_publications','upcoming','contact']);
   const DEFAULT_DOSSIER_KINDS=new Set(['interest','education','honor','publication','talk','teaching']);
   const STYLE_ORDER=['publication','conference','talk','visit','organization','teaching','honor','generic','education','interest','contact','personal','mixed'];
 
-  const categoryEligible=category=>!!category&&category.id!==PROFILE_CATEGORY_ID&&!EXCLUDED_KINDS.has(String(category.kind||''));
+  const virtualPage=id=>VIRTUAL_PAGES.find(page=>page.id===id)||null;
+  const isVirtualPage=id=>VIRTUAL_PAGE_IDS.has(String(id||''));
+  const ensureVirtualPages=pages=>{
+    const result=(Array.isArray(pages)?pages:[]).filter(page=>page&&!isVirtualPage(page.id)).map(page=>clone(page));
+    VIRTUAL_PAGES.forEach(page=>result.push(clone(page)));
+    return result;
+  };
+  function enforceVirtualCategories(result){
+    const profile=result.categories.find(category=>category.id===PROFILE_CATEGORY_ID);
+    if(profile){profile.page_id=PERSONAL_PAGE_ID;profile.kind='mixed';profile.show_on_web=false;profile.show_on_cv=false}
+    const cvPersonal=result.categories.find(category=>category.id===CV_PERSONAL_CATEGORY_ID);
+    if(cvPersonal){cvPersonal.page_id=PDF_CV_PAGE_ID;cvPersonal.kind='personal';cvPersonal.show_on_web=false;cvPersonal.show_on_cv=true;if(!result.cv_category_order.includes(CV_PERSONAL_CATEGORY_ID))result.cv_category_order.push(CV_PERSONAL_CATEGORY_ID)}
+    return result;
+  }
+
+  const categoryEligible=category=>!!category&&!new Set([PROFILE_CATEGORY_ID,CV_PERSONAL_CATEGORY_ID]).has(category.id)&&!EXCLUDED_KINDS.has(String(category.kind||''));
   const kindLabel=kind=>kind==='mixed'?'一般內容（不限風格）':GENERAL_FORMAT_LABELS[kind]?`一般內容（${GENERAL_FORMAT_LABELS[kind]}）`:(CATEGORY_KIND_LABELS[kind]||kind);
   const kindOptions=selected=>STYLE_ORDER.map(kind=>`<option value="${esc(kind)}" ${kind===selected?'selected':''}>${esc(kindLabel(kind))}</option>`).join('');
   const cloneRows=rows=>(Array.isArray(rows)?rows:[]).map(row=>({category_id:String(row?.category_id||''),order:Number.isFinite(Number(row?.order))?Number(row.order):999999}));
@@ -58,9 +81,11 @@
 
   const baseNormalizeLayoutBundle=normalizeLayoutBundle;
   normalizeLayoutBundle=function(bundle){
-    const result=baseNormalizeLayoutBundle(bundle);
-    result.dossier_category_order=normalizedDossierOrder(bundle,result);
-    result.placements=normalizedPlacements(bundle,result);
+    const source=bundle&&typeof bundle==='object'?bundle:{};
+    const result=enforceVirtualCategories(baseNormalizeLayoutBundle({...source,pages:ensureVirtualPages(source.pages)}));
+    result.pages=ensureVirtualPages(result.pages);
+    result.dossier_category_order=normalizedDossierOrder(source,result);
+    result.placements=normalizedPlacements(source,result);
     return result;
   };
 
@@ -74,7 +99,11 @@
   const baseApplyLayoutToData=applyLayoutToData;
   applyLayoutToData=function(data,bundle){
     const normalized=normalizeLayoutBundle(bundle),result=baseApplyLayoutToData(data,normalized);
-    result.settings=result.settings||{};result.settings.dossier_category_order=clone(normalized.dossier_category_order);
+    result.settings=result.settings||{};
+    result.settings.pages=(result.settings.pages||[]).filter(page=>!isVirtualPage(page?.id));
+    result.settings.categories=enforceVirtualCategories({...normalized,categories:clone(normalized.categories),cv_category_order:clone(normalized.cv_category_order)}).categories;
+    result.settings.cv_category_order=clone(normalized.cv_category_order);
+    result.settings.dossier_category_order=clone(normalized.dossier_category_order);
     const byId=new Map(layoutItems(result).map(item=>[String(item.id),item]));
     for(const [id,rows] of Object.entries(normalized.placements||{})){const item=byId.get(id);if(item)item.display_placements=cloneRows(rows)}
     return result;
@@ -157,9 +186,10 @@
   };
   const baseCategoryEditorHtml=categoryEditorHtml;
   categoryEditorHtml=function(category){
-    const template=document.createElement('template');template.innerHTML=baseCategoryEditorHtml(category);const root=template.content,typeField=categoryTypeField(root),input=typeField?.querySelector('input[disabled]');
-    if(input&&!categoryHasItems(category.id)){const select=document.createElement('select');select.dataset.categoryField='kind';select.innerHTML=kindOptions(category.kind);input.replaceWith(select);typeField.insertAdjacentHTML('beforeend','<p class="field-hint">此類別沒有項目或引用，可以安全修改顯示風格。</p>')}else if(input)input.value=kindLabel(category.kind);
+    const template=document.createElement('template');template.innerHTML=baseCategoryEditorHtml(category);const root=template.content,typeField=categoryTypeField(root),input=typeField?.querySelector('input[disabled]'),systemCategory=[PROFILE_CATEGORY_ID,CV_PERSONAL_CATEGORY_ID].includes(category.id);
+    if(input&&!categoryHasItems(category.id)&&!systemCategory){const select=document.createElement('select');select.dataset.categoryField='kind';select.innerHTML=kindOptions(category.kind);input.replaceWith(select);typeField.insertAdjacentHTML('beforeend','<p class="field-hint">此類別沒有項目或引用，可以安全修改顯示風格。</p>')}else if(input)input.value=kindLabel(category.kind);
     if(typeField){const holder=document.createElement('div');holder.dataset.categoryStylePreview='';holder.innerHTML=previewMarkup(category.kind);typeField.append(holder)}
+    if(systemCategory){const pageSelect=root.querySelector('[data-category-field="page_id"]');if(pageSelect)pageSelect.disabled=true;const deleteButton=root.querySelector('[data-delete-category]');if(deleteButton){deleteButton.disabled=true;deleteButton.title='這是系統管理的特殊類別，不能刪除。'}root.querySelector('.actions')?.insertAdjacentHTML('beforebegin','<p class="field-hint">此類別屬於特殊管理頁面；主要頁面與顯示用途由系統維護。</p>')}
     const options=root.querySelector('.form-options');if(options)options.insertAdjacentHTML('beforeend',`<label class="switch"><input type="checkbox" data-dossier-category ${inDossier(category.id)?'checked':''} ${categoryEligible(category)?'':'disabled'}>放進審查資料</label>`);return template.innerHTML;
   };
 
@@ -168,8 +198,15 @@
   const formValid=root=>['label.en','label.zh','title.en','title.zh'].every(path=>String(root.querySelector(`[data-category-field="${path}"]`)?.value||'').trim());
   const baseSaveLayoutCategory=saveLayoutCategory;
   saveLayoutCategory=function(id,root){const checked=!!root.querySelector('[data-dossier-category]')?.checked,before=new Set(layoutDraft.categories.map(row=>row.id)),valid=formValid(root);baseSaveLayoutCategory(id,root);if(!valid)return;const categoryId=id||layoutDraft.categories.find(row=>!before.has(row.id))?.id;if(!categoryId)return;setDossierMembership(categoryId,checked);saveLayoutDraft(checked?'已加入審查資料草稿':'已更新審查資料設定')};
+  function enforceCategoryPage(category){
+    if(!category)return;
+    if(category.id===PROFILE_CATEGORY_ID){category.page_id=PERSONAL_PAGE_ID;category.kind='mixed';category.show_on_web=false;category.show_on_cv=false}
+    if(category.id===CV_PERSONAL_CATEGORY_ID){category.page_id=PDF_CV_PAGE_ID;category.kind='personal';category.show_on_web=false;category.show_on_cv=true;if(!layoutDraft.cv_category_order.includes(CV_PERSONAL_CATEGORY_ID))layoutDraft.cv_category_order.push(CV_PERSONAL_CATEGORY_ID)}
+    if(category.page_id===PDF_CV_PAGE_ID){category.show_on_web=false;category.show_on_cv=true;if(!layoutDraft.cv_category_order.includes(category.id))layoutDraft.cv_category_order.push(category.id)}
+    if(category.page_id===PERSONAL_PAGE_ID){category.show_on_web=false;category.show_on_cv=false;layoutDraft.cv_category_order=layoutDraft.cv_category_order.filter(value=>value!==category.id)}
+  }
   const baseSetCategoryFromEditor=setCategoryFromEditor;
-  setCategoryFromEditor=function(id,root){if(formValid(root))setDossierMembership(id,!!root.querySelector('[data-dossier-category]')?.checked);return baseSetCategoryFromEditor(id,root)};
+  setCategoryFromEditor=function(id,root){if(formValid(root))setDossierMembership(id,!!root.querySelector('[data-dossier-category]')?.checked);const result=baseSetCategoryFromEditor(id,root);enforceCategoryPage(layoutDraft.categories.find(category=>category.id===id));layoutDraft=normalizeLayoutBundle(layoutDraft);return result};
 
   function placementEditor(root,type,record){
     if(!root||['page','category','academic_event'].includes(type)||root.querySelector('[data-placement-editor]'))return;
@@ -230,6 +267,15 @@
   const baseDeleteCategory=deleteCategory;
   deleteCategory=function(id){const dossierBefore=clone(currentDossierOrder()),placementBefore=clone(layoutDraft?.placements||{});baseDeleteCategory(id);if(!layoutDraft.categories.some(row=>row.id===id)){layoutDraft.dossier_category_order=dossierBefore.filter(value=>value!==id);for(const itemId of Object.keys(layoutDraft.placements||{}))layoutDraft.placements[itemId]=cloneRows(layoutDraft.placements[itemId]).filter(row=>row.category_id!==id);saveLayoutDraft('已移除刪除類別的審查資料與引用')}else{layoutDraft.dossier_category_order=dossierBefore;layoutDraft.placements=placementBefore}};
 
+  const basePageEditorHtml=pageEditorHtml;
+  pageEditorHtml=function(page){
+    const virtual=virtualPage(page?.id);
+    if(!virtual)return basePageEditorHtml(page);
+    const kind=page.id===PDF_CV_PAGE_ID?'PDF 文件頁面':'資料管理頁面';
+    const purpose=page.id===PDF_CV_PAGE_ID?'只用於設定 PDF 履歷的專屬類別；不會生成可瀏覽的 HTML 頁面。':'集中保存個人資料主項目；其他網頁與 PDF 履歷只引用這些資料。';
+    return `<div class="notice virtual-page-notice"><strong>${esc(kind)} · 雙語</strong><p>${esc(purpose)}</p><div class="virtual-page-language-row"><span class="tag">English</span><span class="tag">中文</span><span class="tag">不公開</span></div></div>`;
+  };
+
   const baseRenderLayoutManager=renderLayoutManager;
   renderLayoutManager=function(){
     baseRenderLayoutManager();const box=$('#layoutManager');if(!box)return;const addSelect=box.querySelector('#newCategoryKind');
@@ -237,23 +283,28 @@
     box.querySelectorAll('[data-category-editor]').forEach(root=>enhanceCategoryRoot(root,layoutDraft.categories.find(row=>row.id===root.dataset.categoryEditor)));
   };
   const baseAddCategoryFromManager=addCategoryFromManager;
-  addCategoryFromManager=function(){const checked=!!document.querySelector('[data-new-category-dossier]')?.checked,before=new Set(layoutDraft.categories.map(row=>row.id)),valid=String($('#newCategoryEn')?.value||'').trim()&&String($('#newCategoryZh')?.value||'').trim();baseAddCategoryFromManager();if(!valid)return;const category=layoutDraft.categories.find(row=>!before.has(row.id));if(category&&checked){setDossierMembership(category.id,true);saveLayoutDraft('已新增類別並加入審查資料草稿')}};
+  addCategoryFromManager=function(){const checked=!!document.querySelector('[data-new-category-dossier]')?.checked,before=new Set(layoutDraft.categories.map(row=>row.id)),valid=String($('#newCategoryEn')?.value||'').trim()&&String($('#newCategoryZh')?.value||'').trim();baseAddCategoryFromManager();if(!valid)return;const category=layoutDraft.categories.find(row=>!before.has(row.id));if(!category)return;enforceCategoryPage(category);if(checked)setDossierMembership(category.id,true);layoutDraft=normalizeLayoutBundle(layoutDraft);saveLayoutDraft(checked?'已新增類別並加入審查資料草稿':'已新增類別草稿')};
 
   const baseFillOrderPageSelector=fillOrderPageSelector;
   fillOrderPageSelector=function(){
     const select=$('#layoutOrderPage'),old=select?.value;baseFillOrderPageSelector();if(!select)return;
-    [...select.options].filter(option=>option.value==='dossier'||option.value==='__dossier__').forEach(option=>option.remove());
+    [...select.options].filter(option=>['dossier','__dossier__',PDF_CV_PAGE_ID].includes(option.value)).forEach(option=>option.remove());
+    const cv=[...select.options].find(option=>option.value==='__cv__');if(cv)cv.textContent='PDF 履歷';else select.add(new Option('PDF 履歷','__cv__'));
+    const personal=[...select.options].find(option=>option.value===PERSONAL_PAGE_ID);if(personal)personal.textContent='個人資料';else select.add(new Option('個人資料',PERSONAL_PAGE_ID));
     select.add(new Option('審查資料','__dossier__'));
-    const next=old==='dossier'?'__dossier__':old;
+    const specialOrder=['__cv__',PERSONAL_PAGE_ID,'__dossier__'];
+    specialOrder.forEach(value=>{const option=[...select.options].find(row=>row.value===value);if(option)select.append(option)});
+    const next=old==='dossier'?'__dossier__':old===PDF_CV_PAGE_ID?'__cv__':old;
     if(next&&[...select.options].some(option=>option.value===next))select.value=next;
   };
 
   const baseOrderCategoryCard=orderCategoryCard;
   orderCategoryCard=function(category,index,total,map,cvMode=false){
     const mode=$('#layoutOrderPage')?.value||'';
-    if(mode==='__cv__'||(!cvMode&&['featured_publications','upcoming'].includes(category.kind)))return baseOrderCategoryCard(category,index,total,map,cvMode);
+    if(!cvMode&&['featured_publications','upcoming'].includes(category.kind))return baseOrderCategoryCard(category,index,total,map,cvMode);
     const refs=categoryRefs(category.id),first=map.get(refs[0]?.id),compatible=first?layoutDraft.categories.filter(value=>compatibleCategory(value,first)&&value.id!==category.id):[];
-    return `<div class="layout-order-category" data-order-category="${esc(category.id)}"><div class="layout-order-category-head"><div><span class="tag">${esc(kindLabel(category.kind))}</span><strong>${index+1}. ${esc(categoryName(category))}</strong><span class="muted">${esc(pageName(category.page_id))} · ${refs.length} 個項目／引用</span></div><div class="actions"><button class="button" data-category-up="${esc(category.id)}" ${index===0?'disabled':''}>類別 ↑</button><button class="button" data-category-down="${esc(category.id)}" ${index===total-1?'disabled':''}>類別 ↓</button><button class="button" data-edit-category-jump="${esc(category.id)}">編輯類別</button></div></div>${!cvMode?`<div class="order-sort-tools"><span class="muted">此類別快速排序：</span><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="newest">日期新到舊</button><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="oldest">日期舊到新</button><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="title">名稱</button></div>`:''}<div>${refs.map((ref,rowIndex)=>{const item=map.get(ref.id);if(!item)return'';const key=`${ref.id}@@${category.id}`;return `<div class="layout-order-item"><div><strong>${rowIndex+1}. ${esc(itemName(item))}</strong><span class="muted">${ref.placement?'<span class="tag">額外引用</span> ':''}${esc(itemMetaChinese(item))}</span></div><div class="layout-order-item-actions"><button class="button" data-item-up="${esc(key)}" ${rowIndex===0?'disabled':''}>↑</button><button class="button" data-item-down="${esc(key)}" ${rowIndex===refs.length-1?'disabled':''}>↓</button>${ref.placement?`<button class="button danger" data-remove-placement="${esc(key)}">移除引用</button>`:compatible.length&&!cvMode?`<select data-move-item="${esc(ref.id)}"><option value="">移到其他類別…</option>${compatible.map(value=>`<option value="${esc(value.id)}">${esc(pageName(value.page_id))} → ${esc(categoryName(value))}</option>`).join('')}</select>`:''}</div></div>`}).join('')||'<p class="muted">此類別目前沒有項目。</p>'}</div></div>`;
+    const pageLabel=mode==='__cv__'?'PDF 履歷':pageName(category.page_id);
+    return `<div class="layout-order-category" data-order-category="${esc(category.id)}"><div class="layout-order-category-head"><div><span class="tag">${esc(kindLabel(category.kind))}</span><strong>${index+1}. ${esc(categoryName(category))}</strong><span class="muted">${esc(pageLabel)} · ${refs.length} 個項目／引用</span></div><div class="actions"><button class="button" data-category-up="${esc(category.id)}" ${index===0?'disabled':''}>類別 ↑</button><button class="button" data-category-down="${esc(category.id)}" ${index===total-1?'disabled':''}>類別 ↓</button><button class="button" data-edit-category-jump="${esc(category.id)}">編輯類別</button></div></div>${!cvMode?`<div class="order-sort-tools"><span class="muted">此類別快速排序：</span><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="newest">日期新到舊</button><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="oldest">日期舊到新</button><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="title">名稱</button></div>`:''}<div>${refs.map((ref,rowIndex)=>{const item=map.get(ref.id);if(!item)return'';const key=`${ref.id}@@${category.id}`,referenceTag=ref.placement?'<span class="tag">引用個人資料</span> ':'';return `<div class="layout-order-item"><div><strong>${rowIndex+1}. ${esc(itemName(item))}</strong><span class="muted">${referenceTag}${esc(itemMetaChinese(item))}</span></div><div class="layout-order-item-actions"><button class="button" data-item-up="${esc(key)}" ${rowIndex===0?'disabled':''}>↑</button><button class="button" data-item-down="${esc(key)}" ${rowIndex===refs.length-1?'disabled':''}>↓</button>${ref.placement&&!cvMode?`<button class="button danger" data-remove-placement="${esc(key)}">移除引用</button>`:!ref.placement&&compatible.length&&!cvMode?`<select data-move-item="${esc(ref.id)}"><option value="">移到其他類別…</option>${compatible.map(value=>`<option value="${esc(value.id)}">${esc(pageName(value.page_id))} → ${esc(categoryName(value))}</option>`).join('')}</select>`:''}</div></div>`}).join('')||'<p class="muted">此類別目前沒有項目。</p>'}</div></div>`;
   };
 
   const baseMoveItem=moveItem;
