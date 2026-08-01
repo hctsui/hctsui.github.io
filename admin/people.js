@@ -85,12 +85,18 @@
     return copy(remote);
   }
   function peopleDirty(){return peopleReady&&!peopleEqual(peopleRemote,peopleDraft);}
+  function refreshPeoplePreview(){
+    // people.json and site.json load concurrently.  Rendering the full preview
+    // before the main site payload exists makes unrelated preview extensions
+    // throw, which used to misreport a successful people fetch as a load error.
+    if(typeof site!=='undefined'&&site&&typeof renderPreview==='function')renderPreview(false);
+  }
   function savePeopleLocal(rerender=true){
     peopleDraft=normalizePeople(peopleDraft);
     if(peopleDirty())localStorage.setItem(PEOPLE_DRAFT_KEY,JSON.stringify({base:peopleRemote,data:peopleDraft}));
     else localStorage.removeItem(PEOPLE_DRAFT_KEY);
     if(rerender)renderPeopleManager();else renderPeopleStatus();
-    if(typeof renderPreview==='function')renderPreview(false);
+    refreshPeoplePreview();
   }
   function clearPeopleDraft(reload=false){
     localStorage.removeItem(PEOPLE_DRAFT_KEY);

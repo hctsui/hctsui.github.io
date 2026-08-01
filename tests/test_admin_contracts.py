@@ -31,7 +31,7 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="tags.js?v=20260801-1"></script>',
             '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
-            '<script src="people.js?v=20260802-1"></script>',
+            '<script src="people.js?v=20260802-2"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
             '<script src="site-settings.js?v=20260801-2"></script>',
             '<script src="github-submit.js?v=20260802-1"></script>',
@@ -228,6 +228,8 @@ class PeopleAndBibtexContracts(unittest.TestCase):
             "系統沒有以空資料取代正式檔案",
             "mergeSavedPeople",
             "PEOPLE_RECOVERY_KEY",
+            "refreshPeoplePreview",
+            "typeof site!=='undefined'&&site",
         ):
             self.assertIn(marker, people)
         self.assertNotIn(".catch(()=>empty())", people)
