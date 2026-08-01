@@ -226,9 +226,9 @@ Account ID 可在 Worker 的設定頁或 Cloudflare Dashboard 網址中找到。
 | Secret | `GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON` | 完整的服務帳戶 JSON |
 | Variable | `GOOGLE_ANALYTICS_PROPERTY_ID` | `548063012`；這是純數字 GA4 Property ID，不是 `G-MHG45MM2N0` |
 
-7. 儲存並重新部署 Worker。開啟 Admin → 網站設定 → 流量統計，選擇 Google 即可查看今天、7 天、30 天與 90 天報表。
+7. 儲存並重新部署 Worker。開啟 Admin → 網站設定 → 流量統計，即可選擇「兩邊同時啟用」「只啟用 Cloudflare」「只啟用 Google」或「全部關閉」。報表區可另外切換 Cloudflare／Google，查看今天、7 天、30 天與 90 天資料。
 
-服務帳戶不需要互動式登入，也不會因關閉瀏覽器而失效；兩套報表憑證都保留在 Worker 中，因此 Cloudflare／Google 切換不需要重新設定。
+服務帳戶不需要互動式登入，也不會因關閉瀏覽器而失效；兩套追蹤識別碼與報表憑證都會保留，因此切換、關閉或重新開啟不需要重新設定。
 
 ---
 
