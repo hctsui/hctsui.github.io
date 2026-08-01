@@ -331,7 +331,7 @@
   renderUnifiedOrder=function(){
     if($('#layoutOrderPage')?.value!=='__dossier__'){const result=baseRenderUnifiedOrder();bindDossierOrderControls();return result}
     initLayoutState();syncLayoutAssignments();fillOrderPageSelector();const byId=new Map(layoutDraft.categories.map(row=>[row.id,row])),categories=currentDossierOrder().map(id=>byId.get(id)).filter(Boolean),items=new Map(layoutItems(effectiveSite()).map(item=>[String(item.id),item]));
-    $('#layoutOrderEditor').innerHTML='<div class="notice"><strong>審查資料排序</strong><p>操作方式與 PDF 履歷相同：上方調整類別順序，下方調整各類別中的項目與引用順序。</p></div>'+(categories.map((category,index)=>orderCategoryCard(category,index,categories.length,items,true)).join('')||'<p class="muted">尚未選擇類別；請先在類別設定勾選「放進審查資料」。</p>');
+    $('#layoutOrderEditor').innerHTML=categories.map((category,index)=>orderCategoryCard(category,index,categories.length,items,true)).join('')||'<p class="muted">尚未選擇類別；請先在類別設定勾選「放進審查資料」。</p>';
     bindDossierOrderControls();
   };
   const baseMoveCategory=moveCategory;

@@ -143,17 +143,54 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("formActions.before(details)", layout)
         self.assertIn("VIRTUAL_PAGES", layout)
         self.assertIn("PDF 履歷", layout)
+        self.assertNotIn("操作方式與 PDF 履歷相同", layout)
+        self.assertIn("openPersonalProfileSettings", profile)
+        self.assertIn("openPdfCvOrder", profile)
+        self.assertIn("record?._layout_id===PERSONAL_PAGE_ID", profile)
+        self.assertIn("record?._layout_id===PDF_CV_PAGE_ID", profile)
+        self.assertIn("selector.value='__cv__'", profile)
+        self.assertNotIn("審查資料排序</strong><p>", layout)
 
     def test_people_database_uses_single_canonical_draft_flow(self) -> None:
-        safety = self.read("admin/people-safety.js")
         media = self.read("admin/media.js")
-        self.assertNotIn("重新載入正式資料", safety)
-        self.assertNotIn("MutationObserver", safety)
-        self.assertNotIn("shouldBlockSubmission", safety)
+        safety_path = ROOT / "admin/people-safety.js"
+        if safety_path.exists():
+            safety = safety_path.read_text(encoding="utf-8")
+            self.assertNotIn("重新載入正式資料", safety)
+            self.assertNotIn("MutationObserver", safety)
+            self.assertNotIn("shouldBlockSubmission", safety)
         self.assertNotIn("people-safety.js", media)
         self.assertNotIn("mergePeople", media)
         self.assertNotIn("PEOPLE_BACKUP_KEY", media)
         self.assertIn("canonical people.js draft flow", media)
+        self.assertIn("people-aliases.js?v=20260801-1", media)
+
+    def test_people_aliases_and_full_manual_contracts(self) -> None:
+        aliases = self.read("admin/people-aliases.js")
+        guide = self.read("admin/guide.html")
+        for marker in (
+            "chineseRomanizationAliases",
+            "foreignNameAliases",
+            "givenParts.join('-')",
+            "dotted(letters)",
+            "data-person-field=\"aliases\"",
+            "window.peopleAutomaticAliases",
+        ):
+            self.assertIn(marker, aliases)
+        for section in (
+            'id="mental-model"', 'id="catalog"', 'id="pages-categories"',
+            'id="personal-profile"', 'id="ordering"', 'id="homepage"',
+            'id="pdf-cv"', 'id="dossier"', 'id="database"', 'id="people"',
+            'id="settings"', 'id="notifications"', 'id="drafts"',
+            'id="submit"', 'id="restore"', 'id="automation"',
+            'id="troubleshooting"', 'id="checklist"',
+        ):
+            self.assertIn(section, guide)
+        self.assertIn("2026-08-01 全面更新", guide)
+        self.assertIn("華人羅馬字姓名", guide)
+        self.assertIn("外國姓名", guide)
+        self.assertIn("個人資料」的編輯", guide)
+        self.assertIn("PDF 履歷」的編輯", guide)
 
     def test_dossier_profile_and_print_contracts(self) -> None:
         builder = self.read("tools/build_dossier.py")

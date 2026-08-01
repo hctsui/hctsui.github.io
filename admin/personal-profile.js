@@ -257,6 +257,21 @@
     [...pane.children].forEach(child=>{if(child!==choices)child.hidden=true});
     const box=document.createElement('div');box.dataset.personalProfileGeneralPane='';box.className='site-settings-card personal-profile-general-pane';box.innerHTML=formHtml();pane.append(box);bindProfileForm(box,{generalPanel:true});
   }
+  function openPersonalProfileSettings(){
+    if(typeof switchTab==='function')switchTab('siteSettings');
+    document.querySelector('[data-site-settings-section="general"]')?.click();
+    requestAnimationFrame(()=>requestAnimationFrame(showGeneralProfilePanel));
+  }
+  function openPdfCvOrder(){
+    if(typeof switchTab==='function')switchTab('order');
+    requestAnimationFrame(()=>{
+      const selector=document.querySelector('#layoutOrderPage');
+      if(selector){selector.value='__cv__';selector.dispatchEvent(new Event('change',{bubbles:true}));}
+      else if(typeof renderUnifiedOrder==='function')renderUnifiedOrder();
+    });
+  }
+  window.openPersonalProfileSettings=openPersonalProfileSettings;
+  window.openPdfCvOrder=openPdfCvOrder;
   function removeSettingsIntroHints(){
     const targets=[
       ['#generalSettingsPane .settings-intro',/^一般設定(?:\s|$)/],
@@ -289,14 +304,19 @@
   };
 
   const baseOpenEditor=openEditor;
-  openEditor=function(type,record,options={}){if(record?._personal_profile_key||['name','affiliation','position'].includes(record?.personal_key)){openForm();return}return baseOpenEditor(type,record,options)};
+  openEditor=function(type,record,options={}){
+    if(record?._layout_kind==='page'&&record?._layout_id===PERSONAL_PAGE_ID){openPersonalProfileSettings();return}
+    if(record?._layout_kind==='page'&&record?._layout_id===PDF_CV_PAGE_ID){openPdfCvOrder();return}
+    if(record?._personal_profile_key||['name','affiliation','position'].includes(record?.personal_key)){openPersonalProfileSettings();return}
+    return baseOpenEditor(type,record,options);
+  };
 
   const basePayload=payload;
   payload=function(){const result=basePayload();if(dirty())result.operations.push(profileOperation());return result};
 
   const baseRenderDrafts=renderDrafts;
   renderDrafts=function(){baseRenderDrafts();if(!dirty())return;const box=$('#drafts');if(!box||box.querySelector('[data-personal-profile-draft]'))return;const empty=box.querySelector('.muted:only-child');if(empty&&/尚無草稿/.test(empty.textContent||''))empty.remove();box.insertAdjacentHTML('beforeend','<div class="row draft-row" data-personal-profile-draft><span class="tag">個人資料</span><strong>個人資料主檔</strong><span class="muted">會同步更新所有個人資料項目與引用位置。</span><div class="actions"><button class="button" data-edit-personal-profile>修改草稿</button><button class="button danger" data-drop-personal-profile>移除</button></div></div>')};
-  document.querySelector('#drafts')?.addEventListener('click',event=>{const button=event.target.closest('button');if(button?.hasAttribute('data-edit-personal-profile'))openForm();else if(button?.hasAttribute('data-drop-personal-profile')){profileDraft=copy(profileBase);localStorage.removeItem(DRAFT_KEY);renderAll();flash('已移除個人資料草稿')}});
+  document.querySelector('#drafts')?.addEventListener('click',event=>{const button=event.target.closest('button');if(button?.hasAttribute('data-edit-personal-profile'))openPersonalProfileSettings();else if(button?.hasAttribute('data-drop-personal-profile')){profileDraft=copy(profileBase);localStorage.removeItem(DRAFT_KEY);renderAll();flash('已移除個人資料草稿')}});
 
   const baseRenderPreview=renderPreview;
   renderPreview=function(refreshDictionary=true){baseRenderPreview(refreshDictionary);if(dirty()){const fields=[];for(const key of ['name','affiliation','position','institutional_email','personal_email','website','orcid','address','office','languages'])if(stable(profileBase[key])!==stable(profileDraft[key]))fields.push(KEY_LABELS[key]||key);$('#preview').insertAdjacentHTML('beforeend',`<details class="diff"><summary><strong>個人資料</strong>：${esc(fields.join('、')||'有變更')}</summary><div class="preview-card"><dl class="profile-draft-preview"><dt>Name</dt><dd>${esc(profileDraft.name.en)}／${esc(profileDraft.name.zh)}</dd><dt>Affiliation</dt><dd>${esc(profileDraft.affiliation.en)}／${esc(profileDraft.affiliation.zh)}</dd><dt>Position</dt><dd>${esc(profileDraft.position.en)}／${esc(profileDraft.position.zh)}</dd></dl></div></details>`);$('#payload').textContent=JSON.stringify(payload(),null,2)}};
