@@ -170,9 +170,9 @@ class CanonicalFilenameTests(unittest.TestCase):
             '<script src="tags.js?v=20260801-1"></script>',
             '<script src="layout.js?v=20260801-2"></script>',
             '<script src="homepage.js?v=20260801-1"></script>',
-            '<script src="people.js?v=20260801-2"></script>',
+            '<script src="people.js?v=20260802-1"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
-            '<script src="media.js"></script>',
+            '<script src="media.js?v=20260802-1"></script>',
         ):
             self.assertIn(marker, page)
 

@@ -163,7 +163,7 @@ class SourceContractTests(unittest.TestCase):
         self.assertNotIn("mergePeople", media)
         self.assertNotIn("PEOPLE_BACKUP_KEY", media)
         self.assertIn("canonical people.js draft flow", media)
-        self.assertIn("people-aliases.js?v=20260801-1", media)
+        self.assertIn("people-aliases.js?v=20260802-1", media)
 
     def test_people_aliases_and_full_manual_contracts(self) -> None:
         aliases = self.read("admin/people-aliases.js")
