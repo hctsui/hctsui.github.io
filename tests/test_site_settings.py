@@ -178,6 +178,7 @@ class SiteSettingsTests(unittest.TestCase):
         rendered = render_contact_form(data, "en")
         self.assertIn('action="https://contact.example.workers.dev"', rendered)
         self.assertIn('class="cf-turnstile"', rendered)
+        self.assertIn('data-size="flexible"', rendered)
         self.assertIn('data-sitekey="site-key-public"', rendered)
         self.assertIn('name="email_subject" value="[hctsui.github.io] New contact message"', rendered)
         self.assertIn('name="visitor_subject"', rendered)

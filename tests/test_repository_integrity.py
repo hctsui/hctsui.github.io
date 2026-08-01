@@ -89,9 +89,17 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
     def test_legacy_form_pipeline_is_removed(self) -> None:
         for relative in (
             ".github/workflows/process-website-form.yml",
+            ".github/workflows/workflows/deploy-cms-pages.yml",
             "tools/build_dynamic_forms.py",
+            "admin/people-safety.js",
+            "tools/__pycache__/homepage_config.cpython-313.pyc",
         ):
             self.assertFalse((ROOT / relative).exists(), relative)
+
+    def test_generated_files_are_ignored(self) -> None:
+        ignore = read(".gitignore")
+        for marker in ("__pycache__/", "*.py[cod]", "_site/", ".DS_Store"):
+            self.assertIn(marker, ignore)
 
     def test_active_workflows_do_not_regenerate_old_forms(self) -> None:
         for relative in (
@@ -104,6 +112,28 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
             self.assertNotIn("build_dynamic_forms.py", text, relative)
             self.assertNotIn("add-conference.yml", text, relative)
             self.assertIn("python3 -m unittest discover -s tests", text, relative)
+
+    def test_daily_build_uses_the_complete_extension_pipeline(self) -> None:
+        workflow = read(".github/workflows/daily-upcoming.yml")
+        for marker in (
+            "python3 tools/run_with_extensions.py tools/build_site.py",
+            "python3 tools/build_dossier.py",
+            "python3 tools/inject_prefetch.py",
+            "python3 tools/inject_profile_assets.py",
+            "python3 tools/run_with_extensions.py tools/build_cv.py",
+            "python3 tools/run_validate_site.py",
+            "content/media.json content/search-index.json",
+        ):
+            self.assertIn(marker, workflow)
+
+    def test_push_workflows_do_not_queue_a_second_deployment(self) -> None:
+        for relative in (
+            ".github/workflows/process-website-batch.yml",
+            ".github/workflows/daily-upcoming.yml",
+        ):
+            workflow = read(relative)
+            self.assertIn("git push origin HEAD:cms", workflow)
+            self.assertNotIn("uses: ./.github/workflows/deploy-cms-pages.yml", workflow)
 
 
 class CanonicalFilenameTests(unittest.TestCase):
@@ -204,6 +234,11 @@ class CanonicalFilenameTests(unittest.TestCase):
             self.assertIn('class="contact-page-section"', page)
             self.assertIn(f'href="{asset_prefix}assets/style.css"', page)
             self.assertIn(f'src="{asset_prefix}assets/script.js"', page)
+            self.assertIn('data-size="flexible"', page)
+        style = read("assets/style.css")
+        self.assertIn(".contact-form label,.contact-form-grid>*{min-width:0}", style)
+        self.assertIn(".cf-turnstile{width:100%;max-width:100%", style)
+        self.assertIn("@media(max-width:360px)", style)
 
     def test_custom_404_and_cloudflare_contracts_exist(self) -> None:
         page = read("404.html")

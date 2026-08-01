@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import sys
 import unittest
 from datetime import datetime, timezone
@@ -82,6 +83,13 @@ class PeopleDirectoryTests(unittest.TestCase):
         bad["people"][0]["url"] = "javascript:alert(1)"
         with self.assertRaises(ValueError):
             validate_people(bad)
+
+    def test_committed_people_have_search_aliases_without_boot_draft(self) -> None:
+        people = json.loads((ROOT / "content" / "people.json").read_text(encoding="utf-8"))
+        validate_people(people)
+        self.assertEqual(len(people["people"]), 5)
+        for person in people["people"]:
+            self.assertGreaterEqual(len(person.get("aliases", [])), 6, person["id"])
 
     def test_people_batch_operation_and_undo(self) -> None:
         data = {"settings": {}, "activities": [], "honors": [], "publications": [], "teaching": [], "profile_items": []}
