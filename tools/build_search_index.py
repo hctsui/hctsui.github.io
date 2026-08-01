@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """Build the bilingual client-side search index for the public website."""
 from __future__ import annotations
@@ -14,12 +15,23 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "content" / "site.json"
 OUTPUT = ROOT / "content" / "search-index.json"
 
+DOSSIER_PAGE = {
+    "id": "dossier",
+    "name": {"en": "Dossier", "zh": "審查資料"},
+    "path": {"en": "dossier.html", "zh": "zh/dossier.html"},
+    "header": {
+        "title": {"en": "Academic Dossier", "zh": "學術審查資料"},
+        "intro": {
+            "en": "A concise overview of research, publications, talks, teaching, and academic background.",
+            "zh": "彙整研究、論文、報告、教學與學術背景的審查資料。",
+        },
+    },
+}
 
 def plain(value: Any, lang: str = "en") -> str:
     if isinstance(value, dict):
         value = value.get(lang) or value.get("en") or value.get("zh") or ""
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", str(value or ""))).strip()
-
 
 def entry_title(item: dict[str, Any], lang: str) -> str:
     for field in ("title", "course_title", "course", "name", "label"):
@@ -28,15 +40,17 @@ def entry_title(item: dict[str, Any], lang: str) -> str:
             return value
     return str(item.get("id") or "")
 
-
 def description(item: dict[str, Any], lang: str) -> str:
+    if str(item.get("type") or "") == "visit":
+        fields = ("city", "country", "visit_description")
+    else:
+        fields = ("authors", "venue", "event", "organization", "description", "city", "country", "term")
     parts = []
-    for field in ("authors", "venue", "event", "organization", "description", "visit_description", "city", "country", "term"):
+    for field in fields:
         value = plain(item.get(field), lang)
         if value and value not in parts:
             parts.append(value)
     return " · ".join(parts)[:320]
-
 
 def all_records(data: dict[str, Any]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
@@ -44,10 +58,11 @@ def all_records(data: dict[str, Any]) -> list[dict[str, Any]]:
         rows.extend(item for item in data.get(key, []) if isinstance(item, dict))
     return rows
 
-
 def build_index() -> dict[str, Any]:
     data = migrate_category_data(core.migrate_data(json.loads(SITE.read_text(encoding="utf-8"))))
     pages = normalized_pages(data)
+    if not any(page.get("id") == "dossier" for page in pages):
+        pages.append(json.loads(json.dumps(DOSSIER_PAGE)))
     page_by_id = {str(page.get("id") or ""): page for page in pages}
     category_by_id = {
         str(category.get("id") or ""): category
@@ -95,11 +110,9 @@ def build_index() -> dict[str, Any]:
     rows.sort(key=lambda row: (row["language"], row["kind"], row["title"].casefold()))
     return {"schema_version": 1, "items": rows}
 
-
 def main() -> None:
     OUTPUT.write_text(json.dumps(build_index(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(OUTPUT.relative_to(ROOT))
-
 
 if __name__ == "__main__":
     main()

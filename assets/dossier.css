@@ -1,0 +1,128 @@
+
+.dossier-page {
+  --dossier-rule: color-mix(in srgb, var(--accent, #6b4f3a) 28%, #ddd);
+}
+.dossier-hero .container {
+  display: grid;
+  gap: 1rem;
+}
+.dossier-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+}
+.dossier-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.6fr);
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  align-items: start;
+}
+.dossier-column {
+  display: grid;
+  gap: 1rem;
+}
+.dossier-card {
+  break-inside: avoid;
+  border: 1px solid var(--dossier-rule);
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  background: var(--surface, #fff);
+}
+.dossier-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.22rem;
+}
+.dossier-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.dossier-list,
+.dossier-publications {
+  display: grid;
+  gap: .72rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dossier-entry {
+  break-inside: avoid;
+  border-top: 1px solid var(--dossier-rule);
+  padding-top: .72rem;
+}
+.dossier-entry:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.dossier-meta {
+  color: var(--muted, #6c625c);
+  font-size: .9rem;
+}
+.dossier-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin-top: .3rem;
+}
+.dossier-links a {
+  font-size: .82rem;
+}
+.dossier-contact a {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .dossier-grid { grid-template-columns: 1fr; }
+}
+@media print {
+  @page { size: A4; margin: 14mm; }
+  .site-header,
+  .site-footer,
+  .dossier-actions,
+  .site-search,
+  .language-toggle,
+  .skip-link {
+    display: none !important;
+  }
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 10pt;
+  }
+  .dossier-page,
+  .dossier-page * {
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+  .dossier-hero,
+  .section {
+    padding: 0 !important;
+  }
+  .dossier-hero .container,
+  .dossier-page .container {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  .dossier-grid {
+    grid-template-columns: 34% 1fr;
+    gap: 8mm;
+  }
+  .dossier-card {
+    border: 0;
+    border-top: .4pt solid #777;
+    border-radius: 0;
+    padding: 4mm 0 0;
+    background: transparent !important;
+  }
+  .dossier-entry,
+  .dossier-card,
+  .dossier-publications > li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .dossier-links {
+    display: none !important;
+  }
+  a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+}

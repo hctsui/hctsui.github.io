@@ -2,6 +2,15 @@
   "schema_version": 1,
   "people": [
     {
+      "id": "chieh-yu-chang",
+      "name": {
+        "en": "Chieh-Yu Chang",
+        "zh": "張介玉"
+      },
+      "aliases": [],
+      "url": "https://sites.google.com/gapp.nthu.edu.tw/cychang/"
+    },
+    {
       "id": "ting-wei-chang",
       "name": {
         "en": "Ting-Wei Chang",
