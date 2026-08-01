@@ -2,6 +2,24 @@
   "schema_version": 1,
   "people": [
     {
+      "id": "new-person-2",
+      "name": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "aliases": [
+        "Hung Chun Tsui",
+        "HungChun Tsui",
+        "Tsui Hung-Chun",
+        "Tsui, Hung-Chun",
+        "Tsui Hung Chun",
+        "Tsui, Hung Chun",
+        "Tsui HungChun",
+        "Tsui, HungChun"
+      ],
+      "url": ""
+    },
+    {
       "id": "new-person",
       "name": {
         "en": "Yen-Tsung Chen",

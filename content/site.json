@@ -920,9 +920,8 @@
       ]
     },
     "analytics": {
-      "schema_version": 2,
-      "enabled": true,
-      "provider": "google",
+      "schema_version": 3,
+      "tracking_mode": "both",
       "cloudflare_token": "7d6f118151be461abcda7f7659aeace6",
       "google_measurement_id": "G-MHG45MM2N0"
     },
