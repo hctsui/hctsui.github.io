@@ -238,6 +238,12 @@ class CanonicalFilenameTests(unittest.TestCase):
         workflow = read(".github/workflows/deploy-cms-pages.yml")
         self.assertIn("404.html robots.txt sitemap.xml _site/", workflow)
 
+    def test_google_verification_file_is_published_at_site_root(self) -> None:
+        verification_files = list(ROOT.glob("google*.html"))
+        self.assertTrue(verification_files, "Google verification HTML file is missing")
+        workflow = read(".github/workflows/deploy-cms-pages.yml")
+        self.assertIn("cp google*.html _site/", workflow)
+
 
 
     def test_contact_system_pages_have_canonical_contracts(self) -> None:

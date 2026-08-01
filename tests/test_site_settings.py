@@ -173,6 +173,27 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertIn('gtag("config", "G-ABCD1234")', google)
         self.assertEqual(google.count("managed:google-analytics"), 2)
 
+    def test_analytics_connections_survive_provider_and_enabled_switches(self) -> None:
+        data = site_data()
+        both_configured = current_site_settings(data)
+        both_configured["analytics"] = {
+            "schema_version": 2,
+            "enabled": True,
+            "provider": "google",
+            "cloudflare_token": "e" * 32,
+            "google_measurement_id": "G-ABCD1234",
+        }
+        normalized = normalized_site_settings(both_configured, data)
+        self.assertEqual(normalized["analytics"]["cloudflare_token"], "e" * 32)
+        self.assertEqual(normalized["analytics"]["google_measurement_id"], "G-ABCD1234")
+
+        normalized["analytics"]["enabled"] = False
+        normalized["analytics"]["provider"] = "cloudflare"
+        reopened = normalized_site_settings(normalized, data)
+        self.assertFalse(reopened["analytics"]["enabled"])
+        self.assertEqual(reopened["analytics"]["cloudflare_token"], "e" * 32)
+        self.assertEqual(reopened["analytics"]["google_measurement_id"], "G-ABCD1234")
+
     def test_legacy_cloudflare_token_normalizes_without_reentry(self) -> None:
         data = site_data()
         data["settings"]["analytics"] = {"enabled": True, "token": "d" * 32}
@@ -305,6 +326,49 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(current["error_page"]["auto_redirect"]["seconds"], 9)
         apply_undo(data, translations, history, {"op": "undo", "history_id": "issue-1-op-1"}, "issue-2-op-1", 2, datetime.now(timezone.utc), "digest-2", people={"schema_version": 1, "people": []})
         self.assertEqual(current_site_settings(data), normalized_site_settings(before, data))
+
+    def test_stale_site_settings_preserve_unrelated_newer_values(self) -> None:
+        data = site_data()
+        translations = {"schema_version": 1, "pairs": []}
+        before = current_site_settings(data)
+        requested = copy.deepcopy(before)
+        requested["analytics"].update({
+            "enabled": True,
+            "provider": "google",
+            "google_measurement_id": "G-ABC12345",
+        })
+
+        newer = copy.deepcopy(before)
+        newer["seo"]["pages"]["home"]["description"]["en"] = "Updated elsewhere"
+        for section in ("general", "footer", "seo", "analytics", "contact_form", "error_page"):
+            data["settings"][section] = copy.deepcopy(newer[section])
+
+        apply_special(
+            data, translations, empty_history(),
+            {"op": "site_settings", "before": before, "after": requested},
+            "issue-stale-op-1", 2, datetime.now(timezone.utc), "digest-stale",
+        )
+        current = current_site_settings(data)
+        self.assertEqual(current["seo"]["pages"]["home"]["description"]["en"], "Updated elsewhere")
+        self.assertEqual(current["analytics"]["provider"], "google")
+        self.assertEqual(current["analytics"]["google_measurement_id"], "G-ABC12345")
+
+    def test_stale_site_settings_reject_same_field_conflict(self) -> None:
+        data = site_data()
+        before = current_site_settings(data)
+        requested = copy.deepcopy(before)
+        requested["seo"]["pages"]["home"]["title"]["en"] = "Admin title"
+        newer = copy.deepcopy(before)
+        newer["seo"]["pages"]["home"]["title"]["en"] = "Newer title"
+        for section in ("general", "footer", "seo", "analytics", "contact_form", "error_page"):
+            data["settings"][section] = copy.deepcopy(newer[section])
+
+        with self.assertRaisesRegex(ValueError, r"seo\.pages\.home\.title\.en"):
+            apply_special(
+                data, {"schema_version": 1, "pairs": []}, empty_history(),
+                {"op": "site_settings", "before": before, "after": requested},
+                "issue-conflict-op-1", 3, datetime.now(timezone.utc), "digest-conflict",
+            )
 
     def test_invalid_enabled_cloudflare_token_is_rejected(self) -> None:
         data = site_data()
