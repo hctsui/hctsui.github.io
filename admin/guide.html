@@ -73,52 +73,12 @@
   </style>
 </head>
 
-<!--
-Legacy documentation test compatibility markers.
-These markers are intentionally non-visible and preserve compatibility with
-older source-contract tests while the displayed manual uses the new structure.
-
-Fixed headings:
-標準工作流程
-欄位、小標註與自動填寫
-排序、頁面與類別
-10. 還原
-疑難排解
-送出前完整檢查
-
-Legacy section IDs:
-id="mental-model"
-id="catalog"
-id="pages-categories"
-id="personal-profile"
-id="ordering"
-id="homepage"
-id="pdf-cv"
-id="dossier"
-id="database"
-id="people"
-id="settings"
-id="notifications"
-id="drafts"
-id="submit"
-id="restore"
-id="automation"
-id="troubleshooting"
-id="checklist"
-
-Legacy exact text contracts:
-2026-08-01 全面更新
-華人羅馬字姓名
-外國姓名
-個人資料」的編輯
-PDF 履歷」的編輯
--->
 <body>
 <main class="page">
   <div class="topbar">
     <div>
       <div class="eyebrow">網站管理 · 操作手冊</div>
-      <span class="updated">2026-08-01 重新整理</span>
+      <span class="updated">2026-08-02 重新整理</span>
     </div>
     <a class="button" href="index.html">返回 Admin</a>
   </div>
@@ -384,10 +344,20 @@ PDF 履歷」的編輯
             <tr><td>一般設定</td><td>個人資料、網站封面、導覽列、頁尾、404 頁面與公開資訊。</td></tr>
             <tr><td>聯絡表單</td><td>Web3Forms Email-Only 或 Cloudflare Worker 橋接模式，以及 Cloudflare Turnstile。</td></tr>
             <tr><td>SEO／OG</td><td>基準網址、網站名稱、分享圖片、各頁標題與描述。</td></tr>
-            <tr><td>流量統計</td><td>Cloudflare Web Analytics 或 Google Analytics 4。</td></tr>
+            <tr><td>流量統計</td><td>Cloudflare Web Analytics 或 Google Analytics 4 的追蹤設定與 Admin 彙整報表。</td></tr>
           </tbody>
         </table>
         <p>設定修改與內容修改一樣先存在本機草稿。涉及金鑰或服務設定時，只填公開端允許使用的值，不要把私密金鑰直接寫進公開 repository。</p>
+        <h3>在 Admin 查看流量報表</h3>
+        <ul>
+          <li>報表沿用 GitHub 管理員登入；同一台裝置登入一次後可保留 14 天。</li>
+          <li>可切換今天、7 天、30 天與 90 天，查看瀏覽量、造訪、每日趨勢、熱門頁面、來源、國家、裝置與瀏覽器。</li>
+          <li>Cloudflare 與 Google 會顯示成同一套介面，原本前往官方完整儀表板的按鈕仍保留。</li>
+          <li>第一次使用要先部署最新版 Worker，再在 Worker 設定唯讀報表憑證。私鑰與 API Token 不得貼進 Admin 或提交到 GitHub。</li>
+          <li>Cloudflare 的公開 Site Token 只負責收集資料；讀報表另需 Account Analytics: Read Token 與 Account ID。</li>
+          <li>Google 的 <code>G-...</code> Measurement ID 只負責追蹤；讀報表另需數字 Property ID，以及已被加入 GA4「檢視者」的服務帳戶。</li>
+        </ul>
+        <div class="callout"><strong>尚未看到資料時：</strong>依畫面提示檢查 Worker 是否已更新、所選提供者的報表權限是否設定完成，以及公開網站是否已啟用該提供者的追蹤。</div>
       </section>
 
       <section id="notifications">
