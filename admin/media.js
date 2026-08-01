@@ -112,10 +112,10 @@
     order:99,
     languages:['en','zh']
   };
-  const PEOPLE_KEY='hctsui-people-draft';
-  const PEOPLE_BACKUP_KEY='hctsui-people-draft-backup-v2';
-  const savedPeopleDraft=localStorage.getItem(PEOPLE_KEY);
-  if(savedPeopleDraft)localStorage.setItem(PEOPLE_BACKUP_KEY,savedPeopleDraft);
+  // Person links use the canonical people.js draft flow, matching the translation database.
+  for(const key of ['hctsui-people-draft-backup-v2','hctsui-people-draft-safety-backup-v1'])localStorage.removeItem(key);
+  for(const key of ['hctsui-people-merge-reloaded','hctsui-people-allow-removal-once'])sessionStorage.removeItem(key);
+  document.querySelectorAll('[data-people-safety]').forEach(node=>node.remove());
 
   function ensureDossierPage(data){
     if(!data||typeof data!=='object')return data;
@@ -229,55 +229,9 @@
     }
   });
 
-  function rowMap(data){
-    return new Map((data?.people||[]).filter(Boolean).map(row=>[String(row.id||''),row]));
-  }
-  function stable(value){return JSON.stringify(value);}
-  function mergePeople(base,data,remote){
-    const before=rowMap(base),local=rowMap(data),latest=rowMap(remote);
-    const result=new Map();
-    const conflicts=[];
-    for(const id of new Set([...before.keys(),...local.keys(),...latest.keys()])){
-      const b=before.get(id),l=local.get(id),r=latest.get(id);
-      const localChanged=stable(l)!==stable(b);
-      const remoteChanged=stable(r)!==stable(b);
-      if(localChanged&&remoteChanged&&stable(l)!==stable(r)){
-        if(!b&&l&&r)result.set(id,{...r,...l,name:{...(r.name||{}),...(l.name||{})}});
-        else conflicts.push(id);
-      }else if(localChanged){
-        if(l)result.set(id,l);
-      }else if(r)result.set(id,r);
-    }
-    return {data:{schema_version:1,people:[...result.values()]},conflicts};
-  }
-
-  setTimeout(async()=>{
-    let saved;
-    try{saved=JSON.parse(localStorage.getItem(PEOPLE_BACKUP_KEY)||'null');}catch{return;}
-    if(!saved?.base||!saved?.data)return;
-    try{
-      const remote=await nativeFetch('../content/people.json',{cache:'no-store'}).then(r=>r.json());
-      if(stable(saved.base)===stable(remote))return;
-      const merged=mergePeople(saved.base,saved.data,remote);
-      if(merged.conflicts.length){
-        if(typeof flash==='function')flash('人名資料已更新；舊草稿已保留備份，部分同一筆資料需要人工確認。');
-        return;
-      }
-      const next=JSON.stringify({base:remote,data:merged.data});
-      if(localStorage.getItem(PEOPLE_KEY)!==next){
-        localStorage.setItem(PEOPLE_KEY,next);
-        if(!sessionStorage.getItem('hctsui-people-merge-reloaded')){
-          sessionStorage.setItem('hctsui-people-merge-reloaded','1');
-          location.reload();
-        }
-      }
-    }catch{}
-  },500);
 })();
 
 /* Load Dossier/category controls after the current layout manager. */
 (function(){if(document.getElementById("dossierCategoryManagerScript"))return;const s=document.createElement("script");s.id="dossierCategoryManagerScript";s.src="dossier-category.js?v=20260801-3";s.async=false;document.body.append(s)})();
 /* Load canonical personal-profile controls. */
 (function(){if(document.getElementById("personalProfileManagerScript"))return;const s=document.createElement("script");s.id="personalProfileManagerScript";s.src="personal-profile.js?v=20260801-3";s.async=false;document.body.append(s)})();
-/* Protect the person-link database from incomplete browser drafts. */
-(function(){if(document.getElementById("peopleSafetyScript"))return;const s=document.createElement("script");s.id="peopleSafetyScript";s.src="people-safety.js?v=20260801-1";s.async=false;document.body.append(s)})();

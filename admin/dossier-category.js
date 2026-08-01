@@ -216,7 +216,8 @@
     const details=document.createElement('details');details.dataset.placementEditor='';details.className='placement-editor';details.open=true;
     details._placementRows=cloneRows(itemId?layoutDraft?.placements?.[itemId]||record?.display_placements:[]);
     details.innerHTML='<summary><strong>額外顯示位置</strong><span class="muted">用下拉選單逐一加入；同一筆資料仍只維護一份。</span></summary><div data-placement-current-list></div><div class="placement-add-row"><select data-placement-add-select aria-label="選擇額外顯示位置"></select><button class="button" type="button" data-placement-add-button>新增引用位置</button></div>';
-    (primary?.closest('.field')||root.querySelector('.form-options')||root).after(details);
+    const formActions=root.querySelector('#saveEditor')?.closest('.actions')||[...root.querySelectorAll('.actions')].at(-1);
+    if(formActions)formActions.before(details);else root.append(details);
     const render=()=>{
       const main=String(primary?.value||record?.category_id||'');
       details._placementRows=cloneRows(details._placementRows).filter(row=>row.category_id!==main&&candidates.some(category=>category.id===row.category_id));

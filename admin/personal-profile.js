@@ -208,7 +208,7 @@
     layoutDraft=normalizeLayoutBundle(layoutDraft);
   }
   function formHtml(){
-    init();return `<h3>個人資料編輯</h3><div class="notice"><strong>這裡是個人資料的唯一來源。</strong><p>儲存並送出後，Name、Affiliation、Position、Email、Website、ORCID、地址與語言會同步到所有引用位置。項目本身統一歸在「個人資料」特殊頁面；PDF 履歷與公開網頁只保留引用。</p></div>
+    init();return `<h3>個人資料編輯</h3>
       ${fieldPair('姓名','name')}${fieldPair('所屬單位','affiliation',true)}${fieldPair('職位','position')}
       <div class="pair-grid"><div class="field"><label>學校信箱</label><input data-profile-field="institutional_email" type="email"></div><div class="field"><label>個人信箱</label><input data-profile-field="personal_email" type="email"></div></div>
       <div class="pair-grid"><div class="field"><label>個人網站</label><input data-profile-field="website" placeholder="https://..."></div><div class="field"><label>ORCID</label><input data-profile-field="orcid" placeholder="0000-0000-0000-0000"></div></div>
@@ -257,15 +257,21 @@
     [...pane.children].forEach(child=>{if(child!==choices)child.hidden=true});
     const box=document.createElement('div');box.dataset.personalProfileGeneralPane='';box.className='site-settings-card personal-profile-general-pane';box.innerHTML=formHtml();pane.append(box);bindProfileForm(box,{generalPanel:true});
   }
+  function removeSettingsIntroHints(){
+    const targets=[
+      ['#generalSettingsPane .settings-intro',/^一般設定(?:\s|$)/],
+      ['#seoSettingsPane .settings-intro',/^SEO／OG(?:\s|$)/],
+    ];
+    for(const [selector,pattern] of targets)document.querySelectorAll(selector).forEach(node=>{if(pattern.test((node.textContent||'').trim()))node.remove()});
+  }
   function injectSettingsButton(){
+    removeSettingsIntroHints();
     document.querySelectorAll('#siteSettingsTab > [data-personal-profile-settings],#generalSettingsPane [data-personal-profile-settings]').forEach(node=>node.remove());
     const pane=document.querySelector('#generalSettingsPane'),choices=pane?.querySelector('.general-settings-choices');if(!pane||!choices)return;
     let button=choices.querySelector('[data-personal-profile-general-choice]');
-    if(!button){
-      button=document.createElement('button');button.type='button';button.className='general-settings-choice';button.dataset.personalProfileGeneralChoice='';
-      button.innerHTML='<strong>個人資料</strong><span>姓名、所屬單位、職位與聯絡資訊</span>';
-      choices.append(button);
-    }
+    if(!button){button=document.createElement('button');button.type='button';button.className='general-settings-choice';button.dataset.personalProfileGeneralChoice=''}
+    if(button.innerHTML!=='<strong>個人資料編輯</strong>')button.innerHTML='<strong>個人資料編輯</strong>';
+    if(choices.firstElementChild!==button)choices.prepend(button);
     if(!button.dataset.profileBound){button.dataset.profileBound='1';button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();showGeneralProfilePanel()})}
     if(!choices.dataset.profileRestoreBound){
       choices.dataset.profileRestoreBound='1';
