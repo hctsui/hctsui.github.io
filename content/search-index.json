@@ -227,6 +227,13 @@
     },
     {
       "language": "en",
+      "title": "Academic Dossier",
+      "description": "A concise overview of research, publications, talks, teaching, and academic background.",
+      "url": "/dossier.html",
+      "kind": "page"
+    },
+    {
+      "language": "en",
       "title": "Activities",
       "description": "Academic visits, presentations, conferences and workshops.",
       "url": "/activities.html",
@@ -298,28 +305,28 @@
     {
       "language": "en",
       "title": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
-      "description": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv:2603.10376",
+      "description": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2603.10376",
       "url": "/publications.html#publication-2603.10376-3",
       "kind": "publication"
     },
     {
       "language": "en",
       "title": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-      "description": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv:2504.18879",
+      "description": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2504.18879",
       "url": "/publications.html#publication-2504.18879-2",
       "kind": "publication"
     },
     {
       "language": "en",
       "title": "On u -Multiple Zeta Values in Positive Characteristic",
-      "description": "Hung-Chun Tsui · arXiv:2604.03618",
+      "description": "Hung-Chun Tsui · arXiv: 2604.03618",
       "url": "/publications.html#publication-2604.03618-4",
       "kind": "publication"
     },
     {
       "language": "en",
       "title": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-      "description": "Ting-Wei Chang and Hung-Chun Tsui · arXiv:2504.15697",
+      "description": "Ting-Wei Chang and Hung-Chun Tsui · arXiv: 2504.15697",
       "url": "/publications.html#publication-2504.15697-1",
       "kind": "publication"
     },
@@ -529,7 +536,7 @@
     {
       "language": "en",
       "title": "Tohoku University",
-      "description": "Sendai, Japan · Supported by Japan–Taiwan Exchange Association · Supported by Japan–Taiwan Exchange Association · Sendai · Japan",
+      "description": "Sendai · Japan · Supported by Japan–Taiwan Exchange Association",
       "url": "/activities.html#visit-2026-07-02-tohoku-university",
       "kind": "visit"
     },
@@ -759,6 +766,13 @@
     },
     {
       "language": "zh",
+      "title": "學術審查資料",
+      "description": "彙整研究、論文、報告、教學與學術背景的審查資料。",
+      "url": "/zh/dossier.html",
+      "kind": "page"
+    },
+    {
+      "language": "zh",
       "title": "學術活動",
       "description": "學術訪問、學術報告、會議與工作坊",
       "url": "/zh/activities.html",
@@ -830,28 +844,28 @@
     {
       "language": "zh",
       "title": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性",
-      "description": "張庭瑋, 崔鴻竣 · arXiv:2504.15697",
+      "description": "張庭瑋, 崔鴻竣 · arXiv: 2504.15697",
       "url": "/zh/publications.html#publication-2504.15697-1",
       "kind": "publication"
     },
     {
       "language": "zh",
       "title": "正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係",
-      "description": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣 · arXiv:2504.18879",
+      "description": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣 · arXiv: 2504.18879",
       "url": "/zh/publications.html#publication-2504.18879-2",
       "kind": "publication"
     },
     {
       "language": "zh",
       "title": "正特徵多重 Eisenstein 級數的代數結構",
-      "description": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣 · arXiv:2603.10376",
+      "description": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣 · arXiv: 2603.10376",
       "url": "/zh/publications.html#publication-2603.10376-3",
       "kind": "publication"
     },
     {
       "language": "zh",
       "title": "正特徵的 u-多重 zeta 值",
-      "description": "崔鴻竣 · arXiv:2604.03618",
+      "description": "崔鴻竣 · arXiv: 2604.03618",
       "url": "/zh/publications.html#publication-2604.03618-4",
       "kind": "publication"
     },
@@ -1061,7 +1075,7 @@
     {
       "language": "zh",
       "title": "東北大學",
-      "description": "仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供 · 本次訪問經費由公益財團法人日本台灣交流協會提供 · 仙台 · 日本",
+      "description": "仙台 · 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供",
       "url": "/zh/activities.html#visit-2026-07-02-tohoku-university",
       "kind": "visit"
     }

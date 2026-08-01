@@ -1917,24 +1917,24 @@
         "zh": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性"
       },
       "title_html": {
-        "en": "Uniqueness of <em>v</em>-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-        "zh": "函數體上 Gross–Koblitz 型公式中 <em>v</em>-進 Gamma 函數的唯一性"
+        "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
+        "zh": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性"
       },
       "authors": {
         "en": "Ting-Wei Chang and Hung-Chun Tsui",
         "zh": "張庭瑋, 崔鴻竣"
       },
       "authors_html": {
-        "en": "Ting-Wei Chang and <strong>Hung-Chun Tsui</strong>",
-        "zh": "張庭瑋, <strong>崔鴻竣</strong>"
+        "en": "Ting-Wei Chang and Hung-Chun Tsui",
+        "zh": "張庭瑋, 崔鴻竣"
       },
       "venue": {
-        "en": "arXiv:2504.15697",
-        "zh": "arXiv:2504.15697"
+        "en": "arXiv: 2504.15697",
+        "zh": "arXiv: 2504.15697"
       },
       "venue_html": {
-        "en": "arXiv:2504.15697",
-        "zh": "arXiv:2504.15697"
+        "en": "arXiv: 2504.15697",
+        "zh": "arXiv: 2504.15697"
       },
       "links": [
         {
@@ -1949,11 +1949,22 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://drive.google.com/file/d/1-7W2H3vzHCM4E3asVgfFNbzuP1ojudmO/view?usp=drive_link"
+          "url": "/files/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf"
         }
       ],
       "group_id": "preprints",
-      "category_id": "publication-preprints"
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv_url": "https://arxiv.org/abs/2504.15697",
+      "pdf_url": "/files/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": ""
     },
     {
       "id": "publication-2504.18879-2",
@@ -1967,24 +1978,24 @@
         "zh": "正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係"
       },
       "title_html": {
-        "en": "On <em>q</em>-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-        "zh": "正特徵任意秩多重 Eisenstein 級數的 <em>q</em>-洗牌關係"
+        "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係"
       },
       "authors": {
         "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
         "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "authors_html": {
-        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
-        "zh": "張庭瑋, 陳松筠, 黃斐浚, <strong>崔鴻竣</strong>"
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
+        "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "venue": {
-        "en": "arXiv:2504.18879",
-        "zh": "arXiv:2504.18879"
+        "en": "arXiv: 2504.18879",
+        "zh": "arXiv: 2504.18879"
       },
       "venue_html": {
-        "en": "arXiv:2504.18879",
-        "zh": "arXiv:2504.18879"
+        "en": "arXiv: 2504.18879",
+        "zh": "arXiv: 2504.18879"
       },
       "links": [
         {
@@ -1992,18 +2003,29 @@
             "en": "arXiv",
             "zh": "arXiv"
           },
-          "url": "https://arxiv.org/abs/2504.18879v3"
+          "url": "https://arxiv.org/abs/2504.18879"
         },
         {
           "label": {
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://drive.google.com/file/d/1fzSgTiE4V_rNHtDgoTLtZVMoaWrTHBAx/view?usp=drive_link"
+          "url": "/files/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf"
         }
       ],
       "group_id": "preprints",
-      "category_id": "publication-preprints"
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv_url": "https://arxiv.org/abs/2504.18879",
+      "pdf_url": "/files/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": ""
     },
     {
       "id": "publication-2603.10376-3",
@@ -2025,16 +2047,16 @@
         "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "authors_html": {
-        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>",
-        "zh": "張庭瑋, 陳松筠, 黃斐浚, <strong>崔鴻竣</strong>"
+        "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
+        "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "venue": {
-        "en": "arXiv:2603.10376",
-        "zh": "arXiv:2603.10376"
+        "en": "arXiv: 2603.10376",
+        "zh": "arXiv: 2603.10376"
       },
       "venue_html": {
-        "en": "arXiv:2603.10376",
-        "zh": "arXiv:2603.10376"
+        "en": "arXiv: 2603.10376",
+        "zh": "arXiv: 2603.10376"
       },
       "links": [
         {
@@ -2049,7 +2071,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://drive.google.com/file/d/1odZc8AKcOgvHsn5gvIwKg9MWMdvJ6GcJ/view?usp=sharing"
+          "url": "/files/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf"
         }
       ],
       "homepage_title_html": {
@@ -2061,7 +2083,18 @@
         "zh": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and <strong>Hung-Chun Tsui</strong>"
       },
       "group_id": "preprints",
-      "category_id": "publication-preprints"
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv_url": "https://arxiv.org/abs/2603.10376",
+      "pdf_url": "/files/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": ""
     },
     {
       "id": "publication-2604.03618-4",
@@ -2075,7 +2108,7 @@
         "zh": "正特徵的 u-多重 zeta 值"
       },
       "title_html": {
-        "en": "On <em>u</em>-Multiple Zeta Values in Positive Characteristic",
+        "en": "On u -Multiple Zeta Values in Positive Characteristic",
         "zh": "正特徵的 u-多重 zeta 值"
       },
       "authors": {
@@ -2083,16 +2116,16 @@
         "zh": "崔鴻竣"
       },
       "authors_html": {
-        "en": "<strong>Hung-Chun Tsui</strong>",
-        "zh": "<strong>崔鴻竣</strong>"
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
       },
       "venue": {
-        "en": "arXiv:2604.03618",
-        "zh": "arXiv:2604.03618"
+        "en": "arXiv: 2604.03618",
+        "zh": "arXiv: 2604.03618"
       },
       "venue_html": {
-        "en": "arXiv:2604.03618",
-        "zh": "arXiv:2604.03618"
+        "en": "arXiv: 2604.03618",
+        "zh": "arXiv: 2604.03618"
       },
       "links": [
         {
@@ -2107,7 +2140,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://drive.google.com/file/d/18W5VfIkiHStD1tUsgJRjtaTscF8MsbE6/view?usp=sharing"
+          "url": "/files/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
         }
       ],
       "homepage_title_html": {
@@ -2119,7 +2152,18 @@
         "zh": "<strong>Hung-Chun Tsui</strong>"
       },
       "group_id": "preprints",
-      "category_id": "publication-preprints"
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv_url": "https://arxiv.org/abs/2604.03618",
+      "pdf_url": "/files/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": ""
     }
   ],
   "teaching": [

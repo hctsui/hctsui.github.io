@@ -2,6 +2,15 @@
   "schema_version": 1,
   "people": [
     {
+      "id": "new-person",
+      "name": {
+        "en": "Yen-Tsung Chen",
+        "zh": "陳彥宗"
+      },
+      "aliases": [],
+      "url": "https://sites.google.com/view/ytchen-math"
+    },
+    {
       "id": "chieh-yu-chang",
       "name": {
         "en": "Chieh-Yu Chang",
