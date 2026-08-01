@@ -237,15 +237,19 @@ def layout_expected_matches(current,expected):
   if str(left.get('category_id') or '')!=str(right.get('category_id') or ''):return False
   if int(left.get('order',999999))!=int(right.get('order',999999)):return False
  return True
+_MISSING_SETTING=object()
+def _copy_setting(value):
+ return value if value is _MISSING_SETTING else copy.deepcopy(value)
 def merge_site_settings(current,expected,requested,path=()):
  """Three-way merge stale Admin settings without losing newer unrelated values."""
+ if requested==expected:return _copy_setting(current)
+ if current==expected or current==requested:return _copy_setting(requested)
  if isinstance(current,dict) and isinstance(expected,dict) and isinstance(requested,dict):
   merged={}
   for key in current.keys()|expected.keys()|requested.keys():
-   merged[key]=merge_site_settings(current.get(key),expected.get(key),requested.get(key),path+(str(key),))
+   value=merge_site_settings(current.get(key,_MISSING_SETTING),expected.get(key,_MISSING_SETTING),requested.get(key,_MISSING_SETTING),path+(str(key),))
+   if value is not _MISSING_SETTING:merged[key]=value
   return merged
- if requested==expected:return copy.deepcopy(current)
- if current==expected or current==requested:return copy.deepcopy(requested)
  field='.'.join(path) or 'site_settings'
  raise ValueError(f'Conflict: website setting {field} changed after Admin loaded.')
 def apply_special(data,trans,h,op,hid,issue,n,rd,people=None,arxiv_store=None,notifications=None):
