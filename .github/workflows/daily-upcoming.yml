@@ -31,19 +31,25 @@ jobs:
       - name: Rebuild using today's date
         run: |
           python3 -m unittest discover -s tests
-          python3 tools/build_site.py
-          python3 tools/build_cv.py
-          python3 tools/render_grouped_sections.py
+          python3 tools/run_with_extensions.py tools/build_site.py
+          python3 tools/build_dossier.py
+          python3 tools/inject_prefetch.py
+          python3 tools/inject_profile_assets.py
+          python3 tools/build_media_manifest.py
+          python3 tools/build_search_index.py
+          python3 tools/run_with_extensions.py tools/build_cv.py
+          python3 tools/run_with_extensions.py tools/render_grouped_sections.py
           python3 tools/update_cv_links.py
-          python3 tools/build_catalog.py
+          python3 tools/run_with_extensions.py tools/build_catalog.py
           python3 tools/validate_translations.py
-          python3 tools/validate_site.py
+          python3 tools/run_validate_site.py
 
       - name: Detect whether generated content changed
         id: changes
         run: |
           if [ -z "$(git status --porcelain -- \
             CONTENT-CATALOG.md \
+            content/media.json content/search-index.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html')" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -58,17 +64,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CONTENT-CATALOG.md \
+            content/media.json content/search-index.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html'
           git commit -m "Rebuild website and both CVs"
           git push origin HEAD:cms
-
-  deploy-site:
-    if: needs.update-upcoming.outputs.changed == 'true'
-    needs: update-upcoming
-    permissions:
-      actions: read
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/deploy-cms-pages.yml

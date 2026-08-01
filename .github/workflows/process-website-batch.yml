@@ -122,16 +122,6 @@ jobs:
             --repo "${{ github.repository }}" \
             || echo "::warning::資料已寫入，但無法自動關閉 Issue。"
 
-  deploy-site:
-    if: needs.update-site.result == 'success'
-    needs: update-site
-    permissions:
-      actions: read
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/deploy-cms-pages.yml
-
   explain-failure:
     if: always() && needs.update-site.result == 'failure'
     needs: update-site
