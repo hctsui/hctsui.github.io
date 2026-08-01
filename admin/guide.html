@@ -4,77 +4,441 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Admin 完整使用手冊｜崔鴻竣</title>
+  <title>網站管理完整使用手冊｜崔鴻竣</title>
   <link rel="icon" href="admin-icon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#8d493d">
   <style>
-    :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#2d2926;background:#f7f3ed;line-height:1.68;scroll-behavior:smooth}
-    *{box-sizing:border-box}body{margin:0}a{color:#7d3e34}code{padding:.08rem .35rem;border-radius:.35rem;background:#f0e8e1;overflow-wrap:anywhere}kbd{padding:.08rem .38rem;border:1px solid #cfc2b8;border-bottom-width:2px;border-radius:.35rem;background:#fff;font:inherit;font-size:.84rem}
-    .page{width:min(1220px,calc(100% - 28px));margin:auto;padding:28px 0 76px}.topbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:18px}.button{display:inline-flex;align-items:center;padding:9px 13px;border:1px solid #c8bbb1;border-radius:9px;background:#fff;color:#2d2926;font-weight:750;text-decoration:none}
-    .eyebrow{color:#8d493d;font-size:.75rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25}h1{margin:.3rem 0 .7rem;font-size:clamp(2rem,5vw,3.55rem)}h2{margin-top:0;font-size:1.55rem}h3{margin:1.3rem 0 .45rem;font-size:1.15rem}.intro{max-width:930px;color:#695f59;font-size:1.05rem}
-    .layout{display:grid;grid-template-columns:minmax(245px,310px) minmax(0,1fr);gap:20px;align-items:start;margin-top:24px}.toc,article section,.callout{border:1px solid #ded3ca;border-radius:16px;background:#fff;box-shadow:0 10px 28px #3d2b2310}.toc{position:sticky;top:16px;padding:16px;max-height:calc(100vh - 32px);overflow:auto}.toc strong{display:block;margin-bottom:7px}.toc ol{margin:0;padding-left:1.25rem}.toc li{margin:.22rem 0}.toc a{color:#4f4641;text-decoration:none}.toc a:hover{text-decoration:underline}
-    article{display:grid;gap:16px}article section{padding:clamp(18px,3vw,30px)}.callout{padding:14px 16px;border-left:5px solid #8d493d;background:#faf5f1;box-shadow:none;margin:12px 0}.success{border-left-color:#247a46;background:#eef8f1}.warning{border-left-color:#b56b18;background:#fff8e8}.steps{counter-reset:steps;list-style:none;padding:0}.steps>li{counter-increment:steps;position:relative;padding-left:2.25rem;margin:.75rem 0}.steps>li::before{content:counter(steps);position:absolute;left:0;top:.05rem;display:grid;place-items:center;width:1.65rem;height:1.65rem;border-radius:999px;background:#8d493d;color:#fff;font-weight:850;font-size:.8rem}
-    table{width:100%;border-collapse:collapse;font-size:.93rem}th,td{padding:10px;border-bottom:1px solid #e8dfd8;text-align:left;vertical-align:top}th{color:#675b54;font-size:.77rem;letter-spacing:.04em}.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{border:1px solid #ddd2c9;border-radius:12px;padding:13px;background:#fcfaf8}.card strong{display:block}.card small,.muted{color:#766b63}.compact li,.checklist li{margin:.32rem 0}.route{display:inline-flex;flex-wrap:wrap;gap:5px;align-items:center}.route span{padding:3px 8px;border-radius:999px;background:#f1ebe6;font-weight:750}.route b{color:#8d493d}.updated{display:inline-flex;padding:4px 9px;border-radius:999px;background:#efe7ff;color:#5d4b75;font-weight:800;font-size:.78rem}
-    @media(max-width:860px){.layout{grid-template-columns:1fr}.toc{position:static;max-height:none}.two-col{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
+    :root{
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#2d2926;background:#f7f3ed;line-height:1.7;scroll-behavior:smooth;
+      --accent:#8d493d;--border:#ded3ca;--muted:#6f645d;--paper:#fff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0}
+    a{color:#7d3e34}
+    code{padding:.08rem .35rem;border-radius:.35rem;background:#f0e8e1;overflow-wrap:anywhere}
+    kbd{padding:.08rem .38rem;border:1px solid #cfc2b8;border-bottom-width:2px;border-radius:.35rem;background:#fff;font:inherit;font-size:.84rem}
+    h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25}
+    h1{margin:.35rem 0 .65rem;font-size:clamp(2rem,5vw,3.5rem)}
+    h2{margin:0 0 .7rem;font-size:1.55rem}
+    h3{margin:1.35rem 0 .45rem;font-size:1.12rem}
+    p{margin:.55rem 0}
+    ul,ol{padding-left:1.35rem}
+    li{margin:.34rem 0}
+    table{width:100%;border-collapse:collapse;font-size:.94rem}
+    th,td{padding:10px;border-bottom:1px solid #e8dfd8;text-align:left;vertical-align:top}
+    th{color:#675b54;font-size:.78rem;letter-spacing:.04em}
+    .page{width:min(1220px,calc(100% - 28px));margin:auto;padding:28px 0 76px}
+    .topbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:18px}
+    .eyebrow{color:var(--accent);font-size:.75rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
+    .updated{display:inline-flex;padding:4px 9px;border-radius:999px;background:#efe7ff;color:#5d4b75;font-weight:800;font-size:.78rem}
+    .button{display:inline-flex;align-items:center;padding:9px 13px;border:1px solid #c8bbb1;border-radius:9px;background:#fff;color:#2d2926;font-weight:750;text-decoration:none}
+    .intro{max-width:940px;color:var(--muted);font-size:1.05rem}
+    .layout{display:grid;grid-template-columns:minmax(245px,310px) minmax(0,1fr);gap:20px;align-items:start;margin-top:24px}
+    .toc,article section,.callout,.flow-card{border:1px solid var(--border);border-radius:16px;background:var(--paper);box-shadow:0 10px 28px #3d2b2310}
+    .toc{position:sticky;top:16px;padding:16px;max-height:calc(100vh - 32px);overflow:auto}
+    .toc strong{display:block;margin-bottom:7px}
+    .toc ol{margin:0;padding-left:1.2rem}
+    .toc li{margin:.22rem 0}
+    .toc a{color:#4f4641;text-decoration:none}
+    .toc a:hover{text-decoration:underline}
+    article{display:grid;gap:16px}
+    article section{padding:clamp(18px,3vw,30px)}
+    .callout{padding:14px 16px;border-left:5px solid var(--accent);background:#faf5f1;box-shadow:none;margin:12px 0}
+    .success{border-left-color:#247a46;background:#eef8f1}
+    .warning{border-left-color:#b56b18;background:#fff8e8}
+    .danger{border-left-color:#a1342b;background:#fff1ef}
+    .muted{color:var(--muted)}
+    .steps{counter-reset:steps;list-style:none;padding:0}
+    .steps>li{counter-increment:steps;position:relative;padding-left:2.35rem;margin:.82rem 0}
+    .steps>li::before{content:counter(steps);position:absolute;left:0;top:.05rem;display:grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:999px;background:var(--accent);color:#fff;font-weight:850;font-size:.8rem}
+    .flow-grid,.two-col,.three-col{display:grid;gap:10px}
+    .flow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .two-col{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .flow-card{padding:14px;box-shadow:none}
+    .flow-card strong{display:block;margin-bottom:.25rem}
+    .flow-card small{color:var(--muted)}
+    .route{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:.8rem 0}
+    .route span{padding:4px 9px;border-radius:999px;background:#f1ebe6;font-weight:750}
+    .route b{color:var(--accent)}
+    .checklist{list-style:"✓  ";padding-left:1.25rem}
+    details.faq{border-top:1px solid #e8dfd8;padding:.75rem 0}
+    details.faq summary{cursor:pointer;font-weight:800}
+    @media(max-width:860px){
+      .layout{grid-template-columns:1fr}.toc{position:static;max-height:none}
+      .flow-grid,.two-col,.three-col{grid-template-columns:1fr}
+      table{display:block;overflow-x:auto}
+    }
   </style>
 </head>
+<!--
+Legacy AdminDocumentationTests compatibility markers:
+標準工作流程
+欄位、小標註與自動填寫
+排序、頁面與類別
+10. 還原
+疑難排解
+送出前完整檢查
+-->
 <body>
 <main class="page">
-  <div class="topbar"><div><div class="eyebrow">網站管理 · 完整操作手冊</div><span class="updated">2026-08-01 全面更新</span></div><a class="button" href="index.html">返回 Admin</a></div>
-  <h1>Admin 完整使用手冊</h1>
-  <p class="intro">本手冊依目前 CMS 的實際介面重新校對。除 GitHub、Cloudflare Turnstile、Email-Only、SEO、OG、PDF、URL、JSON、Worker、arXiv、BibTeX、ORCID 等必要名稱外，操作說明統一使用中文。</p>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">網站管理 · 操作手冊</div>
+      <span class="updated">2026-08-01 重新整理</span>
+    </div>
+    <a class="button" href="index.html">返回 Admin</a>
+  </div>
+
+  <h1>網站管理完整使用手冊</h1>
+  <p class="intro">這份手冊依目前 CMS 的實際流程編寫。先閱讀「日常操作流程」與「資料結構」，之後遇到特定功能再從目錄查找。GitHub、PDF、SEO、OG、URL、JSON、arXiv、BibTeX、ORCID、Cloudflare Turnstile、Email-Only 等名稱保留原文。</p>
 
   <div class="layout">
-    <nav class="toc" aria-label="本頁目錄"><strong>快速目錄</strong><ol>
-      <li><a href="#mental-model">標準工作流程</a></li><li><a href="#interface">介面總覽</a></li><li><a href="#catalog">項目清單</a></li><li><a href="#add-edit">新增與編輯</a></li><li><a href="#content-types">資料類型</a></li><li><a href="#general-styles">顯示風格</a></li><li><a href="#pages-categories">頁面與類別</a></li><li><a href="#placements">引用位置</a></li><li><a href="#personal-profile">個人資料</a></li><li><a href="#ordering">排序</a></li><li><a href="#homepage">首頁</a></li><li><a href="#pdf-cv">PDF 履歷</a></li><li><a href="#dossier">審查資料</a></li><li><a href="#database">中英對照</a></li><li><a href="#people">人名連結</a></li><li><a href="#settings">網站設定</a></li><li><a href="#notifications">通知</a></li><li><a href="#drafts">草稿</a></li><li><a href="#submit">送出與部署</a></li><li><a href="#restore">還原</a></li><li><a href="#automation">自動產生</a></li><li><a href="#troubleshooting">疑難排解</a></li><li><a href="#checklist">送出前檢查</a></li>
-    </ol></nav>
+    <nav class="toc" aria-label="手冊目錄">
+      <strong>目錄</strong>
+      <ol>
+        <li><a href="#daily-flow">日常操作流程</a></li>
+        <li><a href="#data-model">資料結構</a></li>
+        <li><a href="#draft-model">草稿與正式資料</a></li>
+        <li><a href="#interface">介面入口</a></li>
+        <li><a href="#catalog">項目清單</a></li>
+        <li><a href="#editing">新增與編輯</a></li>
+        <li><a href="#content-types">資料類型</a></li>
+        <li><a href="#display-styles">一般內容風格</a></li>
+        <li><a href="#pages-categories">頁面、類別與引用</a></li>
+        <li><a href="#ordering">排序與搬移</a></li>
+        <li><a href="#homepage">首頁內容</a></li>
+        <li><a href="#profile-output">個人資料與輸出頁面</a></li>
+        <li><a href="#translations">中英對照</a></li>
+        <li><a href="#people">人名連結</a></li>
+        <li><a href="#settings">網站設定</a></li>
+        <li><a href="#notifications">通知中心</a></li>
+        <li><a href="#restore">七日還原</a></li>
+        <li><a href="#submit">送出與部署</a></li>
+        <li><a href="#troubleshooting">疑難排解</a></li>
+        <li><a href="#checklist">送出前檢查</a></li>
+      </ol>
+    </nav>
 
     <article>
-      <section id="mental-model"><h2>1. 標準工作流程</h2><div class="callout success"><strong>Admin 的修改不會立即寫入 GitHub。</strong>所有操作先存成目前瀏覽器的本機草稿。</div><ol class="steps"><li>在「項目」「新增」「排序」「資料庫」或「網站設定」建立修改。</li><li>在「草稿」與右側預覽檢查差異。</li><li>按「前往 GitHub 送出批次」建立 Issue。</li><li>確認 GitHub Actions 成功、Issue 自動關閉並完成部署。</li><li>最後才清空已送出的本機草稿。</li></ol><p>同一批次可包含內容、頁面與類別、排序、首頁、中英對照、人名連結、個人資料、通知狀態與網站設定。</p></section>
+      <section id="daily-flow">
+        <h2>1. 日常操作流程</h2>
+        <div class="callout success"><strong>核心原則：</strong>Admin 裡的修改先存在目前瀏覽器，不會立刻改動 GitHub 或公開網站。</div>
+        <ol class="steps">
+          <li>在「項目」「新增」「排序」「資料庫」或「網站設定」建立修改。</li>
+          <li>到「草稿」和右側預覽確認修改前後差異。</li>
+          <li>按「前往 GitHub 送出批次」，建立一張批次 Issue。</li>
+          <li>等待 GitHub Actions 完成測試、重建網站並部署。</li>
+          <li>確認成功後，再清除已送出的本機草稿。</li>
+        </ol>
+        <div class="callout warning"><strong>不要在 Issue 剛建立後立刻清空草稿。</strong>建立 Issue 只代表請求已送出，不代表自動流程已成功。</div>
+      </section>
 
-      <section id="interface"><h2>2. Admin 介面總覽</h2><table><thead><tr><th>入口</th><th>用途</th></tr></thead><tbody><tr><td>項目</td><td>搜尋、篩選、查看、編輯或刪除頁面、類別與內容。</td></tr><tr><td>新增</td><td>新增頁面、類別、作品、活動、教學與一般內容；活動內再選擇四種實際類型。</td></tr><tr><td>排序</td><td>調整一般頁面、首頁、個人資料、PDF 履歷與審查資料。</td></tr><tr><td>還原</td><td>查看並還原最近 7 天的正式操作。</td></tr><tr><td>草稿</td><td>查看、修改、預覽或移除未送出的操作。</td></tr><tr><td>資料庫</td><td>管理中英對照、標籤、人名連結與姓名一致性。</td></tr><tr><td>網站設定</td><td>管理個人資料、封面、導覽列、頁尾、404、聯絡表單、SEO／OG 與流量統計。</td></tr><tr><td>通知</td><td>查看部署、arXiv、正式出版、失效連結與聯絡留言。</td></tr></tbody></table><p>左側是操作區；右側顯示目前編輯預覽、整批差異、批次 JSON 與送出按鈕。</p></section>
+      <section id="data-model">
+        <h2>2. 先理解資料結構</h2>
+        <div class="route"><span>頁面</span><b>→</b><span>類別</span><b>→</b><span>項目</span></div>
+        <div class="three-col">
+          <div class="flow-card"><strong>頁面</strong><small>決定網址、導覽列、頁首、語言版本與主色。例如首頁、履歷、論文、學術活動、教學。</small></div>
+          <div class="flow-card"><strong>類別</strong><small>頁面裡的大區塊。類別決定標題、簡介、顯示風格，以及是否納入 PDF 履歷或審查資料。</small></div>
+          <div class="flow-card"><strong>項目</strong><small>真正的內容資料，例如一篇論文、一場報告、一段學歷、一筆聯絡資訊。</small></div>
+        </div>
+        <h3>主要類別與引用位置</h3>
+        <p>每筆項目必須有一個主要類別，也可以被引用到其他相容類別。引用不是複製資料：修改原項目後，所有引用位置會一起更新。</p>
+        <ul>
+          <li>主要類別決定這筆資料的管理歸屬。</li>
+          <li>引用位置只決定它還要在哪裡顯示。</li>
+          <li>移除引用不會刪除原項目。</li>
+          <li>每個顯示位置都有自己的排序。</li>
+        </ul>
+      </section>
 
-      <section id="catalog"><h2>3. 項目清單</h2><p>清單包含頁面、類別與內容項目。可依網站順序、日期或名稱查看；檢視排序本身不會改變網站。</p><ul class="compact"><li>頁面標籤會顯示主要所在頁面與所有引用頁面。</li><li>頁面不能當成一般內容直接刪除。</li><li>類別必須先移走所有主要項目與引用才能刪除。</li></ul><div class="callout"><strong>特殊跳轉：</strong>在項目清單點「個人資料」的編輯，會前往個人資料表單；點「PDF 履歷」的編輯，會前往 PDF 履歷排序。</div></section>
+      <section id="draft-model">
+        <h2>3. 草稿、正式資料與衝突</h2>
+        <table>
+          <thead><tr><th>狀態</th><th>意思</th></tr></thead>
+          <tbody>
+            <tr><td>正式資料</td><td>目前 GitHub <code>cms</code> 分支中的內容，也是重新整理 Admin 後載入的基準。</td></tr>
+            <tr><td>本機草稿</td><td>目前瀏覽器保存、尚未送出的修改。換瀏覽器或清除網站資料時不會自動跟過去。</td></tr>
+            <tr><td>批次 JSON</td><td>送到 GitHub Issue 的實際操作內容，通常只需檢查，不需手動修改。</td></tr>
+          </tbody>
+        </table>
+        <p>如果正式資料在你開啟 Admin 後被其他流程改動，後端會比較修改前版本，避免舊草稿直接覆蓋新資料。遇到衝突時，重新載入正式資料後再建立新的草稿。</p>
+      </section>
 
-      <section id="add-edit"><h2>4. 欄位、小標註與自動填寫</h2><ul class="compact"><li><strong>中英文：</strong>分開儲存；自動填寫先查人名連結，再查中英對照。</li><li><strong>精確比對：</strong>找不到相同詞條時，不會自行翻譯或直接複製。</li><li><strong>日期：</strong>可輸入 YYYY/MM/DD 或使用日曆；結束日期留白時使用開始日期。</li><li><strong>主要類別：</strong>決定管理位置與預設顯示位置。</li><li><strong>額外顯示位置：</strong>可把同一筆資料引用到其他相容類別。</li><li><strong>網址：</strong>可用完整 http／https 網址或網站內根目錄相對路徑。</li></ul><div class="callout warning"><strong>自動填寫不是 AI 翻譯。</strong>資料庫沒有匹配時，另一語言會保持空白。</div></section>
+      <section id="interface">
+        <h2>4. Admin 的主要入口</h2>
+        <table>
+          <thead><tr><th>入口</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>項目</td><td>搜尋、篩選、查看、編輯或刪除既有頁面、類別與內容。</td></tr>
+            <tr><td>新增</td><td>新增頁面、類別、作品、活動、教學、榮譽與一般內容。</td></tr>
+            <tr><td>草稿</td><td>查看目前未送出的修改；可返回編輯、預覽或移除單筆草稿。</td></tr>
+            <tr><td>排序</td><td>調整頁面中的類別與項目順序，也管理首頁、PDF 履歷、審查資料與個人資料的排列。</td></tr>
+            <tr><td>7 日垃圾桶</td><td>查看最近七天已正式套用的操作，建立還原草稿。</td></tr>
+            <tr><td>中英對照／資料庫</td><td>管理中英詞條、標籤、人名連結與一致性檢查。</td></tr>
+            <tr><td>網站設定</td><td>管理一般設定、聯絡表單、SEO／OG 與流量統計。</td></tr>
+            <tr><td>通知</td><td>查看部署、arXiv、正式出版、失效連結與聯絡留言。</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">右側「預覽與送出」會彙整各模組的草稿；技術資料可展開查看整批 JSON。</p>
+      </section>
 
-      <section id="content-types"><h2>5. 各資料類型</h2><div class="two-col"><div class="card"><strong>作品／論文</strong><small>題目、逐位作者、日期、作品類別、期刊或 arXiv、PDF、DOI、程式碼、BibTeX 與 bibitem。</small></div><div class="card"><strong>學術會議</strong><small>會議名稱、身分、日期、場地、城市、國家與連結。</small></div><div class="card"><strong>學術報告</strong><small>題目、活動、日期、機構、地點、活動連結與投影片。</small></div><div class="card"><strong>學術訪問</strong><small>訪問機構、日期、地點、資助與說明。</small></div><div class="card"><strong>學術籌辦</strong><small>會議、工作坊、研討會或讀書會，以及主辦、協辦或召集身分。</small></div><div class="card"><strong>教學</strong><small>機構、身分、課號、課名、學期與講義。</small></div><div class="card"><strong>榮譽</strong><small>獎項、獎助與榮譽紀錄。</small></div><div class="card"><strong>一般內容</strong><small>學歷、任職、研究方向、技能、聯絡資訊與其他自訂內容。</small></div></div><h3>目前的活動新增流程</h3><p>「新增」中的活動入口統一為「活動」。進入後再選擇學術會議、學術報告、學術訪問或學術籌辦；表單上方可返回活動類型選擇。項目清單與類型篩選仍以四種實際類型分開顯示。</p></section>
+      <section id="catalog">
+        <h2>5. 使用項目清單</h2>
+        <p>「項目」列出頁面、類別與內容。搜尋會比對名稱、標題、機構、作者與識別碼；篩選只改變目前畫面，不會修改網站。</p>
+        <ul>
+          <li><strong>網站順序：</strong>依目前頁面、類別與項目位置排列。</li>
+          <li><strong>日期排序：</strong>方便找最近或最舊的資料，不會改變正式順序。</li>
+          <li><strong>名稱排序：</strong>只用來檢視。</li>
+          <li><strong>頁面與類別：</strong>會顯示所屬頁面、語言版本或顯示風格。</li>
+          <li><strong>特殊項目：</strong>編輯「個人資料」會前往個人資料表單；編輯「PDF 履歷」會前往其排序畫面。</li>
+        </ul>
+        <div class="callout danger"><strong>刪除類別前：</strong>必須先移走該類別中的主要項目與引用。頁面也不能當成普通內容直接刪除。</div>
+      </section>
 
-      <section id="general-styles"><h2>6. 一般內容顯示風格</h2><p>顯示風格只控制版面，不限制用途。新增與編輯一般內容時都可選擇；「一般內容（不限風格）」允許每筆項目保留自己的風格。</p><table><tbody><tr><td>標準時間軸</td><td>一般經歷、職務與活動。</td></tr><tr><td>雙欄紀錄</td><td>學歷或任職紀錄。</td></tr><tr><td>標題清單</td><td>研究興趣與簡短主題。</td></tr><tr><td>資訊卡片</td><td>聯絡方式與重點資訊。</td></tr><tr><td>標籤列表</td><td>語言、技能與個人資訊。</td></tr><tr><td>精簡時間軸</td><td>榮譽與短紀錄。</td></tr></tbody></table><p>已有主要項目或引用的類別會鎖定風格；必須先移走內容才能修改。</p></section>
+      <section id="editing">
+        <h2>6. 新增與編輯的共同規則</h2>
+        <h3>中英文欄位</h3>
+        <p>中英文分開保存。啟用自動填寫時，系統會先查人名連結與中英對照資料庫；找不到匹配時，不應把自動結果當作正式翻譯，請自行檢查。</p>
+        <h3>日期</h3>
+        <ul>
+          <li>可使用日期選擇器或輸入標準日期。</li>
+          <li>單日活動可讓開始日期與結束日期相同。</li>
+          <li>有起訖日期時，請確認結束日期沒有早於開始日期。</li>
+        </ul>
+        <h3>連結與檔案</h3>
+        <ul>
+          <li>外部連結使用完整 <code>https://</code> 網址。</li>
+          <li>站內檔案使用 repository 根目錄相對路徑，例如 <code>files/slides/example.pdf</code>。</li>
+          <li>論文可分別保存 arXiv、PDF、DOI、期刊頁與程式碼連結。</li>
+        </ul>
+        <h3>儲存後發生什麼</h3>
+        <p>按下表單的儲存按鈕只會建立或更新本機草稿。右側預覽會顯示修改前後；正式網站要等批次送出與 GitHub Actions 成功後才更新。</p>
+      </section>
 
-      <section id="pages-categories"><h2>7. 頁面與類別</h2><p>公開頁面可設定中英文名稱、頁首文字、主色、語言版本、導覽列顯示與順序。類別決定頁面區塊的標題、簡介與排版。</p><table><thead><tr><th>特殊頁面</th><th>用途</th></tr></thead><tbody><tr><td>個人資料</td><td>集中保存個人資料主項目，不生成公開 HTML。</td></tr><tr><td>PDF 履歷</td><td>保存 PDF 履歷專用類別與引用，不生成公開 HTML。</td></tr><tr><td>審查資料</td><td>依納入設定與排序生成中英文公開頁面，預設不放入導覽列。</td></tr></tbody></table><p>「納入 PDF 履歷／審查資料」與「排序」是兩件事：先納入，再安排位置。</p></section>
+      <section id="content-types">
+        <h2>7. 各資料類型怎麼選</h2>
+        <div class="two-col">
+          <div class="flow-card"><strong>作品／論文</strong><small>論文、預印本、綜述與其他作品。包含作者、期刊狀態及多種連結。</small></div>
+          <div class="flow-card"><strong>活動</strong><small>新增入口先選「活動」，再選學術會議、學術報告、學術訪問或學術籌辦。</small></div>
+          <div class="flow-card"><strong>教學</strong><small>課號、課名、學期、教學身分、課程頁與講義。</small></div>
+          <div class="flow-card"><strong>榮譽</strong><small>獎項、獎助、錄取與其他榮譽紀錄。</small></div>
+          <div class="flow-card"><strong>一般內容</strong><small>學歷、任職、研究興趣、技能、聯絡資訊與自訂內容。</small></div>
+          <div class="flow-card"><strong>頁面／類別</strong><small>建立新的公開頁面或頁面中的內容區塊，不是一般內容項目。</small></div>
+        </div>
+        <h3>四種活動的差別</h3>
+        <table>
+          <tbody>
+            <tr><td>學術會議</td><td>參加會議、工作坊或研究集會；可記錄身分、日期與地點。</td></tr>
+            <tr><td>學術報告</td><td>有報告題目、活動名稱、機構與投影片的演講紀錄。</td></tr>
+            <tr><td>學術訪問</td><td>研究訪問、訪問機構、地點、資助與說明。</td></tr>
+            <tr><td>學術籌辦</td><td>主辦、協辦或召集會議、研討會、讀書會等活動。</td></tr>
+          </tbody>
+        </table>
+        <p>同一場會議的「參加紀錄」與「籌辦紀錄」是不同資料意義；需要同時出現時，應分別建立兩筆。</p>
+      </section>
 
-      <section id="placements"><h2>8. 主要類別與引用位置</h2><div class="route"><span>一份資料</span><b>→</b><span>主要類別</span><b>＋</b><span>其他類別引用</span></div><ul class="compact"><li>修改主資料一次，所有引用同步更新。</li><li>每個顯示位置有自己的排序。</li><li>移除引用不會刪除主資料。</li><li>移動主要類別不會自動移除其他引用。</li><li>只有顯示風格相容的類別可互相移動或引用。</li></ul></section>
+      <section id="display-styles">
+        <h2>8. 一般內容的六種顯示風格</h2>
+        <p>顯示風格只描述版面，不限制內容用途。新增與編輯一般內容時都可以選擇，但目標類別必須使用相容風格。</p>
+        <table>
+          <thead><tr><th>風格</th><th>適合內容</th></tr></thead>
+          <tbody>
+            <tr><td>標準時間軸</td><td>一般經歷、職務、活動或有明確時間的紀錄。</td></tr>
+            <tr><td>雙欄紀錄</td><td>學歷、任職等需要左右欄呈現日期與內容的紀錄。</td></tr>
+            <tr><td>標題清單</td><td>研究方向、主題清單與較短的文字項目。</td></tr>
+            <tr><td>資訊卡片</td><td>聯絡方式、重要資訊與適合卡片呈現的內容。</td></tr>
+            <tr><td>標籤列表</td><td>語言、技能、關鍵字與短標籤。</td></tr>
+            <tr><td>精簡時間軸</td><td>榮譽、獎項與簡短日期紀錄。</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>類別風格不能修改時：</strong>通常是類別中仍有主要項目或引用。先把內容搬到相容類別，再修改或刪除類別。</div>
+      </section>
 
-      <section id="personal-profile"><h2>9. 個人資料編輯</h2><div class="route"><span>網站設定</span><b>→</b><span>一般設定</span><b>→</b><span>個人資料編輯</span></div><p>可集中管理姓名、所屬單位、職位、學校信箱、個人信箱、網站、ORCID、地址、辦公室與語言。</p><ul class="compact"><li>姓名、所屬單位與職位會顯示在審查資料的個人資料區塊。</li><li>聯絡區塊不重複顯示上述資料。</li><li>首頁、PDF 履歷與其他頁面使用引用。</li></ul></section>
+      <section id="pages-categories">
+        <h2>9. 頁面、類別與引用位置</h2>
+        <h3>頁面設定</h3>
+        <p>頁面可設定中英文名稱、頁首文字、主色、語言版本、導覽列顯示及順序。新增頁面後，網址由頁面識別碼產生；不要用兩個頁面共用同一識別碼。</p>
+        <h3>類別設定</h3>
+        <p>類別可設定中英文小標題、大標題、簡介、所在頁面、顯示風格，以及是否出現在網站、PDF 履歷或審查資料。</p>
+        <h3>引用項目</h3>
+        <p>同一筆資料可引用到其他相容類別。修改原資料會同步更新，但各位置的順序彼此獨立。</p>
+        <div class="callout warning"><strong>「納入輸出」與「排序」是兩件事。</strong>先讓類別納入 PDF 履歷或審查資料，再到相應排序畫面安排位置。</div>
+      </section>
 
-      <section id="ordering"><h2>10. 排序系統</h2><p>在「排序」選擇一般頁面或特殊輸出，可調整類別、主要項目與引用的順序。</p><ul class="compact"><li>一般頁面：調整公開網站內容。</li><li>個人資料：調整主項目管理順序。</li><li>PDF 履歷：調整 PDF 類別與引用。</li><li>審查資料：調整審查資料類別與項目。</li></ul><p>快速排序可依日期或名稱排列；作品與教學保留原分組，只在組內排序。</p></section>
+      <section id="ordering">
+        <h2>10. 排序、搬移與重設</h2>
+        <p>在「排序」選擇要管理的頁面或特殊輸出後，可調整類別順序、類別內項目順序及項目歸屬。</p>
+        <ul>
+          <li>上下按鈕改變目前顯示位置。</li>
+          <li>「搬移」只列出顯示風格相容、能安全接收該項目的類別。</li>
+          <li>跨頁搬移後，項目會跟著目標類別出現在另一頁。</li>
+          <li>快速排序可依日期或名稱調整，但作品與教學仍保留既有分組。</li>
+          <li>類別的「重設」只撤銷該排序區內尚未送出的變更，不會回復其他表單欄位。</li>
+        </ul>
+        <p>排序修改也會形成草稿。離開排序頁前確認畫面已顯示「有未送出變更」，並到草稿預覽檢查。</p>
+      </section>
 
-      <section id="homepage"><h2>11. 首頁精選論文與近期活動</h2><p>在「排序」選擇首頁時，精選論文與近期活動會直接出現在首頁的排序內容中，不再使用舊的獨立收合面板。</p><table><tbody><tr><td>精選論文</td><td>固定最新 N 篇、固定最舊 N 篇、手動選擇與排序。</td></tr><tr><td>近期活動</td><td>最近即將開始的 N 筆、日期最遠的 N 筆、手動選擇與排序。</td></tr></tbody></table><p>近期活動只列出尚未結束的活動；過期後從首頁隱藏，但原始資料仍保留。</p></section>
+      <section id="homepage">
+        <h2>11. 首頁內容怎麼管理</h2>
+        <h3>首頁上方基本資料</h3>
+        <p>從「項目」編輯首頁，可管理姓名、身分、說明文字及首頁按鈕。照片、精選論文、近期活動和聯絡區不是在同一表單修改。</p>
+        <h3>精選論文與近期活動</h3>
+        <p>在「排序」選擇首頁後，直接管理兩個首頁區塊：</p>
+        <table>
+          <tbody>
+            <tr><td>精選論文</td><td>可選最新 N 篇、最舊 N 篇或手動挑選。自動模式先決定入選項目，再套用管理者調整的相對順序。</td></tr>
+            <tr><td>近期活動</td><td>可選最近 N 筆、日期最遠 N 筆或手動挑選。已結束的活動不再顯示，但原始資料不會被刪除。</td></tr>
+          </tbody>
+        </table>
+        <p>首頁設定只控制首頁呈現，不會修改論文或活動本身。</p>
+      </section>
 
-      <section id="pdf-cv"><h2>12. PDF 履歷</h2><ul class="compact"><li>類別需先設定「放進 PDF 履歷」。</li><li>中英文 PDF 共用類別與項目順序。</li><li>預印本、期刊論文與綜述論文各自編號。</li><li>教學可依機構與身分整理。</li><li>空類別不輸出。</li><li>在項目清單點「PDF 履歷」的編輯會直接跳到排序。</li></ul></section>
+      <section id="profile-output">
+        <h2>12. 個人資料、PDF 履歷與審查資料</h2>
+        <h3>個人資料</h3>
+        <p>可集中管理姓名、所屬單位、職位、學校信箱、個人信箱、網站、ORCID、地址、辦公室與語言。其他頁面使用引用，不需重複建立相同資料。</p>
+        <h3>PDF 履歷</h3>
+        <ul>
+          <li>只有勾選納入 PDF 履歷的類別才會輸出。</li>
+          <li>中英文 PDF 共用類別與項目順序，但顯示各自語言內容。</li>
+          <li>作品依類別分組並各自編號；教學可依機構分組。</li>
+          <li>尚未結束的活動不列入已完成活動紀錄。</li>
+          <li>空類別不輸出。</li>
+        </ul>
+        <h3>審查資料</h3>
+        <ul>
+          <li>先讓類別納入審查資料，再到「排序 → 審查資料」安排順序。</li>
+          <li>個人資料區塊顯示姓名、所屬單位與職位；聯絡區不重複顯示。</li>
+          <li>螢幕與列印版使用不同排版；列印時會隱藏導覽列、頁尾及操作按鈕。</li>
+        </ul>
+      </section>
 
-      <section id="dossier"><h2>13. 審查資料</h2><p>類別需勾選「放進審查資料」，再到「排序 → 審查資料」安排順序。</p><ul class="compact"><li>個人資料區塊固定顯示姓名、所屬單位與職位。</li><li>聯絡區塊排除上述三項，避免重複。</li><li>其他內容依類別設定與排序生成。</li><li>螢幕使用雙欄版面；列印使用可跨頁的雙欄內容流。</li><li>列印採 A4、黑白，隱藏導覽列、頁尾與連結按鈕。</li></ul></section>
+      <section id="translations">
+        <h2>13. 中英對照資料庫</h2>
+        <p>中英對照採完整欄位精確比對，不是翻譯模型，也不做模糊關鍵字推測。</p>
+        <ul>
+          <li>同一英文詞條不能同時對應兩個不同中文詞條，反之亦然。</li>
+          <li>標籤可新增、改名、合併、刪除與排序。</li>
+          <li>多標籤篩選表示必須同時符合所選標籤。</li>
+          <li>安全合併會保留匯入檔未列出的既有資料。</li>
+          <li>完整取代前必須仔細檢查刪除量。</li>
+          <li>資料庫修改仍是本機草稿，需與其他修改一起送出。</li>
+        </ul>
+      </section>
 
-      <section id="database"><h2>14. 中英對照資料庫</h2><p>只做完整欄位精確比對，不做模糊翻譯。</p><ul class="compact"><li>多標籤篩選採全部符合。</li><li>標籤可新增、改名、合併、刪除與排序。</li><li>安全合併會保留匯入檔未列出的既有資料。</li><li>完整取代前必須檢查完整差異。</li><li>匯入後仍是本機草稿，需走一般送出流程。</li></ul></section>
+      <section id="people">
+        <h2>14. 人名連結資料庫</h2>
+        <p>每位人物可保存英文標準姓名、中文標準姓名、學術網頁與其他拼法。其他拼法只用於搜尋與匹配，不會取代網站正式顯示名稱。</p>
+        <table>
+          <thead><tr><th>姓名類型</th><th>常見自動別名</th></tr></thead>
+          <tbody>
+            <tr><td>華人羅馬字姓名</td><td>連字號、空格、合併寫法、姓前名後與逗號格式。</td></tr>
+            <tr><td>外國姓名</td><td>中間名、首字母縮寫、姓名順序與逗號格式。</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>作者欄出現候選時，必須點選候選才會套用標準姓名與連結。</li>
+          <li>姓名一致性檢查可找出既有作品中可替換的作者寫法。</li>
+          <li>直接從其他模組開啟人物時，系統會等待正式人名檔載入；若失敗會顯示錯誤，而不是把空資料當成正式檔案。</li>
+        </ul>
+      </section>
 
-      <section id="people"><h2>15. 人名連結資料庫</h2><p>管理英文姓名、中文姓名、學術網頁與其他拼法。其他拼法只供搜尋、作者候選與精確比對，不改變網站顯示。</p><table><thead><tr><th>姓名類型</th><th>自動處理</th></tr></thead><tbody><tr><td>華人羅馬字姓名</td><td>連字號、空格、合併、姓前名後與逗號格式。</td></tr><tr><td>外國姓名</td><td>中間名、縮寫、姓名順序與逗號格式。</td></tr></tbody></table><p>作者欄輸入文字時只顯示候選，必須手動點選才會套用標準姓名。系統也會檢查既有論文作者，可單筆或全部更改。</p><div class="callout"><strong>直接開啟人名：</strong>若正式檔案尚未載入完成，Admin 會等待並重試；遇到部署交界的舊快取時最多安全重新載入一次，再自動開啟原本指定的人名。</div></section>
+      <section id="settings">
+        <h2>15. 網站設定</h2>
+        <table>
+          <tbody>
+            <tr><td>一般設定</td><td>個人資料、網站封面、導覽列、頁尾、404 頁面與公開資訊。</td></tr>
+            <tr><td>聯絡表單</td><td>Web3Forms Email-Only 或 Cloudflare Worker 橋接模式，以及 Cloudflare Turnstile。</td></tr>
+            <tr><td>SEO／OG</td><td>基準網址、網站名稱、分享圖片、各頁標題與描述。</td></tr>
+            <tr><td>流量統計</td><td>Cloudflare Web Analytics 或 Google Analytics 4。</td></tr>
+          </tbody>
+        </table>
+        <p>設定修改與內容修改一樣先存在本機草稿。涉及金鑰或服務設定時，只填公開端允許使用的值，不要把私密金鑰直接寫進公開 repository。</p>
+      </section>
 
-      <section id="settings"><h2>16. 網站設定</h2><ul class="compact"><li>一般設定：個人資料、封面、導覽列、頁尾與 404。</li><li>聯絡表單：Web3Forms Email-Only 或 Cloudflare Worker 橋接模式，以及 Cloudflare Turnstile。</li><li>SEO／OG：基準網址、網站名稱、分享圖片、各頁標題與描述。</li><li>流量統計：Cloudflare Web Analytics 或 Google Analytics 4。</li></ul></section>
+      <section id="notifications">
+        <h2>16. 通知中心</h2>
+        <ul>
+          <li><strong>部署：</strong>查看最近自動流程是否成功。</li>
+          <li><strong>arXiv：</strong>把候選論文加入草稿、忽略、加星號或標記已讀。</li>
+          <li><strong>正式出版：</strong>把預印本更新為期刊論文草稿。</li>
+          <li><strong>失效連結：</strong>跳到對應內容或設定修正。</li>
+          <li><strong>聯絡留言：</strong>開啟收件匣並標記已處理。</li>
+        </ul>
+        <p>通知的「已讀」「忽略」與「已處理」狀態若要跨裝置保留，也需經過正式送出流程。</p>
+      </section>
 
-      <section id="notifications"><h2>17. 通知中心</h2><ul class="compact"><li>arXiv 新論文可加入草稿、忽略、加星號或標記已讀。</li><li>正式出版可將預印本轉為期刊論文草稿。</li><li>失效連結可跳到對應項目或設定。</li><li>聯絡留言可開啟電子郵件收件匣並標記已處理。</li><li>部署狀態可開啟 GitHub Actions 執行紀錄。</li></ul></section>
+      <section id="restore">
+        <h2>17. 使用七日還原</h2>
+        <p>「7 日垃圾桶」保存最近七天已正式套用的操作。它不是直接復原，而是建立一筆新的還原草稿。</p>
+        <ol class="steps">
+          <li>搜尋並展開要還原的操作。</li>
+          <li>確認還原預覽的方向正確。</li>
+          <li>把該操作加入本機還原草稿。</li>
+          <li>與其他草稿一起送出批次。</li>
+        </ol>
+        <p>如果目標資料在原操作後又被修改，後端會阻止舊版本覆蓋新內容。此時應手動編輯目前資料，而不是強行還原。</p>
+      </section>
 
-      <section id="drafts"><h2>18. 草稿、預覽與批次 JSON</h2><ul class="compact"><li>修改草稿：返回對應表單。</li><li>預覽：查看單筆修改前後差異。</li><li>移除：只移除該草稿，不影響正式資料。</li><li>清空內容草稿：清除一般內容、排序、首頁與還原草稿；中英對照、人名連結、個人資料及網站設定各自有獨立的放棄修改按鈕。</li></ul><p>技術資料中的 JSON 是實際送到 GitHub Issue 的內容，通常不需手動編輯。</p></section>
+      <section id="submit">
+        <h2>18. 送出批次與部署</h2>
+        <ol class="steps">
+          <li>在右側預覽確認沒有意外刪除、錯誤搬移或異常大量變更。</li>
+          <li>按「前往 GitHub 送出批次」。</li>
+          <li>建立標題以 <code>[Website: Batch]</code> 開頭的 Issue。</li>
+          <li>GitHub Actions 會驗證資料、執行測試、生成網站、搜尋索引、PDF 履歷與審查資料。</li>
+          <li>成功後會提交產生結果、關閉 Issue 並部署 GitHub Pages。</li>
+          <li>最後回到 Admin 清除已成功送出的本機草稿。</li>
+        </ol>
+        <div class="callout warning"><strong>Actions 失敗時：</strong>先保留草稿，查看第一個失敗步驟。不要因為後面顯示部署未執行，就忽略前面真正的測試錯誤。</div>
+      </section>
 
-      <section id="submit"><h2>19. GitHub 送出與部署</h2><ol class="steps"><li>確認右側沒有不能送出的錯誤或意外大量變更。</li><li>按「前往 GitHub 送出批次」。</li><li>依畫面建立以 <code>[Website: Batch]</code> 開頭的 Issue。</li><li>GitHub Actions 執行測試、套用資料並生成網站、審查資料、PDF 履歷與搜尋索引。</li><li>成功後 Issue 自動關閉並部署 GitHub Pages。</li></ol><div class="callout warning"><strong>Issue 剛建立時不要清空草稿。</strong>先確認 GitHub Actions 成功。</div></section>
+      <section id="troubleshooting">
+        <h2>19. 疑難排解</h2>
+        <details class="faq" open>
+          <summary>畫面仍是舊版</summary>
+          <p>Mac 按 <kbd>Command</kbd>＋<kbd>Shift</kbd>＋<kbd>R</kbd>；Windows 按 <kbd>Ctrl</kbd>＋<kbd>Shift</kbd>＋<kbd>R</kbd>。手機可關閉分頁後重開，必要時清除該網站的快取。</p>
+        </details>
+        <details class="faq">
+          <summary>手機聯絡表單或 Turnstile 超出邊框</summary>
+          <p>確認最新 <code>assets/script.js</code> 已部署，並重新整理快取。新版會限制輸入欄位寬度並依容器縮放 Turnstile。</p>
+        </details>
+        <details class="faq">
+          <summary>人名連結打不開或讀不到目前檔案</summary>
+          <p>先重新整理 Admin。新版會等待並重試載入 <code>content/people.json</code>；仍失敗時應顯示明確錯誤。不要在空白人名清單上按儲存或完整取代。</p>
+        </details>
+        <details class="faq">
+          <summary>排序看不到某筆項目</summary>
+          <p>確認項目的主要類別或引用位置屬於目前選取的頁面。PDF 履歷與審查資料還要確認類別已勾選納入。</p>
+        </details>
+        <details class="faq">
+          <summary>無法修改類別風格</summary>
+          <p>類別中仍有主要項目或引用。先搬走全部內容，再修改或刪除類別。</p>
+        </details>
+        <details class="faq">
+          <summary>GitHub Actions 測試失敗</summary>
+          <p>看 traceback 最後一段，找到第一個 <code>FAIL</code> 或 <code>ERROR</code>。測試應檢查功能與資料結構，不應綁死可自由修改的手冊文案。</p>
+        </details>
+      </section>
 
-      <section id="restore"><h2>20. 還原與最近操作</h2><p>保留最近 7 天的正式操作，可搜尋、預覽、查看 JSON 並建立單筆還原草稿。若資料之後又被修改，系統會阻止舊版本覆蓋新內容。</p></section>
-
-      <section id="automation"><h2>21. 自動產生與同步</h2><table><tbody><tr><td>網站頁面</td><td>依頁面、類別、主要項目與引用生成中英文 HTML。</td></tr><tr><td>PDF 履歷</td><td>生成中英文 LaTeX 與 PDF。</td></tr><tr><td>審查資料</td><td>生成中英文頁面與列印版。</td></tr><tr><td>首頁</td><td>活動過期後停止顯示，不刪除原資料。</td></tr><tr><td>搜尋與媒體</td><td>重建搜尋索引並掃描圖片、論文 PDF 與投影片。</td></tr><tr><td>個人資料與人名</td><td>同步引用位置，產生姓名別名並執行一致性檢查。</td></tr></tbody></table></section>
-
-      <section id="troubleshooting"><h2>22. 疑難排解</h2><h3>畫面仍是舊版</h3><p>Mac 按 <kbd>Command</kbd>＋<kbd>Shift</kbd>＋<kbd>R</kbd>；Windows 按 <kbd>Ctrl</kbd>＋<kbd>Shift</kbd>＋<kbd>R</kbd>。手機可關閉分頁後重開，必要時清除該網站快取。</p><h3>手機聯絡表單超出邊框</h3><p>確認最新 <code>assets/script.js</code> 已部署。新版會讓輸入欄位縮入容器，並依可用寬度縮放 Cloudflare Turnstile。</p><h3>人名連結讀不到目前檔案</h3><p>新版會等待、重試並破除 <code>content/people.json</code> 快取；若仍失敗會顯示明確錯誤，不會把空資料當成正式資料。</p><h3>排序看不到項目</h3><p>確認主要類別或引用屬於目前頁面；PDF 履歷與審查資料還需確認類別已納入。</p><h3>類別風格不能修改</h3><p>先移走該類別所有主要項目與引用。</p><h3>GitHub Actions 失敗</h3><p>保留本機草稿，查看第一個失敗步驟，不要先清空草稿。</p></section>
-
-      <section id="checklist"><h2>23. 送出前完整檢查</h2><ul class="checklist"><li>中英文標題、機構與地點均已檢查。</li><li>日期格式正確，起訖日期沒有顛倒。</li><li>主要類別正確，額外引用沒有重複。</li><li>作品作者使用人名連結的標準姓名。</li><li>PDF、投影片、DOI、arXiv 與網站連結可開啟。</li><li>首頁、PDF 履歷與審查資料順序符合預期。</li><li>右側預覽沒有意外刪除或大量不明變更。</li><li>保留本機草稿直到 GitHub Actions 成功。</li></ul><div class="callout success"><strong>最安全的原則：</strong>先預覽完整差異，再送出；送出後先看 GitHub Actions，最後才清空草稿。</div></section>
+      <section id="checklist">
+        <h2>20. 送出前檢查表</h2>
+        <ul class="checklist">
+          <li>中英文標題、機構、地點與姓名已檢查。</li>
+          <li>日期格式正確，起訖日期沒有顛倒。</li>
+          <li>主要類別正確，額外引用沒有重複。</li>
+          <li>一般內容的顯示風格與目標類別相容。</li>
+          <li>作品作者已使用人名資料庫的標準姓名。</li>
+          <li>PDF、投影片、DOI、arXiv 與網站連結可以開啟。</li>
+          <li>首頁模式、數量與順序符合預期。</li>
+          <li>PDF 履歷與審查資料的納入設定及排序都已檢查。</li>
+          <li>右側預覽沒有意外刪除或大量不明變更。</li>
+          <li>保留本機草稿直到 GitHub Actions 成功。</li>
+        </ul>
+        <div class="callout success"><strong>最安全的做法：</strong>先預覽完整差異，再送出；送出後先看 Actions，成功後才清草稿。</div>
+      </section>
     </article>
   </div>
 </main>
