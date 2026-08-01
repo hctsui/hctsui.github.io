@@ -13,7 +13,8 @@
  *
  * GITHUB_TOKEN must be a fine-grained token owned by the repository owner and
  * limited to this repository. It needs Contents: write for repository_dispatch
- * and Issues: write for CMS batch submission.
+ * and Issues: write for CMS batch submission, plus Actions: read for live
+ * processing and deployment status.
  *
  * Optional secrets/vars:
  *   TURNSTILE_SECRET
@@ -287,6 +288,69 @@ async function submitCms(request, env, origin) {
   return json({ success: true, issue: { number: issue.number, url: issue.html_url }, login: session.sub }, 201, origin);
 }
 
+async function githubJson(env, url) {
+  const response = await fetch(url, { headers: githubHeaders(env) });
+  const value = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const reason = new Error(clean(value?.message, 300) || `GitHub status request failed (${response.status})`);
+    reason.status = response.status;
+    throw reason;
+  }
+  return value;
+}
+
+function workflowFailure(run) {
+  return run?.status === "completed" && run?.conclusion !== "success" && run?.conclusion !== "skipped";
+}
+
+async function cmsStatus(request, env, origin) {
+  const session = await requireSession(request, env);
+  if (!session) return json({ success: false, code: "login_required", message: "請重新登入 GitHub" }, 401, origin);
+  if (!env.GITHUB_TOKEN) return json({ success: false, message: "網站送出服務尚未設定 GitHub Token" }, 503, origin);
+  const issueNumber = Number(new URL(request.url).searchParams.get("issue"));
+  if (!Number.isSafeInteger(issueNumber) || issueNumber < 1) return json({ success: false, message: "修改請求編號不正確" }, 400, origin);
+  const repository = clean(env.GITHUB_REPOSITORY, 200) || "hctsui/hctsui.github.io";
+  const api = `https://api.github.com/repos/${repository}`;
+  try {
+    const issue = await githubJson(env, `${api}/issues/${issueNumber}`);
+    const processRuns = await githubJson(env, `${api}/actions/workflows/process-website-batch.yml/runs?event=issues&per_page=50`);
+    const processRun = (processRuns.workflow_runs || []).find((run) => run.display_title === issue.title);
+    const base = {
+      success: true,
+      issue: { number: issue.number, url: issue.html_url },
+      checked_at: new Date().toISOString(),
+    };
+    if (!processRun) return json({ ...base, stage: "queued", message: "修改請求已建立，等待 GitHub 開始處理" }, 200, origin);
+    if (workflowFailure(processRun)) {
+      return json({ ...base, stage: "failed", message: "自動處理失敗，草稿已保留", log_url: processRun.html_url }, 200, origin);
+    }
+    if (processRun.status !== "completed") {
+      return json({ ...base, stage: "processing", message: "正在檢查並套用網站修改", action_url: processRun.html_url }, 200, origin);
+    }
+
+    const commits = await githubJson(env, `${api}/commits?sha=cms&per_page=100`);
+    const commit = (Array.isArray(commits) ? commits : []).find((entry) => String(entry?.commit?.message || "").includes(`issue #${issueNumber}`));
+    const deployRuns = await githubJson(env, `${api}/actions/workflows/deploy-cms-pages.yml/runs?branch=cms&per_page=50`);
+    const processFinished = Date.parse(processRun.updated_at || processRun.created_at || 0) || 0;
+    const deployment = (deployRuns.workflow_runs || []).find((run) => commit && run.head_sha === commit.sha)
+      || (deployRuns.workflow_runs || []).find((run) => (Date.parse(run.created_at || 0) || 0) >= processFinished - 5000);
+    if (!deployment) {
+      return json({ ...base, stage: "publishing", message: "修改已套用，等待網站發布", action_url: processRun.html_url }, 200, origin);
+    }
+    if (workflowFailure(deployment)) {
+      return json({ ...base, stage: "failed", message: "網站發布失敗，草稿已保留", log_url: deployment.html_url }, 200, origin);
+    }
+    if (deployment.status !== "completed") {
+      return json({ ...base, stage: "publishing", message: "修改已套用，正在發布網站", action_url: deployment.html_url }, 200, origin);
+    }
+    return json({ ...base, stage: "completed", message: "網站發布完成", action_url: deployment.html_url, site_url: clean(env.SITE_ORIGIN, 300) || "https://hctsui.github.io" }, 200, origin);
+  } catch (reason) {
+    const status = reason?.status === 403 ? 503 : 502;
+    const message = reason?.status === 403 ? "GitHub Token 尚未開啟 Actions 讀取權限" : "暫時無法讀取 GitHub 處理狀態";
+    return json({ success: false, code: "status_unavailable", message }, status, origin);
+  }
+}
+
 const ANALYTICS_RANGES = { "1d": 1, "7d": 7, "30d": 30, "90d": 90 };
 const numberValue = (value) => {
   const parsed = Number(value);
@@ -544,6 +608,7 @@ async function handleCms(request, env, allowedOrigin) {
       : json({ success: false, code: "login_required" }, 401, allowedOrigin);
   }
   if (url.pathname === "/cms/submit" && request.method === "POST") return submitCms(request, env, allowedOrigin);
+  if (url.pathname === "/cms/status" && request.method === "GET") return cmsStatus(request, env, allowedOrigin);
   if (url.pathname === "/cms/analytics" && request.method === "GET") return analyticsReport(request, env, allowedOrigin);
   return json({ success: false, message: "Not found" }, 404, allowedOrigin);
 }

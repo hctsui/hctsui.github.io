@@ -39,6 +39,7 @@ class GitHubSubmitWorkerContracts(unittest.TestCase):
             "cms-request:",
             'url.pathname === "/cms/submit"',
             'url.pathname === "/cms/session"',
+            'url.pathname === "/cms/status"',
             'url.pathname === "/cms/analytics"',
             "CLOUDFLARE_ANALYTICS_API_TOKEN",
             "GOOGLE_ANALYTICS_SERVICE_ACCOUNT_JSON",

@@ -35,7 +35,7 @@ class AdminLoadingContracts(unittest.TestCase):
             '<script src="people.js?v=20260802-3"></script>',
             '<script src="notifications.js?v=20260801-1"></script>',
             '<script src="site-settings.js?v=20260802-1"></script>',
-            '<script src="github-submit.js?v=20260802-1"></script>',
+            '<script src="github-submit.js?v=20260802-2"></script>',
             '<script src="analytics-report.js?v=20260802-1"></script>',
         )
         positions = [ADMIN_PAGE.index(marker) for marker in expected]
@@ -62,6 +62,10 @@ class AdminLoadingContracts(unittest.TestCase):
             "validatePeopleDraft",
             "request_id",
             "website-form-applied",
+            "STATUS_POLL_MS=5000",
+            "/cms/status?issue=",
+            "查看錯誤日誌",
+            "setTimeout(()=>clearSubmittedDraft(),700)",
         ):
             self.assertIn(marker, ADMIN_PAGE + submit)
         self.assertLess(
