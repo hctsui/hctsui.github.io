@@ -122,6 +122,13 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("個人資料編輯", profile)
         self.assertIn("個人資料顯示位置", profile)
         self.assertIn("op:'personal_profile'", profile)
+        self.assertIn("data-placement-add-select", layout)
+        self.assertIn("data-profile-placement-select", profile)
+        self.assertIn("#generalSettingsPane", profile)
+        self.assertIn("option.value==='dossier'||option.value==='__dossier__'", layout)
+        self.assertIn("bindDossierOrderControls", layout)
+        self.assertIn("['featured_publications','upcoming'].includes(category.kind)", layout)
+        self.assertIn("decorateRecordPageBadges", layout)
 
     def test_dossier_profile_and_print_contracts(self) -> None:
         builder = self.read("tools/build_dossier.py")

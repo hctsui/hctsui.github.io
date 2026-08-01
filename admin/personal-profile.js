@@ -117,24 +117,37 @@
     return `<div class="pair-grid"><div class="field"><label>${label}（英文）</label>${control('en',en)}</div><div class="field"><label>${label}（中文）</label>${control('zh',zh)}</div></div>`;
   }
   function setInputValues(root){root.querySelectorAll('input[data-profile-field]').forEach(input=>{const [key,lang]=input.dataset.profileField.split('.');input.value=lang?profileDraft[key][lang]:profileDraft[key]||''})}
+  function profilePlacementCategories(item){
+    if(typeof layoutDraft==='undefined'||!layoutDraft)return[];
+    const excluded=new Set(['featured_publications','upcoming']);
+    return layoutDraft.categories.filter(category=>category.id!==PROFILE_CATEGORY_ID&&!excluded.has(category.kind)&&(category.kind==='mixed'||category.kind===item.type||category.kind===item.display_style)&&!(item.personal_key==='affiliation'&&category.id==='home-contact'));
+  }
   function profilePlacementHtml(){
     if(typeof layoutDraft==='undefined'||!layoutDraft)return'';
-    const excluded=new Set(['featured_publications','upcoming']),items=(site.profile_items||[]).filter(item=>item?.personal_key),categories=layoutDraft.categories.filter(category=>category.id!==PROFILE_CATEGORY_ID&&!excluded.has(category.kind));
-    const rows=items.map(item=>{
-      const current=new Set((layoutDraft.placements?.[item.id]||item.display_placements||[]).map(row=>String(row.category_id||'')));
-      const allowed=categories.filter(category=>(category.kind==='mixed'||category.kind===item.type||category.kind===item.display_style)&&!(item.personal_key==='affiliation'&&category.id==='home-contact'));
-      if(!allowed.length)return'';
-      return `<details class="profile-placement-row" data-profile-placement-item="${esc(item.id)}"><summary><strong>${esc(item.title?.zh||item.title?.en||item.id)}</strong><span class="muted">${current.size} 個額外位置</span></summary><div class="placement-options">${allowed.map(category=>`<label class="switch"><input type="checkbox" value="${esc(category.id)}" ${current.has(category.id)?'checked':''}><span>${esc(pageName(category.page_id))} → ${esc(categoryName(category))}</span></label>`).join('')}</div></details>`;
-    }).filter(Boolean).join('');
-    return rows?`<details class="personal-profile-placements"><summary><strong>個人資料顯示位置</strong><span class="muted">主要資料統一放在「個人資料」類別；這裡只設定額外引用。</span></summary><div>${rows}</div></details>`:'';
+    const rows=(site.profile_items||[]).filter(item=>item?.personal_key&&profilePlacementCategories(item).length).map(item=>`<details class="profile-placement-row" data-profile-placement-item="${esc(item.id)}"><summary><strong>${esc(item.title?.zh||item.title?.en||item.id)}</strong><span class="muted" data-profile-placement-count></span></summary><div data-profile-placement-current></div><div class="profile-placement-add"><select data-profile-placement-select aria-label="選擇引用位置"></select><button class="button" type="button" data-profile-placement-add>新增引用位置</button></div></details>`).join('');
+    return rows?`<details class="personal-profile-placements" open><summary><strong>個人資料顯示位置</strong><span class="muted">用下拉選單逐一加入其他頁面或類別。</span></summary><div>${rows}</div></details>`:'';
+  }
+  function renderProfilePlacementGroup(group){
+    const id=group.dataset.profilePlacementItem,item=(site.profile_items||[]).find(row=>row?.id===id),categories=profilePlacementCategories(item||{}),current=new Set((group._placementRows||[]).map(row=>row.category_id));
+    group._placementRows=(group._placementRows||[]).filter(row=>categories.some(category=>category.id===row.category_id));
+    const list=group.querySelector('[data-profile-placement-current]'),select=group.querySelector('[data-profile-placement-select]'),count=group.querySelector('[data-profile-placement-count]');
+    list.innerHTML=group._placementRows.map((row,index)=>{const category=categories.find(value=>value.id===row.category_id);return category?`<div class="profile-placement-current-row"><span><strong>${index+1}. ${esc(pageName(category.page_id))}</strong><small>${esc(categoryName(category))}</small></span><button class="button danger" type="button" data-profile-placement-remove="${esc(category.id)}">移除</button></div>`:''}).join('')||'<p class="muted">目前沒有額外顯示位置。</p>';
+    const available=categories.filter(category=>!current.has(category.id));
+    select.innerHTML='<option value="">選擇要引用到的頁面與類別…</option>'+available.map(category=>`<option value="${esc(category.id)}">${esc(pageName(category.page_id))} → ${esc(categoryName(category))}</option>`).join('');
+    select.disabled=!available.length;group.querySelector('[data-profile-placement-add]').disabled=!available.length;count.textContent=`${group._placementRows.length} 個額外位置`;
+  }
+  function initializeProfilePlacementEditors(root){
+    root.querySelectorAll('[data-profile-placement-item]').forEach(group=>{const id=group.dataset.profilePlacementItem,item=(site.profile_items||[]).find(row=>row?.id===id);group._placementRows=placementRows(layoutDraft?.placements?.[id]||item?.display_placements,PROFILE_CATEGORY_ID);renderProfilePlacementGroup(group)});
+    root.addEventListener('click',event=>{
+      const group=event.target.closest('[data-profile-placement-item]');if(!group)return;
+      const remove=event.target.closest('[data-profile-placement-remove]');if(remove){group._placementRows=group._placementRows.filter(row=>row.category_id!==remove.dataset.profilePlacementRemove);renderProfilePlacementGroup(group);return}
+      const add=event.target.closest('[data-profile-placement-add]');if(add){const select=group.querySelector('[data-profile-placement-select]'),id=select.value;if(!id)return;group._placementRows.push({category_id:id,order:group._placementRows.length});renderProfilePlacementGroup(group)}
+    });
   }
   function applyProfilePlacements(root){
     if(typeof layoutDraft==='undefined'||!layoutDraft)return;
     layoutDraft.placements=layoutDraft.placements||{};
-    root.querySelectorAll('[data-profile-placement-item]').forEach(group=>{
-      const id=group.dataset.profilePlacementItem,old=new Map((layoutDraft.placements[id]||[]).map(row=>[row.category_id,Number(row.order)||0]));
-      layoutDraft.placements[id]=[...group.querySelectorAll('input[type="checkbox"]:checked')].map((input,index)=>({category_id:input.value,order:old.has(input.value)?old.get(input.value):index}));
-    });
+    root.querySelectorAll('[data-profile-placement-item]').forEach(group=>{const id=group.dataset.profilePlacementItem,old=new Map((layoutDraft.placements[id]||[]).map(row=>[row.category_id,Number(row.order)||0]));layoutDraft.placements[id]=placementRows(group._placementRows).map((row,index)=>({category_id:row.category_id,order:old.has(row.category_id)?old.get(row.category_id):index}))});
     layoutDraft=normalizeLayoutBundle(layoutDraft);
   }
   function formHtml(){
@@ -147,14 +160,16 @@
       <div class="actions"><button class="button primary" id="savePersonalProfileDraft">儲存個人資料草稿</button><button class="button" id="resetPersonalProfileDraft">還原目前網站資料</button></div>`;
   }
   function openForm(){
-    init();const box=document.createElement('div');box.innerHTML=formHtml();$('#addEditor').replaceChildren(box);currentEditor={type:'personal_profile',record:null,root:box};setInputValues(box);switchTab('add');
+    init();const box=document.createElement('div');box.innerHTML=formHtml();$('#addEditor').replaceChildren(box);currentEditor={type:'personal_profile',record:null,root:box};setInputValues(box);initializeProfilePlacementEditors(box);switchTab('add');
     box.querySelector('#savePersonalProfileDraft').onclick=()=>{const next=copy(profileDraft);box.querySelectorAll('[data-profile-field]').forEach(input=>{const path=input.dataset.profileField.split('.');if(path.length===2)next[path[0]][path[1]]=input.value.trim();else next[path[0]]=input.value.trim()});if(!next.name.en||!next.name.zh)return flash('姓名的中英文都不能留白');applyProfilePlacements(box);profileDraft=normalize(next);saveLocal();if(typeof saveLayoutDraft==='function'&&layoutDirty())saveLayoutDraft('已儲存個人資料與顯示位置草稿')};
     box.querySelector('#resetPersonalProfileDraft').onclick=()=>{profileDraft=copy(profileBase);localStorage.removeItem(DRAFT_KEY);if(typeof layoutDraft!=='undefined'&&layoutDraft&&layoutBase){for(const item of site.profile_items||[])if(item?.personal_key)layoutDraft.placements[item.id]=copy(layoutBase.placements?.[item.id]||[]);layoutDraft=normalizeLayoutBundle(layoutDraft)}openForm();renderAll();flash('已還原目前網站的個人資料與顯示位置')};
   }
 
   function injectSettingsButton(){
-    const tab=document.querySelector('#siteSettingsTab');if(!tab||tab.querySelector('[data-personal-profile-settings]'))return;
-    const card=document.createElement('div');card.className='notice personal-profile-settings-card';card.dataset.personalProfileSettings='';card.innerHTML='<div><strong>個人資料</strong><p>集中管理姓名、所屬單位、職位、Email、網站、ORCID、地址與語言。</p></div><button class="button primary" type="button" data-open-personal-profile>個人資料編輯</button>';tab.prepend(card);card.querySelector('button').onclick=openForm;
+    document.querySelectorAll('#siteSettingsTab > [data-personal-profile-settings]').forEach(node=>node.remove());
+    const pane=document.querySelector('#generalSettingsPane');if(!pane||pane.querySelector('[data-personal-profile-settings]'))return;
+    const card=document.createElement('div');card.className='site-settings-card personal-profile-settings-card';card.dataset.personalProfileSettings='';card.innerHTML='<div><strong>個人資料</strong><p>集中管理姓名、所屬單位、職位、Email、網站、ORCID、地址與語言。</p></div><button class="button primary" type="button" data-open-personal-profile>個人資料編輯</button>';
+    const choices=pane.querySelector('.general-settings-choices');choices?choices.insertAdjacentElement('afterend',card):pane.prepend(card);card.querySelector('button').onclick=openForm;
   }
   new MutationObserver(injectSettingsButton).observe(document.body,{childList:true,subtree:true});setTimeout(injectSettingsButton,0);
 
@@ -182,7 +197,7 @@
   const baseClearSubmittedDraft=clearSubmittedDraft;
   clearSubmittedDraft=function(){localStorage.removeItem(DRAFT_KEY);profileReady=false;return baseClearSubmittedDraft()};
 
-  const style=document.createElement('style');style.textContent=`.personal-profile-settings-card{display:flex;align-items:center;justify-content:space-between;gap:14px}.personal-profile-settings-card p{margin:.25rem 0 0}.profile-draft-preview{display:grid;grid-template-columns:110px 1fr;gap:7px;margin:0}.profile-draft-preview dt{font-weight:800;color:#6e625a}.profile-draft-preview dd{margin:0}.personal-profile-placements{margin:14px 0;border:1px solid #ded3ca;border-radius:12px;padding:10px}.personal-profile-placements>summary,.profile-placement-row>summary{cursor:pointer;display:flex;justify-content:space-between;gap:10px}.profile-placement-row{padding:9px 0;border-top:1px solid #eee5de}.profile-placement-row:first-child{border-top:0}.profile-placement-row .placement-options{display:grid;gap:5px;margin-top:8px}.profile-placement-row .switch{margin:0}@media(max-width:650px){.personal-profile-settings-card{align-items:flex-start;flex-direction:column}.profile-draft-preview{grid-template-columns:1fr}}`;document.head.append(style);
+  const style=document.createElement('style');style.textContent=`.personal-profile-settings-card{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:12px 0 18px}.personal-profile-settings-card p{margin:.25rem 0 0}.profile-draft-preview{display:grid;grid-template-columns:110px 1fr;gap:7px;margin:0}.profile-draft-preview dt{font-weight:800;color:#6e625a}.profile-draft-preview dd{margin:0}.personal-profile-placements{margin:14px 0;border:1px solid #ded3ca;border-radius:12px;padding:10px}.personal-profile-placements>summary,.profile-placement-row>summary{cursor:pointer;display:flex;justify-content:space-between;gap:10px}.profile-placement-row{padding:9px 0;border-top:1px solid #eee5de}.profile-placement-row:first-child{border-top:0}.profile-placement-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:9px}.profile-placement-current-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee5de}.profile-placement-current-row span{display:grid;gap:2px}.profile-placement-current-row small{color:#766c65}@media(max-width:650px){.personal-profile-settings-card{align-items:flex-start;flex-direction:column}.profile-draft-preview{grid-template-columns:1fr}.profile-placement-add{grid-template-columns:1fr}.profile-placement-current-row{align-items:flex-start;flex-direction:column}}`;document.head.append(style);
 
   if(site){init();renderAll()}
 })();

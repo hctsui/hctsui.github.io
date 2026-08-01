@@ -174,13 +174,28 @@
   function placementEditor(root,type,record){
     if(!root||['page','category','academic_event'].includes(type)||root.querySelector('[data-placement-editor]'))return;
     const itemType=record?.type||type,primary=root.querySelector('#itemCategorySelector'),itemId=String(record?.id||'');
-    const existing=itemId?cloneRows(layoutDraft?.placements?.[itemId]||record?.display_placements):[];
-    const current=new Set(existing.map(row=>row.category_id));
     const displayStyle=record?.display_style||itemType;
     const candidates=layoutDraft.categories.filter(category=>!EXCLUDED_KINDS.has(category.kind)&&category.id!==PROFILE_CATEGORY_ID&&(category.kind==='mixed'||category.kind===ITEM_KIND[itemType]||category.kind===displayStyle));
-    const details=document.createElement('details');details.dataset.placementEditor='';details.className='placement-editor';details.innerHTML=`<summary><strong>額外顯示位置</strong><span class="muted">同一筆資料可引用到其他類別，不會複製內容或改變主要排序。</span></summary><div class="placement-options">${candidates.map(category=>`<label class="switch" data-placement-option="${esc(category.id)}"><input type="checkbox" value="${esc(category.id)}" ${current.has(category.id)?'checked':''}><span>${esc(pageName(category.page_id))} → ${esc(categoryName(category))}</span></label>`).join('')||'<p class="muted">目前沒有可引用的其他類別。</p>'}</div>`;
+    const details=document.createElement('details');details.dataset.placementEditor='';details.className='placement-editor';details.open=true;
+    details._placementRows=cloneRows(itemId?layoutDraft?.placements?.[itemId]||record?.display_placements:[]);
+    details.innerHTML='<summary><strong>額外顯示位置</strong><span class="muted">用下拉選單逐一加入；同一筆資料仍只維護一份。</span></summary><div data-placement-current-list></div><div class="placement-add-row"><select data-placement-add-select aria-label="選擇額外顯示位置"></select><button class="button" type="button" data-placement-add-button>新增引用位置</button></div>';
     (primary?.closest('.field')||root.querySelector('.form-options')||root).after(details);
-    const refresh=()=>{const main=primary?.value||record?.category_id||'';details.querySelectorAll('[data-placement-option]').forEach(label=>{const checkbox=label.querySelector('input'),disabled=checkbox.value===main;checkbox.disabled=disabled;if(disabled)checkbox.checked=false})};primary?.addEventListener('change',refresh);refresh();
+    const render=()=>{
+      const main=String(primary?.value||record?.category_id||'');
+      details._placementRows=cloneRows(details._placementRows).filter(row=>row.category_id!==main&&candidates.some(category=>category.id===row.category_id));
+      const current=new Set(details._placementRows.map(row=>row.category_id)),list=details.querySelector('[data-placement-current-list]'),select=details.querySelector('[data-placement-add-select]');
+      list.innerHTML=details._placementRows.map((row,index)=>{const category=candidates.find(value=>value.id===row.category_id);return category?`<div class="placement-current-row" data-placement-row="${esc(category.id)}"><span><strong>${index+1}. ${esc(pageName(category.page_id))}</strong><small>${esc(categoryName(category))}</small></span><button class="button danger" type="button" data-placement-remove="${esc(category.id)}">移除</button></div>`:''}).join('')||'<p class="muted">目前沒有額外顯示位置。</p>';
+      const available=candidates.filter(category=>category.id!==main&&!current.has(category.id));
+      select.innerHTML='<option value="">選擇要引用到的頁面與類別…</option>'+available.map(category=>`<option value="${esc(category.id)}">${esc(pageName(category.page_id))} → ${esc(categoryName(category))}</option>`).join('');
+      select.disabled=!available.length;details.querySelector('[data-placement-add-button]').disabled=!available.length;
+    };
+    details.addEventListener('click',event=>{
+      const remove=event.target.closest('[data-placement-remove]');
+      if(remove){details._placementRows=details._placementRows.filter(row=>row.category_id!==remove.dataset.placementRemove);render();return}
+      const add=event.target.closest('[data-placement-add-button]');
+      if(add){const select=details.querySelector('[data-placement-add-select]'),id=select.value;if(!id)return;details._placementRows.push({category_id:id,order:details._placementRows.length});render()}
+    });
+    primary?.addEventListener('change',render);render();
   }
 
   const baseOpenEditor=openEditor;
@@ -208,7 +223,7 @@
     if(selectedStyle&&GENERAL_FORMAT_ORDER.includes(selectedStyle))result.o.display_style=selectedStyle;
     if(!editor)return result;
     const main=String(result.o.category_id||''),old=cloneRows(layoutDraft?.placements?.[result.o.id]||base?.display_placements),oldMap=new Map(old.map(row=>[row.category_id,row.order]));
-    const selected=[...editor.querySelectorAll('input[type="checkbox"]:checked')].map((input,index)=>({category_id:input.value,order:oldMap.has(input.value)?oldMap.get(input.value):index})).filter(row=>row.category_id!==main);
+    const selected=cloneRows(editor._placementRows).filter(row=>row.category_id!==main).map((row,index)=>({category_id:row.category_id,order:oldMap.has(row.category_id)?oldMap.get(row.category_id):index}));
     result.o.display_placements=selected;layoutDraft.placements=layoutDraft.placements||{};layoutDraft.placements[result.o.id]=cloneRows(selected);return result;
   };
 
@@ -225,11 +240,19 @@
   addCategoryFromManager=function(){const checked=!!document.querySelector('[data-new-category-dossier]')?.checked,before=new Set(layoutDraft.categories.map(row=>row.id)),valid=String($('#newCategoryEn')?.value||'').trim()&&String($('#newCategoryZh')?.value||'').trim();baseAddCategoryFromManager();if(!valid)return;const category=layoutDraft.categories.find(row=>!before.has(row.id));if(category&&checked){setDossierMembership(category.id,true);saveLayoutDraft('已新增類別並加入審查資料草稿')}};
 
   const baseFillOrderPageSelector=fillOrderPageSelector;
-  fillOrderPageSelector=function(){const select=$('#layoutOrderPage'),old=select?.value;baseFillOrderPageSelector();if(!select)return;if(![...select.options].some(option=>option.value==='__dossier__'))select.add(new Option('審查資料','__dossier__'));if(old&&[...select.options].some(option=>option.value===old))select.value=old};
+  fillOrderPageSelector=function(){
+    const select=$('#layoutOrderPage'),old=select?.value;baseFillOrderPageSelector();if(!select)return;
+    [...select.options].filter(option=>option.value==='dossier'||option.value==='__dossier__').forEach(option=>option.remove());
+    select.add(new Option('審查資料','__dossier__'));
+    const next=old==='dossier'?'__dossier__':old;
+    if(next&&[...select.options].some(option=>option.value===next))select.value=next;
+  };
 
   const baseOrderCategoryCard=orderCategoryCard;
   orderCategoryCard=function(category,index,total,map,cvMode=false){
-    const refs=categoryRefs(category.id),compatible=layoutDraft.categories.filter(value=>compatibleCategory(value,map.get(refs[0]?.id))&&value.id!==category.id);
+    const mode=$('#layoutOrderPage')?.value||'';
+    if(mode==='__cv__'||(!cvMode&&['featured_publications','upcoming'].includes(category.kind)))return baseOrderCategoryCard(category,index,total,map,cvMode);
+    const refs=categoryRefs(category.id),first=map.get(refs[0]?.id),compatible=first?layoutDraft.categories.filter(value=>compatibleCategory(value,first)&&value.id!==category.id):[];
     return `<div class="layout-order-category" data-order-category="${esc(category.id)}"><div class="layout-order-category-head"><div><span class="tag">${esc(kindLabel(category.kind))}</span><strong>${index+1}. ${esc(categoryName(category))}</strong><span class="muted">${esc(pageName(category.page_id))} · ${refs.length} 個項目／引用</span></div><div class="actions"><button class="button" data-category-up="${esc(category.id)}" ${index===0?'disabled':''}>類別 ↑</button><button class="button" data-category-down="${esc(category.id)}" ${index===total-1?'disabled':''}>類別 ↓</button><button class="button" data-edit-category-jump="${esc(category.id)}">編輯類別</button></div></div>${!cvMode?`<div class="order-sort-tools"><span class="muted">此類別快速排序：</span><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="newest">日期新到舊</button><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="oldest">日期舊到新</button><button class="button" data-sort-category="${esc(category.id)}" data-sort-mode="title">名稱</button></div>`:''}<div>${refs.map((ref,rowIndex)=>{const item=map.get(ref.id);if(!item)return'';const key=`${ref.id}@@${category.id}`;return `<div class="layout-order-item"><div><strong>${rowIndex+1}. ${esc(itemName(item))}</strong><span class="muted">${ref.placement?'<span class="tag">額外引用</span> ':''}${esc(itemMetaChinese(item))}</span></div><div class="layout-order-item-actions"><button class="button" data-item-up="${esc(key)}" ${rowIndex===0?'disabled':''}>↑</button><button class="button" data-item-down="${esc(key)}" ${rowIndex===refs.length-1?'disabled':''}>↓</button>${ref.placement?`<button class="button danger" data-remove-placement="${esc(key)}">移除引用</button>`:compatible.length&&!cvMode?`<select data-move-item="${esc(ref.id)}"><option value="">移到其他類別…</option>${compatible.map(value=>`<option value="${esc(value.id)}">${esc(pageName(value.page_id))} → ${esc(categoryName(value))}</option>`).join('')}</select>`:''}</div></div>`}).join('')||'<p class="muted">此類別目前沒有項目。</p>'}</div></div>`;
   };
 
@@ -247,10 +270,17 @@
   const baseUnifiedOrderClick=unifiedOrderClick;
   unifiedOrderClick=function(event){const button=event.target.closest('[data-remove-placement]');if(button){const [id,categoryId]=button.dataset.removePlacement.split('@@');setPlacement(id,categoryId,false);saveLayoutDraft('已移除額外顯示位置');return}return baseUnifiedOrderClick(event)};
 
+  function bindDossierOrderControls(){
+    const select=$('#layoutOrderPage'),editor=$('#layoutOrderEditor');
+    if(select)select.onchange=()=>renderUnifiedOrder();
+    if(editor){editor.onclick=event=>unifiedOrderClick(event);editor.onchange=event=>unifiedOrderChange(event)}
+  }
   const baseRenderUnifiedOrder=renderUnifiedOrder;
   renderUnifiedOrder=function(){
-    if($('#layoutOrderPage')?.value!=='__dossier__')return baseRenderUnifiedOrder();initLayoutState();syncLayoutAssignments();fillOrderPageSelector();const byId=new Map(layoutDraft.categories.map(row=>[row.id,row])),categories=currentDossierOrder().map(id=>byId.get(id)).filter(Boolean),items=new Map(layoutItems(effectiveSite()).map(item=>[String(item.id),item]));
-    $('#layoutOrderEditor').innerHTML='<div class="notice"><strong>審查資料類別順序</strong><p>Profile 與 Contact 是固定卡片；其他勾選的類別依這裡的順序產生。</p></div>'+(categories.map((category,index)=>orderCategoryCard(category,index,categories.length,items,true)).join('')||'<p class="muted">尚未選擇類別。</p>');
+    if($('#layoutOrderPage')?.value!=='__dossier__'){const result=baseRenderUnifiedOrder();bindDossierOrderControls();return result}
+    initLayoutState();syncLayoutAssignments();fillOrderPageSelector();const byId=new Map(layoutDraft.categories.map(row=>[row.id,row])),categories=currentDossierOrder().map(id=>byId.get(id)).filter(Boolean),items=new Map(layoutItems(effectiveSite()).map(item=>[String(item.id),item]));
+    $('#layoutOrderEditor').innerHTML='<div class="notice"><strong>審查資料排序</strong><p>操作方式與 PDF 履歷相同：上方調整類別順序，下方調整各類別中的項目與引用順序。</p></div>'+(categories.map((category,index)=>orderCategoryCard(category,index,categories.length,items,true)).join('')||'<p class="muted">尚未選擇類別；請先在類別設定勾選「放進審查資料」。</p>');
+    bindDossierOrderControls();
   };
   const baseMoveCategory=moveCategory;
   moveCategory=function(id,delta){if($('#layoutOrderPage')?.value!=='__dossier__')return baseMoveCategory(id,delta);const index=currentDossierOrder().indexOf(id);if(moveInArray(layoutDraft.dossier_category_order,index,delta))saveLayoutDraft('已調整審查資料類別順序')};
@@ -258,9 +288,30 @@
   const baseLayoutPreviewHtml=layoutPreviewHtml;
   layoutPreviewHtml=function(op){let html=baseLayoutPreviewHtml(op),before=normalizeLayoutBundle(op.before),after=normalizeLayoutBundle(op.after);if(JSON.stringify(before.dossier_category_order)!==JSON.stringify(after.dossier_category_order)){const names=after.dossier_category_order.map(id=>categoryName(after.categories.find(row=>row.id===id))).join(' → ');html+=`<details class="diff"><summary><strong>審查資料順序有變更</strong></summary><div class="preview-card"><p>${esc(names||'目前沒有類別')}</p></div></details>`}if(JSON.stringify(before.placements)!==JSON.stringify(after.placements))html+='<details class="diff"><summary><strong>額外顯示位置有變更</strong></summary><div class="preview-card"><p>同一筆資料的引用位置或獨立排序已更新。</p></div></details>';return html};
 
+  function decorateRecordPageBadges(){
+    const categories=new Map((layoutDraft?.categories||[]).map(category=>[category.id,category]));
+    const records=new Map([...(typeof allRecords==='function'?allRecords(effectiveSite()):[]),...(typeof layoutCatalogRecords==='function'?layoutCatalogRecords():[])].map(item=>[String(item.id),item]));
+    document.querySelectorAll('#records .row').forEach(row=>{
+      const id=row.querySelector('[data-edit]')?.dataset.edit,item=records.get(String(id||''));
+      if(!item||['page','category'].includes(item.type))return;
+      const primaryId=String(layoutDraft?.assignments?.[id]?.category_id||item.category_id||''),placements=cloneRows(layoutDraft?.placements?.[id]||item.display_placements),pageRows=[];
+      const addPage=(categoryId,primary=false)=>{const category=categories.get(categoryId),pageId=category?.page_id;if(!pageId||pageRows.some(value=>value.pageId===pageId))return;pageRows.push({pageId,category,primary})};
+      addPage(primaryId,true);placements.forEach(value=>addPage(value.category_id,false));
+      const badges=row.querySelector('.record-badges');if(!badges)return;
+      badges.querySelectorAll('.record-badge-page').forEach(node=>node.remove());
+      const categoryBadge=badges.querySelector('.record-badge-category');
+      pageRows.forEach(value=>{const badge=document.createElement('span');badge.className='record-badge record-badge-page';badge.title=value.category?categoryName(value.category):'';badge.innerHTML=`<span>${value.primary?'所在頁面':'引用頁面'}</span><strong>${esc(pageName(value.pageId))}</strong>`;categoryBadge?badges.insertBefore(badge,categoryBadge):badges.append(badge)});
+    });
+  }
+  const baseRenderRecordsWithPlacements=renderRecords;
+  renderRecords=function(){const result=baseRenderRecordsWithPlacements();decorateRecordPageBadges();return result};
+
   const style=document.createElement('style');style.textContent=`
-    [data-category-style-preview]{margin-top:8px}.category-style-preview{border:1px solid #ded3ca;border-radius:12px;padding:10px;background:#fcfaf8;display:grid;gap:8px}.category-style-preview.specialized p{margin:0;color:#6f655e;font-size:.78rem}.category-style-preview-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.category-style-preview-head span{font-size:.72rem;color:#766c65}.style-demo{border:1px solid #e4dad2;border-radius:9px;padding:9px;background:#fff;min-height:56px}.style-demo small{display:block;color:#766c65;margin-top:3px}.style-demo-timeline{display:grid;grid-template-columns:54px 1fr;gap:9px;border-left:4px solid #8d493d}.style-demo-date{font-weight:800;color:#8d493d}.style-demo-columns{display:grid;grid-template-columns:100px 1fr;gap:10px}.style-demo-headings{display:grid;gap:7px}.style-demo-headings strong{padding-bottom:6px;border-bottom:1px solid #eee4dc}.style-demo-card{display:grid;grid-template-columns:90px 1fr;gap:8px;box-shadow:0 7px 18px #3d2b2310}.style-demo-tags{display:flex;gap:6px;flex-wrap:wrap}.style-demo-tags span{background:#eee5de;border-radius:999px;padding:4px 8px;font-size:.75rem;font-weight:700}.style-demo-compact{display:flex;gap:12px;align-items:center}.style-demo-compact span{font-weight:800;color:#8d493d}.style-demo-mixed{display:grid;gap:7px}.placement-editor{border:1px solid #ded3ca;border-radius:11px;padding:10px;margin:10px 0}.placement-editor>summary{cursor:pointer;display:flex;gap:8px;justify-content:space-between}.placement-options{display:grid;gap:5px;margin-top:8px}.placement-options .switch{margin:0}`;document.head.append(style);
+    [data-category-style-preview]{margin-top:8px}.category-style-preview{border:1px solid #ded3ca;border-radius:12px;padding:10px;background:#fcfaf8;display:grid;gap:8px}.category-style-preview.specialized p{margin:0;color:#6f655e;font-size:.78rem}.category-style-preview-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.category-style-preview-head span{font-size:.72rem;color:#766c65}.style-demo{border:1px solid #e4dad2;border-radius:9px;padding:9px;background:#fff;min-height:56px}.style-demo small{display:block;color:#766c65;margin-top:3px}.style-demo-timeline{display:grid;grid-template-columns:54px 1fr;gap:9px;border-left:4px solid #8d493d}.style-demo-date{font-weight:800;color:#8d493d}.style-demo-columns{display:grid;grid-template-columns:100px 1fr;gap:10px}.style-demo-headings{display:grid;gap:7px}.style-demo-headings strong{padding-bottom:6px;border-bottom:1px solid #eee4dc}.style-demo-card{display:grid;grid-template-columns:90px 1fr;gap:8px;box-shadow:0 7px 18px #3d2b2310}.style-demo-tags{display:flex;gap:6px;flex-wrap:wrap}.style-demo-tags span{background:#eee5de;border-radius:999px;padding:4px 8px;font-size:.75rem;font-weight:700}.style-demo-compact{display:flex;gap:12px;align-items:center}.style-demo-compact span{font-weight:800;color:#8d493d}.style-demo-mixed{display:grid;gap:7px}.placement-editor{border:1px solid #ded3ca;border-radius:11px;padding:10px;margin:10px 0}.placement-editor>summary{cursor:pointer;display:flex;gap:8px;justify-content:space-between}.placement-options{display:grid;gap:5px;margin-top:8px}.placement-options .switch{margin:0}.placement-add-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:10px}.placement-current-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #eee5de}.placement-current-row span{display:grid;gap:2px}.placement-current-row small{color:#766c65}@media(max-width:650px){.placement-add-row{grid-template-columns:1fr}.placement-current-row{align-items:flex-start;flex-direction:column}}`;document.head.append(style);
 
   if(layoutReady){const stored=site?.settings?.dossier_category_order,placements=Object.fromEntries(layoutItems(site||{}).map(item=>[String(item.id),cloneRows(item.display_placements)]));layoutBase=normalizeLayoutBundle({...layoutBase,dossier_category_order:Array.isArray(stored)?stored:layoutBase?.dossier_category_order,placements});layoutDraft=normalizeLayoutBundle({...layoutDraft,dossier_category_order:layoutDraft?.dossier_category_order||layoutBase.dossier_category_order,placements:layoutDraft?.placements||placements})}
+  const dossierBaseRenderAll=renderAll;
+  renderAll=function(){const result=dossierBaseRenderAll();bindDossierOrderControls();decorateRecordPageBadges();return result};
+  bindDossierOrderControls();
   if(site)renderAll();
 })();
