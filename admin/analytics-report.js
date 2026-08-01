@@ -2,7 +2,7 @@
 (function installAnalyticsReport(){
   const SESSION_KEY='hctsui-github-submit-session-v1';
   const DEFAULT_API='https://hctsui-website-worker.hctsui-math.workers.dev';
-  const state={provider:'cloudflare',range:'7d',workerUrl:'',sequence:0};
+  const state={provider:'cloudflare',range:'7d',workerUrl:'',sequence:0,mounted:false};
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{localStorage.removeItem(SESSION_KEY);return null}};
   const format=value=>value==null?'—':new Intl.NumberFormat('zh-TW',{maximumFractionDigits:0}).format(Number(value)||0);
@@ -15,8 +15,9 @@
   function panel(){return document.querySelector('#analyticsReportPanel')}
   function sessionValid(saved){return Boolean(saved?.token&&saved?.expires&&saved.expires*1000>Date.now())}
   function ranges(){return [['1d','今天'],['7d','7 天'],['30d','30 天'],['90d','90 天']].map(([value,label])=>`<button class="button ${state.range===value?'active':''}" type="button" data-analytics-range="${value}">${label}</button>`).join('')}
+  function providers(){return [['cloudflare','Cloudflare 報表'],['google','Google 報表']].map(([value,label])=>`<button class="button ${state.provider===value?'active':''}" type="button" data-analytics-report-provider="${value}">${label}</button>`).join('')}
   function head(subtitle='直接在 Admin 查看彙整資料，不必另外開啟服務商後台。'){
-    return `<div class="analytics-report-head"><div><h3>${esc(providerName())} 報表</h3><p>${esc(subtitle)}</p></div><div class="analytics-range-tabs" aria-label="報表範圍">${ranges()}</div></div>`;
+    return `<div class="analytics-report-head"><div><h3>${esc(providerName())} 報表</h3><p>${esc(subtitle)}</p></div><div class="analytics-range-tabs" aria-label="報表範圍">${ranges()}</div></div><div class="analytics-report-provider-tabs" aria-label="報表提供者">${providers()}</div>`;
   }
   function setupText(message){
     const instructions=state.provider==='google'
@@ -42,6 +43,8 @@
   }
   function bind(root){
     root.onclick=event=>{
+      const provider=event.target.closest('[data-analytics-report-provider]');
+      if(provider){state.provider=provider.dataset.analyticsReportProvider==='google'?'google':'cloudflare';load();return}
       const range=event.target.closest('[data-analytics-range]');
       if(range){state.range=range.dataset.analyticsRange;load(true);return}
       if(event.target.closest('[data-analytics-retry]')){load(true);return}
@@ -71,15 +74,16 @@
     }finally{if(sequence===state.sequence&&root===panel())bind(root)}
   }
   function mount(options={}){
-    state.provider=options.provider==='google'?'google':'cloudflare';
+    if(!state.mounted)state.provider=options.initialProvider==='google'?'google':'cloudflare';
+    state.mounted=true;
     state.workerUrl=String(options.workerUrl||'');
     const root=panel();if(!root)return;
     root.dataset.analyticsProvider=state.provider;
     load();
   }
   function mountFromPage(){
-    const provider=document.querySelector('[data-analytics-field="provider"]')?.value;
-    if(panel())mount({provider,workerUrl:site?.settings?.contact_form?.worker_url||''});
+    const mode=document.querySelector('[data-analytics-field="tracking_mode"]')?.value;
+    if(panel())mount({initialProvider:mode==='google'?'google':'cloudflare',workerUrl:site?.settings?.contact_form?.worker_url||''});
   }
   window.hctsuiAnalyticsReport={mount,refresh:()=>load(true)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountFromPage,{once:true});
