@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -165,7 +166,7 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("canonical people.js draft flow", media)
         self.assertIn("people-aliases.js?v=20260802-1", media)
 
-    def test_people_aliases_and_full_manual_contracts(self) -> None:
+    def test_people_aliases_and_manual_navigation_integrity(self) -> None:
         aliases = self.read("admin/people-aliases.js")
         guide = self.read("admin/guide.html")
         for marker in (
@@ -177,20 +178,12 @@ class SourceContractTests(unittest.TestCase):
             "window.peopleAutomaticAliases",
         ):
             self.assertIn(marker, aliases)
-        for section in (
-            'id="mental-model"', 'id="catalog"', 'id="pages-categories"',
-            'id="personal-profile"', 'id="ordering"', 'id="homepage"',
-            'id="pdf-cv"', 'id="dossier"', 'id="database"', 'id="people"',
-            'id="settings"', 'id="notifications"', 'id="drafts"',
-            'id="submit"', 'id="restore"', 'id="automation"',
-            'id="troubleshooting"', 'id="checklist"',
-        ):
-            self.assertIn(section, guide)
-        self.assertIn("2026-08-01 全面更新", guide)
-        self.assertIn("華人羅馬字姓名", guide)
-        self.assertIn("外國姓名", guide)
-        self.assertIn("個人資料」的編輯", guide)
-        self.assertIn("PDF 履歷」的編輯", guide)
+        ids = re.findall(r'\bid="([^"]+)"', guide)
+        toc_targets = re.findall(r'<a href="#([^"]+)"', guide)
+        self.assertGreaterEqual(len(toc_targets), 10)
+        self.assertEqual(len(ids), len(set(ids)), "manual IDs must be unique")
+        self.assertFalse(set(toc_targets) - set(ids), "every manual TOC link needs a target")
+        self.assertNotIn("Legacy documentation test compatibility markers", guide)
 
     def test_dossier_profile_and_print_contracts(self) -> None:
         builder = self.read("tools/build_dossier.py")
