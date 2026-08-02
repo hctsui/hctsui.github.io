@@ -389,3 +389,13 @@
     },50);
   }
 })();
+
+/* Load inline navigation ordering and website-identity placement help. */
+(function(){
+  if(document.getElementById('navigationSettingsInlineScript'))return;
+  const script=document.createElement('script');
+  script.id='navigationSettingsInlineScript';
+  script.src='navigation-settings.js?v=20260802-1';
+  script.async=false;
+  document.body.append(script);
+})();
