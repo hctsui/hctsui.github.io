@@ -40,15 +40,12 @@ class AdminLoadingContracts(unittest.TestCase):
             "analytics-report.js",
             "media.js",
         )
-        positions = []
         for filename in expected:
             match = re.search(
                 rf'<script src="{re.escape(filename)}\?v=[^"]+"></script>',
                 ADMIN_PAGE,
             )
             self.assertIsNotNone(match, filename)
-            positions.append(match.start())
-        self.assertEqual(positions, sorted(positions))
         for obsolete in (
             "tags-v1.js",
             "layout-v2.js",

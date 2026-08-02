@@ -114,7 +114,11 @@ class ClearAllDraftContracts(unittest.TestCase):
         ):
             with self.subTest(clearer=clearer):
                 self.assertIn(clearer, aliases)
-        self.assertIn("data.clearsAllCmsDrafts", aliases)
+        self.assertIn("button.onclick", aliases)
+        self.assertIn(
+            "clearAllCmsDrafts({reload:true,showMessage:false})",
+            aliases,
+        )
         self.assertIn("clearSubmittedDraft", aliases)
         self.assertIn("location.reload()", aliases)
 
