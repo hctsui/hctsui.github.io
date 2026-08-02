@@ -71901,6 +71901,278 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-87-op-1",
+      "batch_issue": 87,
+      "applied_at": "2026-08-02T09:25:35.317852Z",
+      "expires_at": "2026-08-09T09:25:35.317852Z",
+      "reverted_by": null,
+      "request_digest": "b87ce1dd6cbe70ee2dfe8c81af48a7ecaba44450210a5ee17f561b19bbe306e8",
+      "request_action": "people",
+      "action": "people",
+      "type": "people",
+      "entry_id": "people",
+      "label": {
+        "en": "Person links",
+        "zh": "人名連結"
+      },
+      "before": {
+        "schema_version": 1,
+        "people": [
+          {
+            "id": "new-person-3",
+            "name": {
+              "en": "Oğuz Gezmiş",
+              "zh": "Oğuz Gezmiş"
+            },
+            "aliases": [
+              "Gezmiş Oğuz",
+              "Gezmiş, Oğuz"
+            ],
+            "url": "https://sites.google.com/view/oguzgezmis"
+          },
+          {
+            "id": "new-person-2",
+            "name": {
+              "en": "Hung-Chun Tsui",
+              "zh": "崔鴻竣"
+            },
+            "aliases": [
+              "Hung Chun Tsui",
+              "HungChun Tsui",
+              "Tsui Hung-Chun",
+              "Tsui, Hung-Chun",
+              "Tsui Hung Chun",
+              "Tsui, Hung Chun",
+              "Tsui HungChun",
+              "Tsui, HungChun"
+            ],
+            "url": ""
+          },
+          {
+            "id": "new-person",
+            "name": {
+              "en": "Yen-Tsung Chen",
+              "zh": "陳彥宗"
+            },
+            "aliases": [
+              "Yen Tsung Chen",
+              "YenTsung Chen",
+              "Chen Yen-Tsung",
+              "Chen, Yen-Tsung",
+              "Chen Yen Tsung",
+              "Chen, Yen Tsung",
+              "Chen YenTsung",
+              "Chen, YenTsung"
+            ],
+            "url": "https://sites.google.com/view/ytchen-math"
+          },
+          {
+            "id": "chieh-yu-chang",
+            "name": {
+              "en": "Chieh-Yu Chang",
+              "zh": "張介玉"
+            },
+            "aliases": [
+              "Chieh Yu Chang",
+              "ChiehYu Chang",
+              "Chang Chieh-Yu",
+              "Chang, Chieh-Yu",
+              "Chang Chieh Yu",
+              "Chang, Chieh Yu",
+              "Chang ChiehYu",
+              "Chang, ChiehYu"
+            ],
+            "url": "https://sites.google.com/gapp.nthu.edu.tw/cychang/"
+          },
+          {
+            "id": "ting-wei-chang",
+            "name": {
+              "en": "Ting-Wei Chang",
+              "zh": "張庭瑋"
+            },
+            "aliases": [
+              "Ting Wei Chang",
+              "TingWei Chang",
+              "Chang Ting-Wei",
+              "Chang, Ting-Wei",
+              "Chang Ting Wei",
+              "Chang, Ting Wei",
+              "Chang TingWei",
+              "Chang, TingWei"
+            ],
+            "url": "https://twchang.com/"
+          },
+          {
+            "id": "song-yun-chen",
+            "name": {
+              "en": "Song-Yun Chen",
+              "zh": "陳松筠"
+            },
+            "aliases": [
+              "Song Yun Chen",
+              "SongYun Chen",
+              "Chen Song-Yun",
+              "Chen, Song-Yun",
+              "Chen Song Yun",
+              "Chen, Song Yun",
+              "Chen SongYun",
+              "Chen, SongYun"
+            ],
+            "url": "https://sites.google.com/view/songyun-math/homepage?authuser=0"
+          },
+          {
+            "id": "fei-jun-huang",
+            "name": {
+              "en": "Fei-Jun Huang",
+              "zh": "黃斐浚"
+            },
+            "aliases": [
+              "Fei Jun Huang",
+              "FeiJun Huang",
+              "Huang Fei-Jun",
+              "Huang, Fei-Jun",
+              "Huang Fei Jun",
+              "Huang, Fei Jun",
+              "Huang FeiJun",
+              "Huang, FeiJun"
+            ],
+            "url": "https://feijunhuang.github.io/slidesandposters.html"
+          }
+        ]
+      },
+      "after": {
+        "schema_version": 1,
+        "people": [
+          {
+            "id": "new-person-3",
+            "name": {
+              "en": "Oğuz Gezmiş",
+              "zh": "Oğuz Gezmiş"
+            },
+            "aliases": [
+              "Oguz Gezmis",
+              "Gezmis Oguz",
+              "Gezmis, Oguz",
+              "Gezmiş Oğuz",
+              "Gezmiş, Oğuz"
+            ],
+            "url": "https://sites.google.com/view/oguzgezmis"
+          },
+          {
+            "id": "new-person-2",
+            "name": {
+              "en": "Hung-Chun Tsui",
+              "zh": "崔鴻竣"
+            },
+            "aliases": [
+              "Hung Chun Tsui",
+              "HungChun Tsui",
+              "Tsui Hung-Chun",
+              "Tsui, Hung-Chun",
+              "Tsui Hung Chun",
+              "Tsui, Hung Chun",
+              "Tsui HungChun",
+              "Tsui, HungChun"
+            ],
+            "url": ""
+          },
+          {
+            "id": "new-person",
+            "name": {
+              "en": "Yen-Tsung Chen",
+              "zh": "陳彥宗"
+            },
+            "aliases": [
+              "Yen Tsung Chen",
+              "YenTsung Chen",
+              "Chen Yen-Tsung",
+              "Chen, Yen-Tsung",
+              "Chen Yen Tsung",
+              "Chen, Yen Tsung",
+              "Chen YenTsung",
+              "Chen, YenTsung"
+            ],
+            "url": "https://sites.google.com/view/ytchen-math"
+          },
+          {
+            "id": "chieh-yu-chang",
+            "name": {
+              "en": "Chieh-Yu Chang",
+              "zh": "張介玉"
+            },
+            "aliases": [
+              "Chieh Yu Chang",
+              "ChiehYu Chang",
+              "Chang Chieh-Yu",
+              "Chang, Chieh-Yu",
+              "Chang Chieh Yu",
+              "Chang, Chieh Yu",
+              "Chang ChiehYu",
+              "Chang, ChiehYu"
+            ],
+            "url": "https://sites.google.com/gapp.nthu.edu.tw/cychang/"
+          },
+          {
+            "id": "ting-wei-chang",
+            "name": {
+              "en": "Ting-Wei Chang",
+              "zh": "張庭瑋"
+            },
+            "aliases": [
+              "Ting Wei Chang",
+              "TingWei Chang",
+              "Chang Ting-Wei",
+              "Chang, Ting-Wei",
+              "Chang Ting Wei",
+              "Chang, Ting Wei",
+              "Chang TingWei",
+              "Chang, TingWei"
+            ],
+            "url": "https://twchang.com/"
+          },
+          {
+            "id": "song-yun-chen",
+            "name": {
+              "en": "Song-Yun Chen",
+              "zh": "陳松筠"
+            },
+            "aliases": [
+              "Song Yun Chen",
+              "SongYun Chen",
+              "Chen Song-Yun",
+              "Chen, Song-Yun",
+              "Chen Song Yun",
+              "Chen, Song Yun",
+              "Chen SongYun",
+              "Chen, SongYun"
+            ],
+            "url": "https://sites.google.com/view/songyun-math/homepage?authuser=0"
+          },
+          {
+            "id": "fei-jun-huang",
+            "name": {
+              "en": "Fei-Jun Huang",
+              "zh": "黃斐浚"
+            },
+            "aliases": [
+              "Fei Jun Huang",
+              "FeiJun Huang",
+              "Huang Fei-Jun",
+              "Huang, Fei-Jun",
+              "Huang Fei Jun",
+              "Huang, Fei Jun",
+              "Huang FeiJun",
+              "Huang, FeiJun"
+            ],
+            "url": "https://feijunhuang.github.io/slidesandposters.html"
+          }
+        ]
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
