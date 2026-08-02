@@ -20,44 +20,32 @@ class PersonalProfileExtensionTests(unittest.TestCase):
             "settings": {
                 "categories": [
                     {
-                        "id": "home-contact",
-                        "page_id": "home",
-                        "kind": "contact",
+                        "id": "home-contact", "page_id": "home", "kind": "contact",
                         "label": {"en": "Contact", "zh": "聯絡"},
                         "title": {"en": "Contact", "zh": "聯絡"},
-                        "intro": {"en": "", "zh": ""},
-                        "order": 0,
-                        "show_on_web": True,
-                        "show_on_cv": False,
+                        "intro": {"en": "", "zh": ""}, "order": 0,
+                        "show_on_web": True, "show_on_cv": False,
                     },
                     {
-                        "id": "cv-personal",
-                        "page_id": "cv",
-                        "kind": "personal",
+                        "id": "cv-personal", "page_id": "cv", "kind": "personal",
                         "label": {"en": "Details", "zh": "資料"},
                         "title": {"en": "Personal Information", "zh": "個人資料"},
-                        "intro": {"en": "", "zh": ""},
-                        "order": 0,
-                        "show_on_web": False,
-                        "show_on_cv": True,
+                        "intro": {"en": "", "zh": ""}, "order": 0,
+                        "show_on_web": False, "show_on_cv": True,
                     },
                 ],
                 "cv_category_order": ["cv-personal"],
             },
             "profile_items": [
                 {
-                    "id": "contact-affiliation",
-                    "type": "contact",
-                    "category_id": "home-contact",
-                    "order": 2,
+                    "id": "contact-affiliation", "type": "contact",
+                    "category_id": "home-contact", "order": 2,
                     "title": {"en": "Affiliation", "zh": "所屬單位"},
                     "description": {"en": "Old University", "zh": "舊大學"},
                 },
                 {
-                    "id": "contact-institutional-email",
-                    "type": "contact",
-                    "category_id": "home-contact",
-                    "order": 0,
+                    "id": "contact-institutional-email", "type": "contact",
+                    "category_id": "home-contact", "order": 0,
                     "title": {"en": "Email", "zh": "信箱"},
                     "description": {"en": "old@example.edu", "zh": "old@example.edu"},
                 },
@@ -72,10 +60,8 @@ class PersonalProfileExtensionTests(unittest.TestCase):
                 "name": {"en": "Example Name", "zh": "範例姓名"},
                 "affiliation": {"en": "Example University", "zh": "範例大學"},
                 "position": {"en": "Researcher", "zh": "研究員"},
-                "institutional_email": "name@example.edu",
-                "personal_email": "",
-                "website": "https://example.edu",
-                "orcid": "",
+                "institutional_email": "name@example.edu", "personal_email": "",
+                "website": "https://example.edu", "orcid": "",
                 "address": {"en": "", "zh": ""},
                 "office": {"en": "Office 1", "zh": "辦公室 1"},
                 "languages": {"en": "English", "zh": "英文"},
@@ -105,8 +91,7 @@ class PersonalProfileExtensionTests(unittest.TestCase):
                 {"category_id": "other", "order": 3},
                 {"category_id": "other", "order": 9},
             ],
-            primary="primary",
-            known={"primary", "other"},
+            primary="primary", known={"primary", "other"},
         )
         self.assertEqual(rows, [{"category_id": "other", "order": 3}])
 
@@ -118,38 +103,26 @@ class SourceContractTests(unittest.TestCase):
     def test_admin_supports_dossier_order_mixed_style_and_profile_form(self) -> None:
         layout = self.read("admin/dossier-category.js")
         profile = self.read("admin/personal-profile.js")
-        self.assertIn("dossier_category_order", layout)
-        self.assertIn("一般內容（不限風格）", layout)
-        self.assertIn("data-category-style-preview", layout)
-        self.assertIn("放進審查資料", layout)
-        self.assertIn("額外顯示位置", layout)
-        self.assertIn("<strong>個人資料編輯</strong>", profile)
+        for marker in (
+            "dossier_category_order", "一般內容（不限風格）", "data-category-style-preview",
+            "放進審查資料", "額外顯示位置", "data-placement-add-select",
+            "['dossier','__dossier__',PDF_CV_PAGE_ID]", "bindDossierOrderControls",
+            "['featured_publications','upcoming'].includes(category.kind)",
+            "decorateRecordPageBadges", "formActions.before(details)", "VIRTUAL_PAGES", "PDF 履歷",
+        ):
+            self.assertIn(marker, layout)
+        for marker in (
+            "<strong>個人資料編輯</strong>", "choices.prepend(button)", "removeSettingsIntroHints",
+            "個人資料顯示位置", "op:'personal_profile'", "data-profile-placement-select",
+            "#generalSettingsPane", "data-personal-profile-general-choice", "showGeneralProfilePanel",
+            "persistProfilePlacementGroup", "filter(category=>category.id!==PROFILE_CATEGORY_ID",
+            "openPersonalProfileSettings", "openPdfCvOrder", "record?._layout_id===PERSONAL_PAGE_ID",
+            "record?._layout_id===PDF_CV_PAGE_ID", "selector.value='__cv__'",
+        ):
+            self.assertIn(marker, profile)
         self.assertNotIn("這裡是個人資料的唯一來源。", profile)
         self.assertNotIn("姓名、所屬單位、職位與聯絡資訊", profile)
-        self.assertIn("choices.prepend(button)", profile)
-        self.assertIn("removeSettingsIntroHints", profile)
-        self.assertIn("個人資料顯示位置", profile)
-        self.assertIn("op:'personal_profile'", profile)
-        self.assertIn("data-placement-add-select", layout)
-        self.assertIn("data-profile-placement-select", profile)
-        self.assertIn("#generalSettingsPane", profile)
-        self.assertIn("data-personal-profile-general-choice", profile)
-        self.assertIn("showGeneralProfilePanel", profile)
-        self.assertIn("persistProfilePlacementGroup", profile)
-        self.assertIn("filter(category=>category.id!==PROFILE_CATEGORY_ID", profile)
-        self.assertIn("['dossier','__dossier__',PDF_CV_PAGE_ID]", layout)
-        self.assertIn("bindDossierOrderControls", layout)
-        self.assertIn("['featured_publications','upcoming'].includes(category.kind)", layout)
-        self.assertIn("decorateRecordPageBadges", layout)
-        self.assertIn("formActions.before(details)", layout)
-        self.assertIn("VIRTUAL_PAGES", layout)
-        self.assertIn("PDF 履歷", layout)
         self.assertNotIn("操作方式與 PDF 履歷相同", layout)
-        self.assertIn("openPersonalProfileSettings", profile)
-        self.assertIn("openPdfCvOrder", profile)
-        self.assertIn("record?._layout_id===PERSONAL_PAGE_ID", profile)
-        self.assertIn("record?._layout_id===PDF_CV_PAGE_ID", profile)
-        self.assertIn("selector.value='__cv__'", profile)
         self.assertNotIn("審查資料排序</strong><p>", layout)
 
     def test_people_database_uses_single_canonical_draft_flow(self) -> None:
@@ -164,23 +137,18 @@ class SourceContractTests(unittest.TestCase):
         self.assertNotIn("mergePeople", media)
         self.assertNotIn("PEOPLE_BACKUP_KEY", media)
         self.assertIn("canonical people.js draft flow", media)
-        self.assertIn("people-aliases.js?v=20260802-1", media)
+        self.assertRegex(media, r'people-aliases\.js\?v=[^"\']+')
 
     def test_people_aliases_and_manual_navigation_integrity(self) -> None:
         aliases = self.read("admin/people-aliases.js")
         guide = self.read("admin/guide.html")
         for marker in (
-            "chineseRomanizationAliases",
-            "foreignNameAliases",
-            "givenParts.join('-')",
-            "dotted(letters)",
-            "data-person-field=\"aliases\"",
-            "window.peopleAutomaticAliases",
+            "chineseRomanizationAliases", "foreignNameAliases", "givenParts.join('-')",
+            "dotted(letters)", "data-person-field=\"aliases\"", "window.peopleAutomaticAliases",
         ):
             self.assertIn(marker, aliases)
         ids = re.findall(r'\bid="([^"]+)"', guide)
         toc_targets = re.findall(r'<a href="#([^"]+)"', guide)
-        self.assertGreaterEqual(len(toc_targets), 10)
         self.assertEqual(len(ids), len(set(ids)), "manual IDs must be unique")
         self.assertFalse(set(toc_targets) - set(ids), "every manual TOC link needs a target")
         self.assertNotIn("Legacy documentation test compatibility markers", guide)

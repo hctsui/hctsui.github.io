@@ -170,3 +170,222 @@
   }
   window.peopleAutomaticAliases=automaticAliases;
 })();
+
+/* Detailed People preview and one canonical clear-all-drafts action. */
+(function installDraftPreviewExtension(){
+  if(window.__hctsuiDraftPreviewExtensionInstalled)return;
+  window.__hctsuiDraftPreviewExtensionInstalled=true;
+
+  const ACTIVE_DRAFT_KEYS=[
+    'hctsui-batch-v12',
+    'hctsui-translations-draft-v1',
+    'hctsui-translations-stale-v1',
+    'hctsui-headings-draft-v1',
+    'hctsui-homepage-draft-v1',
+    'hctsui-layout-draft-v3',
+    'hctsui-general-layout-links-v1',
+    'hctsui-people-draft',
+    'hctsui-people-draft-recovery-v1',
+    'hctsui-people-draft-backup-v2',
+    'hctsui-people-draft-safety-backup-v1',
+    'hctsui-site-settings-draft',
+    'hctsui-arxiv-suggestions-draft-v1',
+    'hctsui-general-notifications-draft-v1',
+    'hctsui-personal-profile-draft-v1',
+  ];
+
+  const cloneValue=value=>{
+    if(typeof structuredClone==='function')return structuredClone(value);
+    return JSON.parse(JSON.stringify(value));
+  };
+  const escapeHtml=value=>{
+    if(typeof window.esc==='function')return window.esc(String(value??''));
+    return String(value??'').replace(/[&<>"']/g,char=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[char]);
+  };
+  const clean=value=>String(value??'').trim().replace(/\s+/g,' ');
+  const display=value=>clean(value)||'（未設定）';
+  const normalizedAliases=value=>{
+    const source=Array.isArray(value)?value:String(value||'').split(/[\n,，]+/);
+    const seen=new Set(),result=[];
+    for(const raw of source){
+      const text=clean(raw),key=text.normalize('NFKC').toLocaleLowerCase();
+      if(!text||seen.has(key))continue;
+      seen.add(key);result.push(text);
+    }
+    return result;
+  };
+  function normalizePeople(value){
+    const rows=Array.isArray(value?.people)?value.people:[];
+    return rows.filter(row=>row&&typeof row==='object').map((row,index)=>({
+      id:clean(row.id)||`person-${index+1}`,
+      name:{en:clean(row.name?.en),zh:clean(row.name?.zh)},
+      aliases:normalizedAliases(row.aliases),
+      url:clean(row.url),
+    }));
+  }
+  const personTitle=person=>person?.name?.en||person?.name?.zh||person?.id||'未命名作者';
+  function aliasDifference(before,after){
+    const beforeKeys=new Map(before.map(value=>[value.normalize('NFKC').toLocaleLowerCase(),value]));
+    const afterKeys=new Map(after.map(value=>[value.normalize('NFKC').toLocaleLowerCase(),value]));
+    return {
+      added:after.filter(value=>!beforeKeys.has(value.normalize('NFKC').toLocaleLowerCase())),
+      removed:before.filter(value=>!afterKeys.has(value.normalize('NFKC').toLocaleLowerCase())),
+    };
+  }
+  function chips(values,kind){
+    if(!values.length)return '<span class="people-diff-empty">無</span>';
+    return `<span class="people-diff-chips">${values.map(value=>`<span class="people-diff-chip ${kind}">${escapeHtml(value)}</span>`).join('')}</span>`;
+  }
+  function fieldChange(label,before,after){
+    if(clean(before)===clean(after))return '';
+    return `<div class="people-diff-field changed"><strong>${escapeHtml(label)}</strong><div class="people-diff-values"><span class="before">${escapeHtml(display(before))}</span><span class="people-diff-arrow">→</span><span class="after">${escapeHtml(display(after))}</span></div></div>`;
+  }
+  function fullPersonFields(person){
+    return `<div class="people-diff-field"><strong>英文姓名</strong><span>${escapeHtml(display(person.name.en))}</span></div>
+      <div class="people-diff-field"><strong>中文姓名</strong><span>${escapeHtml(display(person.name.zh))}</span></div>
+      <div class="people-diff-field"><strong>學術網頁</strong><span>${escapeHtml(display(person.url))}</span></div>
+      <div class="people-diff-field"><strong>別名</strong>${chips(person.aliases,'neutral')}</div>`;
+  }
+  function addedOrRemovedCard(person,kind){
+    const label=kind==='added'?'新增':'刪除';
+    return `<article class="people-diff-card ${kind}"><div class="people-diff-card-head"><strong>${escapeHtml(personTitle(person))}</strong><span class="people-diff-status">${label}</span></div>${fullPersonFields(person)}</article>`;
+  }
+  function modifiedCard(before,after){
+    const aliases=aliasDifference(before.aliases,after.aliases);
+    const fields=[
+      fieldChange('英文姓名',before.name.en,after.name.en),
+      fieldChange('中文姓名',before.name.zh,after.name.zh),
+      fieldChange('學術網頁',before.url,after.url),
+    ].filter(Boolean);
+    if(aliases.added.length||aliases.removed.length){
+      fields.push(`<div class="people-diff-field changed"><strong>別名變更</strong><div class="people-diff-alias-groups"><div><span class="people-diff-label added">新增別名</span>${chips(aliases.added,'added')}</div><div><span class="people-diff-label removed">刪除別名</span>${chips(aliases.removed,'removed')}</div></div></div>`);
+    }
+    if(!fields.length)return '';
+    return `<article class="people-diff-card changed"><div class="people-diff-card-head"><strong>${escapeHtml(personTitle(after))}</strong><span class="people-diff-status">修改</span></div>${fields.join('')}</article>`;
+  }
+  function detailedPeoplePreview(operation){
+    const before=normalizePeople(operation?.before),after=normalizePeople(operation?.after);
+    const beforeMap=new Map(before.map(person=>[person.id,person]));
+    const afterMap=new Map(after.map(person=>[person.id,person]));
+    const added=after.filter(person=>!beforeMap.has(person.id));
+    const removed=before.filter(person=>!afterMap.has(person.id));
+    const modified=after
+      .filter(person=>beforeMap.has(person.id))
+      .map(person=>modifiedCard(beforeMap.get(person.id),person))
+      .filter(Boolean);
+    const beforeOrder=before.map(person=>person.id).join('\u0001');
+    const afterOrder=after.map(person=>person.id).join('\u0001');
+    const orderChanged=beforeOrder!==afterOrder&&!added.length&&!removed.length;
+    const total=added.length+removed.length+modified.length+(orderChanged?1:0);
+    const cards=[
+      ...added.map(person=>addedOrRemovedCard(person,'added')),
+      ...modified,
+      ...removed.map(person=>addedOrRemovedCard(person,'removed')),
+    ].join('');
+    const orderNotice=orderChanged?'<div class="notice"><strong>順序調整：</strong>人名項目的排列順序已變更。</div>':'';
+    return `<details class="diff people-diff-preview" open><summary><strong>人名連結資料</strong>：${before.length} → ${after.length} 人；${total} 項變更</summary><p class="people-diff-guide">逐欄顯示英文姓名、中文姓名、學術網頁，以及別名的新增與刪除。</p>${orderNotice}${cards||'<p class="muted">沒有實際變更。</p>'}</details>`;
+  }
+
+  function installPeoplePreview(){
+    if(typeof window.peoplePreviewHtml!=='function')return false;
+    window.peoplePreviewHtml=detailedPeoplePreview;
+    window.peopleHistoryPreviewHtml=history=>detailedPeoplePreview({before:history?.before,after:history?.after});
+    return true;
+  }
+
+  function removeDraftStorage(){
+    for(const key of ACTIVE_DRAFT_KEYS)localStorage.removeItem(key);
+    sessionStorage.removeItem('hctsui-submission-pending');
+  }
+  function callClearer(name){
+    const fn=window[name];
+    if(typeof fn==='function'){
+      try{fn(false);}catch(error){console.warn(`Unable to run ${name}`,error);}
+    }
+  }
+  function resetSharedDraftState(){
+    try{if(typeof draft!=='undefined')draft=[];}catch{}
+    try{
+      if(typeof translations!=='undefined'&&typeof originalTranslations!=='undefined')translations=cloneValue(originalTranslations);
+    }catch{}
+    try{
+      if(typeof layoutBase!=='undefined'&&layoutBase&&typeof layoutDraft!=='undefined')layoutDraft=cloneValue(layoutBase);
+    }catch{}
+    for(const name of [
+      'clearHomepageDraft',
+      'clearPeopleDraft',
+      'clearArxivSuggestionsDraft',
+      'clearGeneralNotificationsDraft',
+      'clearSiteSettingsDraft',
+    ])callClearer(name);
+  }
+  function clearAllCmsDrafts({reload=false,showMessage=true}={}){
+    removeDraftStorage();
+    resetSharedDraftState();
+    if(reload){location.reload();return;}
+    if(typeof window.renderAll==='function')window.renderAll();
+    else if(typeof window.renderPreview==='function')window.renderPreview(false);
+    if(showMessage&&typeof window.flash==='function')window.flash('已清空所有內容、排序、首頁、個人資料、資料庫、通知中心與網站設定草稿');
+  }
+  window.clearAllCmsDrafts=clearAllCmsDrafts;
+  window.cmsDraftStorageKeys=[...ACTIVE_DRAFT_KEYS];
+
+  function installClearButton(){
+    const button=document.querySelector('#clearDraft');
+    if(!button)return false;
+    button.dataset.clearsAllCmsDrafts='1';
+    button.onclick=()=>{
+      if(!confirm('清空所有內容、排序、首頁、個人資料、資料庫、通知中心與網站設定草稿？'))return;
+      clearAllCmsDrafts({reload:true,showMessage:false});
+    };
+    return true;
+  }
+  function installSubmittedDraftWrapper(){
+    const current=window.clearSubmittedDraft;
+    if(typeof current!=='function')return false;
+    if(current.__clearsAllCmsDrafts)return true;
+    const wrapped=function(){
+      const result=current.apply(this,arguments);
+      clearAllCmsDrafts({reload:false,showMessage:false});
+      return result;
+    };
+    wrapped.__clearsAllCmsDrafts=true;
+    window.clearSubmittedDraft=wrapped;
+    try{clearSubmittedDraft=wrapped;}catch{}
+    return true;
+  }
+  function installAll(){
+    const previewReady=installPeoplePreview();
+    const buttonReady=installClearButton();
+    const submittedReady=installSubmittedDraftWrapper();
+    return previewReady&&buttonReady&&submittedReady;
+  }
+
+  const style=document.createElement('style');
+  style.textContent=`
+    .people-diff-preview{display:grid;gap:10px}
+    .people-diff-guide{margin:0;padding:9px 11px;border-radius:8px;background:#fff7dc;color:#654b10;font-size:.78rem}
+    .people-diff-card{display:grid;gap:7px;padding:11px;border:1px solid #ded3ca;border-radius:11px;background:#fff}
+    .people-diff-card.added{border-left:5px solid #247a46}.people-diff-card.removed{border-left:5px solid #a1342b}.people-diff-card.changed{border-left:5px solid #c58a32}
+    .people-diff-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .people-diff-status{border-radius:999px;background:#eee5de;padding:2px 8px;font-size:.7rem;font-weight:900}
+    .people-diff-card.added .people-diff-status{background:#dff2e5;color:#1f6539}.people-diff-card.removed .people-diff-status{background:#f9dfdc;color:#8c2f26}.people-diff-card.changed .people-diff-status{background:#f2dfb8;color:#68420b}
+    .people-diff-field{display:grid;grid-template-columns:minmax(90px,130px) minmax(0,1fr);gap:8px;align-items:start;padding-top:7px;border-top:1px solid #eee6df}
+    .people-diff-field>strong{font-size:.76rem;color:#6e625a}.people-diff-field.changed{margin:0 -5px;padding:7px 5px 0;border-radius:7px;background:#fff9ec}
+    .people-diff-values{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:7px;align-items:start}.people-diff-values span{overflow-wrap:anywhere}.people-diff-values .before{color:#8c2f26}.people-diff-values .after{color:#1f6539}.people-diff-arrow{font-weight:900;color:#766c65}
+    .people-diff-alias-groups{display:grid;gap:8px}.people-diff-label{display:block;margin-bottom:4px;font-size:.7rem;font-weight:900}.people-diff-label.added{color:#1f6539}.people-diff-label.removed{color:#8c2f26}
+    .people-diff-chips{display:flex;flex-wrap:wrap;gap:5px}.people-diff-chip{display:inline-block;border-radius:999px;padding:3px 8px;background:#eee5de;font-size:.74rem;overflow-wrap:anywhere}.people-diff-chip.added{background:#dff2e5;color:#1f6539}.people-diff-chip.removed{background:#f9dfdc;color:#8c2f26;text-decoration:line-through}.people-diff-empty{color:#766c65;font-size:.76rem}
+    @media(max-width:700px){.people-diff-field,.people-diff-values{grid-template-columns:1fr}.people-diff-arrow{transform:rotate(90deg);justify-self:start}}
+  `;
+  document.head.append(style);
+
+  if(!installAll()){
+    let attempts=0;
+    const timer=setInterval(()=>{
+      attempts+=1;
+      if(installAll()||attempts>=80)clearInterval(timer);
+    },50);
+  }
+})();

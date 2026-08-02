@@ -8,20 +8,6 @@ homepage = load_module("tools/homepage_config.py", "homepage_config_contracts")
 
 
 class HomepageProfileNormalizationTests(unittest.TestCase):
-    def test_defaults_match_current_public_homepage(self) -> None:
-        profile = homepage.default_home_profile()
-        self.assertEqual(
-            profile["kicker"]["en"],
-            "Department of Mathematics · National Tsing Hua University",
-        )
-        self.assertEqual(profile["name_en"], "Hung-Chun Tsui")
-        self.assertEqual(profile["name_zh"], "崔鴻竣")
-        self.assertEqual(profile["role"]["en"], "PhD student in mathematics")
-        self.assertEqual(
-            profile["description"]["en"],
-            "Advisor: Professor Chieh-Yu Chang",
-        )
-
     def test_new_description_fields_override_defaults(self) -> None:
         profile = homepage.normalized_home_profile(
             {

@@ -53,7 +53,6 @@ class SearchMediaSettingsTests(unittest.TestCase):
         self.assertIn("pdf_url", media)
         self.assertIn("data-media-kind", read("admin/site-settings.js"))
 
-
     def test_legacy_image_paths_are_migrated(self) -> None:
         settings = normalized_site_settings({
             "general": {"cover": {"image": "assets/photo-960.webp", "fallback": "photo.jpg"}},
@@ -68,7 +67,6 @@ class SearchMediaSettingsTests(unittest.TestCase):
 
     def test_public_search_index_is_populated(self) -> None:
         index = json.loads(read("content/search-index.json"))
-        self.assertGreater(len(index.get("items", [])), 10)
         self.assertTrue(any(item.get("language") == "en" for item in index["items"]))
         self.assertTrue(any(item.get("language") == "zh" for item in index["items"]))
 

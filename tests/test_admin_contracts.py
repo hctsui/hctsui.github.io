@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import unittest
 
 from _contracts import node_check, read
@@ -29,19 +30,25 @@ class AdminLoadingContracts(unittest.TestCase):
 
     def test_admin_loads_canonical_scripts_with_cache_busting(self) -> None:
         expected = (
-            '<script src="tags.js?v=20260802-2"></script>',
-            '<script src="layout.js?v=20260801-2"></script>',
-            '<script src="homepage.js?v=20260801-1"></script>',
-            '<script src="people.js?v=20260802-3"></script>',
-            '<script src="notifications.js?v=20260802-2"></script>',
-            '<script src="site-settings.js?v=20260802-2"></script>',
-            '<script src="github-submit.js?v=20260802-2"></script>',
-            '<script src="analytics-report.js?v=20260802-2"></script>',
+            "tags.js",
+            "layout.js",
+            "homepage.js",
+            "people.js",
+            "notifications.js",
+            "site-settings.js",
+            "github-submit.js",
+            "analytics-report.js",
+            "media.js",
         )
-        positions = [ADMIN_PAGE.index(marker) for marker in expected]
+        positions = []
+        for filename in expected:
+            match = re.search(
+                rf'<script src="{re.escape(filename)}\?v=[^"]+"></script>',
+                ADMIN_PAGE,
+            )
+            self.assertIsNotNone(match, filename)
+            positions.append(match.start())
         self.assertEqual(positions, sorted(positions))
-        for marker in expected:
-            self.assertIn(marker, ADMIN_PAGE)
         for obsolete in (
             "tags-v1.js",
             "layout-v2.js",
@@ -100,7 +107,6 @@ class AdminLoadingContracts(unittest.TestCase):
             ADMIN_PAGE.index('src="github-submit.js'),
             ADMIN_PAGE.index('src="analytics-report.js'),
         )
-
 
     def test_admin_disables_stale_browser_cache(self) -> None:
         for marker in (
@@ -342,7 +348,6 @@ class SiteSettingsContracts(unittest.TestCase):
         ):
             self.assertIn(marker, settings)
 
-
     def test_analytics_404_and_semantic_preview_are_editable(self) -> None:
         settings = read("admin/site-settings.js")
         for marker in (
@@ -405,7 +410,6 @@ class SiteSettingsContracts(unittest.TestCase):
             "本頁 OG 圖片（留白沿用預設）",
         ):
             self.assertIn(marker, settings)
-
 
     def test_site_settings_draft_is_listed_in_common_drafts(self) -> None:
         for marker in (

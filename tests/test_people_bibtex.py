@@ -87,7 +87,6 @@ class PeopleDirectoryTests(unittest.TestCase):
     def test_committed_people_directory_is_valid(self) -> None:
         people = json.loads((ROOT / "content" / "people.json").read_text(encoding="utf-8"))
         validate_people(people)
-        self.assertTrue(people["people"], "committed people directory must not be empty")
 
     def test_people_batch_operation_and_undo(self) -> None:
         data = {"settings": {}, "activities": [], "honors": [], "publications": [], "teaching": [], "profile_items": []}

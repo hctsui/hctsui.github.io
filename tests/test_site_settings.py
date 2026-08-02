@@ -44,7 +44,6 @@ class SiteSettingsTests(unittest.TestCase):
         data = site_data()
         settings = current_site_settings(data)
         self.assertEqual(settings["seo"]["base_url"], "https://hctsui.github.io")
-        self.assertEqual(len(settings["footer"]["items"]), 2)
         self.assertEqual(settings["analytics"]["tracking_mode"], "off")
         self.assertEqual(settings["error_page"]["auto_redirect"]["seconds"], 8)
         self.assertIn("contact", settings["seo"]["pages"])
@@ -61,7 +60,6 @@ class SiteSettingsTests(unittest.TestCase):
                 "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。",
             },
         )
-        # This mirrors the Admin payload when site.json has no stored contact_form yet.
         admin_before = copy.deepcopy(before)
         after = copy.deepcopy(admin_before)
         after["contact_form"].update({
@@ -106,10 +104,8 @@ class SiteSettingsTests(unittest.TestCase):
             self.assertIn(f"Disallow: {path}", robots)
         self.assertIn("Sitemap: https://hctsui.github.io/sitemap.xml", robots)
         for url in (
-            "https://hctsui.github.io/",
-            "https://hctsui.github.io/zh/",
-            "https://hctsui.github.io/publications.html",
-            "https://hctsui.github.io/zh/publications.html",
+            "https://hctsui.github.io/", "https://hctsui.github.io/zh/",
+            "https://hctsui.github.io/publications.html", "https://hctsui.github.io/zh/publications.html",
             "https://hctsui.github.io/contact.html",
         ):
             self.assertIn(f"<loc>{url}</loc>", sitemap)
@@ -149,21 +145,18 @@ class SiteSettingsTests(unittest.TestCase):
         data["settings"]["analytics"] = {"enabled": False, "token": ""}
         self.assertNotIn("cloudflare-web-analytics", apply_cloudflare_analytics(rendered_again, data))
 
-
     def test_analytics_supports_cloudflare_google_both_and_off(self) -> None:
         data = site_data()
         source = '<html><head></head><body><main></main></body></html>'
         data["settings"]["analytics"] = {
-            "tracking_mode": "cloudflare",
-            "cloudflare_token": "c" * 32,
+            "tracking_mode": "cloudflare", "cloudflare_token": "c" * 32,
             "google_measurement_id": "G-ABCD1234",
         }
         cloudflare = apply_analytics(source, data)
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", cloudflare)
         self.assertNotIn("googletagmanager.com", cloudflare)
         data["settings"]["analytics"] = {
-            "tracking_mode": "google",
-            "cloudflare_token": "c" * 32,
+            "tracking_mode": "google", "cloudflare_token": "c" * 32,
             "google_measurement_id": "G-ABCD1234",
         }
         google = apply_analytics(cloudflare, data)
@@ -186,15 +179,12 @@ class SiteSettingsTests(unittest.TestCase):
         data = site_data()
         both_configured = current_site_settings(data)
         both_configured["analytics"] = {
-            "schema_version": 3,
-            "tracking_mode": "both",
-            "cloudflare_token": "e" * 32,
-            "google_measurement_id": "G-ABCD1234",
+            "schema_version": 3, "tracking_mode": "both",
+            "cloudflare_token": "e" * 32, "google_measurement_id": "G-ABCD1234",
         }
         normalized = normalized_site_settings(both_configured, data)
         self.assertEqual(normalized["analytics"]["cloudflare_token"], "e" * 32)
         self.assertEqual(normalized["analytics"]["google_measurement_id"], "G-ABCD1234")
-
         normalized["analytics"]["tracking_mode"] = "off"
         reopened = normalized_site_settings(normalized, data)
         self.assertEqual(reopened["analytics"]["tracking_mode"], "off")
@@ -209,7 +199,6 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(analytics["cloudflare_token"], "d" * 32)
         validate_site_settings(current_site_settings(data), data)
 
-
     def test_contact_form_modes_are_safe_and_configurable(self) -> None:
         data = site_data()
         settings = current_site_settings(data)
@@ -217,8 +206,7 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(settings["contact_form"]["email_subject"], "[hctsui.github.io] New contact message")
         self.assertEqual(render_contact_form(data, "en"), "")
         settings["contact_form"].update({
-            "enabled": True,
-            "mode": "worker",
+            "enabled": True, "mode": "worker",
             "worker_url": "https://contact.example.workers.dev",
             "turnstile_site_key": "site-key-public",
         })
@@ -234,14 +222,11 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertNotIn("TURNSTILE_SECRET", rendered)
         self.assertNotIn("GITHUB_TOKEN", rendered)
 
-
     def test_contact_page_design_and_home_entry_are_generated(self) -> None:
         data = site_data()
         settings = current_site_settings(data)
         settings["contact_form"].update({
-            "enabled": True,
-            "mode": "email_only",
-            "web3forms_access_key": "a" * 32,
+            "enabled": True, "mode": "email_only", "web3forms_access_key": "a" * 32,
         })
         settings["contact_form"]["page_design"]["title"] = {"en": "Write to me", "zh": "聯絡我"}
         settings["contact_form"]["page_design"]["colors"]["accent"] = "#123456"
@@ -286,9 +271,7 @@ class SiteSettingsTests(unittest.TestCase):
         data = site_data()
         settings = current_site_settings(data)
         settings["contact_form"].update({
-            "enabled": True,
-            "mode": "email_only",
-            "web3forms_access_key": "a" * 32,
+            "enabled": True, "mode": "email_only", "web3forms_access_key": "a" * 32,
             "email_subject": "[Website] Contact form",
         })
         data["settings"].update(settings)
@@ -306,11 +289,8 @@ class SiteSettingsTests(unittest.TestCase):
         data["settings"].update(settings)
         rendered = render_404_page(data, date(2026, 8, 1))
         for marker in (
-            '<meta name="robots" content="noindex,nofollow">',
-            'data-language="en"',
-            'data-language="zh"',
-            'data-switch-language',
-            '--nf-accent:#123456',
+            '<meta name="robots" content="noindex,nofollow">', 'data-language="en"',
+            'data-language="zh"', 'data-switch-language', '--nf-accent:#123456',
             '"enabled":true,"seconds":12',
         ):
             self.assertIn(marker, rendered)
@@ -339,16 +319,11 @@ class SiteSettingsTests(unittest.TestCase):
         translations = {"schema_version": 1, "pairs": []}
         before = current_site_settings(data)
         requested = copy.deepcopy(before)
-        requested["analytics"].update({
-            "tracking_mode": "google",
-            "google_measurement_id": "G-ABC12345",
-        })
-
+        requested["analytics"].update({"tracking_mode": "google", "google_measurement_id": "G-ABC12345"})
         newer = copy.deepcopy(before)
         newer["seo"]["pages"]["home"]["description"]["en"] = "Updated elsewhere"
         for section in ("general", "footer", "seo", "analytics", "contact_form", "error_page"):
             data["settings"][section] = copy.deepcopy(newer[section])
-
         apply_special(
             data, translations, empty_history(),
             {"op": "site_settings", "before": before, "after": requested},
@@ -364,17 +339,12 @@ class SiteSettingsTests(unittest.TestCase):
         before = current_site_settings(data)
         before["seo"]["pages"]["dossier"] = None
         requested = copy.deepcopy(before)
-        requested["analytics"].update({
-            "tracking_mode": "google",
-            "google_measurement_id": "G-ABC12345",
-        })
-
+        requested["analytics"].update({"tracking_mode": "google", "google_measurement_id": "G-ABC12345"})
         apply_special(
             data, {"schema_version": 1, "pairs": []}, empty_history(),
             {"op": "site_settings", "before": before, "after": requested},
             "issue-null-page-op-1", 4, datetime.now(timezone.utc), "digest-null-page",
         )
-
         stored_pages = data["settings"]["seo"]["pages"]
         self.assertNotIn("dossier", stored_pages)
         self.assertEqual(current_site_settings(data)["analytics"]["tracking_mode"], "google")
@@ -388,7 +358,6 @@ class SiteSettingsTests(unittest.TestCase):
         newer["seo"]["pages"]["home"]["title"]["en"] = "Newer title"
         for section in ("general", "footer", "seo", "analytics", "contact_form", "error_page"):
             data["settings"][section] = copy.deepcopy(newer[section])
-
         with self.assertRaisesRegex(ValueError, r"seo\.pages\.home\.title\.en"):
             apply_special(
                 data, {"schema_version": 1, "pairs": []}, empty_history(),

@@ -29,12 +29,8 @@ cleanup_mod = load("cleanup_notifications")
 class NotificationStoreTests(unittest.TestCase):
     def candidate(self, key="test:1"):
         return {
-            "key": key,
-            "type": "system",
-            "title": "Test",
-            "message": "Message",
-            "created_at": "2026-01-01T00:00:00Z",
-            "updated_at": "2026-01-01T00:00:00Z",
+            "key": key, "type": "system", "title": "Test", "message": "Message",
+            "created_at": "2026-01-01T00:00:00Z", "updated_at": "2026-01-01T00:00:00Z",
         }
 
     def test_upsert_preserves_user_state_and_resolution(self):
@@ -54,11 +50,8 @@ class NotificationStoreTests(unittest.TestCase):
 
     def test_contact_alert_contains_no_personal_data(self):
         notification = contact_mod.build_notification({
-            "event_id": "opaque-123",
-            "received_at": "2026-07-31T12:00:00Z",
-            "name": "Prof. Smith",
-            "email": "smith@example.com",
-            "message": "Private invitation",
+            "event_id": "opaque-123", "received_at": "2026-07-31T12:00:00Z",
+            "name": "Prof. Smith", "email": "smith@example.com", "message": "Private invitation",
         })
         serialized = json.dumps(notification)
         self.assertNotIn("Prof. Smith", serialized)
@@ -107,14 +100,12 @@ class StaticNotificationIntegrationTests(unittest.TestCase):
     def test_admin_and_workflows_are_wired(self):
         admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
         script = (ROOT / "admin/notifications.js").read_text(encoding="utf-8")
-        self.assertIn('<script src="notifications.js?v=20260802-2"></script>', admin)
+        self.assertRegex(admin, r'<script src="notifications\.js\?v=[^"]+"></script>')
         for token in ["通知中心", "data-general-star", "notificationSearch", "fetchDeploymentStatus", "轉為 Published", "前往修改"]:
             self.assertIn(token, script)
         for path in [
-            ".github/workflows/check-publication-status.yml",
-            ".github/workflows/check-links.yml",
-            ".github/workflows/cleanup-notifications.yml",
-            ".github/workflows/ingest-contact.yml",
+            ".github/workflows/check-publication-status.yml", ".github/workflows/check-links.yml",
+            ".github/workflows/cleanup-notifications.yml", ".github/workflows/ingest-contact.yml",
         ]:
             self.assertTrue((ROOT / path).exists(), path)
 
