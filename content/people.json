@@ -2,6 +2,18 @@
   "schema_version": 1,
   "people": [
     {
+      "id": "new-person-3",
+      "name": {
+        "en": "Oğuz Gezmiş",
+        "zh": "Oğuz Gezmiş"
+      },
+      "aliases": [
+        "Gezmiş Oğuz",
+        "Gezmiş, Oğuz"
+      ],
+      "url": "https://sites.google.com/view/oguzgezmis"
+    },
+    {
       "id": "new-person-2",
       "name": {
         "en": "Hung-Chun Tsui",

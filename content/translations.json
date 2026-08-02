@@ -9,13 +9,6 @@
       }
     },
     {
-      "id": "person",
-      "label": {
-        "en": "Person",
-        "zh": "人名"
-      }
-    },
-    {
       "id": "course",
       "label": {
         "en": "Course",
