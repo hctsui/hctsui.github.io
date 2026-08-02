@@ -23,7 +23,8 @@ class InlineNavigationAndIdentityContracts(unittest.TestCase):
             "直接調整導覽列",
         ):
             self.assertIn(marker, script)
-        self.assertNotIn("data-open-page-manager", script)
+        self.assertIn("const oldButton=card.querySelector(\'[data-open-page-manager]\')", script)
+        self.assertIn("oldButton?.remove()", script)
 
     def test_identity_help_explains_desktop_and_mobile_locations(self) -> None:
         script = read("admin/navigation-settings.js")
