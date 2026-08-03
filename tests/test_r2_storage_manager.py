@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import subprocess
 import unittest
 from pathlib import Path
@@ -14,12 +15,13 @@ class R2StorageManagerContracts(unittest.TestCase):
         self.config = (ROOT / "content" / "media-config.json").read_text(encoding="utf-8")
 
     def test_r2_manager_is_loaded(self) -> None:
-        self.assertIn("r2-media.js?v=20260803-2", self.loader)
+        self.assertRegex(self.loader, r"r2-media\.js\?v=[^\"']+")
         self.assertIn("r2MediaLibraryScript", self.loader)
+        self.assertIsNone(re.search(r"r2-media\.js\?v=20\d{6}(?:-\d+)?[\"']", Path(__file__).read_text(encoding="utf-8")))
 
     def test_r2_is_a_website_settings_section(self) -> None:
         self.assertIn("data-r2-settings-section", self.script)
-        self.assertIn("id=\"r2SettingsPane\"", self.script)
+        self.assertIn('id="r2SettingsPane"', self.script)
         self.assertIn("R2 儲存桶", self.script)
         self.assertNotIn("r2-media-launcher", self.script)
 
@@ -32,9 +34,9 @@ class R2StorageManagerContracts(unittest.TestCase):
         self.assertNotIn("data-r2-import-legacy", self.script)
 
     def test_home_photo_creates_site_settings_draft(self) -> None:
-        self.assertIn('data-general-field=\"cover.image\"', self.script)
-        self.assertIn('data-general-field=\"cover.fallback\"', self.script)
-        self.assertIn('data-seo-global=\"default_image\"', self.script)
+        self.assertIn('data-general-field="cover.image"', self.script)
+        self.assertIn('data-general-field="cover.fallback"', self.script)
+        self.assertIn('data-seo-global="default_image"', self.script)
         self.assertIn("photo-original.webp", self.script)
         self.assertIn("photo-1440.webp", self.script)
 

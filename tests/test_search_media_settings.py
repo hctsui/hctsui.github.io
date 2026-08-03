@@ -45,13 +45,17 @@ class SearchMediaSettingsTests(unittest.TestCase):
 
     def test_media_manifest_and_admin_picker(self) -> None:
         manifest = json.loads(read("content/media.json"))
-        self.assertTrue(manifest["images"])
-        self.assertTrue((ROOT / "files/slides").is_dir())
-        self.assertTrue((ROOT / "files/papers").is_dir())
+        for group in ("images", "slides", "papers"):
+            self.assertIn(group, manifest)
+            self.assertIsInstance(manifest[group], list)
         media = read("admin/media.js")
         self.assertIn("slides_url", media)
         self.assertIn("pdf_url", media)
         self.assertIn("data-media-kind", read("admin/site-settings.js"))
+        self.assertTrue((ROOT / "admin/r2-media.js").is_file())
+        config = json.loads(read("content/media-config.json"))
+        self.assertEqual(config["bucket_name"], "hctsui-website-media")
+        self.assertTrue(config["public_base"].endswith("/media"))
 
     def test_legacy_image_paths_are_migrated(self) -> None:
         settings = normalized_site_settings({
