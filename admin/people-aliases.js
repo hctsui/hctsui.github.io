@@ -405,7 +405,7 @@
   if(document.getElementById('r2MediaLibraryScript'))return;
   const script=document.createElement('script');
   script.id='r2MediaLibraryScript';
-  script.src='r2-media.js?v=20260803-2';
+  script.src='r2-media.js?v=r5';
   script.async=false;
   document.body.append(script);
 })();

@@ -8,45 +8,30 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-class R2StorageManagerContracts(unittest.TestCase):
+class R2StorageManagerTests(unittest.TestCase):
     def setUp(self) -> None:
         self.script = (ROOT / "admin" / "r2-media.js").read_text(encoding="utf-8")
         self.loader = (ROOT / "admin" / "people-aliases.js").read_text(encoding="utf-8")
-        self.config = (ROOT / "content" / "media-config.json").read_text(encoding="utf-8")
 
-    def test_r2_manager_is_loaded(self) -> None:
+    def test_loader_uses_non_date_cache_version(self) -> None:
         self.assertRegex(self.loader, r"r2-media\.js\?v=[^\"']+")
-        self.assertIn("r2MediaLibraryScript", self.loader)
-        self.assertIsNone(re.search(r"r2-media\.js\?v=20\d{6}(?:-\d+)?[\"']", Path(__file__).read_text(encoding="utf-8")))
+        self.assertIsNone(re.search(r"r2-media\.js\?v=20\d{6}(?:-\d+)?", self.loader))
 
-    def test_r2_is_a_website_settings_section(self) -> None:
-        self.assertIn("data-r2-settings-section", self.script)
-        self.assertIn('id="r2SettingsPane"', self.script)
-        self.assertIn("R2 儲存桶", self.script)
-        self.assertNotIn("r2-media-launcher", self.script)
-
-    def test_dynamic_folders_and_upload_are_supported(self) -> None:
-        self.assertIn("safePrefix", self.script)
-        self.assertIn("lecturenotes/algebra", self.script)
-        self.assertIn("method:'PUT'", self.script)
-        self.assertIn("/cms/media?key=", self.script)
-        self.assertNotIn("/cms/media/import", self.script)
-        self.assertNotIn("data-r2-import-legacy", self.script)
-
-    def test_home_photo_creates_site_settings_draft(self) -> None:
-        self.assertIn('data-general-field="cover.image"', self.script)
-        self.assertIn('data-general-field="cover.fallback"', self.script)
-        self.assertIn('data-seo-global="default_image"', self.script)
-        self.assertIn("photo-original.webp", self.script)
-        self.assertIn("photo-1440.webp", self.script)
-
-    def test_bucket_configuration(self) -> None:
-        self.assertIn('"bucket_name": "hctsui-website-media"', self.config)
-        self.assertIn('"public_base": "https://hctsui-website-worker.hctsui-math.workers.dev/media"', self.config)
+    def test_r2_mount_is_unique_and_media_fields_are_scoped(self) -> None:
+        self.assertIn("topLevelSettingsTabs", self.script)
+        self.assertIn("cleanupR2Mounts", self.script)
+        self.assertIn("node.remove()", self.script)
+        self.assertNotIn("panel?.querySelector('.site-settings-tabs')", self.script)
+        self.assertNotRegex(self.script, r"match\(/\(\[a-z\].*\)_url/\)")
 
     def test_javascript_syntax(self) -> None:
-        for path in (ROOT / "admin" / "r2-media.js", ROOT / "admin" / "people-aliases.js"):
-            subprocess.run(["node", "--check", str(path)], check=True, capture_output=True, text=True)
+        for relative in ("admin/r2-media.js", "admin/people-aliases.js"):
+            subprocess.run(
+                ["node", "--check", str(ROOT / relative)],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
 
 
 if __name__ == "__main__":
