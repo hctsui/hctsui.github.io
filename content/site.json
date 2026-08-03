@@ -1091,8 +1091,8 @@
         }
       },
       "cover": {
-        "image": "assets/images/photo-960.webp",
-        "fallback": "assets/images/photo.jpg",
+        "image": "https://hctsui-website-worker.hctsui-math.workers.dev/media/images/photo-960.webp",
+        "fallback": "https://hctsui-website-worker.hctsui-math.workers.dev/media/images/photo.jpg",
         "alt": {
           "en": "Landscape photograph",
           "zh": "風景照片"
@@ -2122,7 +2122,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "/files/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf"
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf"
         }
       ],
       "group_id": "preprints",
@@ -2132,7 +2132,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2504.15697",
-      "pdf_url": "/files/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2184,7 +2184,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "/files/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf"
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf"
         }
       ],
       "group_id": "preprints",
@@ -2194,7 +2194,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2504.18879",
-      "pdf_url": "/files/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2246,7 +2246,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "/files/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf"
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf"
         }
       ],
       "homepage_title_html": {
@@ -2264,7 +2264,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2603.10376",
-      "pdf_url": "/files/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2316,7 +2316,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "/files/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
         }
       ],
       "homepage_title_html": {
@@ -2334,7 +2334,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2604.03618",
-      "pdf_url": "/files/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",

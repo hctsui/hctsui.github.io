@@ -43,38 +43,5 @@
     }
   ],
   "slides": [],
-  "papers": [
-    {
-      "path": "files/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
-      "name": "2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
-      "label": "2025 on q shuffle relations for multiple eisenstein series of arbitrary rank in positive characteristic",
-      "extension": ".pdf",
-      "size": 402519,
-      "kind": "papers"
-    },
-    {
-      "path": "files/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
-      "name": "2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
-      "label": "2025 uniqueness of v adic gamma functions in gross koblitz type formulas over function fields",
-      "extension": ".pdf",
-      "size": 364046,
-      "kind": "papers"
-    },
-    {
-      "path": "files/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
-      "name": "2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
-      "label": "2026 algebra structures of multiple eisenstein series in positive characteristic",
-      "extension": ".pdf",
-      "size": 306101,
-      "kind": "papers"
-    },
-    {
-      "path": "files/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
-      "name": "2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
-      "label": "2026 on u multiple zeta values in positive characteristic",
-      "extension": ".pdf",
-      "size": 225789,
-      "kind": "papers"
-    }
-  ]
+  "papers": []
 }
