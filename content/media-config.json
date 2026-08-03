@@ -1,0 +1,13 @@
+{
+  "schema_version": 2,
+  "bucket_name": "hctsui-website-media",
+  "worker_origin": "https://hctsui-website-worker.hctsui-math.workers.dev",
+  "public_base": "https://hctsui-website-worker.hctsui-math.workers.dev/media",
+  "homepage_images": {
+    "folder": "images",
+    "original": "photo-original.webp",
+    "small": "photo-640.webp",
+    "medium": "photo-960.webp",
+    "large": "photo-1440.webp"
+  }
+}
