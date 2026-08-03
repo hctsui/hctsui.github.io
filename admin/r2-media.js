@@ -13,6 +13,8 @@
   let libraryPromise=null;
   let currentInput=null;
   let r2Active=false;
+  let nativePaneState=null;
+  let nativeSection='general';
   const POPUP_SAFE_GAP=18;
   const POPUP_MAX_HEIGHT=310;
   const POPUP_ITEM_HEIGHT=52;
@@ -278,12 +280,40 @@
     return true;
   }
 
+  const nativePaneIds=['generalSettingsPane','contactFormSettingsPane','seoSettingsPane','analyticsSettingsPane'];
+  const sectionPaneIds={general:'generalSettingsPane',contactForm:'contactFormSettingsPane',seo:'seoSettingsPane',analytics:'analyticsSettingsPane'};
+
+  function rememberNativeVisualState(){
+    const panel=document.querySelector('#siteSettingsTab'),tabs=panel&&topLevelSettingsTabs(panel);
+    if(!panel||!tabs)return;
+    const active=tabs.querySelector(':scope > [data-site-settings-section].active');
+    if(active?.dataset.siteSettingsSection)nativeSection=active.dataset.siteSettingsSection;
+    nativePaneState=Object.fromEntries(nativePaneIds.map(id=>{
+      const node=panel.querySelector(`#${id}`);
+      return [id,node?Boolean(node.hidden):null];
+    }));
+  }
+
+  function restoreNativeVisualState(){
+    const panel=document.querySelector('#siteSettingsTab'),tabs=panel&&topLevelSettingsTabs(panel);
+    if(!panel||!tabs)return;
+    for(const id of nativePaneIds){
+      const node=panel.querySelector(`#${id}`);
+      if(!node)continue;
+      const remembered=nativePaneState?.[id];
+      node.hidden=remembered===null||remembered===undefined?id!==sectionPaneIds[nativeSection]:remembered;
+    }
+    [...tabs.children].filter(button=>button.matches?.('[data-site-settings-section]')).forEach(button=>{
+      button.classList.toggle('active',button.dataset.siteSettingsSection===nativeSection);
+    });
+  }
+
   function setR2VisualState(){
     const panel=document.querySelector('#siteSettingsTab'),tabs=panel&&topLevelSettingsTabs(panel),pane=panel?.querySelector(':scope > #r2SettingsPane');
     if(!panel||!tabs||!pane)return;
     [...tabs.children].filter(button=>button.matches?.('[data-site-settings-section]')).forEach(button=>button.classList.remove('active'));
     tabs.querySelector(':scope > [data-r2-settings-section]')?.classList.toggle('active',r2Active);
-    for(const id of ['generalSettingsPane','contactFormSettingsPane','seoSettingsPane','analyticsSettingsPane']){
+    for(const id of nativePaneIds){
       const node=panel.querySelector(`#${id}`);if(node&&r2Active)node.hidden=true;
     }
     pane.hidden=!r2Active;
@@ -294,17 +324,20 @@
     const outerTab=document.querySelector('[data-tab="siteSettings"]');
     if(outerTab&&!outerTab.classList.contains('active'))outerTab.click();
     installSettingsPane();
+    if(!r2Active)rememberNativeVisualState();
     r2Active=true;
     setR2VisualState();
     await renderLibrary(force).catch(reason=>setStatus(reason.message,'error'));
     setR2VisualState();
   }
 
-  function deactivateR2(){
+  function deactivateR2({restore=true}={}){
+    const wasActive=r2Active;
     r2Active=false;
     currentInput=null;
     const pane=document.querySelector('#siteSettingsTab > #r2SettingsPane');if(pane)pane.hidden=true;
     document.querySelector('[data-r2-settings-section]')?.classList.remove('active');
+    if(wasActive&&restore)restoreNativeVisualState();
   }
 
   function setStatus(message,kind=''){
@@ -462,6 +495,12 @@
   }
 
   document.addEventListener('click',event=>{
+    const panel=event.target.closest('#siteSettingsTab');
+    if(panel&&r2Active&&!event.target.closest('#r2SettingsPane')&&!event.target.closest('[data-r2-settings-section]')){
+      const nativeButton=event.target.closest('[data-site-settings-section]');
+      if(nativeButton?.dataset.siteSettingsSection)nativeSection=nativeButton.dataset.siteSettingsSection;
+      deactivateR2();
+    }
     const button=event.target.closest('[data-r2-settings-section]');
     if(!button)return;
     event.preventDefault();
@@ -481,7 +520,11 @@
   document.addEventListener('change',event=>{if(event.target.matches('#r2SettingsPane [data-r2-folder-filter]'))renderLibrary().catch(reason=>setStatus(reason.message,'error'));});
   document.addEventListener('click',event=>{
     const existing=event.target.closest('[data-site-settings-section]');
-    if(existing){deactivateR2();return;}
+    if(existing){
+      if(existing.dataset.siteSettingsSection)nativeSection=existing.dataset.siteSettingsSection;
+      deactivateR2({restore:false});
+      return;
+    }
     const folderChoice=event.target.closest('[data-r2-folder-choice]');
     if(folderChoice){
       const popup=folderChoice.closest('.r2-media-suggestion-popup'),input=popupAnchor(popup);
