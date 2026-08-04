@@ -1189,10 +1189,30 @@
         "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
         "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
       },
-      "slides_url": "https://drive.google.com/file/d/1HmrxcOYRdzcAFKnnCzarS6wfa4d7gSbS/view?usp=sharing",
+      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
       "category_id": "activity-talks",
       "order": 0,
-      "display_placements": []
+      "display_placements": [],
+      "event": {
+        "en": "Tohoku University Number Theory Seminar",
+        "zh": "東北大學數論研討會"
+      },
+      "venue": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "city": {
+        "en": "Sendai",
+        "zh": "仙台"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "venue_html": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      }
     },
     {
       "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
@@ -1233,22 +1253,42 @@
         "zh": "函數體上的有限多重調和 u-級數"
       },
       "title_html": {
-        "en": "On Finite Multiple Harmonic <em>u</em>-series over Function Field",
+        "en": "On Finite Multiple Harmonic u -series over Function Field",
         "zh": "函數體上的有限多重調和 u-級數"
       },
       "url": "",
       "description": {
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
-        "zh": "名古屋—關西青年研究者 zeta 研討會 , 名古屋大學, 名古屋, 日本"
+        "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
       },
       "description_html": {
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
-        "zh": "名古屋—關西青年研究者 zeta 研討會\n, 名古屋大學, 名古屋, 日本"
+        "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
       },
-      "slides_url": "https://drive.google.com/file/d/1lwDJ5mT_b7K84dxeCCNd5DcY-ORmDCHZ/view?usp=sharing",
+      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
       "category_id": "activity-talks",
       "order": 2,
-      "display_placements": []
+      "display_placements": [],
+      "event": {
+        "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
+        "zh": "名古屋—關西青年研究者 zeta 研討會"
+      },
+      "venue": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      },
+      "city": {
+        "en": "Nagoya",
+        "zh": "名古屋"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "venue_html": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      }
     },
     {
       "id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
@@ -1289,8 +1329,8 @@
         "zh": "正特徵多重 Eisenstein 級數的 q-洗牌關係"
       },
       "title_html": {
-        "en": "On <em>q</em>-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵多重 Eisenstein 級數的 <em>q</em>-洗牌關係"
+        "en": "On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 q-洗牌關係"
       },
       "url": "",
       "description": {
@@ -1301,10 +1341,30 @@
         "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
         "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
       },
-      "slides_url": "https://drive.google.com/file/d/1UAwe7PzgwOy-H2U2m3mVj0RLqfC_8Rar/view?usp=sharing",
+      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
       "category_id": "activity-talks",
       "order": 4,
-      "display_placements": []
+      "display_placements": [],
+      "event": {
+        "en": "Japan-Taiwan Number Theory Conference",
+        "zh": "日臺數論會議"
+      },
+      "venue": {
+        "en": "Kyukamura Shikanoshima",
+        "zh": "休暇村志賀島"
+      },
+      "city": {
+        "en": "Fukuoka",
+        "zh": "福岡"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "venue_html": {
+        "en": "Kyukamura Shikanoshima",
+        "zh": "休暇村志賀島"
+      }
     },
     {
       "id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
