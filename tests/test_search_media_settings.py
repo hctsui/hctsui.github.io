@@ -4,6 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
+from tools.r2_build_fix import apply_static_asset_paths_safely
 from tools.site_settings_config import normalized_site_settings
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,20 +19,15 @@ class SearchMediaSettingsTests(unittest.TestCase):
         for path in ("index.html", "zh/index.html", "publications.html", "404.html"):
             text = read(path)
             self.assertIn('class="site-header"', text, path)
-            self.assertIn('data-site-search', text, path)
+            self.assertIn("data-site-search", text, path)
         self.assertNotIn("not-found-header", read("404.html"))
         self.assertIn(">English</button>", read("404.html"))
 
     def test_images_are_centralized(self) -> None:
-        expected = {
-            "assets/images/photo.jpg",
-            "assets/images/photo-640.webp",
-            "assets/images/photo-960.webp",
-            "assets/images/photo-1440.webp",
-            "assets/images/favicon.svg",
-        }
-        for path in expected:
-            self.assertTrue((ROOT / path).is_file(), path)
+        # The favicon stays in GitHub because every public page needs it.
+        self.assertTrue((ROOT / "assets/images/favicon.svg").is_file())
+
+        # Old duplicate locations must remain removed.
         for legacy in (
             "photo.jpg",
             "assets/photo-640.webp",
@@ -40,8 +36,43 @@ class SearchMediaSettingsTests(unittest.TestCase):
             "assets/favicon.svg",
         ):
             self.assertFalse((ROOT / legacy).exists(), f"Remove legacy image path: {legacy}")
-        self.assertIn("assets/images/photo-1440.webp", read("index.html"))
-        self.assertIn("../assets/images/photo-1440.webp", read("zh/index.html"))
+
+        # Cover and OG images may now live either in assets/images or in R2.
+        site = json.loads(read("content/site.json"))
+        settings = normalized_site_settings(site.get("settings", {}), site)
+        media_config = json.loads(read("content/media-config.json"))
+        public_base = str(media_config["public_base"]).rstrip("/")
+
+        references = (
+            settings["general"]["cover"]["image"],
+            settings["general"]["cover"]["fallback"],
+            settings["seo"]["default_image"],
+        )
+        for value in references:
+            self.assertTrue(value, "Media reference must not be empty")
+            if value.startswith(("http://", "https://")):
+                self.assertTrue(
+                    value.startswith(public_base + "/"),
+                    f"External managed media must use the configured R2 public base: {value}",
+                )
+            else:
+                self.assertTrue(
+                    value.startswith("assets/images/"),
+                    f"Local managed image must stay in assets/images: {value}",
+                )
+                self.assertTrue((ROOT / value).is_file(), value)
+
+        # Regression for the real R2 bug: legacy-path migration must not rewrite
+        # the tail of a complete HTTPS URL.
+        original = lambda text, lang: text.replace(
+            "photo.jpg",
+            "../assets/images/photo.jpg" if lang == "zh" else "assets/images/photo.jpg",
+        )
+        r2_url = public_base + "/images/photo.jpg"
+        self.assertEqual(
+            apply_static_asset_paths_safely(original, r2_url, "zh"),
+            r2_url,
+        )
 
     def test_media_manifest_and_admin_picker(self) -> None:
         manifest = json.loads(read("content/media.json"))
@@ -85,7 +116,7 @@ class SearchMediaSettingsTests(unittest.TestCase):
         page = read("publications.html")
         self.assertIn(">Cite</button>", page)
         self.assertIn("<span>biblatex</span>", page)
-        self.assertIn(r"LaTeX \bibitem", page)
+        self.assertIn(r"LaTeX \\bibitem", page)
 
     def test_people_consistency_audit_exists(self) -> None:
         people = read("admin/people.js")
