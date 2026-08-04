@@ -14,6 +14,7 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 import cms_extensions
+import r2_build_fix
 
 
 def main() -> None:
@@ -32,6 +33,7 @@ def main() -> None:
     if target.name == "build_site.py":
         module = importlib.import_module("build_site")
         cms_extensions.patch_build_site(module)
+        r2_build_fix.patch_build_site(module)
         module.main()
         return
     runpy.run_path(str(target), run_name="__main__")
