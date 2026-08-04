@@ -116,7 +116,7 @@ class SearchMediaSettingsTests(unittest.TestCase):
         page = read("publications.html")
         self.assertIn(">Cite</button>", page)
         self.assertIn("<span>biblatex</span>", page)
-        self.assertIn(r"LaTeX \\bibitem", page)
+        self.assertIn(r"LaTeX \bibitem", page)
 
     def test_people_consistency_audit_exists(self) -> None:
         people = read("admin/people.js")
