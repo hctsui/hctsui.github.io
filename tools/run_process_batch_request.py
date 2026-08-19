@@ -410,12 +410,13 @@ def layout_after_already_applied(current: Any, requested: Any) -> bool:
             return False
     if not _same_shared_mapping(left, right, "assignments"):
         return False
-    # If requested mentions every current assignment, equality on the shared set
-    # means the primary layout state is already fully applied.
-    if set(right["assignments"]) != set(left["assignments"]):
-        return False
+    # A content-only edit may carry an auxiliary layout snapshot that was made
+    # before another operation added/deleted an item.  Missing/extra item IDs do
+    # not request a layout change by themselves: only shared IDs can prove that
+    # category/order changed.  Treat such a snapshot as an idempotent no-op and
+    # preserve the current state of IDs that are absent from the request.
     if "placements" in requested:
-        if stable(left["placements"]) != stable(right["placements"]):
+        if not _same_shared_mapping(left, right, "placements"):
             return False
     if "dossier_category_order" in requested:
         if stable(left["dossier_category_order"]) != stable(right["dossier_category_order"]):
