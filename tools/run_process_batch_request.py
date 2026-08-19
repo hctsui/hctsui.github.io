@@ -31,6 +31,12 @@ _original_layout_structure = batch.layout_structure
 _original_apply_special = batch.apply_special
 _original_apply_undo = batch.apply_undo
 
+# These pages exist only to make the Admin UI easier to navigate. They are not
+# ordinary persisted CMS pages and therefore must not participate in stale-data
+# conflicts or be written back to content/site.json.
+DOSSIER_PAGE_ID = "dossier"
+SYNTHETIC_LAYOUT_PAGE_IDS = set(ext.VIRTUAL_PAGE_IDS) | {DOSSIER_PAGE_ID}
+
 
 def virtual_page_rows() -> list[dict[str, Any]]:
     return [
@@ -62,13 +68,27 @@ def virtual_page_rows() -> list[dict[str, Any]]:
 
 
 def with_virtual_pages(value: Any) -> list[dict[str, Any]]:
-    rows = [copy.deepcopy(row) for row in value if isinstance(row, dict) and str(row.get("id") or "") not in ext.VIRTUAL_PAGE_IDS] if isinstance(value, list) else []
+    rows = [
+        copy.deepcopy(row)
+        for row in value
+        if isinstance(row, dict)
+        and str(row.get("id") or "") not in ext.VIRTUAL_PAGE_IDS
+    ] if isinstance(value, list) else []
     rows.extend(virtual_page_rows())
     return rows
 
 
 def public_pages(value: Any) -> list[dict[str, Any]]:
-    return [copy.deepcopy(row) for row in value if isinstance(row, dict) and str(row.get("id") or "") not in ext.VIRTUAL_PAGE_IDS] if isinstance(value, list) else []
+    """Return only real CMS pages.
+
+    In particular, the browser-only Dossier row must never leak into site.json.
+    """
+    return [
+        copy.deepcopy(row)
+        for row in value
+        if isinstance(row, dict)
+        and str(row.get("id") or "") not in SYNTHETIC_LAYOUT_PAGE_IDS
+    ] if isinstance(value, list) else []
 
 
 def placements_from_data(data: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
@@ -114,17 +134,31 @@ def normalized_layout_bundle(data: dict[str, Any], value: Any) -> dict[str, Any]
         if row.get("id") != ext.PROFILE_CATEGORY_ID
         and row.get("kind") not in {"featured_publications", "upcoming", "contact"}
     }
-    raw_order = value.get("dossier_category_order", [])
-    if not isinstance(raw_order, list):
-        raise ValueError("dossier_category_order must be an array.")
-    result["dossier_category_order"] = list(dict.fromkeys(str(cid) for cid in raw_order if str(cid) in eligible))
 
-    raw_placements = value.get("placements", {})
-    if not isinstance(raw_placements, dict):
-        raise ValueError("Layout placements must be an object.")
+    # Older/racing Admin state may not yet contain the Dossier extension fields.
+    # Missing fields mean "leave the current value alone", never "clear it".
+    if "dossier_category_order" in value:
+        raw_order = value.get("dossier_category_order", [])
+        if not isinstance(raw_order, list):
+            raise ValueError("dossier_category_order must be an array.")
+        result["dossier_category_order"] = list(
+            dict.fromkeys(str(cid) for cid in raw_order if str(cid) in eligible)
+        )
+    else:
+        result["dossier_category_order"] = copy.deepcopy(
+            ext.normalized_dossier_order(data)
+        )
+
     assignments = result.get("assignments", {})
-    if set(raw_placements) - set(assignments):
-        raise ValueError("Layout placements contain unknown item IDs; reload Admin.")
+    if "placements" in value:
+        raw_placements = value.get("placements", {})
+        if not isinstance(raw_placements, dict):
+            raise ValueError("Layout placements must be an object.")
+        if set(raw_placements) - set(assignments):
+            raise ValueError("Layout placements contain unknown item IDs; reload Admin.")
+    else:
+        raw_placements = placements_from_data(data)
+
     result["placements"] = {
         iid: ext.normalize_placements(
             raw_placements.get(iid, []),
@@ -138,14 +172,22 @@ def normalized_layout_bundle(data: dict[str, Any], value: Any) -> dict[str, Any]
 
 def apply_layout_bundle(data: dict[str, Any], value: Any) -> dict[str, Any]:
     normalized = normalized_layout_bundle(data, value)
-    standard = {key: copy.deepcopy(normalized[key]) for key in ("pages", "categories", "cv_category_order", "assignments")}
+    standard = {
+        key: copy.deepcopy(normalized[key])
+        for key in ("pages", "categories", "cv_category_order", "assignments")
+    }
     _original_apply_layout_bundle(data, standard)
     settings = data.setdefault("settings", {})
     settings["pages"] = public_pages(settings.get("pages", []))
     settings["categories"] = copy.deepcopy(categories.normalized_categories(data))
     settings["cv_category_order"] = copy.deepcopy(categories.normalized_cv_order(data))
-    settings["dossier_category_order"] = copy.deepcopy(normalized["dossier_category_order"])
-    by_id = {str(item.get("id") or ""): item for item in categories.all_items(data)}
+    settings["dossier_category_order"] = copy.deepcopy(
+        normalized["dossier_category_order"]
+    )
+    by_id = {
+        str(item.get("id") or ""): item
+        for item in categories.all_items(data)
+    }
     for iid, rows in normalized["placements"].items():
         if iid in by_id:
             by_id[iid]["display_placements"] = copy.deepcopy(rows)
@@ -158,20 +200,139 @@ def layout_structure(value: Any) -> dict[str, Any]:
     if not isinstance(value, dict):
         result.update(dossier_category_order=[], placements={})
         return result
-    result["dossier_category_order"] = copy.deepcopy(value.get("dossier_category_order", []))
+    result["dossier_category_order"] = copy.deepcopy(
+        value.get("dossier_category_order", [])
+    )
     result["placements"] = copy.deepcopy(value.get("placements", {}))
     return result
+
+
+def _canonical_public_pages(value: Any) -> list[dict[str, Any]]:
+    rows = public_pages(value)
+    rows.sort(
+        key=lambda row: (
+            int(row.get("order", 0) or 0),
+            str(row.get("id") or ""),
+        )
+    )
+    # The browser normalizer uses consecutive visible page order numbers.
+    for index, row in enumerate(rows):
+        row["order"] = index
+    return rows
+
+
+def _persisted_structure(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        return {"pages": [], "categories": [], "cv_category_order": []}
+    categories_rows = [
+        copy.deepcopy(row)
+        for row in value.get("categories", [])
+        if isinstance(row, dict)
+    ]
+    categories_rows.sort(
+        key=lambda row: (
+            str(row.get("page_id") or ""),
+            int(row.get("order", 0) or 0),
+            str(row.get("id") or ""),
+        )
+    )
+    return {
+        "pages": _canonical_public_pages(value.get("pages", [])),
+        "categories": categories_rows,
+        "cv_category_order": copy.deepcopy(value.get("cv_category_order", [])),
+    }
+
+
+def layout_expected_matches(current: Any, expected: Any) -> bool:
+    """Compare only persistent layout state and tolerate same-batch add/delete.
+
+    The Admin exposes synthetic Dossier/PDF-CV/Profile pages that the backend
+    intentionally does not persist.  Comparing those rows byte-for-byte caused
+    false "layout changed after Admin loaded" conflicts.
+    """
+    if not isinstance(expected, dict):
+        return True
+    if stable(_persisted_structure(current)) != stable(_persisted_structure(expected)):
+        return False
+
+    expected_assignments = (
+        expected.get("assignments", {})
+        if isinstance(expected.get("assignments"), dict)
+        else {}
+    )
+    current_assignments = (
+        current.get("assignments", {})
+        if isinstance(current.get("assignments"), dict)
+        else {}
+    )
+    for iid in set(expected_assignments) & set(current_assignments):
+        left = expected_assignments[iid] if isinstance(expected_assignments[iid], dict) else {}
+        right = current_assignments[iid] if isinstance(current_assignments[iid], dict) else {}
+        if str(left.get("category_id") or "") != str(right.get("category_id") or ""):
+            return False
+        if int(left.get("order", 999999)) != int(right.get("order", 999999)):
+            return False
+
+    # Only compare extension state if the Admin actually had that extension
+    # loaded when it created the draft. This removes the browser load-order race.
+    if "dossier_category_order" in expected:
+        if list(expected.get("dossier_category_order") or []) != list(
+            current.get("dossier_category_order") or []
+        ):
+            return False
+
+    if "placements" in expected:
+        expected_placements = (
+            expected.get("placements", {})
+            if isinstance(expected.get("placements"), dict)
+            else {}
+        )
+        current_placements = (
+            current.get("placements", {})
+            if isinstance(current.get("placements"), dict)
+            else {}
+        )
+        for iid in set(expected_placements) & set(current_placements):
+            if stable(expected_placements.get(iid, [])) != stable(
+                current_placements.get(iid, [])
+            ):
+                return False
+
+    return True
 
 
 batch.layout_bundle = layout_bundle
 batch.normalized_layout_bundle = normalized_layout_bundle
 batch.apply_layout_bundle = apply_layout_bundle
 batch.layout_structure = layout_structure
+batch.layout_expected_matches = layout_expected_matches
 
 
-def apply_special(data, trans, history, op, hid, issue, applied_at, request_digest, *args, **kwargs):
+def apply_special(
+    data,
+    trans,
+    history,
+    op,
+    hid,
+    issue,
+    applied_at,
+    request_digest,
+    *args,
+    **kwargs,
+):
     if op.get("op") != "personal_profile":
-        return _original_apply_special(data, trans, history, op, hid, issue, applied_at, request_digest, *args, **kwargs)
+        return _original_apply_special(
+            data,
+            trans,
+            history,
+            op,
+            hid,
+            issue,
+            applied_at,
+            request_digest,
+            *args,
+            **kwargs,
+        )
     before = ext.personal_profile(data)
     expected = op.get("before")
     if expected is not None and stable(ext.normalize_profile(expected, data)) != stable(before):
@@ -200,11 +361,40 @@ def apply_special(data, trans, history, op, hid, issue, applied_at, request_dige
 batch.apply_special = apply_special
 
 
-def apply_undo(data, trans, history, op, hid, issue, applied_at, request_digest, *args, **kwargs):
+def apply_undo(
+    data,
+    trans,
+    history,
+    op,
+    hid,
+    issue,
+    applied_at,
+    request_digest,
+    *args,
+    **kwargs,
+):
     target_id = op.get("history_id")
-    target = next((row for row in history.get("operations", []) if row.get("history_id") == target_id), None)
+    target = next(
+        (
+            row
+            for row in history.get("operations", [])
+            if row.get("history_id") == target_id
+        ),
+        None,
+    )
     if not target or target.get("action") != "personal_profile":
-        return _original_apply_undo(data, trans, history, op, hid, issue, applied_at, request_digest, *args, **kwargs)
+        return _original_apply_undo(
+            data,
+            trans,
+            history,
+            op,
+            hid,
+            issue,
+            applied_at,
+            request_digest,
+            *args,
+            **kwargs,
+        )
     if target.get("reverted_by"):
         raise ValueError(f"{target_id} was already undone.")
     current = ext.personal_profile(data)
