@@ -83,6 +83,7 @@
 | conference | Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic | Nevanlinna 理論、雙曲性與算術動力系統導論 | `conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar` |
 | conference | The 59th TMS Annual Meeting | 中華民國數學會第 59 屆年會 | `conference-2024-01-22-the-59th-tms-annual-meeting` |
 | conference | The 58th TMS Annual Meeting | 中華民國數學會第 58 屆年會 | `conference-2023-01-16-the-58th-tms-annual-meeting` |
+| conference | 國立清華大學數論研討會 | NTHU Workshop on Number Theory | `conference-2025-04-17-nthu-workshop-on-number-theory` |
 
 ## Teaching / 教學
 
