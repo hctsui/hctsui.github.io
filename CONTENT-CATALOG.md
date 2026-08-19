@@ -77,14 +77,13 @@
 | conference | The 11th East Asia Number Theory Conference | 第 11 屆東亞數論會議 | `conference-2025-08-25-the-11th-east-asia-number-theory-conference` |
 | conference | Iwasawa 2025 | Iwasawa 2025 國際會議 | `conference-2025-06-30-iwasawa-2025` |
 | conference | Iwasawa Theory Taipei Summer School | Iwasawa 理論臺北暑期學校 | `conference-2025-06-25-iwasawa-theory-taipei-summer-school` |
+| conference | NTHU Workshop on Number Theory | 國立清華大學數論研討會 | `conference-2025-04-17-entry` |
 | conference | The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2 | 第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第二週 | `conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w` |
 | conference | The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1 | 第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第一週 | `conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w` |
 | conference | The 60th TMS Annual Meeting | 中華民國數學會第 60 屆年會 | `conference-2025-01-14-the-60th-tms-annual-meeting` |
 | conference | Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic | Nevanlinna 理論、雙曲性與算術動力系統導論 | `conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar` |
 | conference | The 59th TMS Annual Meeting | 中華民國數學會第 59 屆年會 | `conference-2024-01-22-the-59th-tms-annual-meeting` |
 | conference | The 58th TMS Annual Meeting | 中華民國數學會第 58 屆年會 | `conference-2023-01-16-the-58th-tms-annual-meeting` |
-| conference | 國立清華大學數論研討會 | NTHU Workshop on Number Theory | `conference-2025-04-17-nthu-workshop-on-number-theory` |
-| conference | NTHU Workshop on Number Theory | 國立清華大學數論研討會 | `conference-2025-04-17-entry` |
 
 ## Teaching / 教學
 

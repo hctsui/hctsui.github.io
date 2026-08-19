@@ -1775,7 +1775,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 14,
+      "order": 15,
       "display_placements": []
     },
     {
@@ -1807,7 +1807,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 15,
+      "order": 16,
       "display_placements": []
     },
     {
@@ -1839,7 +1839,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 16,
+      "order": 17,
       "display_placements": []
     },
     {
@@ -1871,7 +1871,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 17,
+      "order": 18,
       "display_placements": []
     },
     {
@@ -1903,7 +1903,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 18,
+      "order": 19,
       "display_placements": []
     },
     {
@@ -1935,7 +1935,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 19,
+      "order": 20,
       "display_placements": []
     },
     {
@@ -2074,7 +2074,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 21
+      "order": 14
     }
   ],
   "honors": [
