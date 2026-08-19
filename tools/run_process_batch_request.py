@@ -215,91 +215,212 @@ def _canonical_public_pages(value: Any) -> list[dict[str, Any]]:
             str(row.get("id") or ""),
         )
     )
-    # The browser normalizer uses consecutive visible page order numbers.
+    # admin/layout.js rewrites visible page order to 0,1,2,...
     for index, row in enumerate(rows):
         row["order"] = index
     return rows
 
 
-def _persisted_structure(value: Any) -> dict[str, Any]:
-    if not isinstance(value, dict):
-        return {"pages": [], "categories": [], "cv_category_order": []}
-    categories_rows = [
-        copy.deepcopy(row)
-        for row in value.get("categories", [])
-        if isinstance(row, dict)
-    ]
-    categories_rows.sort(
+def _canonical_categories(value: Any) -> list[dict[str, Any]]:
+    """Match admin/layout.js category normalization exactly enough for conflicts.
+
+    In particular, category order is *relative to its page*.  A legacy stored
+    order such as cv-personal.order == 3 is therefore equivalent to order == 0
+    when it is the only category on the PDF-CV virtual page.
+    """
+    rows = [copy.deepcopy(row) for row in value if isinstance(row, dict)] if isinstance(value, list) else []
+    rows.sort(
         key=lambda row: (
             str(row.get("page_id") or ""),
             int(row.get("order", 0) or 0),
             str(row.get("id") or ""),
         )
     )
+    counters: dict[str, int] = {}
+    for row in rows:
+        page_id = str(row.get("page_id") or "")
+        row["order"] = counters.get(page_id, 0)
+        counters[page_id] = row["order"] + 1
+        for field in ("label", "title", "intro"):
+            pair = row.get(field) if isinstance(row.get(field), dict) else {}
+            row[field] = {
+                "en": str(pair.get("en") or ""),
+                "zh": str(pair.get("zh") or ""),
+            }
+        row["show_on_web"] = row.get("show_on_web") is not False
+        row["show_on_cv"] = bool(row.get("show_on_cv"))
+    return rows
+
+
+def _canonical_assignment_and_placements(value: Any) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """Mirror layout.js + dossier-category.js order normalization.
+
+    Frontend layout state uses contiguous order numbers.  The persistent data
+    may contain legacy/gapped numbers, so comparing raw integers creates false
+    stale-layout conflicts even when the visible order is identical.
+    """
+    source = value if isinstance(value, dict) else {}
+    raw_assignments = source.get("assignments", {}) if isinstance(source.get("assignments"), dict) else {}
+    assignments: dict[str, dict[str, Any]] = {}
+    for iid, state in raw_assignments.items():
+        state = state if isinstance(state, dict) else {}
+        try:
+            order = int(state.get("order", 999999))
+        except (TypeError, ValueError):
+            order = 999999
+        assignments[str(iid)] = {
+            "category_id": str(state.get("category_id") or ""),
+            "order": order,
+        }
+
+    # First pass from admin/layout.js: primary items are contiguous per category.
+    by_category: dict[str, list[str]] = {}
+    for iid, state in assignments.items():
+        by_category.setdefault(state["category_id"], []).append(iid)
+    for ids in by_category.values():
+        ids.sort(key=lambda iid: (assignments[iid]["order"], iid))
+        for index, iid in enumerate(ids):
+            assignments[iid]["order"] = index
+
+    known_categories = {
+        str(row.get("id") or "")
+        for row in source.get("categories", [])
+        if isinstance(row, dict) and row.get("id")
+    }
+    raw_placements = source.get("placements", {}) if isinstance(source.get("placements"), dict) else {}
+    placements: dict[str, list[dict[str, Any]]] = {}
+    for iid in assignments:
+        primary = assignments[iid]["category_id"]
+        rows = raw_placements.get(iid, []) if isinstance(raw_placements.get(iid, []), list) else []
+        seen: set[str] = set()
+        normalized: list[dict[str, Any]] = []
+        for index, row in enumerate(rows):
+            if not isinstance(row, dict):
+                continue
+            category_id = str(row.get("category_id") or "")
+            if (
+                not category_id
+                or category_id == primary
+                or category_id in seen
+                or (known_categories and category_id not in known_categories)
+            ):
+                continue
+            seen.add(category_id)
+            try:
+                order = int(row.get("order", index))
+            except (TypeError, ValueError):
+                order = index
+            normalized.append({"category_id": category_id, "order": order})
+        placements[iid] = normalized
+
+    # dossier-category.js then merges primary + placement references per category
+    # and gives the whole visible list one contiguous ordering.
+    category_ids = set(known_categories)
+    category_ids.update(state["category_id"] for state in assignments.values())
+    category_ids.update(
+        row["category_id"] for rows in placements.values() for row in rows
+    )
+    for category_id in category_ids:
+        refs: list[tuple[int, str, str]] = []
+        for iid, state in assignments.items():
+            if state["category_id"] == category_id:
+                refs.append((state["order"], iid, "primary"))
+        for iid, rows in placements.items():
+            for row in rows:
+                if row["category_id"] == category_id:
+                    refs.append((row["order"], iid, "placement"))
+        refs.sort(key=lambda ref: (ref[0], ref[1]))
+        for index, (_, iid, kind) in enumerate(refs):
+            if kind == "primary":
+                assignments[iid]["order"] = index
+            else:
+                row = next(
+                    row for row in placements[iid]
+                    if row["category_id"] == category_id
+                )
+                row["order"] = index
+
+    for rows in placements.values():
+        rows.sort(key=lambda row: (row["category_id"], row["order"]))
+    return assignments, placements
+
+
+def _canonical_layout(value: Any) -> dict[str, Any]:
+    source = value if isinstance(value, dict) else {}
+    assignments, placements = _canonical_assignment_and_placements(source)
     return {
-        "pages": _canonical_public_pages(value.get("pages", [])),
-        "categories": categories_rows,
-        "cv_category_order": copy.deepcopy(value.get("cv_category_order", [])),
+        "pages": _canonical_public_pages(source.get("pages", [])),
+        "categories": _canonical_categories(source.get("categories", [])),
+        "cv_category_order": copy.deepcopy(source.get("cv_category_order", [])),
+        "assignments": assignments,
+        "placements": placements,
+        "dossier_category_order": copy.deepcopy(source.get("dossier_category_order", [])),
     }
 
 
-def layout_expected_matches(current: Any, expected: Any) -> bool:
-    """Compare only persistent layout state and tolerate same-batch add/delete.
-
-    The Admin exposes synthetic Dossier/PDF-CV/Profile pages that the backend
-    intentionally does not persist.  Comparing those rows byte-for-byte caused
-    false "layout changed after Admin loaded" conflicts.
-    """
-    if not isinstance(expected, dict):
-        return True
-    if stable(_persisted_structure(current)) != stable(_persisted_structure(expected)):
-        return False
-
-    expected_assignments = (
-        expected.get("assignments", {})
-        if isinstance(expected.get("assignments"), dict)
-        else {}
-    )
-    current_assignments = (
-        current.get("assignments", {})
-        if isinstance(current.get("assignments"), dict)
-        else {}
-    )
-    for iid in set(expected_assignments) & set(current_assignments):
-        left = expected_assignments[iid] if isinstance(expected_assignments[iid], dict) else {}
-        right = current_assignments[iid] if isinstance(current_assignments[iid], dict) else {}
-        if str(left.get("category_id") or "") != str(right.get("category_id") or ""):
+def _same_shared_mapping(
+    current: dict[str, Any],
+    expected: dict[str, Any],
+    key: str,
+) -> bool:
+    left = current.get(key, {}) if isinstance(current.get(key), dict) else {}
+    right = expected.get(key, {}) if isinstance(expected.get(key), dict) else {}
+    for iid in set(left) & set(right):
+        if stable(left[iid]) != stable(right[iid]):
             return False
-        if int(left.get("order", 999999)) != int(right.get("order", 999999)):
-            return False
-
-    # Only compare extension state if the Admin actually had that extension
-    # loaded when it created the draft. This removes the browser load-order race.
-    if "dossier_category_order" in expected:
-        if list(expected.get("dossier_category_order") or []) != list(
-            current.get("dossier_category_order") or []
-        ):
-            return False
-
-    if "placements" in expected:
-        expected_placements = (
-            expected.get("placements", {})
-            if isinstance(expected.get("placements"), dict)
-            else {}
-        )
-        current_placements = (
-            current.get("placements", {})
-            if isinstance(current.get("placements"), dict)
-            else {}
-        )
-        for iid in set(expected_placements) & set(current_placements):
-            if stable(expected_placements.get(iid, [])) != stable(
-                current_placements.get(iid, [])
-            ):
-                return False
-
     return True
 
+
+def layout_expected_matches(current: Any, expected: Any) -> bool:
+    """Detect genuine stale edits without rejecting equivalent normalized layouts."""
+    if not isinstance(expected, dict):
+        return True
+    left = _canonical_layout(current)
+    right = _canonical_layout(expected)
+
+    for key in ("pages", "categories", "cv_category_order"):
+        if stable(left[key]) != stable(right[key]):
+            return False
+
+    # Add/delete may have run earlier in this same batch; only IDs that existed
+    # in both snapshots can represent a stale concurrent edit.
+    if not _same_shared_mapping(left, right, "assignments"):
+        return False
+    if "placements" in expected and not _same_shared_mapping(left, right, "placements"):
+        return False
+    if "dossier_category_order" in expected:
+        if stable(left["dossier_category_order"]) != stable(right["dossier_category_order"]):
+            return False
+    return True
+
+
+def layout_after_already_applied(current: Any, requested: Any) -> bool:
+    """Return True only when the requested layout is already the current layout.
+
+    This safely handles content-only edits that caused Admin to emit an auxiliary
+    layout operation.  It is not a blanket conflict bypass: real requested layout
+    changes still go through the normal stale-state check and apply path.
+    """
+    if not isinstance(requested, dict):
+        return False
+    left = _canonical_layout(current)
+    right = _canonical_layout(requested)
+    for key in ("pages", "categories", "cv_category_order"):
+        if stable(left[key]) != stable(right[key]):
+            return False
+    if not _same_shared_mapping(left, right, "assignments"):
+        return False
+    # If requested mentions every current assignment, equality on the shared set
+    # means the primary layout state is already fully applied.
+    if set(right["assignments"]) != set(left["assignments"]):
+        return False
+    if "placements" in requested:
+        if stable(left["placements"]) != stable(right["placements"]):
+            return False
+    if "dossier_category_order" in requested:
+        if stable(left["dossier_category_order"]) != stable(right["dossier_category_order"]):
+            return False
+    return True
 
 batch.layout_bundle = layout_bundle
 batch.normalized_layout_bundle = normalized_layout_bundle
@@ -320,6 +441,30 @@ def apply_special(
     *args,
     **kwargs,
 ):
+    if op.get("op") == "layout":
+        current = layout_bundle(data)
+        if layout_after_already_applied(current, op.get("after")):
+            batch.append_history(
+                history,
+                history_id=hid,
+                issue_number=issue,
+                applied_at=applied_at,
+                request_digest=request_digest,
+                request_action="layout",
+                action="layout",
+                type="layout",
+                entry_id="layout",
+                label={"en": "Page and category layout", "zh": "頁面與類別"},
+                before=copy.deepcopy(current),
+                after=copy.deepcopy(current),
+                index_before=None,
+                index_after=None,
+                undo_of=None,
+            )
+            return "layout", "layout"
+        return _original_apply_special(
+            data, trans, history, op, hid, issue, applied_at, request_digest, *args, **kwargs
+        )
     if op.get("op") != "personal_profile":
         return _original_apply_special(
             data,

@@ -40,6 +40,11 @@ def _upcoming_ids(module: Any, data: dict[str, Any], today: date) -> set[str]:
     }
 
 
+def _source_id(item: dict[str, Any]) -> str:
+    """Return the real CMS entry ID, including for display-placement copies."""
+    return str(item.get("_source_id") or item.get("id") or "")
+
+
 def filter_upcoming_from_activities(
     module: Any,
     data: dict[str, Any],
@@ -56,15 +61,18 @@ def filter_upcoming_from_activities(
     upcoming = _upcoming_ids(module, data, today)
     if not upcoming:
         return items
-    return [
-        item
-        for item in items
-        if str(item.get("id") or "") not in upcoming
-    ]
+    return [item for item in items if _source_id(item) not in upcoming]
+
+
+def _article_markers(text: str, source_id: str) -> list[str]:
+    """Find exact and display-placement article IDs for one CMS source entry."""
+    pattern = re.compile(
+        r'data-entry-id="(' + re.escape(source_id) + r'(?:--at--[^"<>]+)?)"'
+    )
+    return list(dict.fromkeys(match.group(1) for match in pattern.finditer(text)))
 
 
 def _remove_article(text: str, entry_id: str) -> str:
-    """Remove timeline articles for one exact data-entry-id without parsing HTML."""
     marker = f'data-entry-id="{entry_id}"'
     while marker in text:
         marker_at = text.find(marker)
@@ -82,17 +90,13 @@ def clean_generated_activity_pages(
     module: Any,
     data: dict[str, Any],
     today: date,
-) -> None:
-    """Final safety pass after build_site has rendered the website.
-
-    This is deliberately limited to the two Activities HTML files.  It does not
-    mutate site.json, homepage settings, CV data, ordering, categories, or any
-    other generated page.
-    """
+) -> list[Path]:
+    """Remove homepage Upcoming entries from both generated Activities pages."""
     upcoming = _upcoming_ids(module, data, today)
     if not upcoming:
-        return
+        return []
 
+    changed: list[Path] = []
     root = Path(module.ROOT)
     for relative in _ACTIVITY_HTML_PATHS:
         path = root / relative
@@ -100,11 +104,25 @@ def clean_generated_activity_pages(
             continue
         old = path.read_text(encoding="utf-8")
         new = old
-        for entry_id in upcoming:
-            new = _remove_article(new, entry_id)
+        for source_id in sorted(upcoming):
+            for rendered_id in _article_markers(new, source_id):
+                new = _remove_article(new, rendered_id)
         if new != old:
             path.write_text(new, encoding="utf-8")
+            changed.append(path)
 
+        # Never silently ship a page that still duplicates homepage Upcoming.
+        remaining = [
+            source_id
+            for source_id in sorted(upcoming)
+            if _article_markers(new, source_id)
+        ]
+        if remaining:
+            raise RuntimeError(
+                f"Upcoming entries still present in {relative}: "
+                + ", ".join(remaining)
+            )
+    return changed
 
 def patch_build_site(module: Any) -> None:
     """Patch build_site once; unrelated rendering behavior remains unchanged."""
@@ -133,10 +151,12 @@ def patch_build_site(module: Any) -> None:
         )
 
     def build(today: date, update_date: bool = True):
-        paths = original_build(today, update_date)
-        # Reload through build_site's normal migration path so the fallback
-        # uses exactly the same homepage configuration as the renderer.
-        clean_generated_activity_pages(module, module.load_data(), today)
+        paths = list(original_build(today, update_date))
+        # Use exactly the same migrated homepage configuration as build_site.
+        cleaned = clean_generated_activity_pages(module, module.load_data(), today)
+        for path in cleaned:
+            if path not in paths:
+                paths.append(path)
         return paths
 
     module.apply_static_asset_paths = apply_static_asset_paths
