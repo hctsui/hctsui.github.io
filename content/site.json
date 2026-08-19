@@ -726,7 +726,7 @@
           "en": "",
           "zh": ""
         },
-        "order": 3,
+        "order": 0,
         "show_on_web": false,
         "show_on_cv": true
       },
@@ -2074,7 +2074,49 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 27
+      "order": 20
+    },
+    {
+      "type": "conference",
+      "category_id": "activity-conferences",
+      "start_date": "2025-04-17",
+      "end_date": "2025-04-17",
+      "title": {
+        "en": "NTHU Workshop on Number Theory",
+        "zh": "國立清華大學數論研討會"
+      },
+      "venue": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "city": {
+        "en": "Hsinchu",
+        "zh": "新竹"
+      },
+      "country": {
+        "en": "Taiwan",
+        "zh": "臺灣"
+      },
+      "url": "https://www.math.nthu.edu.tw/download.php?dir=seminar_event&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf&title=2025.04.17",
+      "description": {
+        "en": "National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "國立清華大學, 新竹, 臺灣"
+      },
+      "description_html": {
+        "en": "National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "國立清華大學, 新竹, 臺灣"
+      },
+      "title_html": {
+        "en": "NTHU Workshop on Number Theory",
+        "zh": "國立清華大學數論研討會"
+      },
+      "id": "conference-2025-04-17-entry",
+      "display_placements": [],
+      "venue_html": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "order": 21
     }
   ],
   "honors": [
@@ -2959,7 +3001,7 @@
       "display_placements": [
         {
           "category_id": "home-contact",
-          "order": 3
+          "order": 2
         }
       ],
       "personal_key": "office",

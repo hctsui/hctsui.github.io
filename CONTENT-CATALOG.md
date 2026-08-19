@@ -84,6 +84,7 @@
 | conference | The 59th TMS Annual Meeting | 中華民國數學會第 59 屆年會 | `conference-2024-01-22-the-59th-tms-annual-meeting` |
 | conference | The 58th TMS Annual Meeting | 中華民國數學會第 58 屆年會 | `conference-2023-01-16-the-58th-tms-annual-meeting` |
 | conference | 國立清華大學數論研討會 | NTHU Workshop on Number Theory | `conference-2025-04-17-nthu-workshop-on-number-theory` |
+| conference | NTHU Workshop on Number Theory | 國立清華大學數論研討會 | `conference-2025-04-17-entry` |
 
 ## Teaching / 教學
 
