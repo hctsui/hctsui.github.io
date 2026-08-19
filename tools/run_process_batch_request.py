@@ -2,6 +2,7 @@
 """Run the current batch processor with profile, Dossier and placement support."""
 from __future__ import annotations
 
+import argparse
 import copy
 import json
 import sys
@@ -30,6 +31,8 @@ _original_apply_layout_bundle = batch.apply_layout_bundle
 _original_layout_structure = batch.layout_structure
 _original_apply_special = batch.apply_special
 _original_apply_undo = batch.apply_undo
+_original_validate_operation = batch.validate_operation
+_original_main = batch.main
 
 # These pages exist only to make the Admin UI easier to navigate. They are not
 # ordinary persisted CMS pages and therefore must not participate in stale-data
@@ -358,21 +361,98 @@ def _canonical_layout(value: Any) -> dict[str, Any]:
     }
 
 
-def _same_shared_mapping(
-    current: dict[str, Any],
-    expected: dict[str, Any],
-    key: str,
+def _assignment_category_map(layout: dict[str, Any]) -> dict[str, str]:
+    assignments = layout.get("assignments", {}) if isinstance(layout.get("assignments"), dict) else {}
+    return {
+        str(iid): str((state if isinstance(state, dict) else {}).get("category_id") or "")
+        for iid, state in assignments.items()
+    }
+
+
+def _placement_category_map(layout: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    placements = layout.get("placements", {}) if isinstance(layout.get("placements"), dict) else {}
+    result: dict[str, tuple[str, ...]] = {}
+    for iid, rows in placements.items():
+        values = []
+        for row in rows if isinstance(rows, list) else []:
+            if isinstance(row, dict) and row.get("category_id"):
+                values.append(str(row["category_id"]))
+        result[str(iid)] = tuple(sorted(dict.fromkeys(values)))
+    return result
+
+
+def _visible_sequences(
+    layout: dict[str, Any],
+    ids: set[str],
+    *,
+    include_placements: bool,
+) -> dict[str, list[tuple[str, str]]]:
+    """Return relative per-category display order for the selected item IDs.
+
+    Numeric order values are deliberately discarded after sorting.  This makes
+    stale checks invariant under unrelated items added/deleted in between two
+    shared items while still detecting a real relative reorder.
+    """
+    refs: dict[str, list[tuple[int, str, str]]] = {}
+    assignments = layout.get("assignments", {}) if isinstance(layout.get("assignments"), dict) else {}
+    for iid in ids:
+        state = assignments.get(iid)
+        if not isinstance(state, dict):
+            continue
+        category_id = str(state.get("category_id") or "")
+        try:
+            order = int(state.get("order", 999999))
+        except (TypeError, ValueError):
+            order = 999999
+        refs.setdefault(category_id, []).append((order, iid, "primary"))
+    if include_placements:
+        placements = layout.get("placements", {}) if isinstance(layout.get("placements"), dict) else {}
+        for iid in ids:
+            rows = placements.get(iid, [])
+            for row in rows if isinstance(rows, list) else []:
+                if not isinstance(row, dict):
+                    continue
+                category_id = str(row.get("category_id") or "")
+                if not category_id:
+                    continue
+                try:
+                    order = int(row.get("order", 999999))
+                except (TypeError, ValueError):
+                    order = 999999
+                refs.setdefault(category_id, []).append((order, iid, "placement"))
+    return {
+        category_id: [(iid, kind) for _, iid, kind in sorted(rows, key=lambda x: (x[0], x[1], x[2]))]
+        for category_id, rows in refs.items()
+    }
+
+
+def _shared_item_state_matches(
+    left: dict[str, Any],
+    right: dict[str, Any],
+    *,
+    include_placements: bool,
 ) -> bool:
-    left = current.get(key, {}) if isinstance(current.get(key), dict) else {}
-    right = expected.get(key, {}) if isinstance(expected.get(key), dict) else {}
-    for iid in set(left) & set(right):
-        if stable(left[iid]) != stable(right[iid]):
+    left_assignments = left.get("assignments", {}) if isinstance(left.get("assignments"), dict) else {}
+    right_assignments = right.get("assignments", {}) if isinstance(right.get("assignments"), dict) else {}
+    shared = set(left_assignments) & set(right_assignments)
+    left_categories = _assignment_category_map(left)
+    right_categories = _assignment_category_map(right)
+    for iid in shared:
+        if left_categories.get(iid) != right_categories.get(iid):
             return False
-    return True
+    if include_placements:
+        left_placements = _placement_category_map(left)
+        right_placements = _placement_category_map(right)
+        for iid in shared:
+            if left_placements.get(iid, ()) != right_placements.get(iid, ()):
+                return False
+    return _visible_sequences(left, shared, include_placements=include_placements) == _visible_sequences(
+        right, shared, include_placements=include_placements
+    )
 
 
 def layout_expected_matches(current: Any, expected: Any) -> bool:
-    """Detect genuine stale edits without rejecting equivalent normalized layouts."""
+    """Detect genuine stale layout edits while ignoring unrelated item churn."""
     if not isinstance(expected, dict):
         return True
     left = _canonical_layout(current)
@@ -382,11 +462,11 @@ def layout_expected_matches(current: Any, expected: Any) -> bool:
         if stable(left[key]) != stable(right[key]):
             return False
 
-    # Add/delete may have run earlier in this same batch; only IDs that existed
-    # in both snapshots can represent a stale concurrent edit.
-    if not _same_shared_mapping(left, right, "assignments"):
-        return False
-    if "placements" in expected and not _same_shared_mapping(left, right, "placements"):
+    if not _shared_item_state_matches(
+        left,
+        right,
+        include_placements="placements" in expected,
+    ):
         return False
     if "dossier_category_order" in expected:
         if stable(left["dossier_category_order"]) != stable(right["dossier_category_order"]):
@@ -394,40 +474,171 @@ def layout_expected_matches(current: Any, expected: Any) -> bool:
     return True
 
 
-def layout_after_already_applied(current: Any, requested: Any) -> bool:
-    """Return True only when the requested layout is already the current layout.
+def _layout_refs(layout: dict[str, Any], category_id: str) -> list[tuple[str, str]]:
+    refs: list[tuple[int, str, str]] = []
+    assignments = layout.get("assignments", {}) if isinstance(layout.get("assignments"), dict) else {}
+    for iid, state in assignments.items():
+        if not isinstance(state, dict) or str(state.get("category_id") or "") != category_id:
+            continue
+        try:
+            order = int(state.get("order", 999999))
+        except (TypeError, ValueError):
+            order = 999999
+        refs.append((order, str(iid), "primary"))
+    placements = layout.get("placements", {}) if isinstance(layout.get("placements"), dict) else {}
+    for iid, rows in placements.items():
+        for row in rows if isinstance(rows, list) else []:
+            if not isinstance(row, dict) or str(row.get("category_id") or "") != category_id:
+                continue
+            try:
+                order = int(row.get("order", 999999))
+            except (TypeError, ValueError):
+                order = 999999
+            refs.append((order, str(iid), "placement"))
+    return [(iid, kind) for _, iid, kind in sorted(refs, key=lambda x: (x[0], x[1], x[2]))]
 
-    This safely handles content-only edits that caused Admin to emit an auxiliary
-    layout operation.  It is not a blanket conflict bypass: real requested layout
-    changes still go through the normal stale-state check and apply path.
+
+def _rebase_reference_order(
+    current: dict[str, Any],
+    requested: dict[str, Any],
+    assignments: dict[str, dict[str, Any]],
+    placements: dict[str, list[dict[str, Any]]],
+) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """Apply requested relative order while retaining current-only references.
+
+    Unknown/current-only references keep their current slots whenever possible;
+    requested references occupy the remaining slots in the submitted relative
+    order.  This is the layout analogue of process_batch_request.merge_sequence.
+    """
+    final_layout = {"assignments": assignments, "placements": placements}
+    category_ids = {str(state.get("category_id") or "") for state in assignments.values()}
+    category_ids.update(
+        str(row.get("category_id") or "")
+        for rows in placements.values()
+        for row in rows
+        if isinstance(row, dict)
+    )
+    for category_id in category_ids:
+        final_set = set(_layout_refs(final_layout, category_id))
+        current_sequence = [ref for ref in _layout_refs(current, category_id) if ref in final_set]
+        requested_sequence = [ref for ref in _layout_refs(requested, category_id) if ref in final_set]
+        base = list(current_sequence)
+        seen = set(base)
+        # Moved-in/new references are appended before the requested sequence is
+        # overlaid, so they can still move ahead of known references as requested.
+        for ref in requested_sequence:
+            if ref not in seen:
+                base.append(ref)
+                seen.add(ref)
+        for ref in sorted(final_set):
+            if ref not in seen:
+                base.append(ref)
+                seen.add(ref)
+        wanted = set(requested_sequence)
+        slots = [index for index, ref in enumerate(base) if ref in wanted]
+        if len(slots) != len(requested_sequence):
+            raise ValueError("Could not rebase page/category item ordering safely; reload Admin.")
+        for index, ref in zip(slots, requested_sequence):
+            base[index] = ref
+        for order, (iid, kind) in enumerate(base):
+            if kind == "primary":
+                assignments[iid]["order"] = order
+            else:
+                row = next(
+                    row for row in placements.get(iid, [])
+                    if str(row.get("category_id") or "") == category_id
+                )
+                row["order"] = order
+    for rows in placements.values():
+        rows.sort(key=lambda row: (str(row.get("category_id") or ""), int(row.get("order", 999999))))
+    return assignments, placements
+
+
+def rebase_layout_bundle(current: Any, requested: Any) -> dict[str, Any]:
+    """Rebase a submitted layout onto the current set of content items.
+
+    * current-only IDs are preserved;
+    * IDs that no longer exist are dropped;
+    * requested changes for still-existing IDs are applied;
+    * deleting a category that gained an unseen item/reference is rejected.
     """
     if not isinstance(requested, dict):
-        return False
-    left = _canonical_layout(current)
-    right = _canonical_layout(requested)
-    for key in ("pages", "categories", "cv_category_order"):
-        if stable(left[key]) != stable(right[key]):
-            return False
-    if not _same_shared_mapping(left, right, "assignments"):
-        return False
-    # A content-only edit may carry an auxiliary layout snapshot that was made
-    # before another operation added/deleted an item.  Missing/extra item IDs do
-    # not request a layout change by themselves: only shared IDs can prove that
-    # category/order changed.  Treat such a snapshot as an idempotent no-op and
-    # preserve the current state of IDs that are absent from the request.
-    if "placements" in requested:
-        if not _same_shared_mapping(left, right, "placements"):
-            return False
+        raise ValueError("Layout operation requires an object.")
+    current_canonical = _canonical_layout(current)
+    requested_canonical = _canonical_layout(requested)
+    current_assignments = current_canonical["assignments"]
+    requested_assignments = requested_canonical["assignments"]
+    known_categories = {
+        str(row.get("id") or "")
+        for row in requested_canonical["categories"]
+        if isinstance(row, dict) and row.get("id")
+    }
+
+    current_only = set(current_assignments) - set(requested_assignments)
+    for iid in current_only:
+        category_id = str((current_assignments[iid] or {}).get("category_id") or "")
+        if category_id and category_id not in known_categories:
+            raise ValueError(
+                f"Layout category {category_id} gained item {iid} after Admin loaded; reload Admin before deleting it."
+            )
+        for row in current_canonical["placements"].get(iid, []):
+            placement_category = str(row.get("category_id") or "")
+            if placement_category and placement_category not in known_categories:
+                raise ValueError(
+                    f"Layout category {placement_category} gained a reference after Admin loaded; reload Admin before deleting it."
+                )
+
+    assignments: dict[str, dict[str, Any]] = {}
+    for iid, current_state in current_assignments.items():
+        state = requested_assignments.get(iid, current_state)
+        assignments[iid] = copy.deepcopy(state)
+
+    current_placements = current_canonical["placements"]
+    requested_has_placements = "placements" in requested
+    requested_placements = requested_canonical["placements"] if requested_has_placements else {}
+    placements: dict[str, list[dict[str, Any]]] = {}
+    for iid in current_assignments:
+        if requested_has_placements and iid in requested_assignments:
+            placements[iid] = copy.deepcopy(requested_placements.get(iid, []))
+        else:
+            placements[iid] = copy.deepcopy(current_placements.get(iid, []))
+
+    assignments, placements = _rebase_reference_order(
+        current_canonical,
+        requested_canonical,
+        assignments,
+        placements,
+    )
+
+    result = {
+        "pages": copy.deepcopy(requested.get("pages", [])),
+        "categories": copy.deepcopy(requested.get("categories", [])),
+        "cv_category_order": copy.deepcopy(requested.get("cv_category_order", [])),
+        "assignments": assignments,
+        "placements": placements,
+    }
     if "dossier_category_order" in requested:
-        if stable(left["dossier_category_order"]) != stable(right["dossier_category_order"]):
-            return False
-    return True
+        result["dossier_category_order"] = copy.deepcopy(requested.get("dossier_category_order", []))
+    else:
+        result["dossier_category_order"] = copy.deepcopy(current_canonical["dossier_category_order"])
+    return result
 
 batch.layout_bundle = layout_bundle
 batch.normalized_layout_bundle = normalized_layout_bundle
 batch.apply_layout_bundle = apply_layout_bundle
 batch.layout_structure = layout_structure
 batch.layout_expected_matches = layout_expected_matches
+
+
+def validate_operation(op: Any) -> None:
+    if isinstance(op, dict) and op.get("op") == "personal_profile":
+        if not isinstance(op.get("before"), dict) or not isinstance(op.get("after"), dict):
+            raise ValueError("Personal profile operation requires before and after objects.")
+        return
+    _original_validate_operation(op)
+
+
+batch.validate_operation = validate_operation
 
 
 def apply_special(
@@ -443,29 +654,30 @@ def apply_special(
     **kwargs,
 ):
     if op.get("op") == "layout":
-        current = layout_bundle(data)
-        if layout_after_already_applied(current, op.get("after")):
-            batch.append_history(
-                history,
-                history_id=hid,
-                issue_number=issue,
-                applied_at=applied_at,
-                request_digest=request_digest,
-                request_action="layout",
-                action="layout",
-                type="layout",
-                entry_id="layout",
-                label={"en": "Page and category layout", "zh": "頁面與類別"},
-                before=copy.deepcopy(current),
-                after=copy.deepcopy(current),
-                index_before=None,
-                index_after=None,
-                undo_of=None,
-            )
-            return "layout", "layout"
-        return _original_apply_special(
-            data, trans, history, op, hid, issue, applied_at, request_digest, *args, **kwargs
+        before = layout_bundle(data)
+        expected = op.get("before")
+        if expected is not None and not layout_expected_matches(before, expected):
+            raise ValueError("Conflict: page/category layout changed after Admin loaded.")
+        rebased = rebase_layout_bundle(before, op.get("after"))
+        after = apply_layout_bundle(data, rebased)
+        batch.append_history(
+            history,
+            history_id=hid,
+            issue_number=issue,
+            applied_at=applied_at,
+            request_digest=request_digest,
+            request_action="layout",
+            action="layout",
+            type="layout",
+            entry_id="layout",
+            label={"en": "Page and category layout", "zh": "頁面與類別"},
+            before=copy.deepcopy(before),
+            after=copy.deepcopy(after),
+            index_before=None,
+            index_after=None,
+            undo_of=None,
         )
+        return "layout", "layout"
     if op.get("op") != "personal_profile":
         return _original_apply_special(
             data,
@@ -528,7 +740,7 @@ def apply_undo(
         ),
         None,
     )
-    if not target or target.get("action") != "personal_profile":
+    if not target or target.get("action") not in {"personal_profile", "layout"}:
         return _original_apply_undo(
             data,
             trans,
@@ -543,6 +755,35 @@ def apply_undo(
         )
     if target.get("reverted_by"):
         raise ValueError(f"{target_id} was already undone.")
+    if target.get("expires_at") and batch.dt(target["expires_at"]) <= applied_at:
+        raise ValueError(f"Undo expired: {target_id}")
+
+    if target.get("action") == "layout":
+        current = layout_bundle(data)
+        if not layout_expected_matches(current, target.get("after")):
+            raise ValueError("Cannot undo layout: layout changed later.")
+        rebased = rebase_layout_bundle(current, target.get("before"))
+        restored = apply_layout_bundle(data, rebased)
+        new = batch.append_history(
+            history,
+            history_id=hid,
+            issue_number=issue,
+            applied_at=applied_at,
+            request_digest=request_digest,
+            request_action="undo",
+            action="layout",
+            type="layout",
+            entry_id="layout",
+            label=target.get("label") or {"en": "Page and category layout", "zh": "頁面與類別"},
+            before=copy.deepcopy(current),
+            after=copy.deepcopy(restored),
+            index_before=None,
+            index_after=None,
+            undo_of=target_id,
+        )
+        target["reverted_by"] = new["history_id"]
+        return "undo", "layout"
+
     current = ext.personal_profile(data)
     if stable(current) != stable(ext.normalize_profile(target.get("after"), data)):
         raise ValueError("Cannot undo personal profile: it changed later.")
@@ -567,8 +808,139 @@ def apply_undo(
     target["reverted_by"] = new["history_id"]
     return "undo", "personal-profile"
 
-
 batch.apply_undo = apply_undo
 
+
+def _extended_main() -> None:
+    """Run the batch loop when an extension-only operation needs explicit routing."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("event")
+    parser.add_argument("--result-file", required=True)
+    args = parser.parse_args()
+    event = json.load(open(args.event, encoding="utf-8"))
+    issue = int(event["issue"]["number"])
+    payload = batch.parse_body(event["issue"]["body"])
+    operations = payload.get("operations", [])
+    if payload.get("schema_version") != 2 or not isinstance(operations, list):
+        raise ValueError("Invalid batch payload.")
+
+    data = batch.migrate_category_data(json.load(open(batch.SITE, encoding="utf-8")))
+    translations = json.load(open(batch.TRANS, encoding="utf-8"))
+    batch.normalize_translation_tags(translations)
+    people = batch.normalized_people(
+        json.load(open(batch.PEOPLE, encoding="utf-8")) if batch.PEOPLE.exists() else batch.empty_people()
+    )
+    batch.validate_people(people)
+    arxiv_store = batch.normalized_arxiv_store(
+        json.load(open(batch.ARXIV_STORE, encoding="utf-8")) if batch.ARXIV_STORE.exists() else batch.empty_arxiv_store()
+    )
+    batch.validate_arxiv_store(arxiv_store)
+    notifications = batch.normalized_notification_store(
+        json.load(open(batch.NOTIFICATIONS, encoding="utf-8")) if batch.NOTIFICATIONS.exists() else batch.empty_notification_store()
+    )
+    batch.validate_notification_store(notifications)
+    history = batch.load_history()
+    applied_at = batch.now()
+    batch.prune(history, applied_at)
+    existing = {row["history_id"]: row for row in history["operations"]}
+    action_names = (
+        "add", "update", "delete", "undo", "reorder", "translations", "people",
+        "arxiv_suggestions", "notifications", "site_settings", "headings", "layout",
+        "homepage", "personal_profile", "replayed",
+    )
+    counts = {name: 0 for name in action_names}
+    ids: list[str] = []
+    special = {
+        "reorder", "translations", "people", "arxiv_suggestions", "notifications",
+        "site_settings", "headings", "layout", "homepage", "personal_profile",
+    }
+
+    for index, op in enumerate(operations, 1):
+        batch.validate_operation(op)
+        history_id = f"issue-{issue}-op-{index}"
+        request_digest = batch.digest(op)
+        if history_id in existing:
+            if existing[history_id].get("request_digest") != request_digest:
+                raise ValueError(f"{history_id} exists with different content.")
+            counts["replayed"] += 1
+            continue
+        if op["op"] == "undo":
+            action, entry_id = batch.apply_undo(
+                data, translations, history, op, history_id, issue, applied_at, request_digest,
+                people=people, arxiv_store=arxiv_store, notifications=notifications,
+            )
+        elif op["op"] in special:
+            action, entry_id = batch.apply_special(
+                data, translations, history, op, history_id, issue, applied_at, request_digest,
+                people=people, arxiv_store=arxiv_store, notifications=notifications,
+            )
+        else:
+            action, entry_id = batch.apply_content(
+                data, history, op, history_id, issue, applied_at, request_digest
+            )
+        counts[action] += 1
+        ids.append(entry_id)
+        existing[history_id] = history["operations"][-1]
+
+    batch.normalize_groups(data)
+    data = batch.strip_invisible_chars(batch.migrate_category_data(data))
+    translations = batch.strip_invisible_chars(translations)
+    people = batch.strip_invisible_chars(batch.normalized_people(people))
+    arxiv_store = batch.strip_invisible_chars(batch.normalized_arxiv_store(arxiv_store))
+    notifications = batch.strip_invisible_chars(batch.normalized_notification_store(notifications))
+    history = batch.strip_invisible_chars(history)
+    batch.validate_category_data(data)
+    batch.validate_homepage_config(data, batch.normalized_homepage_config(data))
+    batch.validate_trans(translations)
+    batch.validate_people(people)
+    batch.validate_arxiv_store(arxiv_store)
+    batch.validate_notification_store(notifications)
+    batch.validate_site_settings(batch.current_site_settings(data), data)
+
+    batch.SITE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    batch.TRANS.write_text(json.dumps(translations, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    batch.PEOPLE.write_text(json.dumps(people, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    batch.ARXIV_STORE.write_text(json.dumps(arxiv_store, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    batch.NOTIFICATIONS.write_text(json.dumps(notifications, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    batch.HISTORY.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    summary_keys = (
+        "add", "update", "delete", "undo", "reorder", "translations", "people",
+        "arxiv_suggestions", "notifications", "site_settings", "headings", "layout",
+        "homepage", "personal_profile",
+    )
+    summary = "批次完成：" + "、".join(
+        f"{key} {counts[key]}" for key in summary_keys if counts[key]
+    )
+    result = {
+        "action": summary or "沒有新操作",
+        "entry_id": ", ".join(ids[:8]),
+        "notes": ["每筆操作已保存七天，可在 Admin 單筆 Undo。"],
+        "warnings": [],
+    }
+    Path(args.result_file).write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+
+
+def main() -> None:
+    # Keep the core processor's exact main loop for ordinary batches. Only the
+    # personal-profile extension needs the slightly wider action/count routing.
+    use_extended = False
+    if len(sys.argv) > 1:
+        try:
+            event = json.load(open(sys.argv[1], encoding="utf-8"))
+            payload = batch.parse_body(event["issue"]["body"])
+            use_extended = any(
+                isinstance(op, dict) and op.get("op") == "personal_profile"
+                for op in payload.get("operations", [])
+            )
+        except Exception:
+            # Let the core parser produce the canonical error for malformed input.
+            use_extended = False
+    if use_extended:
+        _extended_main()
+    else:
+        _original_main()
+
+
 if __name__ == "__main__":
-    batch.main()
+    main()
