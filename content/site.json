@@ -2673,6 +2673,74 @@
       },
       "category_id": "teaching-national-tsing-hua-university",
       "display_placements": []
+    },
+    {
+      "type": "teaching",
+      "category_id": "teaching-national-tsing-hua-university",
+      "course_page_id": "",
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      },
+      "term": {
+        "en": "",
+        "zh": ""
+      },
+      "lecture_notes_title": {
+        "en": "",
+        "zh": ""
+      },
+      "lecture_notes_url": "",
+      "course": {
+        "en": "MATH1000 Precalculus",
+        "zh": "MATH1000 微積分預備課程"
+      },
+      "group_id": "national-tsing-hua-university",
+      "order": 9,
+      "id": "teaching-2026-09-12-math1000",
+      "display_placements": [],
+      "role_html": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      }
+    },
+    {
+      "type": "teaching",
+      "category_id": "teaching-national-tsing-hua-university",
+      "course_page_id": "",
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      },
+      "term": {
+        "en": "",
+        "zh": ""
+      },
+      "lecture_notes_title": {
+        "en": "",
+        "zh": ""
+      },
+      "lecture_notes_url": "",
+      "course": {
+        "en": "MATH5410 Modern Algebra I",
+        "zh": "MATH5410 近世代數（一）"
+      },
+      "group_id": "national-tsing-hua-university",
+      "order": 10,
+      "id": "teaching-2026-09-12-math5410",
+      "display_placements": [],
+      "role_html": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      }
     }
   ],
   "profile_items": [

@@ -493,6 +493,13 @@
     },
     {
       "language": "en",
+      "title": "MATH1000 Precalculus",
+      "description": "",
+      "url": "/teaching.html#teaching-2026-09-12-math1000",
+      "kind": "teaching"
+    },
+    {
+      "language": "en",
       "title": "MATH1410 Linear Algebra I",
       "description": "Fall 2024",
       "url": "/teaching.html#teaching-5-math1410-linear-algebra-i",
@@ -552,6 +559,13 @@
       "title": "MATH3450 Cryptography",
       "description": "Fall 2025",
       "url": "/teaching.html#teaching-4-math3450-cryptography",
+      "kind": "teaching"
+    },
+    {
+      "language": "en",
+      "title": "MATH5410 Modern Algebra I",
+      "description": "",
+      "url": "/teaching.html#teaching-2026-09-12-math5410",
       "kind": "teaching"
     },
     {
@@ -1053,6 +1067,13 @@
     },
     {
       "language": "zh",
+      "title": "MATH1000 微積分預備課程",
+      "description": "",
+      "url": "/zh/teaching.html#teaching-2026-09-12-math1000",
+      "kind": "teaching"
+    },
+    {
+      "language": "zh",
       "title": "MATH1410 線性代數（一）",
       "description": "2024 秋",
       "url": "/zh/teaching.html#teaching-5-math1410-linear-algebra-i",
@@ -1112,6 +1133,13 @@
       "title": "MATH3450 密碼學",
       "description": "2025 秋",
       "url": "/zh/teaching.html#teaching-4-math3450-cryptography",
+      "kind": "teaching"
+    },
+    {
+      "language": "zh",
+      "title": "MATH5410 近世代數（一）",
+      "description": "",
+      "url": "/zh/teaching.html#teaching-2026-09-12-math5410",
       "kind": "teaching"
     },
     {

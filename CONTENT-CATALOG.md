@@ -100,4 +100,6 @@
 | teaching | MATH3050 Complex Analysis | MATH3050 複變數函數論 | `teaching-7-math3050-complex-analysis` |
 | teaching | MATH2010 Advanced Calculus I | MATH2010 高等微積分（一） | `teaching-8-math2010-advanced-calculus-i` |
 | teaching | MATH2020 Advanced Calculus II | MATH2020 高等微積分（二） | `teaching-9-math2020-advanced-calculus-ii` |
+| teaching | MATH1000 Precalculus | MATH1000 微積分預備課程 | `teaching-2026-09-12-math1000` |
+| teaching | MATH5410 Modern Algebra I | MATH5410 近世代數（一） | `teaching-2026-09-12-math5410` |
 
