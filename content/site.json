@@ -2741,6 +2741,40 @@
         "en": "Teaching Assistant",
         "zh": "助教"
       }
+    },
+    {
+      "type": "teaching",
+      "category_id": "teaching-national-tsing-hua-university",
+      "course_page_id": "",
+      "institution": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "role": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      },
+      "term": {
+        "en": "Fall 2026",
+        "zh": "2026 秋"
+      },
+      "lecture_notes_title": {
+        "en": "",
+        "zh": ""
+      },
+      "lecture_notes_url": "",
+      "course": {
+        "en": "MATH5640 Algebraic Geometry",
+        "zh": "MATH5640 代數幾何"
+      },
+      "group_id": "national-tsing-hua-university",
+      "order": 11,
+      "id": "teaching-Fall 2026-math5640",
+      "display_placements": [],
+      "role_html": {
+        "en": "Teaching Assistant",
+        "zh": "助教"
+      }
     }
   ],
   "profile_items": [

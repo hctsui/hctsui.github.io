@@ -570,6 +570,13 @@
     },
     {
       "language": "en",
+      "title": "MATH5640 Algebraic Geometry",
+      "description": "Fall 2026",
+      "url": "/teaching.html#teaching-Fall 2026-math5640",
+      "kind": "teaching"
+    },
+    {
+      "language": "en",
       "title": "Tohoku University",
       "description": "Sendai · Japan · Supported by Japan–Taiwan Exchange Association",
       "url": "/activities.html#visit-2026-07-02-tohoku-university",
@@ -1140,6 +1147,13 @@
       "title": "MATH5410 近世代數（一）",
       "description": "2026 秋",
       "url": "/zh/teaching.html#teaching-2026-09-12-math5410",
+      "kind": "teaching"
+    },
+    {
+      "language": "zh",
+      "title": "MATH5640 代數幾何",
+      "description": "2026 秋",
+      "url": "/zh/teaching.html#teaching-Fall 2026-math5640",
       "kind": "teaching"
     },
     {
