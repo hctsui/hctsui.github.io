@@ -8,6 +8,7 @@ import json
 import os
 import re
 from datetime import date, datetime
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -323,6 +324,61 @@ def bibtex_controls(entry: dict[str, Any], lang: str) -> str:
         f'<pre tabindex="0"><code>{esc(bibitem)}</code></pre></section></div>'
     )
 
+
+PUBLICATION_OWNER_NAMES = ("Hung-Chun Tsui", "崔鴻竣")
+
+
+class _PublicationOwnerEmphasisParser(HTMLParser):
+    """Bold the site owner's name without changing stored author markup."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=False)
+        self.parts: list[str] = []
+        self.strong_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.parts.append(self.get_starttag_text() or "")
+        if tag.lower() == "strong":
+            self.strong_depth += 1
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.parts.append(self.get_starttag_text() or "")
+
+    def handle_endtag(self, tag: str) -> None:
+        self.parts.append(f"</{tag}>")
+        if tag.lower() == "strong" and self.strong_depth:
+            self.strong_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self.strong_depth:
+            self.parts.append(data)
+            return
+        emphasized = data
+        for name in PUBLICATION_OWNER_NAMES:
+            pattern = re.compile(rf"(?<![\w-]){re.escape(name)}(?![\w-])")
+            emphasized = pattern.sub(lambda match: f"<strong>{match.group(0)}</strong>", emphasized)
+        self.parts.append(emphasized)
+
+    def handle_entityref(self, name: str) -> None:
+        self.parts.append(f"&{name};")
+
+    def handle_charref(self, name: str) -> None:
+        self.parts.append(f"&#{name};")
+
+    def handle_comment(self, data: str) -> None:
+        self.parts.append(f"<!--{data}-->")
+
+
+def emphasize_publication_owner(fragment: str) -> str:
+    """Apply owner emphasis only to a rendered publication author line."""
+    if not fragment:
+        return fragment
+    parser = _PublicationOwnerEmphasisParser()
+    parser.feed(fragment)
+    parser.close()
+    return "".join(parser.parts)
+
+
 def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool = False) -> str:
     links_html = "".join(
         f'<a class="publication-action" href="{esc(link.get("url", ""))}" rel="noopener" target="_blank">{esc((link.get("label") or {}).get(lang) or (link.get("label") or {}).get("en") or "Link")}</a>'
@@ -334,6 +390,7 @@ def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool 
     authors = (entry.get("homepage_authors_html", {}) or {}).get(lang) if homepage else ""
     title = title or inline_value(entry, "title", lang)
     authors = authors or inline_value(entry, "authors", lang)
+    authors = emphasize_publication_owner(authors)
     authors = link_author_html(authors, PEOPLE, lang)
     venue = inline_value(entry, "venue", lang)
     return (
