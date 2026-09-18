@@ -207,6 +207,35 @@ class BibtexTests(unittest.TestCase):
         self.assertIn(r"LaTeX \bibitem", rendered)
         self.assertNotIn("\b", rendered)
 
+    def test_publication_author_line_bolds_owner_but_not_coauthors(self) -> None:
+        rendered = render_publication_article(self.publication(), "en")
+        self.assertIn("<strong>Hung-Chun Tsui</strong>", rendered)
+        self.assertNotIn("<strong>Ting-Wei Chang</strong>", rendered)
+
+    def test_chinese_publication_author_line_bolds_chinese_owner_name(self) -> None:
+        item = self.publication()
+        item["authors"]["zh"] = "張庭瑋, 崔鴻竣"
+        item["authors_html"] = {"zh": "張庭瑋, 崔鴻竣"}
+        rendered = render_publication_article(item, "zh")
+        self.assertIn("<strong>崔鴻竣</strong>", rendered)
+        self.assertNotIn("<strong>張庭瑋</strong>", rendered)
+
+    def test_homepage_publication_override_also_bolds_owner(self) -> None:
+        item = self.publication()
+        item["homepage_authors_html"] = {"en": "Ting-Wei Chang and Hung-Chun Tsui"}
+        rendered = render_publication_article(item, "en", homepage=True)
+        self.assertIn("<strong>Hung-Chun Tsui</strong>", rendered)
+
+    def test_existing_owner_emphasis_is_not_nested(self) -> None:
+        item = self.publication()
+        item["homepage_authors_html"] = {"en": "Ting-Wei Chang and <strong>Hung-Chun Tsui</strong>"}
+        rendered = render_publication_article(item, "en", homepage=True)
+        self.assertEqual(rendered.count("<strong>Hung-Chun Tsui</strong>"), 1)
+        self.assertNotIn("<strong><strong>", rendered)
+
+    def test_owner_name_is_not_globally_bolded_outside_publications(self) -> None:
+        self.assertEqual(rich_html("Hung-Chun Tsui"), "Hung-Chun Tsui")
+
 
 class StaticMathTests(unittest.TestCase):
     def test_common_number_theory_tex_is_rendered_without_external_dependency(self) -> None:
