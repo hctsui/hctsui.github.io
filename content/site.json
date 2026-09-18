@@ -2197,7 +2197,7 @@
       "type": "publication",
       "date": "2025-04-22",
       "year": 2025,
-      "order": 3,
+      "order": 4,
       "arxiv": "2504.15697",
       "title": {
         "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
@@ -2259,7 +2259,7 @@
       "type": "publication",
       "date": "2025-04-26",
       "year": 2025,
-      "order": 2,
+      "order": 3,
       "arxiv": "2504.18879",
       "title": {
         "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
@@ -2321,7 +2321,7 @@
       "type": "publication",
       "date": "2026-03-11",
       "year": 2026,
-      "order": 1,
+      "order": 2,
       "arxiv": "2603.10376",
       "title": {
         "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
@@ -2391,7 +2391,7 @@
       "type": "publication",
       "date": "2026-04-05",
       "year": 2026,
-      "order": 0,
+      "order": 1,
       "arxiv": "2604.03618",
       "title": {
         "en": "On u -Multiple Zeta Values in Positive Characteristic",
@@ -2455,6 +2455,68 @@
       "bibtex": "",
       "bibitem": "",
       "display_placements": []
+    },
+    {
+      "type": "publication",
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "date": "2026-09-16",
+      "title": {
+        "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
+        "zh": "正特徵上的多重艾森斯坦級數：直和定理"
+      },
+      "venue": {
+        "en": "arXiv: 2609.18777v2",
+        "zh": "arXiv: 2609.18777v2"
+      },
+      "arxiv": "2609.18777v2",
+      "arxiv_url": "https://arxiv.org/abs/2609.18777v2",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": "",
+      "authors": {
+        "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
+        "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
+      },
+      "group_id": "preprints",
+      "year": 2026,
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2609.18777v2"
+        },
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf"
+        }
+      ],
+      "title_html": {
+        "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
+        "zh": "正特徵上的多重艾森斯坦級數：直和定理"
+      },
+      "authors_html": {
+        "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
+        "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
+      },
+      "venue_html": {
+        "en": "arXiv: 2609.18777v2",
+        "zh": "arXiv: 2609.18777v2"
+      },
+      "id": "publication-2026-09-16-entry",
+      "display_placements": [],
+      "order": 0
     }
   ],
   "teaching": [

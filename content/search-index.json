@@ -332,6 +332,13 @@
     },
     {
       "language": "en",
+      "title": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
+      "description": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2609.18777v2",
+      "url": "/publications.html#publication-2026-09-16-entry",
+      "kind": "publication"
+    },
+    {
+      "language": "en",
       "title": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
       "description": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2504.18879",
       "url": "/publications.html#publication-2504.18879-2",
@@ -909,6 +916,13 @@
       "title": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性",
       "description": "張庭瑋, 崔鴻竣 · arXiv: 2504.15697",
       "url": "/zh/publications.html#publication-2504.15697-1",
+      "kind": "publication"
+    },
+    {
+      "language": "zh",
+      "title": "正特徵上的多重艾森斯坦級數：直和定理",
+      "description": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣 · arXiv: 2609.18777v2",
+      "url": "/zh/publications.html#publication-2026-09-16-entry",
       "kind": "publication"
     },
     {
