@@ -1350,4 +1350,30 @@ body[data-page="contact"] .contact-submit:hover{filter:brightness(.93)}
 .nav-language-button:hover,.nav-language-button:focus-visible{background:var(--accent);color:#fff;outline:none}
 @media(max-width:800px){.site-search{max-width:none;width:100%}.site-search-results{left:0;right:auto;width:100%}.site-nav .nav-language-button{width:100%;text-align:left}.site-nav{max-height:calc(100vh - 92px);overflow:auto}}
 /* Course information pages */
-.course-page .container{display:grid;gap:1.5rem}.course-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin:0}.course-detail{padding:1rem 1.05rem;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 8px 24px rgba(40,31,26,.05)}.course-detail dt{margin:0 0 .35rem;color:var(--accent-dark);font-size:.78rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.course-detail dd{margin:0;line-height:1.65}.course-schedule-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 10px 28px rgba(40,31,26,.06)}.course-schedule{width:100%;min-width:660px;border-collapse:collapse}.course-schedule th,.course-schedule td{padding:.95rem 1rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.course-schedule th{background:var(--accent-soft);color:var(--accent-dark);font-size:.82rem;letter-spacing:.04em}.course-schedule th:first-child,.course-schedule td:first-child{width:18%;white-space:nowrap}.course-schedule th:last-child,.course-schedule td:last-child{width:28%}.course-schedule tbody tr:last-child td{border-bottom:0}.course-material-links{display:flex;flex-wrap:wrap;gap:.45rem}.course-material-links a,.course-material-links span{display:inline-flex;padding:.34rem .65rem;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:999px;background:#fff;color:var(--accent-dark);font-size:.84rem;font-weight:750;text-decoration:none}.course-material-links a:hover{border-color:var(--accent);background:var(--accent-soft)}.course-footer-note,.course-empty{margin:0;padding:1rem 1.1rem;border-left:4px solid var(--accent);border-radius:0 10px 10px 0;background:var(--accent-soft);line-height:1.7}@media(max-width:720px){.course-details{grid-template-columns:1fr}.course-schedule{min-width:580px}.course-schedule th,.course-schedule td{padding:.8rem}}
+.course-page{background:linear-gradient(180deg,color-mix(in srgb,var(--accent-soft) 35%,transparent),transparent 15rem)}
+.course-page .container{display:grid;gap:2rem;max-width:1120px}
+.course-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem;margin:0}
+.course-detail{position:relative;overflow:hidden;padding:1.05rem 1.1rem;border:1px solid color-mix(in srgb,var(--accent) 18%,var(--line));border-radius:16px;background:color-mix(in srgb,#fff 96%,var(--accent-soft));box-shadow:0 10px 28px rgba(40,31,26,.055)}
+.course-detail:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--accent)}
+.course-detail dt{margin:0 0 .35rem;color:var(--accent-dark);font-size:.74rem;font-weight:850;letter-spacing:.07em;text-transform:uppercase}
+.course-detail dd{margin:0;line-height:1.65}
+.course-custom-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.course-content-card{position:relative;overflow:hidden;padding:1.25rem 1.3rem;border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line));border-radius:18px;background:var(--surface);box-shadow:0 12px 32px rgba(40,31,26,.065)}
+.course-content-card:before{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 25%,transparent))}
+.course-content-card h2{margin:0 0 .75rem;color:var(--accent-dark);font-size:1.02rem;letter-spacing:-.01em}
+.course-content-body{color:var(--text);line-height:1.72;white-space:pre-line}
+.course-content-body>:first-child{margin-top:0}.course-content-body>:last-child{margin-bottom:0}
+.course-section-heading{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin:.2rem 0 -.7rem;padding-top:.25rem;border-top:1px solid color-mix(in srgb,var(--accent) 18%,var(--line))}
+.course-section-heading span{padding-top:1rem;color:var(--accent-dark);font-size:.72rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase}
+.course-section-heading h2{margin:0;padding-top:1rem;font-size:1.18rem;color:var(--text)}
+.course-schedule-wrap{overflow-x:auto;border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line));border-radius:18px;background:var(--surface);box-shadow:0 14px 34px rgba(40,31,26,.065)}
+.course-schedule{width:100%;min-width:660px;border-collapse:collapse}
+.course-schedule th,.course-schedule td{padding:1rem 1.05rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.course-schedule th{background:color-mix(in srgb,var(--accent-soft) 78%,#fff);color:var(--accent-dark);font-size:.78rem;letter-spacing:.055em;text-transform:uppercase}
+.course-schedule th:first-child,.course-schedule td:first-child{width:18%;white-space:nowrap}.course-schedule th:last-child,.course-schedule td:last-child{width:30%}
+.course-schedule tbody tr:last-child td{border-bottom:0}.course-schedule tbody tr:hover td{background:color-mix(in srgb,var(--accent-soft) 22%,#fff)}
+.course-material-links{display:flex;flex-wrap:wrap;gap:.45rem}
+.course-material-links a,.course-material-links span{display:inline-flex;padding:.36rem .68rem;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));border-radius:999px;background:#fff;color:var(--accent-dark);font-size:.82rem;font-weight:780;text-decoration:none}
+.course-material-links a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.course-footer-note,.course-empty{margin:0;padding:1rem 1.1rem;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;background:var(--accent-soft);line-height:1.7}
+@media(max-width:720px){.course-details,.course-custom-sections{grid-template-columns:1fr}.course-section-heading{align-items:flex-start;flex-direction:column;gap:0}.course-section-heading h2{padding-top:.25rem}.course-schedule{min-width:580px}.course-schedule th,.course-schedule td{padding:.8rem}}

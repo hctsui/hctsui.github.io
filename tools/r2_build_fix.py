@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Protect external media URLs and keep homepage Upcoming out of Activities."""
+"""Protect external media URLs, filter homepage Upcoming, and extend course pages."""
 from __future__ import annotations
 
+import copy
 import re
 from collections.abc import Callable
 from datetime import date
@@ -130,6 +131,97 @@ def clean_generated_activity_pages(
             )
     return changed
 
+
+COURSE_SECTION_DETAIL_PREFIX = "__course_section__:"
+
+
+def _course_pair(value: Any, field: str, lang: str) -> str:
+    raw = value.get(field) if isinstance(value, dict) else {}
+    if isinstance(raw, dict):
+        return str(raw.get(lang) or raw.get("en") or raw.get("zh") or "")
+    return str(raw or "")
+
+
+def _course_section_rows(page: dict[str, Any]) -> list[dict[str, Any]]:
+    course = page.get("course") if isinstance(page.get("course"), dict) else {}
+    result: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for row in course.get("details", []) if isinstance(course.get("details"), list) else []:
+        if not isinstance(row, dict):
+            continue
+        row_id = str(row.get("id") or "")
+        if not row_id.startswith(COURSE_SECTION_DETAIL_PREFIX):
+            continue
+        section_id = row_id[len(COURSE_SECTION_DETAIL_PREFIX):] or f"section-{len(result)+1}"
+        seen.add(section_id)
+        result.append({"id": section_id, "title": row.get("label"), "content": row.get("value")})
+    # Compatibility with drafts made before sections were encoded into details.
+    for index, row in enumerate(course.get("sections", []) if isinstance(course.get("sections"), list) else []):
+        if not isinstance(row, dict):
+            continue
+        section_id = str(row.get("id") or f"section-{index+1}")
+        if section_id in seen:
+            continue
+        seen.add(section_id)
+        result.append(row)
+    return result
+
+
+def _course_page_without_section_details(page: dict[str, Any]) -> dict[str, Any]:
+    clean = copy.deepcopy(page)
+    course = clean.get("course") if isinstance(clean.get("course"), dict) else {}
+    course["details"] = [
+        row for row in course.get("details", []) if isinstance(row, dict)
+        and not str(row.get("id") or "").startswith(COURSE_SECTION_DETAIL_PREFIX)
+    ]
+    course.pop("sections", None)
+    clean["course"] = course
+    return clean
+
+
+def render_course_custom_sections(module: Any, page: dict[str, Any], lang: str) -> str:
+    """Render user-defined course blocks without constraining their titles."""
+    cards: list[str] = []
+    for index, row in enumerate(_course_section_rows(page), start=1):
+        title = _course_pair(row, "title", lang).strip()
+        content = _course_pair(row, "content", lang).strip()
+        if not title and not content:
+            continue
+        section_id = str(row.get("id") or f"section-{index}")
+        title_html = module.rich_html(title) if title else ""
+        body_html = module.rich_html(content) if content else ""
+        heading = f'<h2>{title_html}</h2>' if title_html else ""
+        body = f'<div class="course-content-body">{body_html}</div>' if body_html else ""
+        cards.append(
+            f'<article class="course-content-card" data-course-section-id="{module.esc(section_id)}">'
+            f'{heading}{body}</article>'
+        )
+    if not cards:
+        return ""
+    return '<div class="course-custom-sections">' + "".join(cards) + "</div>"
+
+
+def enhance_course_page(module: Any, rendered: str, page: dict[str, Any], lang: str) -> str:
+    """Insert free-form blocks and a clearer schedule heading into course pages."""
+    custom = render_course_custom_sections(module, page, lang)
+    schedule_marker = '<div class="course-schedule-wrap">'
+    if schedule_marker in rendered:
+        eyebrow = "Weekly plan" if lang == "en" else "課程進度"
+        title = "Schedule & Materials" if lang == "en" else "日期、主題與教材"
+        heading = (
+            '<div class="course-section-heading">'
+            f'<span>{eyebrow}</span><h2>{title}</h2></div>'
+        )
+        return rendered.replace(schedule_marker, custom + heading + schedule_marker, 1)
+    if custom:
+        footer_marker = '<p class="course-footer-note">'
+        if footer_marker in rendered:
+            return rendered.replace(footer_marker, custom + footer_marker, 1)
+        closing = '</div></section>'
+        if closing in rendered:
+            return rendered.replace(closing, custom + closing, 1)
+    return rendered
+
 def patch_build_site(module: Any) -> None:
     """Patch build_site once; unrelated rendering behavior remains unchanged."""
     if getattr(module, "_r2_absolute_media_urls_patched", False):
@@ -138,6 +230,7 @@ def patch_build_site(module: Any) -> None:
     original_static_paths = module.apply_static_asset_paths
     original_category_items = module.category_items
     original_build = module.build
+    original_course_page = getattr(module, "render_course_page", None)
 
     def apply_static_asset_paths(
         text: str,
@@ -165,6 +258,12 @@ def patch_build_site(module: Any) -> None:
             items,
         )
 
+    def render_course_page(data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
+        if not callable(original_course_page):
+            return ""
+        rendered = original_course_page(data, _course_page_without_section_details(page), lang)
+        return enhance_course_page(module, rendered, page, lang)
+
     def build(today: date, update_date: bool = True):
         paths = list(original_build(today, update_date))
         # Use exactly the same migrated homepage configuration as build_site.
@@ -176,5 +275,7 @@ def patch_build_site(module: Any) -> None:
 
     module.apply_static_asset_paths = apply_static_asset_paths
     module.category_items = category_items
+    if callable(original_course_page):
+        module.render_course_page = render_course_page
     module.build = build
     module._r2_absolute_media_urls_patched = True
