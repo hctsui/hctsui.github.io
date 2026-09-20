@@ -1,4 +1,3 @@
-
 'use strict';
 
 (function installMediaSuggestions(){
@@ -238,3 +237,50 @@
 
 /* Add automatic search aliases after the canonical people manager. */
 (function(){if(document.getElementById("peopleAliasesScript"))return;const s=document.createElement("script");s.id="peopleAliasesScript";s.src="people-aliases.js?v=20260802-1";s.async=false;document.body.append(s)})();
+
+/* Course-page information presets. Keeps the canonical course schema unchanged:
+   presets only create ordinary course detail rows with English labels. */
+(function installCourseInformationPresets(){
+  const PRESETS=[
+    ['institution','Institution'],
+    ['term','Term'],
+    ['instructor','Instructor'],
+    ['location','Location'],
+    ['office-hours','Office hours']
+  ];
+  const escapeHtml=value=>String(value||'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+  const baseFields=window.coursePageFieldsHtml;
+  if(typeof baseFields==='function'){
+    window.coursePageFieldsHtml=function(page){
+      const html=baseFields.apply(this,arguments);
+      if(html.includes('data-add-course-detail-preset='))return html;
+      const toolbar=`<div class="course-section-presets course-detail-presets"><span>快速新增：</span>${PRESETS.map(([key,label])=>`<button class="button" type="button" data-add-course-detail-preset="${escapeHtml(key)}">＋ ${escapeHtml(label)}</button>`).join('')}</div>`;
+      return html.replace('<div data-course-details>',toolbar+'<div data-course-details>');
+    };
+  }
+
+  const baseBind=window.bindCoursePageEditor;
+  if(typeof baseBind==='function'){
+    window.bindCoursePageEditor=function(root){
+      baseBind.apply(this,arguments);
+      if(!root||root.dataset.courseDetailPresetsBound==='1')return;
+      root.dataset.courseDetailPresetsBound='1';
+      root.addEventListener('click',event=>{
+        const button=event.target.closest('[data-add-course-detail-preset]');
+        if(!button||!root.contains(button))return;
+        const preset=PRESETS.find(([key])=>key===button.dataset.addCourseDetailPreset);
+        if(!preset)return;
+        const details=root.querySelector('[data-course-details]');
+        if(!details||typeof window.courseDetailRowHtml!=='function')return;
+        details.insertAdjacentHTML('beforeend',window.courseDetailRowHtml({
+          label:{en:preset[1],zh:''},
+          value:{en:'',zh:''}
+        }));
+        if(typeof window.updatePageLanguageFields==='function')window.updatePageLanguageFields(root);
+        const last=details.querySelector('[data-course-detail-row]:last-child [data-detail-value="en"]');
+        last?.focus();
+      });
+    };
+  }
+})();
