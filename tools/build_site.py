@@ -6,10 +6,11 @@ import argparse
 import html
 import json
 import os
+import posixpath
 import re
 from datetime import date, datetime
 from html.parser import HTMLParser
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -399,7 +400,12 @@ def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool 
     )
 
 
-def page_href(data: dict[str, Any], page_id: str, lang: str) -> str:
+def _relative_page_href(target: str, current_path: str) -> str:
+    current_dir = str(PurePosixPath(current_path).parent)
+    return posixpath.relpath(target, "." if current_dir == "." else current_dir)
+
+
+def page_href(data: dict[str, Any], page_id: str, lang: str, current_path: str = "") -> str:
     page = next((p for p in normalized_pages(data) if p["id"] == page_id), None)
     if not page:
         return ""
@@ -407,26 +413,30 @@ def page_href(data: dict[str, Any], page_id: str, lang: str) -> str:
     path = str(page["path"].get(target_lang) or "")
     if not path:
         return ""
+    if current_path:
+        return _relative_page_href(path, current_path)
     if lang == "zh":
-        return Path(path).name if target_lang == "zh" else f"../{path}"
+        return _relative_page_href(path, "zh/current.html") if target_lang == "zh" else f"../{path}"
     return path
 
 
-def _counterpart_href(page: dict[str, Any], lang: str) -> str:
+def _counterpart_href(page: dict[str, Any], lang: str, current_path: str = "") -> str:
     target_lang = "zh" if lang == "en" else "en"
     path = str((page.get("path") or {}).get(target_lang) or "")
     if not path:
         return ""
+    if current_path:
+        return _relative_page_href(path, current_path)
     return path if lang == "en" else f"../{path}"
 
 
-def _navigation_href(data: dict[str, Any], page: dict[str, Any], lang: str, *, absolute: bool = False) -> str:
+def _navigation_href(data: dict[str, Any], page: dict[str, Any], lang: str, *, absolute: bool = False, current_path: str = "") -> str:
     path = str((page.get("path") or {}).get(lang) or "")
     if not path:
         return ""
     if absolute:
         return _absolute_url(current_site_settings(data)["seo"]["base_url"], path)
-    return page_href(data, str(page.get("id") or ""), lang)
+    return page_href(data, str(page.get("id") or ""), lang, current_path)
 
 
 def render_site_navigation(
@@ -436,6 +446,7 @@ def render_site_navigation(
     *,
     absolute: bool = False,
     language_button: bool = False,
+    current_path: str = "",
 ) -> str:
     pages = normalized_pages(data)
     settings = current_site_settings(data)
@@ -445,7 +456,7 @@ def render_site_navigation(
     for page in pages:
         if page.get("show_in_navigation", True) is False:
             continue
-        href = _navigation_href(data, page, lang, absolute=absolute)
+        href = _navigation_href(data, page, lang, absolute=absolute, current_path=current_path)
         if not href:
             continue
         label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
@@ -454,11 +465,12 @@ def render_site_navigation(
         links.append(f'<a{attrs} data-nav="{esc(page.get("id"))}" href="{esc(href)}">{esc(label)}</a>')
 
     home_page = next((page for page in pages if page.get("id") == "home"), None)
-    home_href = _navigation_href(data, home_page, lang, absolute=absolute) if home_page else ""
+    home_href = _navigation_href(data, home_page, lang, absolute=absolute, current_path=current_path) if home_page else ""
     if home_href and navigation_settings.get("show_contact_shortcut", True):
         contact_label = "聯絡" if lang == "zh" else "Contact"
         if current_page_id == "contact":
-            contact_href = _absolute_url(settings["seo"]["base_url"], "zh/contact.html" if lang == "zh" else "contact.html") if absolute else "contact.html"
+            contact_path = "zh/contact.html" if lang == "zh" else "contact.html"
+            contact_href = _absolute_url(settings["seo"]["base_url"], contact_path) if absolute else (_relative_page_href(contact_path, current_path) if current_path else "contact.html")
             links.append(f'<a class="active" aria-current="page" data-nav="contact" href="{esc(contact_href)}">{contact_label}</a>')
         else:
             links.append(f'<a data-nav="contact" href="{esc(home_href)}#contact">{contact_label}</a>')
@@ -466,7 +478,7 @@ def render_site_navigation(
     if navigation_settings.get("search_enabled", True):
         placeholder = navigation_settings["search_placeholder"][lang]
         label = navigation_settings["search_label"][lang]
-        index_url = _absolute_url(settings["seo"]["base_url"], "content/search-index.json") if absolute else ("../content/search-index.json" if lang == "zh" else "content/search-index.json")
+        index_url = _absolute_url(settings["seo"]["base_url"], "content/search-index.json") if absolute else (_relative_page_href("content/search-index.json", current_path) if current_path else ("../content/search-index.json" if lang == "zh" else "content/search-index.json"))
         links.append(
             '<div class="site-search" data-site-search>'
             f'<label class="sr-only" for="site-search-{lang}-{esc(current_page_id or "page")}">{esc(label)}</label>'
@@ -484,7 +496,7 @@ def render_site_navigation(
             counterpart = "../contact.html" if lang == "zh" else "zh/contact.html"
         else:
             current = next((page for page in pages if page.get("id") == current_page_id), None)
-            counterpart = _counterpart_href(current, lang) if current else ""
+            counterpart = _counterpart_href(current, lang, current_path) if current else ""
         if counterpart:
             label = "中文" if lang == "en" else "English"
             aria = "切換至中文版" if lang == "en" else "Switch to English"
@@ -492,13 +504,13 @@ def render_site_navigation(
     return '<nav aria-label="Primary navigation" class="site-nav" id="site-nav-' + esc(lang) + '">' + "".join(links) + "</nav>"
 
 
-def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *, absolute: bool = False, language_button: bool = False) -> str:
+def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *, absolute: bool = False, language_button: bool = False, current_path: str = "") -> str:
     general = current_site_settings(data)["general"]
     brand = general["identity"]["brand"][lang] or general["identity"]["brand"]["en"] or "HC Tsui"
     menu = general["identity"]["menu_label"][lang]
     home_page = next((page for page in normalized_pages(data) if page.get("id") == "home"), None)
-    home_href = _navigation_href(data, home_page, lang, absolute=absolute) if home_page else "/"
-    nav = render_site_navigation(data, current_page_id, lang, absolute=absolute, language_button=language_button)
+    home_href = _navigation_href(data, home_page, lang, absolute=absolute, current_path=current_path) if home_page else "/"
+    nav = render_site_navigation(data, current_page_id, lang, absolute=absolute, language_button=language_button, current_path=current_path)
     return (
         '<header class="site-header"><div class="container nav-wrap">'
         f'<a class="brand" href="{esc(home_href)}">{esc(brand)}</a>'
@@ -506,8 +518,8 @@ def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *,
         f'{nav}</div></header>'
     )
 
-def replace_navigation(text: str, data: dict[str, Any], current_page_id: str, lang: str) -> str:
-    header = render_site_header(data, current_page_id, lang)
+def replace_navigation(text: str, data: dict[str, Any], current_page_id: str, lang: str, current_path: str = "") -> str:
+    header = render_site_header(data, current_page_id, lang, current_path=current_path)
     updated, count = re.subn(r'<header\b(?=[^>]*\bclass="[^"]*\bsite-header\b[^"]*")[^>]*>.*?</header>', lambda _: header, text, count=1, flags=re.S)
     if count != 1:
         raise RuntimeError("Could not replace site header/navigation")
@@ -519,11 +531,13 @@ def render_teaching(data: dict[str, Any], entry: dict[str, Any], lang: str) -> s
     course = rich_html(plain_value(entry, "course", lang))
     role = rich_html(plain_value(entry, "role", lang))
     links: list[str] = []
+    external_course_url = str(entry.get("external_course_url") or "").strip()
     course_page = str(entry.get("course_page_id") or "")
-    href = page_href(data, course_page, lang) if course_page else ""
+    href = external_course_url or (page_href(data, course_page, lang) if course_page else "")
     if href:
         label = "課程資訊" if lang == "zh" else "Course Information"
-        links.append(f'<a href="{esc(href)}">{label}</a>')
+        external = ' rel="noopener" target="_blank"' if external_course_url else ""
+        links.append(f'<a href="{esc(href)}"{external}>{label}</a>')
     notes_url = str(entry.get("lecture_notes_url") or "").strip()
     if notes_url:
         notes_title = plain_value(entry, "lecture_notes_title", lang) or ("講義" if lang == "zh" else "Lecture Notes")
@@ -860,6 +874,62 @@ def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
     return f'<section class="page-hero"><div class="container"><p class="section-label">{label}</p><h1 class="page-title">{title}</h1><p class="page-intro">{intro}</p>{download}</div></section>'
 
 
+def _course_pair(row: dict[str, Any], field: str, lang: str) -> str:
+    value = row.get(field) if isinstance(row, dict) else {}
+    if not isinstance(value, dict):
+        return str(value or "")
+    return str(value.get(lang) or value.get("en") or value.get("zh") or "")
+
+
+def render_course_page(data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
+    course = page.get("course") if isinstance(page.get("course"), dict) else {}
+    details = course.get("details") if isinstance(course.get("details"), list) else []
+    schedule = course.get("schedule") if isinstance(course.get("schedule"), list) else []
+    detail_rows = []
+    for row in details:
+        if not isinstance(row, dict):
+            continue
+        label = rich_html(_course_pair(row, "label", lang))
+        value = rich_html(_course_pair(row, "value", lang))
+        if label or value:
+            detail_rows.append(f'<div class="course-detail"><dt>{label}</dt><dd>{value}</dd></div>')
+    details_html = f'<dl class="course-details">{"".join(detail_rows)}</dl>' if detail_rows else ""
+
+    body_rows = []
+    for row in schedule:
+        if not isinstance(row, dict):
+            continue
+        date_value = rich_html(_course_pair(row, "date", lang))
+        topic = rich_html(_course_pair(row, "topic", lang))
+        links = []
+        for material in row.get("materials", []) if isinstance(row.get("materials"), list) else []:
+            if not isinstance(material, dict):
+                continue
+            url = str(material.get("url") or "").strip()
+            label = _course_pair(material, "label", lang) or url
+            if url and label:
+                links.append(f'<a href="{esc(url)}" rel="noopener" target="_blank">{rich_html(label)}</a>')
+            elif label:
+                links.append(f'<span>{rich_html(label)}</span>')
+        materials = f'<div class="course-material-links">{"".join(links)}</div>' if links else ""
+        body_rows.append(f'<tr><td>{date_value}</td><td>{topic}</td><td>{materials}</td></tr>')
+    schedule_html = ""
+    if body_rows:
+        headings = ("Date", "Topic", "Materials") if lang == "en" else ("日期", "主題", "教材")
+        schedule_html = (
+            '<div class="course-schedule-wrap"><table class="course-schedule">'
+            f'<thead><tr><th>{headings[0]}</th><th>{headings[1]}</th><th>{headings[2]}</th></tr></thead>'
+            f'<tbody>{"".join(body_rows)}</tbody></table></div>'
+        )
+    footer_note = rich_html(_course_pair(course, "footer_note", lang))
+    footer_html = f'<p class="course-footer-note">{footer_note}</p>' if footer_note else ""
+    content = details_html + schedule_html + footer_html
+    if not content:
+        empty = "Course information will be posted here." if lang == "en" else "課程資訊將公布於此。"
+        content = f'<p class="course-empty">{empty}</p>'
+    return page_header(data, str(page.get("id") or ""), lang) + f'<section class="section course-page"><div class="container">{content}</div></section>'
+
+
 def render_home_cover(data: dict[str, Any], lang: str) -> str:
     cover = current_site_settings(data)["general"]["cover"]
     image = str(cover.get("image") or "assets/images/photo-960.webp")
@@ -991,15 +1061,26 @@ def write_search_engine_files(data: dict[str, Any]) -> list[Path]:
 def apply_seo_metadata(text: str, data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
     settings = current_site_settings(data)["seo"]
     page_id = str(page.get("id") or "home")
-    page_settings = settings["pages"].get(page_id) or settings["pages"]["home"]
-    title = page_settings["title"][lang]
-    description = page_settings["description"][lang]
-    og_title = page_settings["og_title"][lang] or title
-    og_description = page_settings["og_description"][lang] or description
+    page_settings = settings["pages"].get(page_id)
+    if page_settings:
+        title = page_settings["title"][lang]
+        description = page_settings["description"][lang]
+        og_title = page_settings["og_title"][lang] or title
+        og_description = page_settings["og_description"][lang] or description
+        og_image = page_settings.get("og_image")
+    else:
+        header = page.get("header") if isinstance(page.get("header"), dict) else {}
+        raw_title = _course_pair(header or page, "title" if header else "name", lang) or page_id
+        site_title = settings["site_name"][lang]
+        title = f"{raw_title}{'｜' if lang == 'zh' else ' | '}{site_title}"
+        description = _course_pair(header, "intro", lang)
+        og_title = title
+        og_description = description
+        og_image = ""
     rel_path = str((page.get("path") or {}).get(lang) or "")
     canonical_path = rel_path[:-10] if rel_path.endswith("index.html") else rel_path
     canonical = _absolute_url(settings["base_url"], "", canonical_path)
-    image = _absolute_url(settings["base_url"], page_settings.get("og_image") or settings["default_image"])
+    image = _absolute_url(settings["base_url"], og_image or settings["default_image"])
     site_name = settings["site_name"][lang]
     counterpart_lang = "zh" if lang == "en" else "en"
     counterpart_path = str((page.get("path") or {}).get(counterpart_lang) or "")
@@ -1184,8 +1265,9 @@ def page_theme_style(color: str) -> str:
     return f"--accent:{value};--accent-dark:{dark};--accent-soft:{soft}"
 
 
-def apply_static_asset_paths(text: str, lang: str) -> str:
-    prefix = "../" if lang == "zh" else ""
+def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
+    prefix = "../" * len(PurePosixPath(page_path).parent.parts) if page_path else ("../" if lang == "zh" else "")
+    text = re.sub(r'((?:href|src)=["\'])(?:\.\./)*assets/', rf'\1{prefix}assets/', text)
     patterns = {
         r"(?:\.\./)?assets/favicon\.svg": f"{prefix}assets/images/favicon.svg",
         r"(?:\.\./)?assets/photo-640\.webp": f"{prefix}assets/images/photo-640.webp",
@@ -1330,13 +1412,15 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             if page_id == "home":
                 sections = render_home_sections(data, categories, lang, today)
                 content = apply_home_cover(extract_home_hero(old), data, lang) + sections
+            elif page.get("page_type") == "course":
+                content = render_course_page(data, page, lang)
             else:
                 rendered = [render_category(data, c, lang, today, i) for i, c in enumerate(categories)]
                 sections = "".join(x for x in rendered if x)
                 content = page_header(data, page_id, lang) + sections
             new = replace_main(old, content)
-            new = replace_navigation(new, data, page_id, lang)
-            new = apply_static_asset_paths(new, lang)
+            new = replace_navigation(new, data, page_id, lang, rel)
+            new = apply_static_asset_paths(new, lang, rel)
             new = apply_page_theme(new, page)
             new = apply_seo_metadata(new, data, page, lang)
             updated_value = f"{today.year}/{today.month}/{today.day}" if update_date else _existing_updated(old, lang, today)

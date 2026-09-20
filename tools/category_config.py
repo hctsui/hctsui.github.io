@@ -14,6 +14,8 @@ PAGE_DEFAULTS: list[dict[str, Any]] = [
     {"id": "teaching", "name": {"en": "Teaching", "zh": "教學"}, "path": {"en": "teaching.html", "zh": "zh/teaching.html"}, "header": {"label": {"en": "Teaching record", "zh": "教學紀錄"}, "title": {"en": "Teaching Experience", "zh": "教學經歷"}, "intro": {"en": "Teaching and course-assistant experience.", "zh": "教學與課程助教經歷"}}, "color": "#b14b86", "show_in_navigation": True, "order": 4},
 ]
 
+PAGE_TYPES = {"general", "course"}
+
 CATEGORY_KIND_LABELS: dict[str, dict[str, str]] = {
     "featured_publications": {"en": "Featured publications", "zh": "首頁精選論文"},
     "upcoming": {"en": "Upcoming activities", "zh": "首頁近期活動"},
@@ -84,6 +86,56 @@ def slugify(value: str) -> str:
     return text[:64] or "category"
 
 
+def _course_page_data(value: Any) -> dict[str, Any]:
+    source = value if isinstance(value, dict) else {}
+    details: list[dict[str, Any]] = []
+    for index, row in enumerate(source.get("details", []) if isinstance(source.get("details"), list) else []):
+        if not isinstance(row, dict):
+            continue
+        label = pair(row.get("label"))
+        content = pair(row.get("value"))
+        if not any((*label.values(), *content.values())):
+            continue
+        details.append({
+            "id": str(row.get("id") or f"detail-{index + 1}"),
+            "label": label,
+            "value": content,
+        })
+
+    schedule: list[dict[str, Any]] = []
+    for index, row in enumerate(source.get("schedule", []) if isinstance(source.get("schedule"), list) else []):
+        if not isinstance(row, dict):
+            continue
+        materials: list[dict[str, Any]] = []
+        for material_index, material in enumerate(row.get("materials", []) if isinstance(row.get("materials"), list) else []):
+            if not isinstance(material, dict):
+                continue
+            label = pair(material.get("label"))
+            url = str(material.get("url") or "").strip()
+            if not any(label.values()) and not url:
+                continue
+            materials.append({
+                "id": str(material.get("id") or f"material-{material_index + 1}"),
+                "label": label,
+                "url": url,
+            })
+        date_value = pair(row.get("date"))
+        topic = pair(row.get("topic"))
+        if not any((*date_value.values(), *topic.values())) and not materials:
+            continue
+        schedule.append({
+            "id": str(row.get("id") or f"meeting-{index + 1}"),
+            "date": date_value,
+            "topic": topic,
+            "materials": materials,
+        })
+    return {
+        "details": details,
+        "schedule": schedule,
+        "footer_note": pair(source.get("footer_note")),
+    }
+
+
 def old_heading(settings: dict[str, Any], key: str, part: str, fallback: dict[str, str]) -> dict[str, str]:
     value = settings.get("headings", {}).get(key, {}).get(part, {})
     return pair(value, fallback)
@@ -99,6 +151,7 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
         item = copy.deepcopy(default)
         item["name"] = pair(source.get("name"), default["name"])
         item["path"] = copy.deepcopy(default["path"])
+        item["page_type"] = "general"
         item["languages"] = ["en", "zh"]
         item["order"] = int(source.get("order", default["order"]))
         item["color"] = str(source.get("color") or default["color"]).strip().lower()
@@ -123,11 +176,28 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
         source_languages = source.get("languages", ["en", "zh"])
         languages = [lang for lang in ("en", "zh") if lang in source_languages]
         if not languages:
-            languages = ["en", "zh"]
-        pages.append({
+            languages = ["en"] if str(source.get("page_type") or "general") == "course" else ["en", "zh"]
+        page_type = str(source.get("page_type") or "general").strip()
+        if page_type not in PAGE_TYPES:
+            page_type = "general"
+        if page_type == "course" and len(languages) > 1:
+            languages = ["en"]
+        path = (
+            {
+                "en": f"teaching/{page_id}/index.html" if "en" in languages else "",
+                "zh": f"zh/teaching/{page_id}/index.html" if "zh" in languages else "",
+            }
+            if page_type == "course"
+            else {
+                "en": f"{page_id}.html" if "en" in languages else "",
+                "zh": f"zh/{page_id}.html" if "zh" in languages else "",
+            }
+        )
+        page = {
             "id": page_id,
+            "page_type": page_type,
             "name": pair(source.get("name"), {"en": page_id.replace("-", " ").title(), "zh": page_id}),
-            "path": {"en": f"{page_id}.html" if "en" in languages else "", "zh": f"zh/{page_id}.html" if "zh" in languages else ""},
+            "path": path,
             "languages": languages,
             "header": {
                 "label": pair(header.get("label"), {"en": "Academic profile", "zh": "學術資料"}),
@@ -137,7 +207,10 @@ def normalized_pages(data: dict[str, Any]) -> list[dict[str, Any]]:
             "color": str(source.get("color") or "#8b3d2e").strip().lower(),
             "show_in_navigation": source.get("show_in_navigation") is not False,
             "order": int(source.get("order", len(PAGE_DEFAULTS) + index)),
-        })
+        }
+        if page_type == "course":
+            page["course"] = _course_page_data(source.get("course"))
+        pages.append(page)
     return sorted(pages, key=lambda p: (int(p.get("order", 999)), p["id"]))
 
 
@@ -359,6 +432,9 @@ def validate_category_data(data: dict[str, Any]) -> None:
         raise ValueError("settings.pages contains duplicate IDs.")
     paths: set[str] = set()
     for page in pages:
+        page_type = str(page.get("page_type") or "general")
+        if page_type not in PAGE_TYPES:
+            raise ValueError(f"Page {page['id']} has an unsupported page_type.")
         if not re.fullmatch(r"#[0-9a-fA-F]{6}", str(page.get("color") or "")):
             raise ValueError(f"Page {page['id']} has an invalid color.")
         languages = page.get("languages") or ["en", "zh"]
@@ -371,6 +447,24 @@ def validate_category_data(data: dict[str, Any]) -> None:
                 for lang in languages:
                     if not str(page["header"].get(field, {}).get(lang) or "").strip():
                         raise ValueError(f"Page {page['id']} header.{field}.{lang} cannot be blank.")
+        if page_type == "course":
+            course = _course_page_data(page.get("course"))
+            row_ids: set[str] = set()
+            for row in [*course["details"], *course["schedule"]]:
+                row_id = str(row.get("id") or "")
+                if not row_id or row_id in row_ids:
+                    raise ValueError(f"Course page {page['id']} has a missing or duplicate row ID.")
+                row_ids.add(row_id)
+            for meeting in course["schedule"]:
+                material_ids: set[str] = set()
+                for material in meeting["materials"]:
+                    material_id = str(material.get("id") or "")
+                    if not material_id or material_id in material_ids:
+                        raise ValueError(f"Course page {page['id']} has a missing or duplicate material ID.")
+                    material_ids.add(material_id)
+                    url = str(material.get("url") or "").strip()
+                    if url and re.match(r"^(?:javascript|data|vbscript):", url, flags=re.I):
+                        raise ValueError(f"Course page {page['id']} has an unsafe material URL.")
         for lang in ("en", "zh"):
             path = str(page.get("path", {}).get(lang) or "")
             if lang in languages and (not path or path in paths):
@@ -385,6 +479,9 @@ def validate_category_data(data: dict[str, Any]) -> None:
     for category in categories:
         if category["page_id"] not in page_set:
             raise ValueError(f"Category {category['id']} refers to an unknown page.")
+        page = next(row for row in pages if row["id"] == category["page_id"])
+        if page.get("page_type") == "course":
+            raise ValueError(f"Category {category['id']} cannot be placed on a course page.")
         if category["kind"] not in ALL_CATEGORY_KINDS:
             raise ValueError(f"Category {category['id']} has an unsupported kind.")
         for field in ("label", "title"):
@@ -409,8 +506,15 @@ def validate_category_data(data: dict[str, Any]) -> None:
             raise ValueError(f"{iid}: type '{item_type}' does not match category kind '{expected}'.")
         if item_type == "teaching":
             page_id = str(item.get("course_page_id") or "")
+            external_url = str(item.get("external_course_url") or "").strip()
+            if page_id and external_url:
+                raise ValueError(f"{iid}: choose either course_page_id or external_course_url, not both.")
+            if external_url and not re.match(r"^https?://", external_url, flags=re.I):
+                raise ValueError(f"{iid}: external_course_url must use http or https.")
             if page_id and page_id not in page_set:
                 raise ValueError(f"{iid}: unknown course_page_id '{page_id}'.")
+            if page_id and next(row for row in pages if row["id"] == page_id).get("page_type") != "course":
+                raise ValueError(f"{iid}: course_page_id '{page_id}' is not a course page.")
     cv_order = normalized_cv_order(data)
     if len(cv_order) != len(set(cv_order)):
         raise ValueError("settings.cv_category_order contains duplicates.")
