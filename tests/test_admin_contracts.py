@@ -139,6 +139,22 @@ class AdminLoadingContracts(unittest.TestCase):
 
 
 class ExistingFeatureContracts(unittest.TestCase):
+    def test_general_and_course_pages_have_separate_admin_flows(self) -> None:
+        for marker in (
+            "openPageTypeChooser",
+            'data-page-type-choice="general"',
+            'data-page-type-choice="course"',
+            "一般頁面",
+            "課程頁面",
+            "data-course-schedule",
+            "data-add-course-material",
+            "coursePages()",
+            "external_course_url",
+            "外部課程網址",
+        ):
+            self.assertIn(marker, LAYOUT)
+        self.assertIn("'general_page','course_page'", MAIN)
+
     def test_general_content_styles_remain_clickable_and_collapsible(self) -> None:
         for label in (
             "標準時間軸",

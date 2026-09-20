@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from build_cv import build_sections, render_education, render_publication, rich_to_latex  # noqa: E402
-from build_site import page_href, render_activity, render_category, render_home_sections, render_teaching  # noqa: E402
+from build_site import page_href, render_activity, render_category, render_course_page, render_home_sections, render_teaching  # noqa: E402
 from category_config import (  # noqa: E402
     all_items,
     categories_for_page,
@@ -200,6 +200,73 @@ class CategoryArchitectureTests(unittest.TestCase):
         self.assertEqual(pages["algebra-i"]["color"], "#123456")
         validate_category_data(data)
 
+    def test_existing_pages_default_to_general_pages(self) -> None:
+        data = minimal_site()
+        self.assertTrue(all(page["page_type"] == "general" for page in normalized_pages(data)))
+
+    def test_course_page_uses_teaching_path_and_preserves_course_template_data(self) -> None:
+        data = minimal_site()
+        data["settings"]["pages"].append(
+            {
+                "id": "math2020-fall-2026",
+                "page_type": "course",
+                "name": {"en": "MATH2020", "zh": "MATH2020"},
+                "languages": ["zh"],
+                "header": {
+                    "label": {"en": "Course", "zh": "課程"},
+                    "title": {"en": "Advanced Calculus II", "zh": "高等微積分（二）"},
+                    "intro": {"en": "Course materials", "zh": "課程教材"},
+                },
+                "color": "#315f9b",
+                "show_in_navigation": False,
+                "order": 5,
+                "course": {
+                    "details": [{"id": "office", "label": {"en": "Office hours", "zh": "Office hours"}, "value": {"en": "Tue. 16:30", "zh": "週二 16:30"}}],
+                    "schedule": [{"id": "week-1", "date": {"en": "Sep. 20", "zh": "9/20"}, "topic": {"en": "Review", "zh": "複習"}, "materials": [{"id": "notes", "label": {"en": "Notes", "zh": "講義"}, "url": "files/teaching/notes.pdf"}, {"id": "solutions", "label": {"en": "Solutions", "zh": "解答"}, "url": "https://example.com/solutions.pdf"}]}],
+                    "footer_note": {"en": "Please report errors.", "zh": "若發現錯誤請來信。"},
+                },
+            }
+        )
+        page = next(page for page in normalized_pages(data) if page["id"] == "math2020-fall-2026")
+        self.assertEqual(page["languages"], ["zh"])
+        self.assertEqual(page["path"], {"en": "", "zh": "zh/teaching/math2020-fall-2026/index.html"})
+        self.assertFalse(page["show_in_navigation"])
+        self.assertEqual(len(page["course"]["schedule"][0]["materials"]), 2)
+        rendered = render_course_page(data, page, "zh")
+        self.assertIn("高等微積分（二）", rendered)
+        self.assertIn("週二 16:30", rendered)
+        self.assertIn("files/teaching/notes.pdf", rendered)
+        self.assertIn("https://example.com/solutions.pdf", rendered)
+        validate_category_data(data)
+
+    def test_course_page_never_becomes_bilingual(self) -> None:
+        data = minimal_site()
+        data["settings"]["pages"].append(
+            {
+                "id": "legacy-bilingual-course",
+                "page_type": "course",
+                "name": {"en": "Course", "zh": "課程"},
+                "languages": ["en", "zh"],
+                "header": {
+                    "label": {"en": "Course", "zh": "課程"},
+                    "title": {"en": "Course", "zh": "課程"},
+                    "intro": {"en": "", "zh": ""},
+                },
+                "color": "#123456",
+                "order": 5,
+            }
+        )
+        page = next(page for page in normalized_pages(data) if page["id"] == "legacy-bilingual-course")
+        self.assertEqual(page["languages"], ["en"])
+        self.assertEqual(page["path"], {"en": "teaching/legacy-bilingual-course/index.html", "zh": ""})
+
+    def test_course_pages_cannot_receive_general_categories(self) -> None:
+        data = minimal_site()
+        data["settings"]["pages"].append({"id": "course", "page_type": "course", "name": {"en": "Course", "zh": "課程"}, "languages": ["en", "zh"], "header": {"label": {"en": "Course", "zh": "課程"}, "title": {"en": "Course", "zh": "課程"}, "intro": {"en": "", "zh": ""}}, "color": "#123456", "order": 5})
+        data["settings"]["categories"][0]["page_id"] = "course"
+        with self.assertRaisesRegex(ValueError, "cannot be placed on a course page"):
+            validate_category_data(data)
+
     def test_custom_page_can_be_chinese_only(self) -> None:
         data = minimal_site()
         data["settings"]["pages"].append(
@@ -224,23 +291,43 @@ class CategoryArchitectureTests(unittest.TestCase):
 
     def test_teaching_optional_page_and_notes_render_as_buttons(self) -> None:
         data = minimal_site()
+        data["settings"]["pages"].append({"id": "algebra-i", "page_type": "course", "name": {"en": "", "zh": "代數（一）"}, "languages": ["zh"], "header": {"label": {"en": "", "zh": "課程"}, "title": {"en": "", "zh": "代數（一）"}, "intro": {"en": "", "zh": ""}}, "color": "#123456", "order": 5})
         entry = {
             "id": "teaching-example",
             "type": "teaching",
             "term": {"en": "Fall 2026", "zh": "2026 秋"},
             "course": {"en": "MATH 101 Algebra", "zh": "MATH 101 代數"},
             "role": {"en": "Lecturer", "zh": "講師"},
-            "course_page_id": "cv",
+            "course_page_id": "algebra-i",
             "lecture_notes_title": {"en": "Lecture Notes", "zh": "講義"},
             "lecture_notes_url": "https://example.com/notes.pdf",
         }
         rendered_en = render_teaching(data, entry, "en")
         rendered_zh = render_teaching(data, entry, "zh")
         self.assertIn('<div class="item-links">', rendered_en)
-        self.assertIn('href="cv.html">Course Information</a>', rendered_en)
-        self.assertIn('href="cv.html">課程資訊</a>', rendered_zh)
+        self.assertIn('href="zh/teaching/algebra-i/index.html">Course Information</a>', rendered_en)
+        self.assertIn('href="teaching/algebra-i/index.html">課程資訊</a>', rendered_zh)
         self.assertIn(">Lecture Notes</a>", rendered_en)
         self.assertIn(">講義</a>", rendered_zh)
+
+    def test_teaching_external_course_url_opens_in_new_tab(self) -> None:
+        data = minimal_site()
+        entry = {
+            "id": "teaching-external",
+            "type": "teaching",
+            "term": {"en": "Fall 2026", "zh": "2026 秋"},
+            "course": {"en": "MATH 2020", "zh": "MATH 2020"},
+            "external_course_url": "https://teacher.example.edu/math2020",
+        }
+        rendered = render_teaching(data, entry, "en")
+        self.assertIn('href="https://teacher.example.edu/math2020" rel="noopener" target="_blank">Course Information</a>', rendered)
+
+    def test_teaching_external_course_url_is_validated(self) -> None:
+        data = minimal_site()
+        data["settings"]["categories"].append({"id": "teaching-test", "page_id": "teaching", "kind": "teaching", "label": {"en": "Institution", "zh": "機構"}, "title": {"en": "Teaching", "zh": "教學"}, "intro": {"en": "", "zh": ""}, "order": 0, "show_on_web": True, "show_on_cv": True})
+        data["teaching"] = [{"id": "teaching-external", "type": "teaching", "category_id": "teaching-test", "external_course_url": "javascript:alert(1)"}]
+        with self.assertRaisesRegex(ValueError, "must use http or https"):
+            validate_category_data(data)
 
     def test_conference_and_organization_are_independent(self) -> None:
         data = minimal_site()
