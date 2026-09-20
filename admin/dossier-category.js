@@ -194,7 +194,7 @@
   };
 
   const baseOpenLayoutEditor=openLayoutEditor;
-  openLayoutEditor=function(type,record){baseOpenLayoutEditor(type,record);if(type==='category'){const category=record?layoutDraft.categories.find(row=>row.id===record._layout_id):null;enhanceCategoryRoot(currentEditor?.root,category)}};
+  openLayoutEditor=function(type,record,options={}){baseOpenLayoutEditor(type,record,options);if(type==='category'){const category=record?layoutDraft.categories.find(row=>row.id===record._layout_id):null;enhanceCategoryRoot(currentEditor?.root,category)}};
   const formValid=root=>['label.en','label.zh','title.en','title.zh'].every(path=>String(root.querySelector(`[data-category-field="${path}"]`)?.value||'').trim());
   const baseSaveLayoutCategory=saveLayoutCategory;
   saveLayoutCategory=function(id,root){const checked=!!root.querySelector('[data-dossier-category]')?.checked,before=new Set(layoutDraft.categories.map(row=>row.id)),valid=formValid(root);baseSaveLayoutCategory(id,root);if(!valid)return;const categoryId=id||layoutDraft.categories.find(row=>!before.has(row.id))?.id;if(!categoryId)return;setDossierMembership(categoryId,checked);saveLayoutDraft(checked?'已加入審查資料草稿':'已更新審查資料設定')};

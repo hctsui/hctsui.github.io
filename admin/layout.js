@@ -139,7 +139,7 @@ openEditor=function(type,record,options={}){
   }
   if(type==='academic_event'){openAcademicEventChooser();return}
   if(type==='page'&&!record){openPageTypeChooser();return}
-  if(type==='page'||type==='category'){openLayoutEditor(type,record);return}
+  if(type==='page'||type==='category'){openLayoutEditor(type,record,options);return}
   baseOpenEditor(type,record,options);initLayoutState();
   const root=currentEditor?.root;if(!root)return;
   const cats=categoriesForEditor(type,record);
