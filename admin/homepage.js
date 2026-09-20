@@ -477,7 +477,7 @@ saveLocal=function(){homepageGeneralBaseSaveLocal();if(reconcileGeneralLayoutLin
 
 const GENERAL_CONTENT_FILTER_TYPES=new Set(['interest','education','generic','contact','personal']);
 function configureActivityLabels(){
-  LABEL.academic_event='活動';LABEL.organization='學術籌辦';LABEL.general_content='一般內容';
+  LABEL.academic_event='活動';LABEL.organization='學術籌辦';LABEL.general_content='一般內容';LABEL.general_page='一般頁面';LABEL.course_page='課程頁面';
   if(typeof CATEGORY_KIND_LABELS==='object')CATEGORY_KIND_LABELS.organization='學術籌辦';
 }
 const homepageBaseAdminFilterMatches=adminFilterMatches;
@@ -495,7 +495,7 @@ function configureAddTypeMenu(){
   }
   const filter=$('#filter');if(filter){
     const previous=GENERAL_CONTENT_FILTER_TYPES.has(filter.value)?'general_content':filter.value;
-    const types=['page','category','publication','conference','talk','visit','organization','honor','teaching','general_content'];
+    const types=['general_page','course_page','category','publication','conference','talk','visit','organization','honor','teaching','general_content'];
     filter.innerHTML='<option value="">全部</option>'+types.map(type=>`<option value="${type}" ${type===previous?'selected':''}>${esc(LABEL[type]||type)}</option>`).join('');
     filter.value=types.includes(previous)?previous:'';
   }
@@ -681,13 +681,13 @@ function homeProfilePreviewHtml(before,after){
 const homeProfileBaseLayoutCatalogRecords=layoutCatalogRecords;
 layoutCatalogRecords=function(){
   const rows=homeProfileBaseLayoutCatalogRecords(),home=layoutDraft?.pages?.find(page=>page.id==='home');
-  if(home&&!rows.some(row=>row._layout_kind==='page'&&row._layout_id==='home'))rows.unshift({id:'page:home',type:'page',_layout_kind:'page',_layout_id:'home',title:clone(home.name),category_id:'',order:home.order});
+  if(home&&!rows.some(row=>row._layout_kind==='page'&&row._layout_id==='home'))rows.unshift({id:'page:home',type:'page',_page_type:'general',_layout_kind:'page',_layout_id:'home',title:clone(home.name),category_id:'',order:home.order});
   return rows;
 };
 const homeProfileBasePageFormHtml=pageFormHtml;
-pageFormHtml=function(page){return page?.id==='home'?homeProfilePageFormHtml():homeProfileBasePageFormHtml(page)};
+pageFormHtml=function(page,createType='general'){return page?.id==='home'?homeProfilePageFormHtml():homeProfileBasePageFormHtml(page,createType)};
 const homeProfileBaseOpenLayoutEditor=openLayoutEditor;
-openLayoutEditor=function(type,record){homeProfileBaseOpenLayoutEditor(type,record);if(type==='page'&&record?._layout_id==='home')installHomeProfileEditor(currentEditor?.root)};
+openLayoutEditor=function(type,record,options={}){homeProfileBaseOpenLayoutEditor(type,record,options);if(type==='page'&&record?._layout_id==='home')installHomeProfileEditor(currentEditor?.root)};
 const homeProfileBaseSaveLayoutPage=saveLayoutPage;
 saveLayoutPage=function(id,root){if(id==='home')return saveHomeProfilePage(root);return homeProfileBaseSaveLayoutPage(id,root)};
 const homeProfileBaseSortedRecords=sortedRecords;

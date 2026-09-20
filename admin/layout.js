@@ -24,6 +24,15 @@ const ITEM_KIND={conference:'conference',talk:'talk',visit:'visit',organization:
 let layoutBase=null,layoutDraft=null,layoutReady=false,layoutPreviewSuppressed=false,layoutManagerPageId='';
 
 function layoutPair(value){return{en:String(value?.en||''),zh:String(value?.zh||'')}}
+function pageType(page){return page?.page_type==='course'?'course':'general'}
+function coursePageData(value){
+  const source=value&&typeof value==='object'?value:{};
+  const details=(Array.isArray(source.details)?source.details:[]).filter(row=>row&&typeof row==='object').map((row,index)=>({id:String(row.id||`detail-${index+1}`),label:layoutPair(row.label),value:layoutPair(row.value)}));
+  const schedule=(Array.isArray(source.schedule)?source.schedule:[]).filter(row=>row&&typeof row==='object').map((row,index)=>({id:String(row.id||`meeting-${index+1}`),date:layoutPair(row.date),topic:layoutPair(row.topic),materials:(Array.isArray(row.materials)?row.materials:[]).filter(material=>material&&typeof material==='object').map((material,materialIndex)=>({id:String(material.id||`material-${materialIndex+1}`),label:layoutPair(material.label),url:String(material.url||'')}))}));
+  return{details,schedule,footer_note:layoutPair(source.footer_note)};
+}
+function generalPages(){initLayoutState();return layoutDraft.pages.filter(page=>pageType(page)==='general')}
+function coursePages(){initLayoutState();return layoutDraft.pages.filter(page=>pageType(page)==='course')}
 function layoutItems(data){return allRecords(data||{}).filter(x=>x&&x.id)}
 function layoutBundle(data){
   const settings=data?.settings||{};
@@ -38,7 +47,7 @@ function normalizeLayoutBundle(bundle){
   const result={pages:clone(bundle?.pages||[]),categories:clone(bundle?.categories||[]),cv_category_order:clone(bundle?.cv_category_order||[]),assignments:clone(bundle?.assignments||{})};
   const defaultPageColors={home:'#a34f3b',cv:'#8b5a2b',publications:'#315f9b',activities:'#176b52',teaching:'#b14b86'};
   result.pages.sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0)||String(a.id).localeCompare(String(b.id)));
-  result.pages.forEach((p,i)=>{p.order=i;p.name=layoutPair(p.name);p.path=layoutPair(p.path);p.languages=['en','zh'].filter(lang=>(Array.isArray(p.languages)?p.languages:['en','zh']).includes(lang));if(!p.languages.length)p.languages=['en','zh'];p.color=/^#[0-9a-f]{6}$/i.test(String(p.color||''))?String(p.color).toLowerCase():(defaultPageColors[p.id]||'#8b3d2e');p.show_in_navigation=p.show_in_navigation!==false;if(p.header){p.header={label:layoutPair(p.header.label),title:layoutPair(p.header.title),intro:layoutPair(p.header.intro)}}});
+  result.pages.forEach((p,i)=>{p.order=i;p.page_type=pageType(p);p.name=layoutPair(p.name);p.path=layoutPair(p.path);p.languages=['en','zh'].filter(lang=>(Array.isArray(p.languages)?p.languages:(p.page_type==='course'?['en']:['en','zh'])).includes(lang));if(!p.languages.length)p.languages=p.page_type==='course'?['en']:['en','zh'];if(p.page_type==='course'&&p.languages.length>1)p.languages=['en'];p.color=/^#[0-9a-f]{6}$/i.test(String(p.color||''))?String(p.color).toLowerCase():(defaultPageColors[p.id]||'#8b3d2e');p.show_in_navigation=p.show_in_navigation!==false;if(p.header){p.header={label:layoutPair(p.header.label),title:layoutPair(p.header.title),intro:layoutPair(p.header.intro)}}if(p.page_type==='course')p.course=coursePageData(p.course);else delete p.course});
   const pageRank=new Map(result.pages.map((p,i)=>[p.id,i]));
   result.categories.sort((a,b)=>(pageRank.get(a.page_id)??999)-(pageRank.get(b.page_id)??999)||(Number(a.order)||0)-(Number(b.order)||0)||String(a.id).localeCompare(String(b.id)));
   const counters={};
@@ -129,6 +138,7 @@ openEditor=function(type,record,options={}){
     return;
   }
   if(type==='academic_event'){openAcademicEventChooser();return}
+  if(type==='page'&&!record){openPageTypeChooser();return}
   if(type==='page'||type==='category'){openLayoutEditor(type,record);return}
   baseOpenEditor(type,record,options);initLayoutState();
   const root=currentEditor?.root;if(!root)return;
@@ -154,10 +164,14 @@ openEditor=function(type,record,options={}){
   }
   for(const id of ['publicationGroup','publicationCustom','teachingGroup','teachingCustom'])root.querySelector('#'+id)?.closest('.field,div')?.classList.add('legacy-category-hidden');
   if(type==='teaching'){
-    const pages=layoutDraft.pages.filter(p=>p.id!=='home');
+    const pages=coursePages();
+    const externalUrl=String(record?.external_course_url||'');
+    const source=externalUrl?'__external__':String(record?.course_page_id||'');
     const linkBlock=document.createElement('div');linkBlock.className='field';
-    linkBlock.innerHTML=`<label>課程資訊頁面（選填）</label><select data-path="course_page_id"><option value="">無，維持目前顯示</option>${pages.map(p=>`<option value="${esc(p.id)}" ${p.id===String(record?.course_page_id||'')?'selected':''}>${esc(pageName(p.id))}</option>`).join('')}</select><p class="field-hint">選擇後，網站教學項目旁會出現「課程資訊」按鈕並連到該頁面。</p>`;
+    linkBlock.innerHTML=`<label>課程資訊連結（選填）</label><select data-course-link-source><option value="" ${!source?'selected':''}>無，維持目前顯示</option>${pages.map(p=>`<option value="${esc(p.id)}" ${p.id===source?'selected':''}>站內課程頁面 · ${esc(pageName(p.id))}</option>`).join('')}<option value="__external__" ${source==='__external__'?'selected':''}>外部課程網址…</option></select><input data-path="course_page_id" type="hidden" value="${source&&source!=='__external__'?esc(source):''}"><div data-external-course-url ${source==='__external__'?'':'hidden'}><label>外部課程網址</label><input data-path="external_course_url" inputmode="url" placeholder="https://…" value="${esc(externalUrl)}"></div><p class="field-hint">站內選單只列出「課程頁面」；若課程網站由授課老師維護，請選外部網址。前台會顯示同一個「課程資訊」按鈕。</p>`;
     block.after(linkBlock);
+    const sourceSelect=linkBlock.querySelector('[data-course-link-source]'),pageInput=linkBlock.querySelector('[data-path="course_page_id"]'),externalBox=linkBlock.querySelector('[data-external-course-url]'),externalInput=linkBlock.querySelector('[data-path="external_course_url"]');
+    sourceSelect.onchange=()=>{const external=sourceSelect.value==='__external__';pageInput.value=external?'':sourceSelect.value;externalBox.hidden=!external;if(!external)externalInput.value=''};
   }
   if(!cats.length){block.innerHTML='<div class="notice error">目前沒有可容納這種項目的類別。請先在「新增」選擇「類別」。</div>';root.querySelector('#saveEditor').disabled=true}
 };
@@ -184,20 +198,62 @@ collectEditor=function(type,base){
       }
     }
   }
+  if(type==='teaching'){
+    result.o.course_page_id=String(result.o.course_page_id||'').trim();
+    result.o.external_course_url=String(result.o.external_course_url||'').trim();
+    if(result.o.external_course_url)result.o.course_page_id='';
+  }
   return result;
 };
 
-function pageFormHtml(page){
-  const p=page||{name:{en:'',zh:''},languages:['en','zh'],header:{label:{en:'',zh:''},title:{en:'',zh:''},intro:{en:'',zh:''}},color:'#8b3d2e',show_in_navigation:true};
-  const editing=!!page,mode=p.languages?.length===1?p.languages[0]:'bilingual';
-  return `<h3>${editing?'編輯':'新增'}頁面</h3><div class="field"><label>頁面語言版本</label><select data-page-field="language_mode" id="pageLanguageMode" ${editing?'disabled':''}><option value="bilingual" ${mode==='bilingual'?'selected':''}>雙語（英文＋中文）</option><option value="zh" ${mode==='zh'?'selected':''}>僅中文</option><option value="en" ${mode==='en'?'selected':''}>僅英文</option></select><p class="field-hint">${editing?'頁面建立後固定語言版本，避免留下失效網址。':'單語頁面不會顯示語言切換按鈕。'}</p></div>
-  ${editing?'':`<div class="field"><label>網址代稱</label><input data-page-field="slug" placeholder="例如 algebra-course"><p class="field-hint">使用英文字母、數字與連字號；有英文導覽名稱時可留白自動產生，僅中文頁面請填寫。</p></div>`}
-  <div class="pair-grid"><div class="field" data-page-language="en"><label>導覽名稱（英文）</label><input data-page-field="name.en" value="${esc(p.name?.en||'')}"></div><div class="field" data-page-language="zh"><label>導覽名稱（中文）</label><input data-page-field="name.zh" value="${esc(p.name?.zh||'')}"></div></div>
+const courseLinkBaseValidateEditorObject=validateEditorObject;
+validateEditorObject=function(type,o){
+  const errors=courseLinkBaseValidateEditorObject(type,o);
+  if(type==='teaching'&&String(o.external_course_url||'').trim()){
+    try{const url=new URL(String(o.external_course_url).trim());if(!['http:','https:'].includes(url.protocol))errors.push('外部課程網址必須使用 http 或 https。')}
+    catch(_error){errors.push('外部課程網址格式不正確。')}
+  }
+  return errors;
+};
+
+function courseEditorId(prefix){return`${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`}
+function courseDetailRowHtml(row={}){
+  return `<div class="course-editor-row" data-course-detail-row data-row-id="${esc(row.id||courseEditorId('detail'))}"><div class="course-editor-row-head"><strong>資訊欄位</strong><button class="button danger" type="button" data-remove-course-row>移除</button></div><div class="pair-grid"><div class="field" data-page-language="en"><label>欄名（英文）</label><input data-detail-label="en" value="${esc(row.label?.en||'')}"></div><div class="field" data-page-language="zh"><label>欄名（中文）</label><input data-detail-label="zh" value="${esc(row.label?.zh||'')}"></div></div><div class="pair-grid"><div class="field" data-page-language="en"><label>內容（英文）</label><textarea data-detail-value="en">${esc(row.value?.en||'')}</textarea></div><div class="field" data-page-language="zh"><label>內容（中文）</label><textarea data-detail-value="zh">${esc(row.value?.zh||'')}</textarea></div></div></div>`;
+}
+function courseMaterialRowHtml(material={}){
+  return `<div class="course-material-row" data-course-material-row data-row-id="${esc(material.id||courseEditorId('material'))}"><div class="pair-grid"><div class="field" data-page-language="en"><label>教材名稱（英文）</label><input data-material-label="en" value="${esc(material.label?.en||'')}"></div><div class="field" data-page-language="zh"><label>教材名稱（中文）</label><input data-material-label="zh" value="${esc(material.label?.zh||'')}"></div></div><div class="course-material-url"><div class="field"><label>教材網址或檔案路徑</label><input data-material-url inputmode="url" placeholder="https://… 或 files/teaching/…" value="${esc(material.url||'')}"></div><button class="button danger" type="button" data-remove-course-row>移除教材</button></div></div>`;
+}
+function courseMeetingRowHtml(row={}){
+  const materials=Array.isArray(row.materials)?row.materials:[];
+  return `<div class="course-editor-row course-meeting-row" data-course-meeting-row data-row-id="${esc(row.id||courseEditorId('meeting'))}"><div class="course-editor-row-head"><strong>課程進度</strong><div class="actions"><button class="button" type="button" data-move-course-row="-1">↑</button><button class="button" type="button" data-move-course-row="1">↓</button><button class="button danger" type="button" data-remove-course-row>移除</button></div></div><div class="pair-grid"><div class="field" data-page-language="en"><label>日期（英文）</label><input data-meeting-date="en" placeholder="Sep. 20" value="${esc(row.date?.en||'')}"></div><div class="field" data-page-language="zh"><label>日期（中文）</label><input data-meeting-date="zh" placeholder="9/20" value="${esc(row.date?.zh||'')}"></div></div><div class="pair-grid"><div class="field" data-page-language="en"><label>主題（英文）</label><textarea data-meeting-topic="en">${esc(row.topic?.en||'')}</textarea></div><div class="field" data-page-language="zh"><label>主題（中文）</label><textarea data-meeting-topic="zh">${esc(row.topic?.zh||'')}</textarea></div></div><div data-course-materials>${materials.map(courseMaterialRowHtml).join('')}</div><button class="button" type="button" data-add-course-material>＋ 新增教材連結</button></div>`;
+}
+function coursePageFieldsHtml(page){
+  const course=coursePageData(page?.course);
+  return `<section class="course-editor-section"><div class="course-editor-section-head"><div><h3>課程資訊</h3><p class="field-hint">可自由新增機構、學期、授課教師、上課地點、Office hours 等欄位。</p></div><button class="button" type="button" data-add-course-detail>＋ 新增資訊欄位</button></div><div data-course-details>${course.details.map(courseDetailRowHtml).join('')}</div></section><section class="course-editor-section"><div class="course-editor-section-head"><div><h3>日期、主題與教材</h3><p class="field-hint">每個日期可附多個講義、作業或解答連結；順序就是前台表格順序。</p></div><button class="button" type="button" data-add-course-meeting>＋ 新增一列</button></div><div data-course-schedule>${course.schedule.map(courseMeetingRowHtml).join('')}</div></section><div class="pair-grid"><div class="field" data-page-language="en"><label>頁尾提醒（英文，可留白）</label><textarea data-course-footer="en">${esc(course.footer_note.en)}</textarea></div><div class="field" data-page-language="zh"><label>頁尾提醒（中文，可留白）</label><textarea data-course-footer="zh">${esc(course.footer_note.zh)}</textarea></div></div>`;
+}
+function collectCoursePage(root){
+  const details=[...root.querySelectorAll('[data-course-detail-row]')].map(row=>({id:row.dataset.rowId,label:{en:row.querySelector('[data-detail-label="en"]')?.value||'',zh:row.querySelector('[data-detail-label="zh"]')?.value||''},value:{en:row.querySelector('[data-detail-value="en"]')?.value||'',zh:row.querySelector('[data-detail-value="zh"]')?.value||''}})).filter(row=>Object.values(row.label).some(Boolean)||Object.values(row.value).some(Boolean));
+  const schedule=[...root.querySelectorAll('[data-course-meeting-row]')].map(row=>({id:row.dataset.rowId,date:{en:row.querySelector('[data-meeting-date="en"]')?.value||'',zh:row.querySelector('[data-meeting-date="zh"]')?.value||''},topic:{en:row.querySelector('[data-meeting-topic="en"]')?.value||'',zh:row.querySelector('[data-meeting-topic="zh"]')?.value||''},materials:[...row.querySelectorAll('[data-course-material-row]')].map(material=>({id:material.dataset.rowId,label:{en:material.querySelector('[data-material-label="en"]')?.value||'',zh:material.querySelector('[data-material-label="zh"]')?.value||''},url:material.querySelector('[data-material-url]')?.value||''})).filter(material=>Object.values(material.label).some(Boolean)||material.url)})).filter(row=>Object.values(row.date).some(Boolean)||Object.values(row.topic).some(Boolean)||row.materials.length);
+  return{details,schedule,footer_note:{en:root.querySelector('[data-course-footer="en"]')?.value||'',zh:root.querySelector('[data-course-footer="zh"]')?.value||''}};
+}
+function bindCoursePageEditor(root){
+  root.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.hasAttribute('data-add-course-detail')){root.querySelector('[data-course-details]').insertAdjacentHTML('beforeend',courseDetailRowHtml());updatePageLanguageFields(root)}else if(button.hasAttribute('data-add-course-meeting')){root.querySelector('[data-course-schedule]').insertAdjacentHTML('beforeend',courseMeetingRowHtml());updatePageLanguageFields(root)}else if(button.hasAttribute('data-add-course-material')){button.closest('[data-course-meeting-row]').querySelector('[data-course-materials]').insertAdjacentHTML('beforeend',courseMaterialRowHtml());updatePageLanguageFields(root)}else if(button.hasAttribute('data-remove-course-row'))button.closest('[data-course-material-row],[data-course-detail-row],[data-course-meeting-row]')?.remove();else if(button.hasAttribute('data-move-course-row')){const row=button.closest('[data-course-meeting-row]'),delta=Number(button.dataset.moveCourseRow),sibling=delta<0?row.previousElementSibling:row.nextElementSibling;if(sibling)row.parentElement.insertBefore(delta<0?row:sibling,delta<0?sibling:row)}});
+}
+function pageFormHtml(page,createType='general'){
+  const kind=page?pageType(page):(createType==='course'?'course':'general');
+  const p=page||{page_type:kind,name:{en:'',zh:''},languages:kind==='course'?['en']:['en','zh'],header:{label:{en:'',zh:''},title:{en:'',zh:''},intro:{en:'',zh:''}},color:kind==='course'?'#315f9b':'#8b3d2e',show_in_navigation:kind==='general'};
+  const editing=!!page,mode=p.languages?.length===1?p.languages[0]:'bilingual',kindLabel=kind==='course'?'課程頁面':'一般頁面';
+  const languageOptions=kind==='course'?`<option value="en" ${mode==='en'?'selected':''}>英文</option><option value="zh" ${mode==='zh'?'selected':''}>中文</option>`:`<option value="bilingual" ${mode==='bilingual'?'selected':''}>雙語（英文＋中文）</option><option value="zh" ${mode==='zh'?'selected':''}>僅中文</option><option value="en" ${mode==='en'?'selected':''}>僅英文</option>`;
+  const languageHint=kind==='course'?'課程頁面使用單一語言，不顯示語言切換按鈕。':(editing?'頁面建立後固定語言版本，避免留下失效網址。':'單語頁面不會顯示語言切換按鈕。');
+  return `<div class="page-editor-title"><div><span class="tag">${kindLabel}</span><h3>${editing?'編輯':'新增'}${kindLabel}</h3></div>${editing?'':`<button class="button" type="button" data-back-to-page-chooser>← 返回頁面類型</button>`}</div><input type="hidden" data-page-field="page_type" value="${kind}"><div class="field"><label>${kind==='course'?'課程頁面語言':'頁面語言版本'}</label><select data-page-field="language_mode" id="pageLanguageMode" ${editing?'disabled':''}>${languageOptions}</select><p class="field-hint">${languageHint}</p></div>
+  ${editing?'':`<div class="field"><label>網址代稱</label><input data-page-field="slug" placeholder="例如 math2020-fall-2026"><p class="field-hint">${kind==='course'?'課程頁網址會建立在 teaching/網址代稱/。':'使用英文字母、數字與連字號；有英文導覽名稱時可留白自動產生，僅中文頁面請填寫。'}</p></div>`}
+  <div class="pair-grid"><div class="field" data-page-language="en"><label>${kind==='course'?'頁面名稱':'導覽名稱'}（英文）</label><input data-page-field="name.en" value="${esc(p.name?.en||'')}"></div><div class="field" data-page-language="zh"><label>${kind==='course'?'頁面名稱':'導覽名稱'}（中文）</label><input data-page-field="name.zh" value="${esc(p.name?.zh||'')}"></div></div>
   <div class="pair-grid"><div class="field" data-page-language="en"><label>左上小字（英文）</label><input data-page-field="header.label.en" value="${esc(p.header?.label?.en||'')}"></div><div class="field" data-page-language="zh"><label>左上小字（中文）</label><input data-page-field="header.label.zh" value="${esc(p.header?.label?.zh||'')}"></div></div>
   <div class="pair-grid"><div class="field" data-page-language="en"><label>頁面標題（英文）</label><input data-page-field="header.title.en" value="${esc(p.header?.title?.en||'')}"></div><div class="field" data-page-language="zh"><label>頁面標題（中文）</label><input data-page-field="header.title.zh" value="${esc(p.header?.title?.zh||'')}"></div></div>
   <div class="pair-grid"><div class="field" data-page-language="en"><label>簡介（英文，可留白）</label><textarea data-page-field="header.intro.en">${esc(p.header?.intro?.en||'')}</textarea></div><div class="field" data-page-language="zh"><label>簡介（中文，可留白）</label><textarea data-page-field="header.intro.zh">${esc(p.header?.intro?.zh||'')}</textarea></div></div>
+  ${kind==='course'?coursePageFieldsHtml(p):''}
   <div class="field"><label>頁面主色</label><input type="color" data-page-field="color" value="${esc(p.color||'#8b3d2e')}"><p class="field-hint">頁首、按鈕與重點色會依這個顏色自動產生一致色階。</p></div>
-  <div class="form-options"><label class="switch"><input type="checkbox" data-page-field="show_in_navigation" ${p.show_in_navigation!==false?'checked':''}>顯示於導覽列</label></div><p class="field-hint">關閉後頁面與網址仍保留，但不會出現在一般網站導覽列或 404 頁面的導覽列。</p>
+  <div class="form-options"><label class="switch"><input type="checkbox" data-page-field="show_in_navigation" ${p.show_in_navigation!==false?'checked':''}>顯示於導覽列</label></div><p class="field-hint">課程頁通常由 Teaching 項目連入，不必放進主導覽；關閉後網址仍保留。</p>
   ${editing?`<div class="field"><label>網址</label><div class="preview-value">${[p.path?.en,p.path?.zh].filter(Boolean).map(esc).join(' ／ ')}</div></div>`:''}
   <div class="actions"><button class="button primary" data-save-layout-page="${esc(page?.id||'')}">${editing?'儲存頁面設定':'加入新增頁面草稿'}</button></div>`;
 }
@@ -205,9 +261,15 @@ function updatePageLanguageFields(root){
   const mode=root.querySelector('#pageLanguageMode')?.value||'bilingual';
   root.querySelectorAll('[data-page-language]').forEach(field=>field.classList.toggle('page-language-hidden',mode!=='bilingual'&&field.dataset.pageLanguage!==mode));
 }
+function openPageTypeChooser(){
+  initLayoutState();const box=document.createElement('div');
+  box.innerHTML=`<div class="activity-chooser-head"><div><span class="eyebrow">新增頁面</span><h3>選擇頁面類型</h3></div></div><p class="field-hint">一般頁面使用現有的頁首、類別與內容排版；課程頁面使用課程資訊、日期、主題與教材表格。</p><div class="academic-event-choices page-type-choices"><button class="button academic-event-choice" type="button" data-page-type-choice="general"><strong>一般頁面</strong><span>現有模板；適合研究、活動或其他自訂內容</span></button><button class="button academic-event-choice" type="button" data-page-type-choice="course"><strong>課程頁面</strong><span>課程資訊、進度表與多個教材連結</span></button></div>`;
+  $('#addEditor').replaceChildren(box);currentEditor={type:'page',record:null,root:box};
+  box.onclick=event=>{const button=event.target.closest('[data-page-type-choice]');if(button)openLayoutEditor('page',null,{pageType:button.dataset.pageTypeChoice})};
+}
 function categoryFormHtml(category){
-  const c=category||{label:{en:'',zh:''},title:{en:'',zh:''},intro:{en:'',zh:''},page_id:layoutDraft.pages.find(p=>p.id!=='home')?.id||'home',kind:'generic',show_on_web:true,show_on_cv:false};
-  const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}" ${p.id===c.page_id?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
+  const c=category||{label:{en:'',zh:''},title:{en:'',zh:''},intro:{en:'',zh:''},page_id:generalPages().find(p=>p.id!=='home')?.id||'home',kind:'generic',show_on_web:true,show_on_cv:false};
+  const pageOptions=generalPages().map(p=>`<option value="${esc(p.id)}" ${p.id===c.page_id?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
   const kindOrder=['publication','conference','talk','visit','organization','teaching','honor','generic','education','interest','contact','personal'];
   const formatLabels=Object.fromEntries(Object.entries(GENERAL_FORMAT_LABELS).map(([kind,label])=>[kind,`一般內容（${label}）`]));
   const kindOptions=kindOrder.map(id=>`<option value="${id}" ${id===c.kind?'selected':''}>${esc(formatLabels[id]||CATEGORY_KIND_LABELS[id])}</option>`).join('');
@@ -219,24 +281,25 @@ function categoryFormHtml(category){
   <div class="form-options"><label class="switch"><input type="checkbox" data-category-field="show_on_web" ${c.show_on_web!==false?'checked':''}>顯示於網站</label><label class="switch"><input type="checkbox" data-category-field="show_on_cv" ${c.show_on_cv?'checked':''}>顯示於 PDF 履歷</label></div>
   <div class="actions"><button class="button primary" data-save-layout-category="${esc(category?.id||'')}">${category?'儲存類別設定':'加入新增類別草稿'}</button>${category?`<button class="button danger" data-delete-layout-category="${esc(category.id)}">刪除類別</button>`:''}</div>`;
 }
-function openLayoutEditor(type,record){
+function openLayoutEditor(type,record,options={}){
   initLayoutState();const box=document.createElement('div');
-  box.innerHTML=type==='page'?pageFormHtml(record?layoutDraft.pages.find(p=>p.id===record._layout_id):null):categoryFormHtml(record?layoutDraft.categories.find(c=>c.id===record._layout_id):null);
+  box.innerHTML=type==='page'?pageFormHtml(record?layoutDraft.pages.find(p=>p.id===record._layout_id):null,options.pageType):categoryFormHtml(record?layoutDraft.categories.find(c=>c.id===record._layout_id):null);
   $('#addEditor').replaceChildren(box);currentEditor={type,record,root:box};
-  if(type==='page'){updatePageLanguageFields(box);box.querySelector('#pageLanguageMode')?.addEventListener('change',()=>updatePageLanguageFields(box))}
+  if(type==='page'){updatePageLanguageFields(box);box.querySelector('#pageLanguageMode')?.addEventListener('change',()=>updatePageLanguageFields(box));if(box.querySelector('[data-course-schedule]'))bindCoursePageEditor(box)}
   box.onclick=event=>{
     const button=event.target.closest('button');if(!button)return;
-    if(button.hasAttribute('data-save-layout-page'))saveLayoutPage(button.dataset.saveLayoutPage,box);
+    if(button.hasAttribute('data-back-to-page-chooser'))openPageTypeChooser();
+    else if(button.hasAttribute('data-save-layout-page'))saveLayoutPage(button.dataset.saveLayoutPage,box);
     else if(button.hasAttribute('data-save-layout-category'))saveLayoutCategory(button.dataset.saveLayoutCategory,box);
     else if(button.dataset.deleteLayoutCategory)deleteCategory(button.dataset.deleteLayoutCategory);
   };
 }
 function saveLayoutPage(id,root){
-  const value=readNestedFields(root,'data-page-field'),languages=value.language_mode==='en'?['en']:value.language_mode==='zh'?['zh']:['en','zh'],required=languages.flatMap(lang=>[value.name?.[lang],value.header?.label?.[lang],value.header?.title?.[lang]]);
+  const value=readNestedFields(root,'data-page-field'),kind=value.page_type==='course'?'course':'general',languages=kind==='course'?[value.language_mode==='zh'?'zh':'en']:(value.language_mode==='en'?['en']:value.language_mode==='zh'?['zh']:['en','zh']),required=languages.flatMap(lang=>[value.name?.[lang],value.header?.label?.[lang],value.header?.title?.[lang]]);
   if(required.some(v=>!String(v||'').trim()))return flash('使用中的語言必須填寫導覽名稱、左上小字與頁面標題');
   if(!id&&!String(value.slug||value.name?.en||'').trim())return flash('僅中文頁面請填寫網址代稱');
-  if(id){const page=layoutDraft.pages.find(p=>p.id===id);if(!page)return;page.languages=languages;page.name=layoutPair(value.name);page.path={en:languages.includes('en')?(page.path.en||`${page.id}.html`):'',zh:languages.includes('zh')?(page.path.zh||`zh/${page.id}.html`):''};page.header={label:layoutPair(value.header.label),title:layoutPair(value.header.title),intro:layoutPair(value.header.intro)};page.color=value.color;page.show_in_navigation=value.show_in_navigation!==false;saveLayoutDraft('已儲存頁面設定');return}
-  const pageId=uniquePageId(value.slug||value.name.en),page={id:pageId,name:layoutPair(value.name),languages,path:{en:languages.includes('en')?`${pageId}.html`:'',zh:languages.includes('zh')?`zh/${pageId}.html`:''},header:{label:layoutPair(value.header.label),title:layoutPair(value.header.title),intro:layoutPair(value.header.intro)},color:value.color,show_in_navigation:value.show_in_navigation!==false,order:layoutDraft.pages.length};
+  if(id){const page=layoutDraft.pages.find(p=>p.id===id);if(!page)return;page.languages=languages;page.name=layoutPair(value.name);page.path=kind==='course'?{en:languages.includes('en')?(page.path.en||`teaching/${page.id}/index.html`):'',zh:languages.includes('zh')?(page.path.zh||`zh/teaching/${page.id}/index.html`):''}:{en:languages.includes('en')?(page.path.en||`${page.id}.html`):'',zh:languages.includes('zh')?(page.path.zh||`zh/${page.id}.html`):''};page.header={label:layoutPair(value.header.label),title:layoutPair(value.header.title),intro:layoutPair(value.header.intro)};page.color=value.color;page.show_in_navigation=value.show_in_navigation!==false;if(kind==='course')page.course=collectCoursePage(root);saveLayoutDraft('已儲存頁面設定');return}
+  const pageId=uniquePageId(value.slug||value.name.en),page={id:pageId,page_type:kind,name:layoutPair(value.name),languages,path:kind==='course'?{en:languages.includes('en')?`teaching/${pageId}/index.html`:'',zh:languages.includes('zh')?`zh/teaching/${pageId}/index.html`:''}:{en:languages.includes('en')?`${pageId}.html`:'',zh:languages.includes('zh')?`zh/${pageId}.html`:''},header:{label:layoutPair(value.header.label),title:layoutPair(value.header.title),intro:layoutPair(value.header.intro)},color:value.color,show_in_navigation:value.show_in_navigation!==false,order:layoutDraft.pages.length};if(kind==='course')page.course=collectCoursePage(root);
   layoutDraft.pages.push(page);saveLayoutDraft('已加入新增頁面草稿');openLayoutEditor('page',{_layout_id:pageId});renderRecords();
 }
 function uniquePageId(seed){let id=slug(seed||'page'),base=id,n=2,used=new Set(layoutDraft.pages.map(p=>p.id));while(used.has(id))id=`${base}-${n++}`;return id}
@@ -249,7 +312,7 @@ function saveLayoutCategory(id,root){
 }
 
 function categoryEditorHtml(category){
-  const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}" ${p.id===category.page_id?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
+  const pageOptions=generalPages().map(p=>`<option value="${esc(p.id)}" ${p.id===category.page_id?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
   return `<div class="layout-category-editor" data-category-editor="${esc(category.id)}">
     <div class="pair-grid"><div class="field"><label>左上小字（英文）</label><input data-category-field="label.en" value="${esc(category.label.en)}"></div><div class="field"><label>左上小字（中文）</label><input data-category-field="label.zh" value="${esc(category.label.zh)}"></div></div>
     <div class="pair-grid"><div class="field"><label>大標題（英文）</label><input data-category-field="title.en" value="${esc(category.title.en)}"></div><div class="field"><label>大標題（中文）</label><input data-category-field="title.zh" value="${esc(category.title.zh)}"></div></div>
@@ -271,9 +334,9 @@ function pageEditorHtml(page){
 }
 function renderLayoutManager(){
   initLayoutState();const box=$('#layoutManager');if(!box)return;
-  if(!layoutDraft.pages.some(p=>p.id===layoutManagerPageId))layoutManagerPageId=layoutDraft.pages[0]?.id||'';
-  const selectedPage=layoutDraft.pages.find(p=>p.id===layoutManagerPageId);
-  const pageOptions=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}" ${p.id===layoutManagerPageId?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
+  const pages=generalPages();if(!pages.some(p=>p.id===layoutManagerPageId))layoutManagerPageId=pages[0]?.id||'';
+  const selectedPage=pages.find(p=>p.id===layoutManagerPageId);
+  const pageOptions=pages.map(p=>`<option value="${esc(p.id)}" ${p.id===layoutManagerPageId?'selected':''}>${esc(pageName(p.id))}</option>`).join('');
   const kindOptions=Object.entries(CATEGORY_KIND_LABELS).map(([id,label])=>`<option value="${esc(id)}">${esc(label)}</option>`).join('');
   box.innerHTML=`<div class="notice"><strong>類別就是網站的大標題。</strong><p>所有項目都必須放在某個類別中。類別移到另一頁時，裡面的項目會一起移動；網站與 PDF 履歷共用同一套類別名稱。</p></div>
   <div class="toolbar layout-page-filter"><div class="field"><label>選擇頁面</label><select id="layoutManagerPage">${pageOptions}</select></div><p class="field-hint">下方只顯示所選頁面的頁首與類別。</p></div>
@@ -310,7 +373,7 @@ loadOrder=function(){
   if($('#layoutOrderPage')){renderUnifiedOrder();return}
   return baseLoadOrder()
 };
-function fillOrderPageSelector(){if(!site)return;initLayoutState();const select=$('#layoutOrderPage');if(!select||!layoutDraft)return;const old=select.value;select.innerHTML=layoutDraft.pages.map(p=>`<option value="${esc(p.id)}">${esc(pageName(p.id))}</option>`).join('')+'<option value="__cv__">PDF 履歷</option>';if([...select.options].some(o=>o.value===old))select.value=old}
+function fillOrderPageSelector(){if(!site)return;initLayoutState();const select=$('#layoutOrderPage');if(!select||!layoutDraft)return;const old=select.value;select.innerHTML=generalPages().map(p=>`<option value="${esc(p.id)}">${esc(pageName(p.id))}</option>`).join('')+'<option value="__cv__">PDF 履歷</option>';if([...select.options].some(o=>o.value===old))select.value=old}
 function categoryItemIds(categoryId){return Object.entries(layoutDraft.assignments).filter(([,s])=>s.category_id===categoryId).sort((a,b)=>a[1].order-b[1].order||a[0].localeCompare(b[0])).map(([id])=>id)}
 function orderCategoryCard(category,index,total,map,cvMode=false){
   const ids=categoryItemIds(category.id),compatible=layoutDraft.categories.filter(c=>c.kind===category.kind&&c.id!==category.id);
@@ -347,14 +410,16 @@ const baseSortedRecords=sortedRecords;
 function layoutCatalogRecords(){
   if(!layoutDraft)return[];
   return[
-    ...layoutDraft.pages.filter(p=>p.id!=='home').map(p=>({id:`page:${p.id}`,type:'page',_layout_kind:'page',_layout_id:p.id,title:clone(p.name),category_id:'',order:p.order})),
-    {id:'system-page:contact',type:'page',_layout_kind:'system_page',_settings_section:'contactForm',_settings_panel:'design',title:{en:'Contact Form',zh:'聯絡表單頁面'},category_id:'',order:9000},
-    {id:'system-page:404',type:'page',_layout_kind:'system_page',_settings_section:'errorPage',_settings_panel:'',title:{en:'404 Page',zh:'404 頁面'},category_id:'',order:9001},
+    ...layoutDraft.pages.filter(p=>p.id!=='home').map(p=>({id:`page:${p.id}`,type:'page',_page_type:pageType(p),_layout_kind:'page',_layout_id:p.id,title:clone(p.name),category_id:'',order:p.order})),
+    {id:'system-page:contact',type:'page',_page_type:'general',_layout_kind:'system_page',_settings_section:'contactForm',_settings_panel:'design',title:{en:'Contact Form',zh:'聯絡表單頁面'},category_id:'',order:9000},
+    {id:'system-page:404',type:'page',_page_type:'general',_layout_kind:'system_page',_settings_section:'errorPage',_settings_panel:'',title:{en:'404 Page',zh:'404 頁面'},category_id:'',order:9001},
     ...layoutDraft.categories.map(c=>({id:`category:${c.id}`,type:'category',_layout_kind:'category',_layout_id:c.id,title:clone(c.title),category_id:c.id,order:c.order,page_id:c.page_id}))
   ];
 }
 function adminFilterMatches(item,filter){
   if(!filter)return true;
+  if(filter==='general_page')return item.type==='page'&&item._page_type!=='course';
+  if(filter==='course_page')return item.type==='page'&&item._page_type==='course';
   if(filter==='academic_event')return item.type==='conference'||item.type==='visit';
   if(filter==='generic')return GENERAL_CATEGORY_KINDS.has(item.type);
   return item.type===filter;
@@ -388,7 +453,7 @@ renderRecords=function(){
   const categoryMap=new Map((layoutDraft?.categories||[]).map(c=>[c.id,c])),pageMap=new Map((layoutDraft?.pages||[]).map(p=>[p.id,p]));
   const badge=(kind,label,value)=>`<span class="record-badge record-badge-${kind}"><span>${esc(label)}</span><strong>${esc(value)}</strong></span>`;
   $('#records').innerHTML=sortedRecords().map(item=>{
-    const category=categoryMap.get(item.category_id),page=item.type==='page'?pageMap.get(item._layout_id):pageMap.get(item.type==='category'?item.page_id:category?.page_id),badges=[badge('type','項目類型',LABEL[item.type]||item.type)];
+    const category=categoryMap.get(item.category_id),page=item.type==='page'?pageMap.get(item._layout_id):pageMap.get(item.type==='category'?item.page_id:category?.page_id),typeLabel=item.type==='page'?(pageType(page)==='course'?'課程頁面':'一般頁面'):(LABEL[item.type]||item.type),badges=[badge('type','項目類型',typeLabel)];
     if(item.type==='page')badges.push(badge('language','語言版本',page?.languages?.length===1?(page.languages[0]==='zh'?'僅中文':'僅英文'):'雙語'));
     else badges.push(badge('page','所在頁面',pageName(page?.id||item.page_id)));
     if(!['page','category'].includes(item.type))badges.push(badge('category','所在類別',categoryName(category)));
@@ -404,7 +469,7 @@ const baseClearSubmittedDraft=clearSubmittedDraft;
 clearSubmittedDraft=function(){localStorage.removeItem(LAYOUT_DRAFT_KEY);baseClearSubmittedDraft()};
 
 function installLayoutCss(){const style=document.createElement('style');style.textContent=`
-.legacy-category-hidden,.page-language-hidden{display:none!important}.academic-event-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.academic-event-choice{display:grid;gap:4px;text-align:left;padding:14px}.academic-event-choice span{color:#6f655e;font-weight:400}.order-homepage-panel{margin-top:16px;border-top:1px solid #ded3ca;padding-top:12px}.order-homepage-panel>summary{cursor:pointer;padding:8px 0}.record-badges{display:flex;gap:6px;flex-wrap:wrap}.record-badge{display:inline-flex;overflow:hidden;border:1px solid #d9cec5;border-radius:999px;font-size:12px}.record-badge span{padding:3px 6px;background:#eee7e1;color:#625950}.record-badge strong{padding:3px 7px;background:#fff}.record-badge-type{border-color:#c9b19f}.record-badge-page{border-color:#aebfd2}.record-badge-page span{background:#e8eff6;color:#405b76}.record-badge-category{border-color:#b5cbbf}.record-badge-category span{background:#e8f2ec;color:#3f6651}.record-badge-language{border-color:#c8b8d2}.record-badge-language span{background:#f0eaf4;color:#665072}.layout-tool,.layout-page-card{border:1px solid #ded3ca;border-radius:12px;margin:10px 0;background:#fcfaf8}.layout-tool>summary,.layout-page-card>summary{display:flex;gap:8px;align-items:center;justify-content:space-between;cursor:pointer;padding:12px}.layout-tool-body{padding:0 12px 12px}.layout-category-editor{border:1px solid #e1d6ce;border-radius:11px;padding:12px;margin:10px 0;background:#fff}.layout-category-editor textarea,.layout-page-editor textarea{min-height:70px}.layout-order-category{border:1px solid #d9cec5;border-radius:12px;padding:11px;margin:10px 0;background:#faf6f2}.layout-order-category-head,.layout-order-item{display:flex;justify-content:space-between;gap:12px;align-items:center}.layout-order-category-head>div:first-child,.layout-order-item>div:first-child{display:grid;gap:3px;min-width:0}.layout-order-item{padding:9px;border-top:1px solid #e7ddd5;background:#fff}.layout-order-item-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.layout-order-item-actions select{max-width:240px;padding:7px;border:1px solid #cfc4bb;border-radius:8px}.layout-category-editor .actions{margin-top:8px}@media(max-width:700px){.academic-event-choices{grid-template-columns:1fr}.layout-order-category-head,.layout-order-item{align-items:flex-start;flex-direction:column}.layout-order-item-actions{width:100%}}
+.legacy-category-hidden,.page-language-hidden{display:none!important}.academic-event-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.academic-event-choice{display:grid;gap:4px;text-align:left;padding:14px}.academic-event-choice span{color:#6f655e;font-weight:400}.page-editor-title,.course-editor-section-head,.course-editor-row-head,.course-material-url{display:flex;justify-content:space-between;gap:12px;align-items:center}.page-editor-title h3,.course-editor-section h3{margin:.25rem 0}.course-editor-section{margin:16px 0;padding:12px;border:1px solid #d8cdc5;border-radius:12px;background:#faf7f4}.course-editor-row{margin-top:10px;padding:12px;border:1px solid #e2d8d0;border-radius:10px;background:#fff}.course-material-row{margin:10px 0;padding:10px;border-left:4px solid #b9a395;background:#f8f4f1}.course-material-url>.field{flex:1;margin:0}.order-homepage-panel{margin-top:16px;border-top:1px solid #ded3ca;padding-top:12px}.order-homepage-panel>summary{cursor:pointer;padding:8px 0}.record-badges{display:flex;gap:6px;flex-wrap:wrap}.record-badge{display:inline-flex;overflow:hidden;border:1px solid #d9cec5;border-radius:999px;font-size:12px}.record-badge span{padding:3px 6px;background:#eee7e1;color:#625950}.record-badge strong{padding:3px 7px;background:#fff}.record-badge-type{border-color:#c9b19f}.record-badge-page{border-color:#aebfd2}.record-badge-page span{background:#e8eff6;color:#405b76}.record-badge-category{border-color:#b5cbbf}.record-badge-category span{background:#e8f2ec;color:#3f6651}.record-badge-language{border-color:#c8b8d2}.record-badge-language span{background:#f0eaf4;color:#665072}.layout-tool,.layout-page-card{border:1px solid #ded3ca;border-radius:12px;margin:10px 0;background:#fcfaf8}.layout-tool>summary,.layout-page-card>summary{display:flex;gap:8px;align-items:center;justify-content:space-between;cursor:pointer;padding:12px}.layout-tool-body{padding:0 12px 12px}.layout-category-editor{border:1px solid #e1d6ce;border-radius:11px;padding:12px;margin:10px 0;background:#fff}.layout-category-editor textarea,.layout-page-editor textarea{min-height:70px}.layout-order-category{border:1px solid #d9cec5;border-radius:12px;padding:11px;margin:10px 0;background:#faf6f2}.layout-order-category-head,.layout-order-item{display:flex;justify-content:space-between;gap:12px;align-items:center}.layout-order-category-head>div:first-child,.layout-order-item>div:first-child{display:grid;gap:3px;min-width:0}.layout-order-item{padding:9px;border-top:1px solid #e7ddd5;background:#fff}.layout-order-item-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.layout-order-item-actions select{max-width:240px;padding:7px;border:1px solid #cfc4bb;border-radius:8px}.layout-category-editor .actions{margin-top:8px}@media(max-width:700px){.academic-event-choices{grid-template-columns:1fr}.layout-order-category-head,.layout-order-item,.page-editor-title,.course-editor-section-head,.course-editor-row-head,.course-material-url{align-items:flex-start;flex-direction:column}.layout-order-item-actions{width:100%}}
 `;document.head.append(style)}
 installLayoutCss();
 setupUnifiedOrderUI();
