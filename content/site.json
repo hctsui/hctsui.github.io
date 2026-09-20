@@ -283,6 +283,7 @@
     "pages": [
       {
         "id": "home",
+        "page_type": "general",
         "name": {
           "en": "Home",
           "zh": "首頁"
@@ -302,6 +303,7 @@
       },
       {
         "id": "cv",
+        "page_type": "general",
         "name": {
           "en": "CV",
           "zh": "履歷"
@@ -334,6 +336,7 @@
       },
       {
         "id": "publications",
+        "page_type": "general",
         "name": {
           "en": "Publications",
           "zh": "論文"
@@ -366,6 +369,7 @@
       },
       {
         "id": "activities",
+        "page_type": "general",
         "name": {
           "en": "Activities",
           "zh": "學術活動"
@@ -398,6 +402,7 @@
       },
       {
         "id": "teaching",
+        "page_type": "general",
         "name": {
           "en": "Teaching",
           "zh": "教學"
