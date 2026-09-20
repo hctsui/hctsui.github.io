@@ -14,9 +14,10 @@ _ACTIVITY_HTML_PATHS = ("activities.html", "zh/activities.html")
 
 
 def apply_static_asset_paths_safely(
-    original: Callable[[str, str], str],
+    original: Callable[..., str],
     text: str,
     lang: str,
+    page_path: str = "",
 ) -> str:
     """Run the existing local migration without touching complete HTTP(S) URLs."""
     protected: dict[str, str] = {}
@@ -26,7 +27,12 @@ def apply_static_asset_paths_safely(
         protected[token] = match.group(0)
         return token
 
-    result = original(_ABSOLUTE_URL.sub(stash, text), lang)
+    protected_text = _ABSOLUTE_URL.sub(stash, text)
+    result = (
+        original(protected_text, lang, page_path)
+        if page_path
+        else original(protected_text, lang)
+    )
     for token, url in protected.items():
         result = result.replace(token, url)
     return result
@@ -133,8 +139,17 @@ def patch_build_site(module: Any) -> None:
     original_category_items = module.category_items
     original_build = module.build
 
-    def apply_static_asset_paths(text: str, lang: str) -> str:
-        return apply_static_asset_paths_safely(original_static_paths, text, lang)
+    def apply_static_asset_paths(
+        text: str,
+        lang: str,
+        page_path: str = "",
+    ) -> str:
+        return apply_static_asset_paths_safely(
+            original_static_paths,
+            text,
+            lang,
+            page_path,
+        )
 
     def category_items(
         data: dict[str, Any],
