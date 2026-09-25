@@ -1306,7 +1306,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    script_url = _absolute_url(base, "assets/script.js")
+    script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.svg")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))
 
