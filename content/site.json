@@ -283,7 +283,6 @@
     "pages": [
       {
         "id": "home",
-        "page_type": "general",
         "name": {
           "en": "Home",
           "zh": "首頁"
@@ -296,6 +295,7 @@
         "color": "#a34f3b",
         "show_in_navigation": true,
         "order": 0,
+        "page_type": "general",
         "languages": [
           "en",
           "zh"
@@ -303,7 +303,6 @@
       },
       {
         "id": "cv",
-        "page_type": "general",
         "name": {
           "en": "CV",
           "zh": "履歷"
@@ -329,6 +328,7 @@
         "color": "#8b5a2b",
         "show_in_navigation": true,
         "order": 1,
+        "page_type": "general",
         "languages": [
           "en",
           "zh"
@@ -336,7 +336,6 @@
       },
       {
         "id": "publications",
-        "page_type": "general",
         "name": {
           "en": "Publications",
           "zh": "論文"
@@ -362,6 +361,7 @@
         "color": "#315f9b",
         "show_in_navigation": true,
         "order": 2,
+        "page_type": "general",
         "languages": [
           "en",
           "zh"
@@ -369,7 +369,6 @@
       },
       {
         "id": "activities",
-        "page_type": "general",
         "name": {
           "en": "Activities",
           "zh": "學術活動"
@@ -395,6 +394,7 @@
         "color": "#176b52",
         "show_in_navigation": true,
         "order": 3,
+        "page_type": "general",
         "languages": [
           "en",
           "zh"
@@ -402,7 +402,6 @@
       },
       {
         "id": "teaching",
-        "page_type": "general",
         "name": {
           "en": "Teaching",
           "zh": "教學"
@@ -428,6 +427,7 @@
         "color": "#b14b86",
         "show_in_navigation": true,
         "order": 4,
+        "page_type": "general",
         "languages": [
           "en",
           "zh"
@@ -2202,7 +2202,7 @@
       "type": "publication",
       "date": "2025-04-22",
       "year": 2025,
-      "order": 4,
+      "order": 5,
       "arxiv": "2504.15697",
       "title": {
         "en": "Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
@@ -2264,7 +2264,7 @@
       "type": "publication",
       "date": "2025-04-26",
       "year": 2025,
-      "order": 3,
+      "order": 4,
       "arxiv": "2504.18879",
       "title": {
         "en": "On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
@@ -2326,7 +2326,7 @@
       "type": "publication",
       "date": "2026-03-11",
       "year": 2026,
-      "order": 2,
+      "order": 3,
       "arxiv": "2603.10376",
       "title": {
         "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
@@ -2396,7 +2396,7 @@
       "type": "publication",
       "date": "2026-04-05",
       "year": 2026,
-      "order": 1,
+      "order": 2,
       "arxiv": "2604.03618",
       "title": {
         "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
@@ -2520,6 +2520,53 @@
         "zh": "arXiv: 2609.18777"
       },
       "id": "publication-2026-09-16-entry",
+      "display_placements": [],
+      "order": 1
+    },
+    {
+      "type": "publication",
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "date": "2026-09-25",
+      "title": {
+        "en": "Mishiba's Conjecture on the Coaction of $\\infty$-adic Multiple Zeta Values",
+        "zh": "$\\infty$-進多重 zeta 值餘作用的Mishiba猜想"
+      },
+      "venue": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv": "",
+      "arxiv_url": "",
+      "pdf_url": "",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": "",
+      "authors": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "group_id": "preprints",
+      "year": 2026,
+      "links": [],
+      "title_html": {
+        "en": "Mishiba's Conjecture on the Coaction of <span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-adic Multiple Zeta Values",
+        "zh": "<span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-進多重 zeta 值餘作用的Mishiba猜想"
+      },
+      "authors_html": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "venue_html": {
+        "en": "",
+        "zh": ""
+      },
+      "id": "publication-2026-09-25-infty-zeta-mishiba",
       "display_placements": [],
       "order": 0
     }

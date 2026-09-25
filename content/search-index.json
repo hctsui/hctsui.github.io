@@ -332,6 +332,13 @@
     },
     {
       "language": "en",
+      "title": "Mishiba's Conjecture on the Coaction of ∞-adic Multiple Zeta Values",
+      "description": "Hung-Chun Tsui",
+      "url": "/publications.html#publication-2026-09-25-infty-zeta-mishiba",
+      "kind": "publication"
+    },
+    {
+      "language": "en",
       "title": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
       "description": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2609.18777",
       "url": "/publications.html#publication-2026-09-16-entry",
@@ -910,6 +917,13 @@
       "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
       "url": "/zh/cv.html#personal-email",
       "kind": "personal"
+    },
+    {
+      "language": "zh",
+      "title": "∞-進多重 zeta 值餘作用的Mishiba猜想",
+      "description": "崔鴻竣",
+      "url": "/zh/publications.html#publication-2026-09-25-infty-zeta-mishiba",
+      "kind": "publication"
     },
     {
       "language": "zh",
