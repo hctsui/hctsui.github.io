@@ -1254,12 +1254,12 @@
       "end_date": "2026-02-08",
       "show_upcoming": false,
       "title": {
-        "en": "On Finite Multiple Harmonic u -series over Function Field",
-        "zh": "函數體上的有限多重調和 u-級數"
+        "en": "On Finite Multiple Harmonic $u$-series over Function Field",
+        "zh": "函數體上的有限多重調和 $u$-級數"
       },
       "title_html": {
-        "en": "On Finite Multiple Harmonic u -series over Function Field",
-        "zh": "函數體上的有限多重調和 u-級數"
+        "en": "On Finite Multiple Harmonic $u$-series over Function Field",
+        "zh": "函數體上的有限多重調和 $u$-級數"
       },
       "url": "",
       "description": {
@@ -1302,12 +1302,12 @@
       "end_date": "2025-09-30",
       "show_upcoming": false,
       "title": {
-        "en": "On u -analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
-        "zh": "多重 zeta 值的 u-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+        "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
       },
       "title_html": {
-        "en": "On <em>u</em>-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
-        "zh": "多重 zeta 值的 u-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+        "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
       },
       "url": "",
       "description": {
@@ -1330,12 +1330,12 @@
       "end_date": "2025-09-03",
       "show_upcoming": false,
       "title": {
-        "en": "On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵多重 Eisenstein 級數的 q-洗牌關係"
+        "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
       },
       "title_html": {
-        "en": "On q -shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵多重 Eisenstein 級數的 q-洗牌關係"
+        "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
       },
       "url": "",
       "description": {
@@ -1378,12 +1378,12 @@
       "end_date": "2025-04-17",
       "show_upcoming": false,
       "title": {
-        "en": "On the Uniqueness of v -adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
-        "zh": "Gross–Koblitz–Thakur 公式中 v-進 Gamma 函數的唯一性"
+        "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+        "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
       },
       "title_html": {
-        "en": "On the Uniqueness of <em>v</em>-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
-        "zh": "Gross–Koblitz–Thakur 公式中 <em>v</em>-進 Gamma 函數的唯一性"
+        "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+        "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
       },
       "url": "",
       "description": {
@@ -2205,12 +2205,12 @@
       "order": 4,
       "arxiv": "2504.15697",
       "title": {
-        "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-        "zh": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性"
+        "en": "Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
+        "zh": "函數體上 Gross–Koblitz 型公式中 $v$-進 Gamma 函數的唯一性"
       },
       "title_html": {
-        "en": "Uniqueness of v -adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
-        "zh": "函數體上 Gross–Koblitz 型公式中 v-進 Gamma 函數的唯一性"
+        "en": "Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
+        "zh": "函數體上 Gross–Koblitz 型公式中 $v$-進 Gamma 函數的唯一性"
       },
       "authors": {
         "en": "Ting-Wei Chang and Hung-Chun Tsui",
@@ -2267,12 +2267,12 @@
       "order": 3,
       "arxiv": "2504.18879",
       "title": {
-        "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係"
+        "en": "On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 $q$-洗牌關係"
       },
       "title_html": {
-        "en": "On q -Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
-        "zh": "正特徵任意秩多重 Eisenstein 級數的 q-洗牌關係"
+        "en": "On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
+        "zh": "正特徵任意秩多重 Eisenstein 級數的 $q$-洗牌關係"
       },
       "authors": {
         "en": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
@@ -2399,12 +2399,12 @@
       "order": 1,
       "arxiv": "2604.03618",
       "title": {
-        "en": "On u -Multiple Zeta Values in Positive Characteristic",
-        "zh": "正特徵的 u-多重 zeta 值"
+        "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 $u$-多重 zeta 值"
       },
       "title_html": {
-        "en": "On u -Multiple Zeta Values in Positive Characteristic",
-        "zh": "正特徵的 u-多重 zeta 值"
+        "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 $u$-多重 zeta 值"
       },
       "authors": {
         "en": "Hung-Chun Tsui",
@@ -2439,8 +2439,8 @@
         }
       ],
       "homepage_title_html": {
-        "en": "On <em>u</em>-Multiple Zeta Values in Positive Characteristic",
-        "zh": "正特徵的 u-多重 zeta 值"
+        "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 $u$-多重 zeta 值"
       },
       "homepage_authors_html": {
         "en": "<strong>Hung-Chun Tsui</strong>",
