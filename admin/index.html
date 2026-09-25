@@ -1410,6 +1410,14 @@
       function htmlPair(p) {
         return { en: esc(p?.en || ""), zh: esc(p?.zh || "") };
       }
+      function spacedChineseTitle(value) {
+        return String(value || "")
+          .split(/(\$[^$\n]+\$|\\\([^\n]+?\\\))/g)
+          .map((part, index) => index % 2 ? part : part
+            .replace(/([\u3400-\u9fff])([A-Za-z0-9])/g, "$1 $2")
+            .replace(/([A-Za-z0-9])([\u3400-\u9fff])/g, "$1 $2"))
+          .join("");
+      }
       function slug(s) {
         return (
           norm(s)
@@ -1980,7 +1988,7 @@
       }
       function inputHint(path) {
         if (path === "arxiv")
-          return "可填 2401.12345、2401.12345v2 或舊式分類編號；填寫後會自動產生 arXiv 連結。若作品類別為預印本且沒有 DOI／期刊頁，儲存時也會自動把 arXiv: 編號加到期刊／狀態後方。";
+          return "選填；沒有 arXiv 編號也能發布作品。可填 2401.12345、2401.12345v2 或舊式分類編號；填寫後會自動產生 arXiv 連結。若作品類別為預印本且沒有 DOI／期刊頁，儲存時也會自動把 arXiv: 編號加到期刊／狀態後方。";
         if (path === "arxiv_url")
           return "可貼上 arXiv 的 abs 或 pdf 連結；系統會自動擷取並填入 arXiv ID。";
         if (path === "course_code")
@@ -2655,6 +2663,13 @@
         Object.assign(o, raw);
         if (clearConferenceRole) delete o.role;
         o.type = type;
+        if (o.title?.zh) {
+          let spaced = spacedChineseTitle(o.title.zh);
+          if (spaced !== o.title.zh) {
+            o.title.zh = spaced;
+            notes.push("中文題目已補上中英之間的空格");
+          }
+        }
         if (type === "publication") {
           let authorResult = collectAuthors(currentEditor.root, options);
           o.authors = authorResult.authors;
