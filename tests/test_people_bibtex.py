@@ -13,6 +13,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 from build_site import assign_citation_keys, publication_bibitem, publication_bibtex, render_publication_article, replace_main, rich_html  # noqa: E402
 from people_config import link_author_html, link_people_html, normalized_people, validate_people  # noqa: E402
 from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
+from markup_config import stored_rich_html  # noqa: E402
 
 
 class PeopleDirectoryTests(unittest.TestCase):
@@ -178,6 +179,18 @@ class BibtexTests(unittest.TestCase):
         text = publication_bibitem(item)
         self.assertIn(r"\emph{On $u$-Multiple Zeta Values}", text)
 
+    def test_bibitem_preserves_explicit_tex_without_escaping_dollars(self) -> None:
+        item = self.publication()
+        item["title"] = {"en": "On $q$-shuffle and $\\infty$-adic values", "zh": ""}
+        item["title_html"] = item["title"]
+        citation = publication_bibitem(item)
+        self.assertIn(r"On $q$-shuffle and $\infty$-adic values", citation)
+        self.assertNotIn(r"\$q\$", citation)
+        article = render_publication_article(item, "en")
+        self.assertIn('data-tex-inline="q"', article)
+        self.assertIn('data-tex-inline="\\infty"', article)
+        self.assertIn(r"On $q$-shuffle", publication_bibtex(item))
+
     def test_manual_bibitem_wins(self) -> None:
         item = self.publication()
         item["bibitem"] = r"\bibitem{custom} Exact legacy citation."
@@ -243,7 +256,21 @@ class StaticMathTests(unittest.TestCase):
         self.assertIn("𝔭", rendered)
         self.assertIn("𝔽", rendered)
         self.assertIn("<sub>q</sub>", rendered)
-        self.assertNotIn("\\mathfrak", rendered)
+        self.assertIn('data-tex-inline="\\mathfrak{p}"', rendered)
+
+    def test_inline_tex_has_mathjax_source_and_readable_fallback(self) -> None:
+        rendered = rich_html(r"$q$-shuffle and $\infty$-adic")
+        self.assertIn('data-tex-inline="q"', rendered)
+        self.assertIn('data-tex-inline="\\infty"', rendered)
+        self.assertIn("∞", rendered)
+        self.assertIn('</span>-shuffle', rendered)
+
+    def test_saved_html_preserves_emphasis_and_escapes_other_tags(self) -> None:
+        rendered = stored_rich_html(r'<em>u</em>-values and $q$-shuffle &lt;script&gt;bad&lt;/script&gt;')
+        self.assertIn('<em>u</em>-values', rendered)
+        self.assertIn('data-tex-inline="q"', rendered)
+        self.assertIn('&lt;script&gt;bad&lt;/script&gt;', rendered)
+        self.assertNotIn('<script>', rendered)
 
 
 if __name__ == "__main__":
