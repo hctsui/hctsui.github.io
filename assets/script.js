@@ -229,7 +229,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Convert only managed content. Citation source and other code blocks
       // must keep their literal LaTeX for the copy buttons.
       startup: { typeset: false },
-      svg: { fontCache: "global" },
+      // Each converted fragment is inserted on its own; embed glyph paths so
+      // it cannot refer to a missing page-wide SVG font cache.
+      svg: { fontCache: "none" },
     };
     const mathJax = document.createElement("script");
     mathJax.defer = true;
