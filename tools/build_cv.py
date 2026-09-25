@@ -94,9 +94,11 @@ def rich_to_latex(value: Any, *, author: bool = False, auto_math: bool = False) 
 
 def field_rich(entry: dict[str, Any], field: str, lang: str, *, author: bool = False) -> str:
     rich = entry.get(f"{field}_html", {})
+    plain = entry.get(field, {})
+    if isinstance(rich, dict) and "data-tex-inline" in str(rich.get(lang) or "") and isinstance(plain, dict) and "$" in str(plain.get(lang) or ""):
+        return rich_to_latex(plain[lang], author=author, auto_math=lang == "zh")
     if isinstance(rich, dict) and rich.get(lang):
         return rich_to_latex(rich[lang], author=author, auto_math=lang == "zh")
-    plain = entry.get(field, {})
     if isinstance(plain, dict):
         return rich_to_latex(plain.get(lang) or plain.get("en") or plain.get("zh") or "", author=author, auto_math=lang == "zh")
     return rich_to_latex(plain, author=author, auto_math=lang == "zh")

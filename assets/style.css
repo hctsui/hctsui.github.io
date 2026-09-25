@@ -1377,3 +1377,6 @@ body[data-page="contact"] .contact-submit:hover{filter:brightness(.93)}
 .course-material-links a:hover{border-color:var(--accent);background:var(--accent-soft)}
 .course-footer-note,.course-empty{margin:0;padding:1rem 1.1rem;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;background:var(--accent-soft);line-height:1.7}
 @media(max-width:720px){.course-details,.course-custom-sections{grid-template-columns:1fr}.course-section-heading{align-items:flex-start;flex-direction:column;gap:0}.course-section-heading h2{padding-top:.25rem}.course-schedule{min-width:580px}.course-schedule th,.course-schedule td{padding:.8rem}}
+
+/* Keep MathJax accessibility text available without adding visual spacing. */
+.math-inline mjx-assistive-mml{position:absolute!important;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}

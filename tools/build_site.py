@@ -181,8 +181,13 @@ def _bibtex_key(entry: dict[str, Any]) -> str:
     return str(entry.get("_citation_key") or _citation_key_base(entry))
 
 
-def _bibtex_escape(value: Any) -> str:
+def _bibtex_escape(value: Any, *, preserve_math: bool = False) -> str:
     text = str(value or "").strip()
+    if preserve_math:
+        return "".join(
+            part if index % 2 else part.replace("\\", r"\textbackslash{}")
+            for index, part in enumerate(re.split(r"(\$[^$\n]+\$)", text))
+        )
     return text.replace("\\", r"\textbackslash{}")
 
 
@@ -214,7 +219,7 @@ def publication_bibtex(entry: dict[str, Any]) -> str:
     url = str(entry.get("journal_url") or entry.get("arxiv_url") or entry.get("pdf_url") or "").strip()
     if url:
         fields.append(("url", url))
-    rows = [f"  {name} = {{{_bibtex_escape(value)}}}" for name, value in fields if value]
+    rows = [f"  {name} = {{{_bibtex_escape(value, preserve_math=name == 'title')}}}" for name, value in fields if value]
     return f"@{entry_type}{{{_bibtex_key(entry)},\n" + ",\n".join(rows) + "\n}"
 
 
@@ -239,7 +244,8 @@ def _latex_citation_escape(value: Any, *, strip: bool = True) -> str:
 
 def _publication_title_latex(entry: dict[str, Any]) -> str:
     rich = (entry.get("title_html") or {}).get("en") if isinstance(entry.get("title_html"), dict) else ""
-    raw = str(rich or plain_value(entry, "title", "en"))
+    plain = plain_value(entry, "title", "en")
+    raw = str(plain if "data-tex-inline" in str(rich) and "$" in plain else rich or plain)
     result: list[str] = []
     position = 0
     for match in re.finditer(r"<em>(.*?)</em>|\$([^$\n]+)\$", raw, flags=re.I | re.S):

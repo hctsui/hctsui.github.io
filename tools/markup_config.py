@@ -27,6 +27,14 @@ FRAKTUR = {
 }
 
 
+def spaced_chinese_title(value: Any) -> str:
+    """Add readable Han/Latin spacing outside inline TeX expressions."""
+    chunks = re.split(r"(\$[^$\n]+\$|\\\([^\n]+?\\\))", str(value or ""))
+    for index in range(0, len(chunks), 2):
+        chunks[index] = re.sub(r"(?<=[\u3400-\u9fff])(?=[A-Za-z0-9])|(?<=[A-Za-z0-9])(?=[\u3400-\u9fff])", " ", chunks[index])
+    return "".join(chunks)
+
+
 def static_math_html(expression: Any) -> str:
     """Render a deliberately small, safe subset of inline TeX without JS."""
     text = html.escape(str(expression or ""), quote=False)
@@ -75,18 +83,34 @@ class _StoredMarkup(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.parts: list[str] = []
         self.stack: list[str] = []
+        self.math_depth = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if self.math_depth:
+            if tag == "span":
+                self.math_depth += 1
+            return
+        attributes = dict(attrs)
+        if tag == "span" and "math-inline" in (attributes.get("class") or "").split() and attributes.get("data-tex-inline"):
+            self.parts.append(rich_html(f'${attributes["data-tex-inline"]}$'))
+            self.math_depth = 1
+            return
         if tag in {"em", "strong"}:
             self.parts.append(f"<{tag}>")
             self.stack.append(tag)
 
     def handle_endtag(self, tag: str) -> None:
+        if self.math_depth:
+            if tag == "span":
+                self.math_depth -= 1
+            return
         if self.stack and self.stack[-1] == tag:
             self.parts.append(f"</{tag}>")
             self.stack.pop()
 
     def handle_data(self, data: str) -> None:
+        if self.math_depth:
+            return
         self.parts.append(rich_html(data))
 
 
