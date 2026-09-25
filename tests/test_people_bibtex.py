@@ -12,8 +12,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 from build_site import assign_citation_keys, publication_bibitem, publication_bibtex, render_publication_article, replace_main, rich_html  # noqa: E402
 from people_config import link_author_html, link_people_html, normalized_people, validate_people  # noqa: E402
-from process_batch_request import apply_special, apply_undo, empty_history  # noqa: E402
-from markup_config import stored_rich_html  # noqa: E402
+from process_batch_request import apply_special, apply_undo, empty_history, normalize_item  # noqa: E402
+from markup_config import stored_rich_html, spaced_chinese_title  # noqa: E402
+from build_cv import field_rich  # noqa: E402
 
 
 class PeopleDirectoryTests(unittest.TestCase):
@@ -191,6 +192,25 @@ class BibtexTests(unittest.TestCase):
         self.assertIn('data-tex-inline="\\infty"', article)
         self.assertIn(r"On $q$-shuffle", publication_bibtex(item))
 
+    def test_unposted_publication_keeps_tex_in_web_cv_and_citation(self) -> None:
+        item = self.publication()
+        item.update({"title": {"en": r"Mishiba on $\infty$-adic values", "zh": r"$\infty$-進的Mishiba猜想"},
+                     "venue": {"en": "", "zh": ""}, "arxiv": "", "arxiv_url": "", "links": []})
+        item = normalize_item(item)
+        self.assertEqual(item["title"]["zh"], r"$\infty$-進的 Mishiba 猜想")
+        article = render_publication_article(item, "zh")
+        self.assertIn('data-tex-inline="\\infty"', article)
+        self.assertIn("的 Mishiba 猜想", article)
+        self.assertNotIn('>arXiv<', article)
+        self.assertIn(r"$\infty$", field_rich(item, "title", "zh"))
+        self.assertIn(r"$\infty$", publication_bibitem(item))
+        self.assertIn(r"$\infty$", publication_bibtex(item))
+        self.assertNotIn(r"\textbackslash{}infty", publication_bibtex(item))
+
+    def test_title_spacing_leaves_math_and_existing_spaces_intact(self) -> None:
+        self.assertEqual(spaced_chinese_title(r"正特徵Mishiba猜想與$\infty$-進"),
+                         r"正特徵 Mishiba 猜想與$\infty$-進")
+
     def test_manual_bibitem_wins(self) -> None:
         item = self.publication()
         item["bibitem"] = r"\bibitem{custom} Exact legacy citation."
@@ -271,6 +291,13 @@ class StaticMathTests(unittest.TestCase):
         self.assertIn('data-tex-inline="q"', rendered)
         self.assertIn('&lt;script&gt;bad&lt;/script&gt;', rendered)
         self.assertNotIn('<script>', rendered)
+
+    def test_saved_math_fallback_is_rehydrated_without_trusting_nested_html(self) -> None:
+        saved = rich_html(r"$\mathbb{F}_q$-adic and $\infty$-adic")
+        restored = stored_rich_html(saved)
+        self.assertIn('data-tex-inline="\\mathbb{F}_q"', restored)
+        self.assertIn('data-tex-inline="\\infty"', restored)
+        self.assertEqual(restored.count('data-tex-inline'), 2)
 
 
 if __name__ == "__main__":
