@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import html
 import re
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,7 @@ import cms_extensions
 cms_extensions.install()
 import process_request as core
 from category_config import categories_for_page, migrate_category_data, normalized_pages
+from markup_config import static_math_html
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "content" / "site.json"
@@ -33,7 +35,12 @@ DOSSIER_PAGE = {
 def plain(value: Any, lang: str = "en") -> str:
     if isinstance(value, dict):
         value = value.get(lang) or value.get("en") or value.get("zh") or ""
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", str(value or ""))).strip()
+    text = re.sub(
+        r"\$([^$\n]+)\$|\\\(([^\n]+?)\\\)",
+        lambda match: html.unescape(re.sub(r"<[^>]+>", "", static_math_html(match.group(1) or match.group(2)))),
+        str(value or ""),
+    )
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", text)).strip()
 
 def entry_title(item: dict[str, Any], lang: str) -> str:
     for field in ("title", "course_title", "course", "name", "label"):

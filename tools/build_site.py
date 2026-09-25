@@ -17,7 +17,7 @@ from zoneinfo import ZoneInfo
 import process_request as core
 from category_config import categories_for_page, items_for_category, migrate_category_data, normalized_pages
 from homepage_config import homepage_activities, homepage_publications
-from markup_config import rich_html as safe_rich_html
+from markup_config import rich_html as safe_rich_html, stored_rich_html
 from site_settings_config import current_site_settings
 from people_config import link_author_html, link_people_html, load_people
 
@@ -51,7 +51,7 @@ def plain_value(entry: dict[str, Any], field: str, lang: str) -> str:
 def inline_value(entry: dict[str, Any], field: str, lang: str) -> str:
     rich = entry.get(f"{field}_html")
     if isinstance(rich, dict) and rich.get(lang):
-        return str(rich[lang])
+        return stored_rich_html(rich[lang])
     return rich_html(plain_value(entry, field, lang))
 
 
@@ -242,11 +242,14 @@ def _publication_title_latex(entry: dict[str, Any]) -> str:
     raw = str(rich or plain_value(entry, "title", "en"))
     result: list[str] = []
     position = 0
-    for match in re.finditer(r"<em>(.*?)</em>", raw, flags=re.I | re.S):
+    for match in re.finditer(r"<em>(.*?)</em>|\$([^$\n]+)\$", raw, flags=re.I | re.S):
         before = re.sub(r"<[^>]+>", "", raw[position:match.start()])
         result.append(_latex_citation_escape(html.unescape(before), strip=False))
-        inner = re.sub(r"<[^>]+>", "", match.group(1))
-        result.append(f"${_latex_citation_escape(html.unescape(inner), strip=False)}$")
+        if match.group(2) is not None:
+            result.append(f"${html.unescape(match.group(2))}$")
+        else:
+            inner = re.sub(r"<[^>]+>", "", match.group(1))
+            result.append(f"${_latex_citation_escape(html.unescape(inner), strip=False)}$")
         position = match.end()
     tail = re.sub(r"<[^>]+>", "", raw[position:])
     result.append(_latex_citation_escape(html.unescape(tail), strip=False))
@@ -389,8 +392,8 @@ def render_publication_article(entry: dict[str, Any], lang: str, homepage: bool 
     links = f'<div class="pub-links">{links_html}{bibtex}</div>' if links_html or bibtex else ""
     title = (entry.get("homepage_title_html", {}) or {}).get(lang) if homepage else ""
     authors = (entry.get("homepage_authors_html", {}) or {}).get(lang) if homepage else ""
-    title = title or inline_value(entry, "title", lang)
-    authors = authors or inline_value(entry, "authors", lang)
+    title = stored_rich_html(title) if title else inline_value(entry, "title", lang)
+    authors = stored_rich_html(authors) if authors else inline_value(entry, "authors", lang)
     authors = emphasize_publication_owner(authors)
     authors = link_author_html(authors, PEOPLE, lang)
     venue = inline_value(entry, "venue", lang)

@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import html
 import re
+from html.parser import HTMLParser
 from typing import Any
 
 GREEK = {
     "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "epsilon": "ε",
     "theta": "θ", "lambda": "λ", "mu": "μ", "pi": "π", "rho": "ρ",
-    "sigma": "σ", "tau": "τ", "phi": "φ", "psi": "ψ", "omega": "ω",
+    "sigma": "σ", "tau": "τ", "phi": "φ", "psi": "ψ", "omega": "ω", "infty": "∞",
     "Gamma": "Γ", "Delta": "Δ", "Theta": "Θ", "Lambda": "Λ", "Pi": "Π",
     "Sigma": "Σ", "Phi": "Φ", "Psi": "Ψ", "Omega": "Ω",
 }
@@ -54,9 +55,46 @@ def static_math_html(expression: Any) -> str:
 
 
 def rich_html(value: Any) -> str:
-    """Render [i], [b], and dependency-free inline math delimited by $...$."""
+    """Render managed inline markup, with static math until MathJax is ready."""
     text = html.escape(str(value or ""), quote=False)
     text = re.sub(r"\[i\](.+?)\[/i\]", r"<em>\1</em>", text, flags=re.I | re.S)
     text = re.sub(r"\[b\](.+?)\[/b\]", r"<strong>\1</strong>", text, flags=re.I | re.S)
-    text = re.sub(r"\$([^$\n]+)\$", lambda m: static_math_html(html.unescape(m.group(1))), text)
+    def math(match: re.Match[str]) -> str:
+        source = html.unescape(match.group(1) or match.group(2))
+        fallback = static_math_html(source)
+        return fallback.replace('class="math-inline"', f'class="math-inline" data-tex-inline="{html.escape(source, quote=True)}"', 1)
+
+    text = re.sub(r"\$([^$\n]+)\$|\\\(([^\n]+?)\\\)", math, text)
     return text
+
+
+class _StoredMarkup(HTMLParser):
+    """Re-render the CMS's escaped HTML fields without trusting stored tags."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+        self.stack: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in {"em", "strong"}:
+            self.parts.append(f"<{tag}>")
+            self.stack.append(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.stack and self.stack[-1] == tag:
+            self.parts.append(f"</{tag}>")
+            self.stack.pop()
+
+    def handle_data(self, data: str) -> None:
+        self.parts.append(rich_html(data))
+
+
+def stored_rich_html(value: Any) -> str:
+    """Preserve safe CMS emphasis and typeset TeX in escaped text nodes."""
+    parser = _StoredMarkup()
+    parser.feed(str(value or ""))
+    parser.close()
+    while parser.stack:
+        parser.parts.append(f"</{parser.stack.pop()}>")
+    return "".join(parser.parts)
