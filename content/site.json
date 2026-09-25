@@ -2471,7 +2471,7 @@
       "date": "2026-09-16",
       "title": {
         "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-        "zh": "正特徵上的多重艾森斯坦級數：直和定理"
+        "zh": "正特徵上的多重 Eisenstein 級數：直和定理"
       },
       "venue": {
         "en": "arXiv: 2609.18777",
@@ -2509,7 +2509,7 @@
       ],
       "title_html": {
         "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-        "zh": "正特徵上的多重艾森斯坦級數：直和定理"
+        "zh": "正特徵上的多重 Eisenstein 級數：直和定理"
       },
       "authors_html": {
         "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
@@ -2521,7 +2521,7 @@
       },
       "id": "publication-2026-09-16-entry",
       "display_placements": [],
-      "order": 1
+      "order": 0
     },
     {
       "type": "publication",
