@@ -12,7 +12,7 @@ from people_config import empty_people, normalized_people, validate_people
 from site_settings_config import current_site_settings, normalized_site_settings, validate_site_settings
 from arxiv_suggestions import empty_store as empty_arxiv_store, normalized_store as normalized_arxiv_store, validate_store as validate_arxiv_store
 from notification_store import empty_store as empty_notification_store, normalized_store as normalized_notification_store, validate_store as validate_notification_store
-from markup_config import rich_html
+from markup_config import rich_html, spaced_chinese_title
 from process_request import strip_invisible_chars
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; PEOPLE=ROOT/'content/people.json'; ARXIV_STORE=ROOT/'content/arxiv-suggestions.json'; NOTIFICATIONS=ROOT/'content/notifications.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
@@ -35,6 +35,8 @@ def semantic(x):
 def clean(s):return html.escape(str(s or '').strip(),quote=False)
 def normalize_item(x):
  x=copy.deepcopy(x);t=x['type']
+ if isinstance(x.get('title'),dict) and x['title'].get('zh'):
+  x['title']['zh']=spaced_chinese_title(x['title']['zh'])
  for k in ('title','description','organization','authors','venue','role','organization_kind','date_label'):
   if isinstance(x.get(k),dict):
    formatter=rich_html if k in {'title','description','organization','venue','organization_kind','date_label'} else clean
