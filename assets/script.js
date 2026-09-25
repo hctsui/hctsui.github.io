@@ -223,15 +223,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const bodyText = document.body.textContent || "";
-  if (/\$[^$\n]+\$|\\\([^\n]+\\\)/.test(bodyText)) {
+  const inlineMath = [...document.querySelectorAll("[data-tex-inline]")];
+  if (inlineMath.length) {
     window.MathJax = {
-      tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
+      // Convert only managed content. Citation source and other code blocks
+      // must keep their literal LaTeX for the copy buttons.
+      startup: { typeset: false },
       svg: { fontCache: "global" },
     };
     const mathJax = document.createElement("script");
     mathJax.defer = true;
     mathJax.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js";
+    mathJax.onload = async () => {
+      try {
+        await window.MathJax.startup.promise;
+        for (const element of inlineMath) {
+          try {
+            const rendered = await window.MathJax.tex2svgPromise(
+              element.dataset.texInline,
+              { display: false },
+            );
+            element.replaceChildren(rendered);
+          } catch (error) {
+            console.warn("Could not render inline TeX:", error);
+          }
+        }
+      } catch (error) {
+        console.warn("MathJax could not start; keeping the static math.", error);
+      }
+    };
     document.head.append(mathJax);
   }
 });
