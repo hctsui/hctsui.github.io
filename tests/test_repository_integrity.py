@@ -155,14 +155,14 @@ class CanonicalFilenameTests(unittest.TestCase):
         ):
             text = read(relative)
             self.assertIn('href="assets/style.css"', text, relative)
-            self.assertIn('src="assets/script.js"', text, relative)
+            self.assertRegex(text, r'src="assets/script\.js(?:\?v=[^"]+)?"', relative)
         for relative in (
             "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html",
             "zh/teaching.html", "zh/contact.html",
         ):
             text = read(relative)
             self.assertIn('href="../assets/style.css"', text, relative)
-            self.assertIn('src="../assets/script.js"', text, relative)
+            self.assertRegex(text, r'src="\.\./assets/script\.js(?:\?v=[^"]+)?"', relative)
 
     def test_deploy_workflow_checks_canonical_assets(self) -> None:
         workflow = read(".github/workflows/deploy-cms-pages.yml")
@@ -201,7 +201,7 @@ class CanonicalFilenameTests(unittest.TestCase):
             self.assertIn('class="contact-page-hero"', page)
             self.assertIn('class="contact-page-section"', page)
             self.assertIn(f'href="{asset_prefix}assets/style.css"', page)
-            self.assertIn(f'src="{asset_prefix}assets/script.js"', page)
+            self.assertRegex(page, rf'src="{re.escape(asset_prefix)}assets/script\.js(?:\?v=[^"]+)?"')
             self.assertIn('data-size="flexible"', page)
         style = read("assets/style.css")
         self.assertIn(".contact-form label,.contact-form-grid>*{min-width:0}", style)
