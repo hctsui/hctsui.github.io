@@ -2202,7 +2202,7 @@
       "type": "publication",
       "date": "2025-04-22",
       "year": 2025,
-      "order": 5,
+      "order": 6,
       "arxiv": "2504.15697",
       "title": {
         "en": "Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
@@ -2264,7 +2264,7 @@
       "type": "publication",
       "date": "2025-04-26",
       "year": 2025,
-      "order": 4,
+      "order": 5,
       "arxiv": "2504.18879",
       "title": {
         "en": "On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
@@ -2326,7 +2326,7 @@
       "type": "publication",
       "date": "2026-03-11",
       "year": 2026,
-      "order": 3,
+      "order": 4,
       "arxiv": "2603.10376",
       "title": {
         "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
@@ -2396,7 +2396,7 @@
       "type": "publication",
       "date": "2026-04-05",
       "year": 2026,
-      "order": 2,
+      "order": 3,
       "arxiv": "2604.03618",
       "title": {
         "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
@@ -2521,7 +2521,7 @@
       },
       "id": "publication-2026-09-16-entry",
       "display_placements": [],
-      "order": 1
+      "order": 2
     },
     {
       "type": "publication",
@@ -2582,6 +2582,61 @@
         "zh": "arXiv: 2609.30823"
       },
       "id": "publication-2026-09-25-infty-zeta-mishiba",
+      "display_placements": [],
+      "order": 1
+    },
+    {
+      "type": "publication",
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "date": "2026-09-28",
+      "title": {
+        "en": "Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture",
+        "zh": "正特徵多重 zeta 值：Kaneko-Zagier 型猜想"
+      },
+      "venue": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv": "",
+      "arxiv_url": "",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf",
+      "doi_url": "",
+      "journal_url": "",
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": "",
+      "authors": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "group_id": "preprints",
+      "year": 2026,
+      "links": [
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf"
+        }
+      ],
+      "title_html": {
+        "en": "Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture",
+        "zh": "正特徵多重 zeta 值：Kaneko-Zagier 型猜想"
+      },
+      "authors_html": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "venue_html": {
+        "en": "",
+        "zh": ""
+      },
+      "id": "publication-2026-09-28-zeta-kaneko-zagier",
       "display_placements": [],
       "order": 0
     }

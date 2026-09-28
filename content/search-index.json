@@ -339,6 +339,13 @@
     },
     {
       "language": "en",
+      "title": "Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture",
+      "description": "Hung-Chun Tsui",
+      "url": "/publications.html#publication-2026-09-28-zeta-kaneko-zagier",
+      "kind": "publication"
+    },
+    {
+      "language": "en",
       "title": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
       "description": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2609.18777",
       "url": "/publications.html#publication-2026-09-16-entry",
@@ -951,6 +958,13 @@
       "title": "正特徵多重 Eisenstein 級數的代數結構",
       "description": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣 · arXiv: 2603.10376",
       "url": "/zh/publications.html#publication-2603.10376-3",
+      "kind": "publication"
+    },
+    {
+      "language": "zh",
+      "title": "正特徵多重 zeta 值：Kaneko-Zagier 型猜想",
+      "description": "崔鴻竣",
+      "url": "/zh/publications.html#publication-2026-09-28-zeta-kaneko-zagier",
       "kind": "publication"
     },
     {

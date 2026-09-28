@@ -35,6 +35,7 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
+| publication | Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture | 正特徵多重 zeta 值：Kaneko-Zagier 型猜想 | `publication-2026-09-28-zeta-kaneko-zagier` |
 | publication | Mishiba's Conjecture on the Coaction of $\infty$-adic Multiple Zeta Values | $\infty$-進多重 zeta 值餘作用的 Mishiba 猜想 | `publication-2026-09-25-infty-zeta-mishiba` |
 | publication | On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result | 正特徵上的多重 Eisenstein 級數：直和定理 | `publication-2026-09-16-entry` |
 | publication | On $u$-Multiple Zeta Values in Positive Characteristic | 正特徵的 $u$-多重 zeta 值 | `publication-2604.03618-4` |
