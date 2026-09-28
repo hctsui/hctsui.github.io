@@ -1424,7 +1424,7 @@
       },
       "slides_url": "",
       "category_id": "activity-conferences",
-      "order": 3,
+      "order": 4,
       "display_placements": [],
       "venue": {
         "en": "Tohoku University",
@@ -1472,7 +1472,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 4,
+      "order": 5,
       "display_placements": []
     },
     {
@@ -1504,7 +1504,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 5,
+      "order": 6,
       "display_placements": []
     },
     {
@@ -1536,7 +1536,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 6,
+      "order": 7,
       "display_placements": []
     },
     {
@@ -1568,7 +1568,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 7,
+      "order": 8,
       "display_placements": []
     },
     {
@@ -1600,7 +1600,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 8,
+      "order": 9,
       "display_placements": []
     },
     {
@@ -1632,7 +1632,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 9,
+      "order": 10,
       "display_placements": []
     },
     {
@@ -1664,7 +1664,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 10,
+      "order": 11,
       "display_placements": []
     },
     {
@@ -1696,7 +1696,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 11,
+      "order": 12,
       "display_placements": []
     },
     {
@@ -1728,7 +1728,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 12,
+      "order": 13,
       "display_placements": []
     },
     {
@@ -1760,7 +1760,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 13,
+      "order": 14,
       "display_placements": []
     },
     {
@@ -1792,7 +1792,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 15,
+      "order": 16,
       "display_placements": []
     },
     {
@@ -1824,7 +1824,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 16,
+      "order": 17,
       "display_placements": []
     },
     {
@@ -1856,7 +1856,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 17,
+      "order": 18,
       "display_placements": []
     },
     {
@@ -1888,7 +1888,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 18,
+      "order": 19,
       "display_placements": []
     },
     {
@@ -1920,7 +1920,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 19,
+      "order": 20,
       "display_placements": []
     },
     {
@@ -1952,7 +1952,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 20,
+      "order": 21,
       "display_placements": []
     },
     {
@@ -1984,7 +1984,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 2,
+      "order": 3,
       "display_placements": []
     },
     {
@@ -2016,7 +2016,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 1,
+      "order": 2,
       "display_placements": []
     },
     {
@@ -2048,7 +2048,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 0,
+      "order": 1,
       "display_placements": []
     },
     {
@@ -2091,7 +2091,57 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 14
+      "order": 15
+    },
+    {
+      "type": "conference",
+      "category_id": "activity-conferences",
+      "role": {
+        "en": "Speaker",
+        "zh": "講者"
+      },
+      "start_date": "2026-12-28",
+      "end_date": "2026-12-31",
+      "title": {
+        "en": "12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+        "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+      },
+      "venue": {
+        "en": "National Taiwan University",
+        "zh": "國立臺灣大學"
+      },
+      "city": {
+        "en": "Taipei",
+        "zh": "臺北"
+      },
+      "country": {
+        "en": "Taiwan",
+        "zh": "臺灣"
+      },
+      "url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=581",
+      "description": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "title_html": {
+        "en": "12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+        "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+      },
+      "id": "conference-2026-12-28-12-postech-pmi-ncts",
+      "display_placements": [],
+      "venue_html": {
+        "en": "National Taiwan University",
+        "zh": "國立臺灣大學"
+      },
+      "role_html": {
+        "en": "Speaker",
+        "zh": "講者"
+      },
+      "order": 0
     }
   ],
   "honors": [
