@@ -2,11 +2,11 @@
   "schema_version": 3,
   "settings": {
     "timezone": "Asia/Tokyo",
-    "homepage_publication_limit": 2,
+    "homepage_publication_limit": 3,
     "homepage": {
       "publications": {
         "mode": "latest",
-        "limit": 2,
+        "limit": 3,
         "selected_ids": []
       },
       "activities": {

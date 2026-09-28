@@ -5957,6 +5957,57 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-115-op-1",
+      "batch_issue": 115,
+      "applied_at": "2026-09-28T11:51:45.856881Z",
+      "expires_at": "2026-10-05T11:51:45.856881Z",
+      "reverted_by": null,
+      "request_digest": "09ec7b328d81ee0f1aa2e028c1fc339b9ced61e4dbea737dd30a263bd11acb37",
+      "request_action": "homepage",
+      "action": "homepage",
+      "type": "homepage",
+      "entry_id": "homepage",
+      "label": {
+        "en": "Homepage selections",
+        "zh": "首頁精選"
+      },
+      "before": {
+        "publications": {
+          "mode": "latest",
+          "limit": 2,
+          "selected_ids": []
+        },
+        "activities": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "conference-2026-number-theory-summer-school",
+            "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+            "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          ]
+        }
+      },
+      "after": {
+        "publications": {
+          "mode": "latest",
+          "limit": 3,
+          "selected_ids": []
+        },
+        "activities": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "conference-2026-number-theory-summer-school",
+            "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+            "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          ]
+        }
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
