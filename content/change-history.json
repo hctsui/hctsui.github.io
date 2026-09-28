@@ -3,149 +3,6 @@
   "retention_days": 7,
   "operations": [
     {
-      "history_id": "issue-106-op-1",
-      "batch_issue": 106,
-      "applied_at": "2026-09-20T10:27:42.035453Z",
-      "expires_at": "2026-09-27T10:27:42.035453Z",
-      "reverted_by": null,
-      "request_digest": "48de4cb4160ad075acbb121e393bfb0dcd232b68d4550b7d1e4a58098ecf1d62",
-      "request_action": "update",
-      "action": "update",
-      "type": "publication",
-      "entry_id": "publication-2026-09-16-entry",
-      "label": {
-        "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-        "zh": "正特徵上的多重艾森斯坦級數：直和定理"
-      },
-      "before": {
-        "type": "publication",
-        "category_id": "publication-preprints",
-        "group_label": {
-          "en": "",
-          "zh": ""
-        },
-        "date": "2026-09-16",
-        "title": {
-          "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-          "zh": "正特徵上的多重艾森斯坦級數：直和定理"
-        },
-        "venue": {
-          "en": "arXiv: 2609.18777v2",
-          "zh": "arXiv: 2609.18777v2"
-        },
-        "arxiv": "2609.18777v2",
-        "arxiv_url": "https://arxiv.org/abs/2609.18777v2",
-        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf",
-        "doi_url": "",
-        "journal_url": "",
-        "code_url": "",
-        "bibtex": "",
-        "bibitem": "",
-        "authors": {
-          "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
-          "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
-        },
-        "group_id": "preprints",
-        "year": 2026,
-        "links": [
-          {
-            "label": {
-              "en": "arXiv",
-              "zh": "arXiv"
-            },
-            "url": "https://arxiv.org/abs/2609.18777v2"
-          },
-          {
-            "label": {
-              "en": "PDF",
-              "zh": "PDF"
-            },
-            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf"
-          }
-        ],
-        "title_html": {
-          "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-          "zh": "正特徵上的多重艾森斯坦級數：直和定理"
-        },
-        "authors_html": {
-          "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
-          "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
-        },
-        "venue_html": {
-          "en": "arXiv: 2609.18777v2",
-          "zh": "arXiv: 2609.18777v2"
-        },
-        "id": "publication-2026-09-16-entry",
-        "display_placements": [],
-        "order": 0
-      },
-      "after": {
-        "type": "publication",
-        "category_id": "publication-preprints",
-        "group_label": {
-          "en": "",
-          "zh": ""
-        },
-        "date": "2026-09-16",
-        "title": {
-          "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-          "zh": "正特徵上的多重艾森斯坦級數：直和定理"
-        },
-        "venue": {
-          "en": "arXiv: 2609.18777",
-          "zh": "arXiv: 2609.18777"
-        },
-        "arxiv": "2609.18777",
-        "arxiv_url": "https://arxiv.org/abs/2609.18777",
-        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf",
-        "doi_url": "",
-        "journal_url": "",
-        "code_url": "",
-        "bibtex": "",
-        "bibitem": "",
-        "authors": {
-          "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
-          "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
-        },
-        "group_id": "preprints",
-        "year": 2026,
-        "links": [
-          {
-            "label": {
-              "en": "arXiv",
-              "zh": "arXiv"
-            },
-            "url": "https://arxiv.org/abs/2609.18777"
-          },
-          {
-            "label": {
-              "en": "PDF",
-              "zh": "PDF"
-            },
-            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf"
-          }
-        ],
-        "title_html": {
-          "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
-          "zh": "正特徵上的多重艾森斯坦級數：直和定理"
-        },
-        "authors_html": {
-          "en": "Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui",
-          "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
-        },
-        "venue_html": {
-          "en": "arXiv: 2609.18777",
-          "zh": "arXiv: 2609.18777"
-        },
-        "id": "publication-2026-09-16-entry",
-        "display_placements": [],
-        "order": 0
-      },
-      "index_before": 4,
-      "index_after": 4,
-      "undo_of": null
-    },
-    {
       "history_id": "issue-108-op-1",
       "batch_issue": 108,
       "applied_at": "2026-09-25T06:05:30.337929Z",
@@ -4042,6 +3899,134 @@
       },
       "index_before": null,
       "index_after": null,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-113-op-1",
+      "batch_issue": 113,
+      "applied_at": "2026-09-28T11:40:32.878565Z",
+      "expires_at": "2026-10-05T11:40:32.878565Z",
+      "reverted_by": null,
+      "request_digest": "4444fae11a42ea8e3b0fdfef8b09ca8797878a912197088410a7955f649e30fe",
+      "request_action": "update",
+      "action": "update",
+      "type": "publication",
+      "entry_id": "publication-2026-09-25-infty-zeta-mishiba",
+      "label": {
+        "en": "Mishiba's Conjecture on the Coaction of $\\infty$-adic Multiple Zeta Values",
+        "zh": "$\\infty$-進多重 zeta 值餘作用的 Mishiba 猜想"
+      },
+      "before": {
+        "type": "publication",
+        "category_id": "publication-preprints",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-09-25",
+        "title": {
+          "en": "Mishiba's Conjecture on the Coaction of $\\infty$-adic Multiple Zeta Values",
+          "zh": "$\\infty$-進多重 zeta 值餘作用的 Mishiba 猜想"
+        },
+        "venue": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv": "",
+        "arxiv_url": "",
+        "pdf_url": "",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "bibtex": "",
+        "bibitem": "",
+        "authors": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "group_id": "preprints",
+        "year": 2026,
+        "links": [],
+        "title_html": {
+          "en": "Mishiba's Conjecture on the Coaction of <span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-adic Multiple Zeta Values",
+          "zh": "<span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-進多重 zeta 值餘作用的 Mishiba 猜想"
+        },
+        "authors_html": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "venue_html": {
+          "en": "",
+          "zh": ""
+        },
+        "id": "publication-2026-09-25-infty-zeta-mishiba",
+        "display_placements": [],
+        "order": 0
+      },
+      "after": {
+        "type": "publication",
+        "category_id": "publication-preprints",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-09-25",
+        "title": {
+          "en": "Mishiba's Conjecture on the Coaction of $\\infty$-adic Multiple Zeta Values",
+          "zh": "$\\infty$-進多重 zeta 值餘作用的 Mishiba 猜想"
+        },
+        "venue": {
+          "en": "arXiv: 2609.30823",
+          "zh": "arXiv: 2609.30823"
+        },
+        "arxiv": "2609.30823",
+        "arxiv_url": "https://arxiv.org/abs/2609.30823",
+        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "bibtex": "",
+        "bibitem": "",
+        "authors": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "group_id": "preprints",
+        "year": 2026,
+        "links": [
+          {
+            "label": {
+              "en": "arXiv",
+              "zh": "arXiv"
+            },
+            "url": "https://arxiv.org/abs/2609.30823"
+          },
+          {
+            "label": {
+              "en": "PDF",
+              "zh": "PDF"
+            },
+            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf"
+          }
+        ],
+        "title_html": {
+          "en": "Mishiba's Conjecture on the Coaction of <span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-adic Multiple Zeta Values",
+          "zh": "<span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-進多重 zeta 值餘作用的 Mishiba 猜想"
+        },
+        "authors_html": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "venue_html": {
+          "en": "arXiv: 2609.30823",
+          "zh": "arXiv: 2609.30823"
+        },
+        "id": "publication-2026-09-25-infty-zeta-mishiba",
+        "display_placements": [],
+        "order": 0
+      },
+      "index_before": 5,
+      "index_after": 5,
       "undo_of": null
     }
   ]

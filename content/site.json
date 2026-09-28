@@ -2536,12 +2536,12 @@
         "zh": "$\\infty$-進多重 zeta 值餘作用的 Mishiba 猜想"
       },
       "venue": {
-        "en": "",
-        "zh": ""
+        "en": "arXiv: 2609.30823",
+        "zh": "arXiv: 2609.30823"
       },
-      "arxiv": "",
-      "arxiv_url": "",
-      "pdf_url": "",
+      "arxiv": "2609.30823",
+      "arxiv_url": "https://arxiv.org/abs/2609.30823",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2553,7 +2553,22 @@
       },
       "group_id": "preprints",
       "year": 2026,
-      "links": [],
+      "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2609.30823"
+        },
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf"
+        }
+      ],
       "title_html": {
         "en": "Mishiba's Conjecture on the Coaction of <span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-adic Multiple Zeta Values",
         "zh": "<span class=\"math-inline\" data-tex-inline=\"\\infty\">∞</span>-進多重 zeta 值餘作用的 Mishiba 猜想"
@@ -2563,8 +2578,8 @@
         "zh": "崔鴻竣"
       },
       "venue_html": {
-        "en": "",
-        "zh": ""
+        "en": "arXiv: 2609.30823",
+        "zh": "arXiv: 2609.30823"
       },
       "id": "publication-2026-09-25-infty-zeta-mishiba",
       "display_placements": [],
