@@ -10,7 +10,7 @@
         "selected_ids": []
       },
       "activities": {
-        "mode": "manual",
+        "mode": "soonest",
         "limit": 3,
         "selected_ids": [
           "conference-2026-number-theory-summer-school",
