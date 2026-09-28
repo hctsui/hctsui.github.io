@@ -3,13 +3,6 @@
   "items": [
     {
       "language": "en",
-      "title": "12th POSTECH PMI NCTS Joint Workshop on Number Theory",
-      "description": "National Taiwan University · National Taiwan University, Taipei, Taiwan · Taipei · Taiwan",
-      "url": "/activities.html#conference-2026-12-28-12-postech-pmi-ncts",
-      "kind": "conference"
-    },
-    {
-      "language": "en",
       "title": "2025 Taipei Conference on Arithmetic Geometry",
       "description": "Academia Sinica, Taipei, Taiwan",
       "url": "/activities.html#conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
@@ -62,6 +55,13 @@
       "title": "The 11th East Asia Number Theory Conference",
       "description": "National Taiwan University, Taipei, Taiwan",
       "url": "/activities.html#conference-2025-08-25-the-11th-east-asia-number-theory-conference",
+      "kind": "conference"
+    },
+    {
+      "language": "en",
+      "title": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+      "description": "National Taiwan University · National Taiwan University, Taipei, Taiwan · Taipei · Taiwan",
+      "url": "/activities.html#conference-2026-12-28-12-postech-pmi-ncts",
       "kind": "conference"
     },
     {

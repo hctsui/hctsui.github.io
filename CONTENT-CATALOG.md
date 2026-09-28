@@ -66,7 +66,7 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
-| conference | 12th POSTECH PMI NCTS Joint Workshop on Number Theory | 第 12 屆 POSTECH PMI NCTS 數論聯合研討會 | `conference-2026-12-28-12-postech-pmi-ncts` |
+| conference | The 12th POSTECH PMI NCTS Joint Workshop on Number Theory | 第 12 屆 POSTECH PMI NCTS 數論聯合研討會 | `conference-2026-12-28-12-postech-pmi-ncts` |
 | conference | The 2nd Multiple Eisenstein Series Research Meeting | 第二屆多重 Eisenstein 級數研究會 | `conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6` |
 | conference | The 73rd Kansai Multiple Zeta Workshop | 第 73 回關西多重 zeta 值研討會 | `conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4` |
 | conference | The 33rd Number Theory Summer School: Arithmetic of Function Fields | 第 33 屆數論暑期學校：函數體的算術 | `conference-2026-number-theory-summer-school` |
