@@ -8271,6 +8271,165 @@
       "index_before": 3,
       "index_after": 3,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-120-op-1",
+      "batch_issue": 120,
+      "applied_at": "2026-09-29T18:33:14.563159Z",
+      "expires_at": "2026-10-06T18:33:14.563159Z",
+      "reverted_by": null,
+      "request_digest": "85bc9abd7d5e92ec138059b9fd2231b19bdf465b449365a1d40f22770cb08e8d",
+      "request_action": "update",
+      "action": "update",
+      "type": "publication",
+      "entry_id": "publication-2604.03618-4",
+      "label": {
+        "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 $u$-多重 zeta 值"
+      },
+      "before": {
+        "id": "publication-2604.03618-4",
+        "type": "publication",
+        "date": "2026-04-05",
+        "year": 2026,
+        "order": 3,
+        "arxiv": "2604.03618",
+        "title": {
+          "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵的 $u$-多重 zeta 值"
+        },
+        "title_html": {
+          "en": "On <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵的 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-多重 zeta 值"
+        },
+        "authors": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "authors_html": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "venue": {
+          "en": "To appear in [b]International Mathematics Research Notices[/b] (IMRN)., arXiv: 2604.03618",
+          "zh": "即將刊登於《International Mathematics Research Notices》（IMRN）。, arXiv: 2604.03618"
+        },
+        "venue_html": {
+          "en": "To appear in <strong>International Mathematics Research Notices</strong> (IMRN)., arXiv: 2604.03618",
+          "zh": "即將刊登於《International Mathematics Research Notices》（IMRN）。, arXiv: 2604.03618"
+        },
+        "links": [
+          {
+            "label": {
+              "en": "arXiv",
+              "zh": "arXiv"
+            },
+            "url": "https://arxiv.org/abs/2604.03618"
+          },
+          {
+            "label": {
+              "en": "PDF",
+              "zh": "PDF"
+            },
+            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
+          }
+        ],
+        "homepage_title_html": {
+          "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵的 $u$-多重 zeta 值"
+        },
+        "homepage_authors_html": {
+          "en": "<strong>Hung-Chun Tsui</strong>",
+          "zh": "<strong>Hung-Chun Tsui</strong>"
+        },
+        "group_id": "preprints",
+        "category_id": "publication-preprints",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv_url": "https://arxiv.org/abs/2604.03618",
+        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "bibtex": "",
+        "bibitem": "",
+        "display_placements": []
+      },
+      "after": {
+        "id": "publication-2604.03618-4",
+        "type": "publication",
+        "date": "2026-04-05",
+        "year": 2026,
+        "order": 3,
+        "arxiv": "2604.03618",
+        "title": {
+          "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵的 $u$-多重 zeta 值"
+        },
+        "title_html": {
+          "en": "On <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵的 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-多重 zeta 值"
+        },
+        "authors": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "authors_html": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "venue": {
+          "en": "2604.03618, arXiv: 2604.03618",
+          "zh": "2604.03618, arXiv: 2604.03618"
+        },
+        "venue_html": {
+          "en": "2604.03618, arXiv: 2604.03618",
+          "zh": "2604.03618, arXiv: 2604.03618"
+        },
+        "links": [
+          {
+            "label": {
+              "en": "arXiv",
+              "zh": "arXiv"
+            },
+            "url": "https://arxiv.org/abs/2604.03618"
+          },
+          {
+            "label": {
+              "en": "PDF",
+              "zh": "PDF"
+            },
+            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
+          }
+        ],
+        "homepage_title_html": {
+          "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵的 $u$-多重 zeta 值"
+        },
+        "homepage_authors_html": {
+          "en": "<strong>Hung-Chun Tsui</strong>",
+          "zh": "<strong>Hung-Chun Tsui</strong>"
+        },
+        "group_id": "preprints",
+        "category_id": "publication-preprints",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv_url": "https://arxiv.org/abs/2604.03618",
+        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
+        "doi_url": "",
+        "journal_url": "",
+        "code_url": "",
+        "bibtex": "",
+        "bibitem": "",
+        "display_placements": []
+      },
+      "index_before": 3,
+      "index_after": 3,
+      "undo_of": null
     }
   ]
 }
