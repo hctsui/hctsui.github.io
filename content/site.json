@@ -2453,8 +2453,8 @@
         "zh": "正特徵的 $u$-多重 zeta 值"
       },
       "title_html": {
-        "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
-        "zh": "正特徵的 $u$-多重 zeta 值"
+        "en": "On <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵的 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-多重 zeta 值"
       },
       "authors": {
         "en": "Hung-Chun Tsui",
@@ -2465,12 +2465,12 @@
         "zh": "崔鴻竣"
       },
       "venue": {
-        "en": "arXiv: 2604.03618",
-        "zh": "arXiv: 2604.03618"
+        "en": "To appear in [b]International Mathematics Research Notices[/b] (IMRN)., arXiv: 2604.03618",
+        "zh": "即將刊登於《International Mathematics Research Notices》（IMRN）。, arXiv: 2604.03618"
       },
       "venue_html": {
-        "en": "arXiv: 2604.03618",
-        "zh": "arXiv: 2604.03618"
+        "en": "To appear in <strong>International Mathematics Research Notices</strong> (IMRN)., arXiv: 2604.03618",
+        "zh": "即將刊登於《International Mathematics Research Notices》（IMRN）。, arXiv: 2604.03618"
       },
       "links": [
         {
