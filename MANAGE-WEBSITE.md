@@ -130,8 +130,12 @@ Admin 的「資料庫」分成兩個子類型，切換按鈕與上方主分頁�
 
 ## 論文引用與 arXiv 通知
 
-- 公開網站的引用入口顯示為 **Cite**，並和 arXiv、PDF 使用完全相同的膠囊按鈕樣式；點擊後可在 **biblatex** 與 **LaTeX `ibitem`** 間切換，兩種格式都有獨立複製按鈕。
-- 論文表單可分別手動覆寫 BibTeX 與 `\bibitem`；任一欄留白時，網站會依作者、題目、年份、arXiv／DOI 自動產生。
+- 作品表單把稿件狀態、arXiv 與正式期刊資料分開管理。狀態可選 Preprint、Submitted、Under review、Accepted / To appear 或 Published。
+- 「在作品狀態列顯示 arXiv ID」只控制卡片、CV 與 dossier 的狀態文字；arXiv 按鈕、搜尋、通知與預印本引用不受影響。
+- 正式期刊資料採用與 biblatex 對應的欄位：`journaltitle`、`shortjournal`、正式日期、`volume`、`number`、`pages`、`eid`、`publisher`、DOI 與期刊頁。期刊全名、縮寫和縮寫括號會一起粗體顯示。
+- 作品類別預設持續自動判定：Accepted / To appear、Published，或已有 DOI、卷期、頁碼等正式資料時歸入期刊論文；Submitted 與 Under review 仍在預印本。綜述或自訂分類可手動覆寫。
+- 公開網站的引用入口顯示為 **Cite**，並和 arXiv、PDF 使用完全相同的膠囊按鈕樣式；點擊後可在 **biblatex** 與 **LaTeX `\bibitem`** 間切換，兩種格式都有獨立複製按鈕。
+- 自動引用採精簡的數學論文格式：期刊論文使用期刊、卷期頁碼與年份；預印本使用 arXiv。DOI、URL 和期刊論文的 arXiv 不會自動塞入引用。兩個手動覆寫欄仍可輸入出版社提供的完整版本。
 - `.github/workflows/check-arxiv.yml` 每週一上午 9:15（Asia/Tokyo）執行，也可從 Actions 手動執行。
 - `tools/check_arxiv.py` 使用 arXiv 官方 API 搜尋 `Hung-Chun Tsui`，再以完整作者姓名做第二次精確比對，避免只因姓氏或相似姓名而產生通知。
 - 新結果保存在 `content/arxiv-suggestions.json`，不會直接寫入公開論文列表。
