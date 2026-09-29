@@ -2250,6 +2250,11 @@
     {
       "id": "publication-2504.15697-1",
       "type": "publication",
+      "publication_state": "preprint",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": true,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {},
       "date": "2025-04-22",
       "year": 2025,
       "order": 6,
@@ -2312,6 +2317,11 @@
     {
       "id": "publication-2504.18879-2",
       "type": "publication",
+      "publication_state": "preprint",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": true,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {},
       "date": "2025-04-26",
       "year": 2025,
       "order": 5,
@@ -2374,6 +2384,11 @@
     {
       "id": "publication-2603.10376-3",
       "type": "publication",
+      "publication_state": "preprint",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": true,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {},
       "date": "2026-03-11",
       "year": 2026,
       "order": 4,
@@ -2444,6 +2459,22 @@
     {
       "id": "publication-2604.03618-4",
       "type": "publication",
+      "publication_state": "forthcoming",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": true,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {
+        "journaltitle": "International Mathematics Research Notices",
+        "shortjournal": "IMRN",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "date": "2026-04-05",
       "year": 2026,
       "order": 3,
@@ -2465,12 +2496,12 @@
         "zh": "崔鴻竣"
       },
       "venue": {
-        "en": "To appear in [b]International Mathematics Research Notices[/b] (IMRN)., arXiv: 2604.03618",
-        "zh": "即將刊登於《International Mathematics Research Notices》（IMRN）。, arXiv: 2604.03618"
+        "en": "To appear in [b]International Mathematics Research Notices (IMRN)[/b]; arXiv: 2604.03618.",
+        "zh": "即將刊登於[b]《International Mathematics Research Notices (IMRN)》[/b]；arXiv：2604.03618。"
       },
       "venue_html": {
-        "en": "To appear in <strong>International Mathematics Research Notices</strong> (IMRN)., arXiv: 2604.03618",
-        "zh": "即將刊登於《International Mathematics Research Notices》（IMRN）。, arXiv: 2604.03618"
+        "en": "To appear in <strong>International Mathematics Research Notices (IMRN)</strong>; arXiv: 2604.03618.",
+        "zh": "即將刊登於<strong>《International Mathematics Research Notices (IMRN)》</strong>；arXiv：2604.03618。"
       },
       "links": [
         {
@@ -2496,8 +2527,8 @@
         "en": "<strong>Hung-Chun Tsui</strong>",
         "zh": "<strong>Hung-Chun Tsui</strong>"
       },
-      "group_id": "preprints",
-      "category_id": "publication-preprints",
+      "group_id": "journal-articles",
+      "category_id": "publication-journal-articles",
       "group_label": {
         "en": "",
         "zh": ""
@@ -2519,6 +2550,11 @@
         "zh": ""
       },
       "date": "2026-09-16",
+      "publication_state": "preprint",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": true,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {},
       "title": {
         "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
         "zh": "正特徵上的多重 Eisenstein 級數：直和定理"
@@ -2581,6 +2617,11 @@
         "zh": ""
       },
       "date": "2026-09-25",
+      "publication_state": "preprint",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": true,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {},
       "title": {
         "en": "Mishiba's Conjecture on the Coaction of $\\infty$-adic Multiple Zeta Values",
         "zh": "$\\infty$-進多重 zeta 值餘作用的 Mishiba 猜想"
@@ -2643,6 +2684,11 @@
         "zh": ""
       },
       "date": "2026-09-28",
+      "publication_state": "preprint",
+      "classification_mode": "auto",
+      "show_arxiv_in_status": false,
+      "publication_note": { "en": "", "zh": "" },
+      "journal": {},
       "title": {
         "en": "Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture",
         "zh": "正特徵多重 zeta 值：Kaneko-Zagier 型猜想"

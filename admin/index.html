@@ -180,6 +180,12 @@
         font-size: 0.76rem;
         line-height: 1.45;
       }
+      .form-section-title {
+        margin: 22px 0 8px;
+        padding-top: 14px;
+        border-top: 1px solid #e3d8cf;
+        font-size: 0.98rem;
+      }
       .switch {
         display: flex;
         align-items: center;
@@ -1664,12 +1670,22 @@
           ["date", "日期", "date"],
           ["title", "題目", "pair"],
           ["authors", "作者", "authors"],
-          ["venue", "期刊／狀態", "pair"],
+          ["publication_state", "稿件狀態", "publication-state"],
+          ["publication_note", "補充狀態", "pair"],
           ["arxiv", "arXiv ID", "text"],
+          ["show_arxiv_in_status", "在作品狀態列顯示 arXiv ID", "checkbox"],
           ["arxiv_url", "arXiv 連結", "url"],
           ["pdf_url", "PDF 連結", "url"],
-          ["doi_url", "DOI 連結", "url"],
-          ["journal_url", "期刊頁連結", "url"],
+          ["journal.journaltitle", "期刊全名（journaltitle）", "text"],
+          ["journal.shortjournal", "期刊縮寫（shortjournal）", "text"],
+          ["journal.date", "正式出版日期", "date"],
+          ["journal.volume", "卷（volume）", "text"],
+          ["journal.number", "期（number）", "text"],
+          ["journal.pages", "頁碼（pages）", "text"],
+          ["journal.eid", "文章編號（eid）", "text"],
+          ["journal.publisher", "出版社（publisher）", "text"],
+          ["journal.doi", "DOI", "text"],
+          ["journal.url", "期刊頁連結", "url"],
           ["code_url", "程式碼連結", "url"],
           ["bibtex", "BibTeX（選填；留白時自動產生）", "textarea"],
           ["bibitem", "LaTeX \\bibitem（選填；留白時自動產生）", "textarea"],
@@ -1869,11 +1885,37 @@
           let lm = Object.fromEntries(
             (record?.links || []).map((l) => [l.label?.en, l.url]),
           );
+          let legacyVenue = `${record?.venue?.en || ""} ${record?.venue?.zh || ""}`.toLowerCase();
           s.arxiv_url = s.arxiv_url || lm.arXiv || "";
           s.pdf_url = s.pdf_url || lm.PDF || "";
           s.doi_url = s.doi_url || lm.DOI || "";
           s.journal_url = s.journal_url || lm.Journal || "";
           s.code_url = s.code_url || lm.Code || "";
+          s.publication_state = normalizePublicationState(s);
+          s.classification_mode =
+            s.classification_mode ||
+            (!record || ["preprints", "journal-articles"].includes(s.group_id)
+              ? "auto"
+              : "manual");
+          if (s.show_arxiv_in_status === undefined)
+            s.show_arxiv_in_status =
+              !record ||
+              (!!s.arxiv &&
+                (legacyVenue.includes("arxiv") ||
+                  s.publication_state === "preprint"));
+          s.journal = {
+            journaltitle: "",
+            shortjournal: "",
+            date: "",
+            volume: "",
+            number: "",
+            pages: "",
+            eid: "",
+            publisher: "",
+            doi: doiFromValue(s.doi_url),
+            url: s.journal_url || "",
+            ...(s.journal || {}),
+          };
         }
         if (type === "teaching") {
           let parts = teachingCourseParts(record);
@@ -1998,13 +2040,17 @@
       function inputField(path, label, type, value) {
         if (type === "checkbox")
           return `<label class="switch"><input data-path="${path}" type="checkbox" ${value ? "checked" : ""}>${label}</label>`;
+        if (type === "publication-state") {
+          let selected = String(value || "preprint");
+          return `<div class="field"><label>${label}</label><select data-path="${path}"><option value="preprint" ${selected === "preprint" ? "selected" : ""}>Preprint</option><option value="submitted" ${selected === "submitted" ? "selected" : ""}>Submitted</option><option value="under_review" ${selected === "under_review" ? "selected" : ""}>Under review</option><option value="forthcoming" ${selected === "forthcoming" ? "selected" : ""}>Accepted / To appear</option><option value="published" ${selected === "published" ? "selected" : ""}>Published</option></select><p class="field-hint">Accepted / To appear 與 Published 會自動歸入期刊論文；Submitted 與 Under review 仍歸入預印本。</p></div>`;
+        }
         if (type === "date") return dateField(path, label, value);
         if (type === "textarea") {
           let isBibitem = path === "bibitem",
-            placeholder = "留白時由題目、作者、年份、arXiv／DOI 等資料自動產生",
+            placeholder = "留白時由題目、作者、稿件狀態與期刊資料自動產生精簡格式",
             hint = isBibitem
-              ? "適合貼入你慣用的 \\bibitem 格式；未填寫時網站會自動建立 thebibliography 可用版本。"
-              : "適合貼入正式期刊提供的 BibTeX；未填寫時網站仍會自動建立可引用版本。";
+              ? "適合貼入你慣用的 \\bibitem；未填寫時會產生不含 DOI／URL 的一般數學論文格式。"
+              : "可貼入出版社提供的完整 BibLaTeX；未填寫時會產生不含 DOI／URL 的精簡版本。";
           return `<div class="field bibtex-editor"><label>${label}</label><textarea data-path="${path}" placeholder="${placeholder}">${esc(value || "")}</textarea><p class="field-hint">${hint}</p></div>`;
         }
         let attrs = type === "number" ? ' inputmode="numeric" step="1"' : "",
@@ -2095,7 +2141,7 @@
         if (type === "organization")
           html += `<div class="pair-grid"><div class="field"><label>活動類型</label><div class="preview-value">${esc(pairText(obj.organization_kind) || "—")}</div></div><div class="field"><label>籌辦身分</label><div class="preview-value">${esc(pairText(obj.role) || "—")}</div></div></div>`;
         for (const [path, label, kind] of SCHEMA[type]) {
-          let value = s[path];
+          let value = valueAt(s, path);
           if (kind === "pair" || kind === "pair-term" || kind === "authors")
             html += `<div class="pair-grid"><div class="field"><label>${esc(label)}（英文）</label><div class="preview-value">${esc(value?.en || "—")}</div></div><div class="field"><label>${esc(label)}（中文）</label><div class="preview-value">${esc(value?.zh || "—")}</div></div></div>`;
           else
@@ -2140,8 +2186,8 @@
         }
         if (type === "publication") {
           let groups = groupData(effectiveSite(), "publication"),
-            current = s.group_id || "auto";
-          html += `<div class="field"><label>作品類別</label><select id="publicationGroup"><option value="auto">自動判定</option>${groups.map((g) => `<option value="${esc(g.id)}" ${current === g.id ? "selected" : ""}>${esc(pairText(g.label) || g.id)}</option>`).join("")}<option value="__other__">其他／新增作品類別</option></select><p class="field-hint">選擇「自動判定」時：有 DOI、期刊頁或正式刊登資訊會歸入期刊論文，否則歸入預印本。</p></div><div id="publicationCustom" class="hidden">${pairFields("group_label", "新作品類別名稱", s.group_label || {})}</div>`;
+            current = s.classification_mode === "manual" ? s.group_id : "auto";
+          html += `<div class="field"><label>作品類別</label><select id="publicationGroup"><option value="auto" ${current === "auto" ? "selected" : ""}>自動判定</option>${groups.map((g) => `<option value="${esc(g.id)}" ${current === g.id ? "selected" : ""}>${esc(pairText(g.label) || g.id)}</option>`).join("")}<option value="__other__">其他／新增作品類別</option></select><p class="field-hint">自動判定會持續生效：Accepted / To appear、Published，或已有 DOI、卷期、頁碼等正式資料時歸入期刊論文；Submitted 與 Under review 保留在預印本。</p></div><div id="publicationCustom" class="hidden">${pairFields("group_label", "新作品類別名稱", s.group_label || {})}</div>`;
         }
         if (type === "teaching") {
           let groups = groupData(effectiveSite(), "teaching"),
@@ -2152,20 +2198,32 @@
           html += `<div class="field"><label>教學身分</label><select id="teachingRole"><option value="Teaching Assistant" ${role === "Teaching Assistant" ? "selected" : ""}>助教</option><option value="Lecturer" ${role === "Lecturer" ? "selected" : ""}>講師</option><option value="__other__" ${!known ? "selected" : ""}>其他</option></select></div><div id="roleCustom" class="${known ? "hidden" : ""}">${pairFields("role", "自訂身分", known ? {} : s.role)}</div>`;
         }
         for (const [path, label, kind] of SCHEMA[type]) {
+          if (type === "publication" && path === "publication_state")
+            html += `<h3 class="form-section-title">稿件狀態</h3>`;
+          if (type === "publication" && path === "arxiv")
+            html += `<h3 class="form-section-title">arXiv 與檔案</h3>`;
+          if (type === "publication" && path === "journal.journaltitle")
+            html += `<h3 class="form-section-title">正式期刊資料</h3><p class="field-hint">這些欄位會直接產生網頁狀態、CV 與精簡引用；期刊全名、縮寫及縮寫括號會一起粗體顯示。</p>`;
+          if (type === "publication" && path === "code_url")
+            html += `<h3 class="form-section-title">其他連結與引用覆寫</h3>`;
           if (kind === "pair" || kind === "pair-term")
             html += pairFields(
               path,
               label,
-              s[path] || {},
+              valueAt(s, path) || {},
               kind === "pair-term",
             );
-          else if (kind === "authors") html += authorFields(s[path] || {});
-          else html += inputField(path, label, kind, s[path]);
+          else if (kind === "authors")
+            html += authorFields(valueAt(s, path) || {});
+          else html += inputField(path, label, kind, valueAt(s, path));
         }
         if (type === "visit")
           html += `<div id="visitFundingNotice" class="notice ${visitAutoDefault ? "" : "hidden"}"><strong>自動生成的其他說明</strong><p>只要某一語言的「資助機構」或「資助計畫」有內容，就會自動產生該語言的「其他說明」。自動生成的內容具有最高優先級，不會被「自動填寫另一語言」覆蓋。</p><ul><li>只有機構：Supported by 機構／本次訪問經費由機構提供</li><li>只有計畫：Supported through 計畫／本次訪問由計畫補助</li><li>兩者都有：Supported by 機構 through 計畫／本次訪問經費由機構透過計畫提供</li></ul><div id="fundingSentencePreview" class="field-hint"></div></div>`;
         html += `<div class="actions"><button class="button" id="previewEditor">在右側預覽</button><button class="button primary" id="saveEditor">${record ? "儲存修改草稿" : "加入新增草稿"}</button></div>`;
         return html;
+      }
+      function valueAt(o, path) {
+        return path.split(".").reduce((value, key) => value?.[key], o);
       }
       function setObj(o, path, v) {
         let a = o,
@@ -2531,41 +2589,119 @@
         });
         updateGeneratedVisitDescription(root);
       }
-      function pubAutoGroup(o) {
-        let text = `${o.venue?.en || ""} ${o.venue?.zh || ""}`.toLowerCase();
-        return o.doi_url ||
-          o.journal_url ||
-          /accepted|to appear|vol\.|volume|issue|pp\.|pages/.test(text)
-          ? "journal-articles"
-          : "preprints";
-      }
-      function stripTrailingArxivStatus(value) {
+      function doiFromValue(value) {
         return String(value || "")
-          .replace(/\s*(?:,\s*)?arxiv:\s*\S+\s*$/i, "")
-          .replace(/,\s*$/, "")
-          .trim();
+          .trim()
+          .replace(/^doi:\s*/i, "")
+          .replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, "")
+          .replace(/^\/+|\/+$/g, "");
       }
-      function withArxivStatus(value, id) {
-        let base = stripTrailingArxivStatus(value);
-        return id ? `${base}${base ? ", " : ""}arXiv: ${id}` : base;
-      }
-      function normalizePreprintVenue(o) {
-        let venue = o.venue || { en: "", zh: "" },
-          onlyArxiv =
-            o.group_id === "preprints" &&
-            !!o.arxiv &&
-            !o.doi_url &&
-            !o.journal_url;
-        o.venue = {
-          en: stripTrailingArxivStatus(venue.en),
-          zh: stripTrailingArxivStatus(venue.zh),
-        };
-        if (onlyArxiv)
-          o.venue = {
-            en: withArxivStatus(o.venue.en, o.arxiv),
-            zh: withArxivStatus(o.venue.zh, o.arxiv),
+      function normalizePublicationState(o) {
+        let value = String(o?.publication_state || "").toLowerCase(),
+          aliases = {
+            accepted: "forthcoming",
+            to_appear: "forthcoming",
+            in_press: "forthcoming",
           };
-        return onlyArxiv;
+        value = aliases[value] || value;
+        if (
+          [
+            "preprint",
+            "submitted",
+            "under_review",
+            "forthcoming",
+            "published",
+          ].includes(value)
+        )
+          return value;
+        let text = `${o?.venue?.en || ""} ${o?.venue?.zh || ""}`.toLowerCase();
+        if (/to appear|forthcoming|accepted|即將刊登|已接受/.test(text))
+          return "forthcoming";
+        if (/under review|審查中/.test(text)) return "under_review";
+        if (/submitted|已投稿/.test(text)) return "submitted";
+        if (o?.group_id === "journal-articles" || o?.doi_url || o?.journal_url)
+          return "published";
+        return "preprint";
+      }
+      function publicationJournal(o) {
+        let j = o?.journal || {};
+        return {
+          journaltitle: String(j.journaltitle || "").trim(),
+          shortjournal: String(j.shortjournal || "").trim(),
+          date: String(j.date || "").trim(),
+          volume: String(j.volume || "").trim(),
+          number: String(j.number || "").trim(),
+          pages: String(j.pages || "").trim(),
+          eid: String(j.eid || "").trim(),
+          publisher: String(j.publisher || "").trim(),
+          doi: doiFromValue(j.doi || o?.doi_url),
+          url: String(j.url || o?.journal_url || "").trim(),
+        };
+      }
+      function publicationJournalLabel(o) {
+        let j = publicationJournal(o),
+          title = j.journaltitle,
+          short = j.shortjournal;
+        if (!title) return short;
+        return short && !title.toLowerCase().includes(short.toLowerCase())
+          ? `${title} (${short})`
+          : title;
+      }
+      function pubAutoGroup(o) {
+        let j = publicationJournal(o),
+          state = normalizePublicationState(o),
+          formal =
+            ["forthcoming", "published"].includes(state) ||
+            ["date", "volume", "number", "pages", "eid", "doi"].some(
+              (key) => !!j[key],
+            );
+        return formal ? "journal-articles" : "preprints";
+      }
+      function publicationStatusText(o, lang) {
+        let state = normalizePublicationState(o),
+          j = publicationJournal(o),
+          label = publicationJournalLabel(o),
+          bold = label ? `[b]${lang === "zh" ? `《${label}》` : label}[/b]` : "",
+          note = String(o.publication_note?.[lang] || "").trim(),
+          base = "";
+        if (state === "forthcoming")
+          base = label
+            ? lang === "zh"
+              ? `即將刊登於${bold}`
+              : `To appear in ${bold}`
+            : lang === "zh"
+              ? "即將刊登"
+              : "To appear";
+        else if (state === "published") {
+          let year = String(j.date || "").match(/^\d{4}/)?.[0] || String(o.year || "");
+          base = bold || (lang === "zh" ? "已正式出版" : "Published");
+          if (j.volume) base += ` ${j.volume}`;
+          if (year) base += ` (${year})`;
+          if (j.number) base += lang === "zh" ? `，第 ${j.number}` : `, no. ${j.number}`;
+          if (j.pages || j.eid) base += `${lang === "zh" ? "，" : ", "}${j.pages || j.eid}`;
+        } else if (state === "submitted")
+          base = lang === "zh" ? "已投稿" : "Submitted";
+        else if (state === "under_review")
+          base = lang === "zh" ? "審查中" : "Under review";
+        if (note) base = base ? `${base} — ${note}` : note;
+        if (o.show_arxiv_in_status && o.arxiv) {
+          let arxiv = lang === "zh" ? `arXiv：${o.arxiv}` : `arXiv: ${o.arxiv}`;
+          base = base ? `${base}${lang === "zh" ? "；" : "; "}${arxiv}` : arxiv;
+        }
+        if (!base) return "";
+        return base.replace(/[。.;；\s]+$/, "") + (lang === "zh" ? "。" : ".");
+      }
+      function normalizePublicationVenue(o) {
+        o.publication_state = normalizePublicationState(o);
+        o.journal = publicationJournal(o);
+        o.doi_url = o.journal.doi
+          ? `https://doi.org/${o.journal.doi}`
+          : "";
+        o.journal_url = o.journal.url;
+        o.venue = {
+          en: publicationStatusText(o, "en"),
+          zh: publicationStatusText(o, "zh"),
+        };
       }
       function collectEditor(type, base) {
         let raw = readInputs(currentEditor.root),
@@ -2678,9 +2814,15 @@
           let arxiv = reconcileArxiv(o.arxiv, o.arxiv_url);
           o.arxiv = arxiv.id;
           o.arxiv_url = arxiv.url;
+          o.date = o.date || new Date().toISOString().slice(0, 10);
+          o.year = Number(o.date.slice(0, 4));
+          normalizePublicationVenue(o);
           let choice =
             currentEditor.root.querySelector("#publicationGroup").value;
-          if (choice === "auto") o.group_id = pubAutoGroup(o);
+          if (choice === "auto") {
+            o.classification_mode = "auto";
+            o.group_id = pubAutoGroup(o);
+          }
           else if (choice === "__other__") {
             let g = raw.group_label || {},
               c = completePair(g.en, g.zh, options);
@@ -2688,11 +2830,16 @@
             if (c.changed) notes.push(`新作品類別名稱已用${c.method}補全`);
             o.group_id = slug(g.en || g.zh);
             o.group_label = g;
-          } else o.group_id = choice;
-          o.date = o.date || new Date().toISOString().slice(0, 10);
-          o.year = Number(o.date.slice(0, 4));
-          if (normalizePreprintVenue(o))
-            notes.push("預印本狀態已自動加入 arXiv 編號");
+            o.classification_mode = "manual";
+          } else {
+            o.group_id = choice;
+            o.classification_mode = "manual";
+          }
+          o.category_id = `publication-${o.group_id}`;
+          if (o.classification_mode === "auto")
+            notes.push(
+              `作品已自動歸入${o.group_id === "journal-articles" ? "期刊論文" : "預印本"}`,
+            );
           o.links = [];
           for (const [label, url] of [
             [

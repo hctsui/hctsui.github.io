@@ -141,14 +141,19 @@ function arxivSuggestionPublication(item) {
     primary_category: item.primary_category || '',
     title: { en: item.title, zh: '' },
     authors: { en: englishAuthorLine(item.authors), zh: '' },
-    venue: {
-      en: item.journal_ref || `arXiv:${item.arxiv_id}`,
-      zh: `arXiv:${item.arxiv_id}`,
-    },
+    publication_state: item.doi ? 'published' : 'preprint',
+    classification_mode: 'auto',
+    show_arxiv_in_status: true,
+    publication_note: { en: item.journal_ref || '', zh: '' },
+    venue: { en: `arXiv: ${item.arxiv_id}.`, zh: `arXiv：${item.arxiv_id}。` },
     arxiv_url: arxivUrl,
     pdf_url: pdfUrl,
     doi_url: item.doi ? `https://doi.org/${item.doi}` : '',
     journal_url: '',
+    journal: {
+      journaltitle: '', shortjournal: '', date: '', volume: '', number: '',
+      pages: '', eid: '', publisher: '', doi: item.doi || '', url: '',
+    },
     code_url: '',
     bibtex: '',
     bibitem: '',
@@ -157,7 +162,7 @@ function arxivSuggestionPublication(item) {
       { label: { en: 'PDF', zh: 'PDF' }, url: pdfUrl },
       ...(item.doi ? [{ label: { en: 'DOI', zh: 'DOI' }, url: `https://doi.org/${item.doi}` }] : []),
     ],
-    group_id: 'preprints',
+    group_id: item.doi ? 'journal-articles' : 'preprints',
   };
   if (category?.id) record.category_id = category.id;
   return record;
@@ -284,12 +289,12 @@ function publishFromNotification(id) {
   const current=(data.publications||[]).find(x=>x.id===entryId);
   if(!current)return flash('找不到原本的預印本，可能已經被修改或刪除');
   const updated=clone(current), p=notice.payload||{};
+  updated.publication_state='published'; updated.classification_mode='auto';
   updated.group_id='journal-articles'; updated.category_id='publication-journal-articles';
-  if(p.year){updated.year=Number(p.year); if(updated.date)updated.date=`${p.year}-01-01`;}
   updated.doi_url=String(p.doi_url||p.source_url||notice.source_url||'');
   updated.journal_url=String(p.journal_url||updated.doi_url||'');
-  const journal=[p.journal,p.volume?`vol. ${p.volume}`:'',p.issue?`no. ${p.issue}`:'',p.pages||'',p.year||''].filter(Boolean).join(', ');
-  if(journal){updated.venue=updated.venue||{en:'',zh:''};updated.venue.en=journal;updated.venue.zh=journal;}
+  updated.journal={...(updated.journal||{}),journaltitle:String(p.journal||''),date:p.year?String(p.year):String(updated.journal?.date||''),volume:String(p.volume||''),number:String(p.issue||''),pages:String(p.pages||''),doi:String(p.doi||'').trim(),url:updated.journal_url};
+  updated.publication_note=updated.publication_note||{en:'',zh:''};
   updated.links=Array.isArray(updated.links)?updated.links:[];
   if(updated.doi_url&&!updated.links.some(x=>String(x?.label?.en||'').toUpperCase()==='DOI'))updated.links.push({label:{en:'DOI',zh:'DOI'},url:updated.doi_url});
   queueOperation({op:'update',type:'publication',id:updated.id,before:clone(current),after:updated,notes:['由 Crossref 正式出版通知建立；請人工確認期刊卷期頁碼']});

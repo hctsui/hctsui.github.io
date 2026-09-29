@@ -20,6 +20,7 @@ from homepage_config import homepage_activities, homepage_publications
 from markup_config import rich_html as safe_rich_html, stored_rich_html
 from site_settings_config import current_site_settings
 from people_config import link_author_html, link_people_html, load_people
+from publication_config import journal_label, normalized_journal, publication_state
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -199,26 +200,30 @@ def publication_bibtex(entry: dict[str, Any]) -> str:
     title = plain_value(entry, "title", "en")
     year = str(entry.get("year") or str(entry.get("date") or "")[:4] or "")
     arxiv = str(entry.get("arxiv") or "").strip()
-    doi_url = str(entry.get("doi_url") or "").strip()
-    doi = re.sub(r"^https?://(?:dx\.)?doi\.org/", "", doi_url, flags=re.I) if doi_url else ""
-    venue = plain_value(entry, "venue", "en")
-    journal_like = bool(doi or entry.get("journal_url") or entry.get("group_id") == "journal-articles")
-    entry_type = "article" if journal_like else "misc"
-    # Field order mirrors the compact arXiv/BibTeX export style commonly used
-    # in mathematics: title/author/year first, then arXiv metadata.
-    fields: list[tuple[str, str]] = [("title", title), ("author", authors), ("year", year)]
-    if journal_like and venue and not venue.lower().startswith("arxiv"):
-        fields.append(("journal", venue))
-    if arxiv:
-        fields.extend((("eprint", arxiv), ("archivePrefix", "arXiv")))
-        primary_class = str(entry.get("primary_category") or entry.get("primary_class") or "").strip()
-        if primary_class:
-            fields.append(("primaryClass", primary_class))
-    if doi:
-        fields.append(("doi", doi))
-    url = str(entry.get("journal_url") or entry.get("arxiv_url") or entry.get("pdf_url") or "").strip()
-    if url:
-        fields.append(("url", url))
+    journal = normalized_journal(entry)
+    state = publication_state(entry)
+    journal_like = bool(journal["journaltitle"] or state in {"forthcoming", "published"})
+    entry_type = "article" if journal_like else "online"
+    fields: list[tuple[str, str]] = [("title", title), ("author", authors)]
+    if journal_like:
+        fields.extend((
+            ("journaltitle", journal["journaltitle"]),
+            ("shortjournal", journal["shortjournal"]),
+            ("date", journal["date"] or year),
+            ("volume", journal["volume"]),
+            ("number", journal["number"]),
+            ("pages", journal["pages"]),
+            ("eid", journal["eid"]),
+        ))
+        if state == "forthcoming":
+            fields.append(("pubstate", "forthcoming"))
+    else:
+        fields.append(("date", year))
+        if arxiv:
+            fields.extend((("eprint", arxiv), ("eprinttype", "arxiv")))
+            primary_class = str(entry.get("primary_category") or entry.get("primary_class") or "").strip()
+            if primary_class:
+                fields.append(("eprintclass", primary_class))
     rows = [f"  {name} = {{{_bibtex_escape(value, preserve_math=name == 'title')}}}" for name, value in fields if value]
     return f"@{entry_type}{{{_bibtex_key(entry)},\n" + ",\n".join(rows) + "\n}"
 
@@ -268,21 +273,41 @@ def publication_bibitem(entry: dict[str, Any]) -> str:
         return manual
     authors = _latex_citation_escape(plain_value(entry, "authors", "en"))
     title = _publication_title_latex(entry)
-    venue = _latex_citation_escape(plain_value(entry, "venue", "en"))
-    year = str(entry.get("year") or str(entry.get("date") or "")[:4] or "").strip()
+    journal = normalized_journal(entry)
+    state = publication_state(entry)
+    year = str(journal["date"][:4] or entry.get("year") or str(entry.get("date") or "")[:4] or "").strip()
     arxiv = _latex_citation_escape(str(entry.get("arxiv") or "").strip())
-    doi_url = str(entry.get("doi_url") or "").strip()
-    doi = _latex_citation_escape(re.sub(r"^https?://(?:dx\.)?doi\.org/", "", doi_url, flags=re.I)) if doi_url else ""
 
     details: list[str] = []
-    if venue:
-        details.append(venue.rstrip(". "))
-    if arxiv and arxiv.casefold() not in venue.casefold():
-        details.append(f"arXiv:{arxiv}")
-    if doi:
-        details.append(f"doi:{doi}")
-    if year and year not in venue:
-        details.append(f"({year})")
+    label = _latex_citation_escape(journal_label(entry))
+    if state == "forthcoming":
+        if label:
+            details.append(rf"\textbf{{{label}}}")
+        details.append("to appear")
+    elif state == "published" or label:
+        journal_parts: list[str] = []
+        if label:
+            journal_parts.append(rf"\textbf{{{label}}}")
+        if journal["volume"]:
+            journal_parts.append(_latex_citation_escape(journal["volume"]))
+        if year:
+            journal_parts.append(f"({year})")
+        journal_citation = " ".join(journal_parts)
+        if journal["number"]:
+            journal_citation += f", no. {_latex_citation_escape(journal['number'])}"
+        if journal["pages"] or journal["eid"]:
+            journal_citation += f", {_latex_citation_escape(journal['pages'] or journal['eid'])}"
+        if journal_citation:
+            details.append(journal_citation)
+    else:
+        if state == "submitted":
+            details.append("submitted")
+        elif state == "under_review":
+            details.append("under review")
+        if arxiv:
+            details.append(f"arXiv:{arxiv}")
+        if year:
+            details.append(f"({year})")
 
     citation = ", ".join(part for part in (authors, rf"\emph{{{title}}}" if title else "", *details) if part)
     if citation and not citation.endswith("."):

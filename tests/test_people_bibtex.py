@@ -15,6 +15,7 @@ from people_config import link_author_html, link_people_html, normalized_people,
 from process_batch_request import apply_special, apply_undo, empty_history, normalize_item  # noqa: E402
 from markup_config import stored_rich_html, spaced_chinese_title  # noqa: E402
 from build_cv import field_rich  # noqa: E402
+from publication_config import normalize_publication, publication_status_text  # noqa: E402
 
 
 class PeopleDirectoryTests(unittest.TestCase):
@@ -143,12 +144,14 @@ class BibtexTests(unittest.TestCase):
         item = self.publication()
         item["primary_category"] = "math.NT"
         text = publication_bibtex(item)
-        self.assertIn("@misc{CT26,", text)
+        self.assertIn("@online{CT26,", text)
         self.assertIn("title = {Algebra Structures of Multiple Eisenstein Series}", text)
         self.assertIn("author = {Ting-Wei Chang and Hung-Chun Tsui}", text)
         self.assertIn("eprint = {2603.10376}", text)
-        self.assertIn("archivePrefix = {arXiv}", text)
-        self.assertIn("primaryClass = {math.NT}", text)
+        self.assertIn("eprinttype = {arxiv}", text)
+        self.assertIn("eprintclass = {math.NT}", text)
+        self.assertNotIn("url =", text)
+        self.assertNotIn("doi =", text)
 
     def test_duplicate_author_year_keys_receive_letter_suffixes(self) -> None:
         first = self.publication()
@@ -157,7 +160,7 @@ class BibtexTests(unittest.TestCase):
         assign_citation_keys(data)
         self.assertEqual(first["_citation_key"], "CT26a")
         self.assertEqual(second["_citation_key"], "CT26b")
-        self.assertIn("@misc{CT26a,", publication_bibtex(first))
+        self.assertIn("@online{CT26a,", publication_bibtex(first))
         self.assertIn(r"\bibitem{CT26b}", publication_bibitem(second))
 
     def test_manual_bibtex_wins(self) -> None:
@@ -215,6 +218,53 @@ class BibtexTests(unittest.TestCase):
         item = self.publication()
         item["bibitem"] = r"\bibitem{custom} Exact legacy citation."
         self.assertEqual(publication_bibitem(item), item["bibitem"])
+
+    def test_forthcoming_journal_metadata_drives_section_status_and_compact_citation(self) -> None:
+        item = self.publication()
+        item.update({
+            "publication_state": "forthcoming",
+            "classification_mode": "auto",
+            "show_arxiv_in_status": False,
+            "doi_url": "https://doi.org/10.1093/imrn/example",
+            "journal_url": "https://academic.oup.com/imrn/example",
+            "journal": {
+                "journaltitle": "International Mathematics Research Notices",
+                "shortjournal": "IMRN",
+                "date": "",
+                "volume": "",
+                "number": "",
+                "pages": "",
+                "eid": "",
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/imrn/example",
+                "url": "https://academic.oup.com/imrn/example",
+            },
+        })
+        normalize_publication(item)
+        self.assertEqual(item["group_id"], "journal-articles")
+        self.assertEqual(item["category_id"], "publication-journal-articles")
+        self.assertEqual(
+            publication_status_text(item, "en"),
+            "To appear in [b]International Mathematics Research Notices (IMRN)[/b].",
+        )
+        self.assertNotIn("arXiv", publication_status_text(item, "en"))
+        self.assertTrue(any(link["label"]["en"] == "arXiv" for link in item["links"]))
+
+        biblatex = publication_bibtex(item)
+        self.assertIn("@article{", biblatex)
+        self.assertIn("journaltitle = {International Mathematics Research Notices}", biblatex)
+        self.assertIn("shortjournal = {IMRN}", biblatex)
+        self.assertIn("pubstate = {forthcoming}", biblatex)
+        self.assertNotIn("doi =", biblatex)
+        self.assertNotIn("url =", biblatex)
+        self.assertNotIn("eprint =", biblatex)
+
+        bibitem = publication_bibitem(item)
+        self.assertIn(r"\textbf{International Mathematics Research Notices (IMRN)}", bibitem)
+        self.assertIn("to appear", bibitem)
+        self.assertNotIn("doi:", bibitem)
+        self.assertNotIn("https://", bibitem)
+        self.assertNotIn("arXiv:", bibitem)
 
 
     def test_main_replacement_accepts_latex_backslashes(self) -> None:

@@ -14,6 +14,7 @@ from arxiv_suggestions import empty_store as empty_arxiv_store, normalized_store
 from notification_store import empty_store as empty_notification_store, normalized_store as normalized_notification_store, validate_store as validate_notification_store
 from markup_config import rich_html, spaced_chinese_title
 from process_request import strip_invisible_chars
+from publication_config import normalize_publication
 ROOT=Path(__file__).resolve().parents[1]; SITE=ROOT/'content/site.json'; TRANS=ROOT/'content/translations.json'; PEOPLE=ROOT/'content/people.json'; ARXIV_STORE=ROOT/'content/arxiv-suggestions.json'; NOTIFICATIONS=ROOT/'content/notifications.json'; HISTORY=ROOT/'content/change-history.json'; RETENTION=7
 SECTIONS={'conference':'activities','talk':'activities','visit':'activities','organization':'activities','honor':'honors','publication':'publications','teaching':'teaching','interest':'profile_items','education':'profile_items','contact':'profile_items','personal':'profile_items','generic':'profile_items'}
 def parse_body(body):
@@ -41,7 +42,9 @@ def normalize_item(x):
   if isinstance(x.get(k),dict):
    formatter=rich_html if k in {'title','description','organization','venue','organization_kind','date_label'} else clean
    x[k+'_html']={l:formatter(v) for l,v in x[k].items()}
- if t=='publication':x['year']=int(str(x.get('date',''))[:4] or x.get('year') or 0)
+ if t=='publication':
+  x['year']=int(str(x.get('date',''))[:4] or x.get('year') or 0)
+  normalize_publication(x)
  return x
 def empty_history():return {'schema_version':2,'retention_days':RETENTION,'operations':[]}
 def load_history():
@@ -202,6 +205,8 @@ def apply_layout_bundle(data,bundle):
 def normalize_groups(data):
  groups=data.setdefault('settings',{}).setdefault('content_groups',{})
  for kind,sec in (('publication','publications'),('teaching','teaching')):
+  if kind=='publication':
+   for publication in data.get(sec,[]):normalize_publication(publication)
   used={x.get('group_id') for x in data.get(sec,[]) if x.get('group_id')};groups[kind]=[g for g in groups.get(kind,[]) if g.get('preset') or g.get('id') in used];known={g.get('id') for g in groups[kind]}
   for x in data.get(sec,[]):
    gid=x.get('group_id');
