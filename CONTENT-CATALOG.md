@@ -31,6 +31,12 @@
 
 ## Publications / 論文
 
+### Journal Articles / 期刊論文
+
+| Type | English title | 中文名稱 | Entry ID |
+|---|---|---|---|
+| publication | On $u$-Multiple Zeta Values in Positive Characteristic | 正特徵的 $u$-多重 zeta 值 | `publication-2604.03618-4` |
+
 ### Preprints / 預印本
 
 | Type | English title | 中文名稱 | Entry ID |
@@ -38,7 +44,6 @@
 | publication | Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture | 正特徵多重 zeta 值：Kaneko-Zagier 型猜想 | `publication-2026-09-28-zeta-kaneko-zagier` |
 | publication | Mishiba's Conjecture on the Coaction of $\infty$-adic Multiple Zeta Values | $\infty$-進多重 zeta 值餘作用的 Mishiba 猜想 | `publication-2026-09-25-infty-zeta-mishiba` |
 | publication | On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result | 正特徵上的多重 Eisenstein 級數：直和定理 | `publication-2026-09-16-entry` |
-| publication | On $u$-Multiple Zeta Values in Positive Characteristic | 正特徵的 $u$-多重 zeta 值 | `publication-2604.03618-4` |
 | publication | Algebra Structures of Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的代數結構 | `publication-2603.10376-3` |
 | publication | On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic | 正特徵任意秩多重 Eisenstein 級數的 $q$-洗牌關係 | `publication-2504.18879-2` |
 | publication | Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields | 函數體上 Gross–Koblitz 型公式中 $v$-進 Gamma 函數的唯一性 | `publication-2504.15697-1` |
