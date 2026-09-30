@@ -62,6 +62,7 @@ jobs:
           test -f tools/process_batch_request.py
           test -f tools/build_site.py
           test -f tools/people_config.py
+          test -f tools/publication_config.py
           test -f tools/markup_config.py
           test -f tools/build_cv.py
           test -f tools/render_grouped_sections.py

@@ -206,6 +206,13 @@
           <li>站內檔案使用 repository 根目錄相對路徑，例如 <code>files/slides/example.pdf</code>。</li>
           <li>論文可分別保存 arXiv、PDF、DOI、期刊頁與程式碼連結。</li>
         </ul>
+        <h3>作品的稿件與期刊狀態</h3>
+        <ul>
+          <li>Preprint、Submitted、Under review 保留在預印本；Accepted / To appear 與 Published 自動歸入期刊論文。</li>
+          <li>期刊資料可填完整名稱、縮寫、正式日期、卷、期、頁碼、文章編號、出版社、DOI 與期刊頁。</li>
+          <li>「在作品狀態列顯示 arXiv ID」只隱藏或顯示狀態文字，不會移除 arXiv 按鈕或預印本引用資料。</li>
+          <li>自動 biblatex 與 <code>\bibitem</code> 採精簡格式，不自動加入 DOI 或 URL；需要出版社完整格式時可使用進階覆寫欄。</li>
+        </ul>
         <h3>儲存後發生什麼</h3>
         <p>按下表單的儲存按鈕只會建立或更新本機草稿。右側預覽會顯示修改前後；正式網站要等批次送出與 GitHub Actions 成功後才更新。</p>
       </section>

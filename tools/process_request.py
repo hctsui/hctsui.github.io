@@ -18,6 +18,7 @@ from typing import Any
 
 from translation_validation import normalize_translation, validate_translation_data
 from category_config import migrate_category_data
+from publication_config import automatic_group_id, normalize_publication
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "content" / "site.json"
@@ -63,7 +64,7 @@ def load_data() -> dict[str, Any]:
 
 
 def save_data(data: dict[str, Any]) -> None:
-    cleaned = strip_invisible_chars(data)
+    cleaned = strip_invisible_chars(migrate_data(data))
     DATA_FILE.write_text(json.dumps(cleaned, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
@@ -424,6 +425,8 @@ def publication_has_link(entry: dict[str, Any], label: str) -> bool:
 
 
 def publication_group_id(entry: dict[str, Any]) -> str:
+    if entry.get("publication_state") or isinstance(entry.get("journal"), dict):
+        return automatic_group_id(entry)
     if publication_has_link(entry, "DOI") or publication_has_link(entry, "Journal"):
         return "journal-articles"
     venue = str((entry.get("venue") or {}).get("en") or "").strip().casefold()
@@ -441,6 +444,7 @@ def migrate_data(data: dict[str, Any]) -> dict[str, Any]:
         ensure_group(data, "publication", dict(preset["label"]), group_id=preset["id"], preset=True, update_label=False)
     nthu = ensure_group(data, "teaching", DEFAULT_INSTITUTION, group_id="national-tsing-hua-university", update_label=False)
     for entry in data.get("publications", []):
+        normalize_publication(entry)
         if not find_group(data, "publication", str(entry.get("group_id") or "")):
             entry["group_id"] = publication_group_id(entry)
     for entry in data.get("teaching", []):

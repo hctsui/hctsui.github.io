@@ -13,6 +13,7 @@ import cms_extensions
 cms_extensions.install()
 import process_request as core
 from category_config import items_for_category, migrate_category_data, normalized_categories
+from markup_config import rich_html as safe_rich_html, stored_rich_html
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "content" / "site.json"
@@ -94,22 +95,32 @@ def item_title(item: dict[str, Any], lang: str) -> str:
     return str(item.get("id") or "")
 
 
-def item_meta(item: dict[str, Any], lang: str) -> str:
-    values: list[str] = []
+def item_meta_html(item: dict[str, Any], lang: str) -> str:
+    values: list[tuple[str, str]] = []
     if item.get("type") == "honor":
-        values.append(str(item.get("year") or ""))
+        value = str(item.get("year") or "")
+        if value:
+            values.append((value, esc(value)))
     elif item.get("type") == "teaching":
-        values.append(pair(item.get("term"), lang))
+        value = pair(item.get("term"), lang)
+        if value:
+            values.append((value, esc(value)))
     else:
         start = str(item.get("start_date") or item.get("date") or "")
         end = str(item.get("end_date") or "")
         if start:
-            values.append(start if not end or end == start else f"{start}–{end}")
+            value = start if not end or end == start else f"{start}–{end}"
+            values.append((value, esc(value)))
     for field in ("authors", "venue", "organization", "institution", "description", "role"):
         value = plain(pair(item.get(field), lang))
-        if value and value not in values:
-            values.append(value)
-    return " · ".join(value for value in values if value)
+        if value and all(value != plain_value for plain_value, _ in values):
+            if field == "venue":
+                rich = item.get("venue_html") if isinstance(item.get("venue_html"), dict) else {}
+                rendered = stored_rich_html(rich.get(lang)) if rich.get(lang) else safe_rich_html(pair(item.get(field), lang))
+            else:
+                rendered = esc(value)
+            values.append((value, rendered))
+    return " · ".join(rendered for _, rendered in values)
 
 
 def item_links(item: dict[str, Any], lang: str) -> str:
@@ -138,10 +149,10 @@ def entries(items: list[dict[str, Any]], lang: str, *, ordered: bool = False) ->
         title = item_title(item, lang)
         url = str(item.get("url") or "")
         heading = f'<a href="{esc(url)}" rel="noopener" target="_blank">{esc(title)}</a>' if url else esc(title)
-        meta = item_meta(item, lang)
+        meta = item_meta_html(item, lang)
         rendered.append(
             '<li class="dossier-entry">'
-            f'<h3>{heading}</h3>{f"<div class=\"dossier-meta\">{esc(meta)}</div>" if meta else ""}{item_links(item, lang)}'
+            f'<h3>{heading}</h3>{f"<div class=\"dossier-meta\">{meta}</div>" if meta else ""}{item_links(item, lang)}'
             '</li>'
         )
     return f'<{tag} class="{css}">' + "".join(rendered) + f"</{tag}>"
