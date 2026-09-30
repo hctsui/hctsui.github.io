@@ -2253,8 +2253,22 @@
       "publication_state": "preprint",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
-      "journal": {},
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "date": "2025-04-22",
       "year": 2025,
       "order": 6,
@@ -2276,12 +2290,12 @@
         "zh": "張庭瑋, 崔鴻竣"
       },
       "venue": {
-        "en": "arXiv: 2504.15697",
-        "zh": "arXiv: 2504.15697"
+        "en": "arXiv: 2504.15697.",
+        "zh": "arXiv：2504.15697。"
       },
       "venue_html": {
-        "en": "arXiv: 2504.15697",
-        "zh": "arXiv: 2504.15697"
+        "en": "arXiv: 2504.15697.",
+        "zh": "arXiv：2504.15697。"
       },
       "links": [
         {
@@ -2320,8 +2334,22 @@
       "publication_state": "preprint",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
-      "journal": {},
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "date": "2025-04-26",
       "year": 2025,
       "order": 5,
@@ -2343,12 +2371,12 @@
         "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "venue": {
-        "en": "arXiv: 2504.18879",
-        "zh": "arXiv: 2504.18879"
+        "en": "arXiv: 2504.18879.",
+        "zh": "arXiv：2504.18879。"
       },
       "venue_html": {
-        "en": "arXiv: 2504.18879",
-        "zh": "arXiv: 2504.18879"
+        "en": "arXiv: 2504.18879.",
+        "zh": "arXiv：2504.18879。"
       },
       "links": [
         {
@@ -2387,8 +2415,22 @@
       "publication_state": "preprint",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
-      "journal": {},
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "date": "2026-03-11",
       "year": 2026,
       "order": 4,
@@ -2410,12 +2452,12 @@
         "zh": "張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "venue": {
-        "en": "arXiv: 2603.10376",
-        "zh": "arXiv: 2603.10376"
+        "en": "arXiv: 2603.10376.",
+        "zh": "arXiv：2603.10376。"
       },
       "venue_html": {
-        "en": "arXiv: 2603.10376",
-        "zh": "arXiv: 2603.10376"
+        "en": "arXiv: 2603.10376.",
+        "zh": "arXiv：2603.10376。"
       },
       "links": [
         {
@@ -2462,7 +2504,10 @@
       "publication_state": "forthcoming",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
       "journal": {
         "journaltitle": "International Mathematics Research Notices",
         "shortjournal": "IMRN",
@@ -2472,12 +2517,12 @@
         "pages": "",
         "eid": "",
         "publisher": "",
-        "doi": "",
+        "doi": "10.1093/imrn/rnag233",
         "url": ""
       },
       "date": "2026-04-05",
       "year": 2026,
-      "order": 3,
+      "order": 0,
       "arxiv": "2604.03618",
       "title": {
         "en": "On $u$-Multiple Zeta Values in Positive Characteristic",
@@ -2517,6 +2562,13 @@
             "zh": "PDF"
           },
           "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
+        },
+        {
+          "label": {
+            "en": "DOI",
+            "zh": "DOI"
+          },
+          "url": "https://doi.org/10.1093/imrn/rnag233"
         }
       ],
       "homepage_title_html": {
@@ -2535,7 +2587,7 @@
       },
       "arxiv_url": "https://arxiv.org/abs/2604.03618",
       "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
-      "doi_url": "",
+      "doi_url": "https://doi.org/10.1093/imrn/rnag233",
       "journal_url": "",
       "code_url": "",
       "bibtex": "",
@@ -2553,15 +2605,29 @@
       "publication_state": "preprint",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
-      "journal": {},
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "title": {
         "en": "On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result",
         "zh": "正特徵上的多重 Eisenstein 級數：直和定理"
       },
       "venue": {
-        "en": "arXiv: 2609.18777",
-        "zh": "arXiv: 2609.18777"
+        "en": "arXiv: 2609.18777.",
+        "zh": "arXiv：2609.18777。"
       },
       "arxiv": "2609.18777",
       "arxiv_url": "https://arxiv.org/abs/2609.18777",
@@ -2602,8 +2668,8 @@
         "zh": "張介玉, 陳松筠, 黃斐浚, 崔鴻竣"
       },
       "venue_html": {
-        "en": "arXiv: 2609.18777",
-        "zh": "arXiv: 2609.18777"
+        "en": "arXiv: 2609.18777.",
+        "zh": "arXiv：2609.18777。"
       },
       "id": "publication-2026-09-16-entry",
       "display_placements": [],
@@ -2620,15 +2686,29 @@
       "publication_state": "preprint",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
-      "journal": {},
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "title": {
         "en": "Mishiba's Conjecture on the Coaction of $\\infty$-adic Multiple Zeta Values",
         "zh": "$\\infty$-進多重 zeta 值餘作用的 Mishiba 猜想"
       },
       "venue": {
-        "en": "arXiv: 2609.30823",
-        "zh": "arXiv: 2609.30823"
+        "en": "arXiv: 2609.30823.",
+        "zh": "arXiv：2609.30823。"
       },
       "arxiv": "2609.30823",
       "arxiv_url": "https://arxiv.org/abs/2609.30823",
@@ -2669,8 +2749,8 @@
         "zh": "崔鴻竣"
       },
       "venue_html": {
-        "en": "arXiv: 2609.30823",
-        "zh": "arXiv: 2609.30823"
+        "en": "arXiv: 2609.30823.",
+        "zh": "arXiv：2609.30823。"
       },
       "id": "publication-2026-09-25-infty-zeta-mishiba",
       "display_placements": [],
@@ -2687,15 +2767,29 @@
       "publication_state": "preprint",
       "classification_mode": "auto",
       "show_arxiv_in_status": true,
-      "publication_note": { "en": "", "zh": "" },
-      "journal": {},
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
       "title": {
         "en": "Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture",
         "zh": "正特徵多重 zeta 值：Kaneko-Zagier 型猜想"
       },
       "venue": {
-        "en": "",
-        "zh": ""
+        "en": "arXiv: 2609.37450.",
+        "zh": "arXiv：2609.37450。"
       },
       "arxiv": "2609.37450",
       "arxiv_url": "https://arxiv.org/abs/2609.37450",
@@ -2736,8 +2830,8 @@
         "zh": "崔鴻竣"
       },
       "venue_html": {
-        "en": "",
-        "zh": ""
+        "en": "arXiv: 2609.37450.",
+        "zh": "arXiv：2609.37450。"
       },
       "id": "publication-2026-09-28-zeta-kaneko-zagier",
       "display_placements": [],
