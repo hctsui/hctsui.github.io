@@ -2686,7 +2686,7 @@
       "date": "2026-09-28",
       "publication_state": "preprint",
       "classification_mode": "auto",
-      "show_arxiv_in_status": false,
+      "show_arxiv_in_status": true,
       "publication_note": { "en": "", "zh": "" },
       "journal": {},
       "title": {
@@ -2694,8 +2694,8 @@
         "zh": "正特徵多重 zeta 值：Kaneko-Zagier 型猜想"
       },
       "venue": {
-        "en": "arXiv: 2609.37450",
-        "zh": "arXiv: 2609.37450"
+        "en": "",
+        "zh": ""
       },
       "arxiv": "2609.37450",
       "arxiv_url": "https://arxiv.org/abs/2609.37450",
@@ -2736,8 +2736,8 @@
         "zh": "崔鴻竣"
       },
       "venue_html": {
-        "en": "arXiv: 2609.37450",
-        "zh": "arXiv: 2609.37450"
+        "en": "",
+        "zh": ""
       },
       "id": "publication-2026-09-28-zeta-kaneko-zagier",
       "display_placements": [],
