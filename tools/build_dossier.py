@@ -126,9 +126,10 @@ def item_meta_html(item: dict[str, Any], lang: str) -> str:
 def item_links(item: dict[str, Any], lang: str) -> str:
     rows: list[tuple[str, str]] = []
     for link in item.get("links", []):
-        if isinstance(link, dict) and link.get("url"):
+        label = pair(link.get("label"), lang) if isinstance(link, dict) else ""
+        if isinstance(link, dict) and link.get("url") and label.casefold() != "doi":
             rows.append((pair(link.get("label"), lang) or "Link", str(link["url"])))
-    for label, field in (("arXiv", "arxiv_url"), ("PDF", "pdf_url"), ("DOI", "doi_url"), ("Journal", "journal_url")):
+    for label, field in (("Journal", "journal_url"), ("arXiv", "arxiv_url"), ("PDF", "pdf_url")):
         url = str(item.get(field) or "")
         if url and all(existing != url for _, existing in rows):
             rows.append((label, url))
