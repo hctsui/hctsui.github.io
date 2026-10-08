@@ -249,6 +249,152 @@ class BibtexTests(unittest.TestCase):
             "To appear in [b]International Mathematics Research Notices (IMRN)[/b].",
         )
         self.assertNotIn("arXiv", publication_status_text(item, "en"))
+        self.assertEqual(
+            [link["label"]["en"] for link in item["links"]],
+            ["Journal", "arXiv", "PDF"],
+        )
+        self.assertEqual(item["doi_url"], "https://doi.org/10.1093/imrn/example")
+        self.assertEqual(item["links"][0]["url"], "https://academic.oup.com/imrn/example")
+
+        article = render_publication_article(item, "en")
+        self.assertNotIn(">DOI</a>", article)
+        self.assertLess(article.index(">Journal</a>"), article.index(">arXiv</a>"))
+        self.assertLess(article.index(">arXiv</a>"), article.index(">PDF</a>"))
+        self.assertLess(article.index(">PDF</a>"), article.index(">Cite</button>"))
+
+        biblatex = publication_bibtex(item)
+        self.assertIn("@article{", biblatex)
+        self.assertIn("journal = {International Mathematics Research Notices}", biblatex)
+        self.assertNotIn("journaltitle =", biblatex)
+        self.assertNotIn("shortjournal =", biblatex)
+        self.assertIn("note = {To appear}", biblatex)
+        self.assertNotIn("pubstate =", biblatex)
+        self.assertIn("doi = {10.1093/imrn/example}", biblatex)
+        self.assertNotIn("url =", biblatex)
+        self.assertNotIn("eprint =", biblatex)
+
+        bibitem = publication_bibitem(item)
+        self.assertIn(r"\textbf{International Mathematics Research Notices (IMRN)}", bibitem)
+        self.assertIn("to appear", bibitem)
+        self.assertIn("doi: 10.1093/imrn/example", bibitem)
+        self.assertNotIn("https://", bibitem)
+        self.assertNotIn("arXiv:", bibitem)
+
+
+    def test_main_replacement_accepts_latex_backslashes(self) -> None:
+        page = '<html><body><main id="main">old</main></body></html>'
+        replaced = replace_main(page, r'<pre>\bibitem{x} \emph{Title}</pre>')
+        self.assertIn(r'\bibitem{x} \emph{Title}', replaced)
+
+    def test_publication_html_has_matching_action_buttons_and_working_citation_controls(self) -> None:
+        rendered = render_publication_article(self.publication(), "en")
+        self.assertIn('<a class="publication-action"', rendered)
+        self.assertIn('class="publication-action pub-citation-toggle"', rendered)
+        self.assertIn("data-bibtex-toggle", rendered)
+        self.assertIn("data-citation-toggle", rendered)
+        self.assertIn("data-citation-close", rendered)
+        self.assertIn("data-copy-bibtex", rendered)
+        self.assertIn("data-copy-citation", rendered)
+        self.assertIn('data-citation-format="bibtex"', rendered)
+        self.assertIn('data-citation-format="bibitem"', rendered)
+        self.assertIn('class="citation-panel"', rendered)
+        self.assertIn("Copy biblatex", rendered)
+        self.assertIn(r"Copy \bibitem", rendered)
+        self.assertIn(">Cite</button>", rendered)
+        self.assertIn(r"LaTeX \bibitem", rendered)
+        self.assertNotIn("\b", rendered)
+
+    def test_publication_author_line_bolds_owner_but_not_coauthors(self) -> None:
+        rendered = render_publication_article(self.publication(), "en")
+        self.assertIn("<strong>Hung-Chun Tsui</strong>", rendered)
+        self.assertNotIn("<strong>Ting-Wei Chang</strong>", rendered)
+
+    def test_chinese_publication_author_line_bolds_chinese_owner_name(self) -> None:
+        item = self.publication()
+        item["authors"]["zh"] = "張庭瑋, 崔鴻竣"
+        item["authors_html"] = {"zh": "張庭瑋, 崔鴻竣"}
+        rendered = render_publication_article(item, "zh")
+        self.assertIn("<strong>崔鴻竣</strong>", rendered)
+        self.assertNotIn("<strong>張庭瑋</strong>", rendered)
+
+    def test_homepage_publication_override_also_bolds_owner(self) -> None:
+        item = self.publication()
+        item["homepage_authors_html"] = {"en": "Ting-Wei Chang and Hung-Chun Tsui"}
+        rendered = render_publication_article(item, "en", homepage=True)
+        self.assertIn("<strong>Hung-Chun Tsui</strong>", rendered)
+
+    def test_existing_owner_emphasis_is_not_nested(self) -> None:
+        item = self.publication()
+        item["homepage_authors_html"] = {"en": "Ting-Wei Chang and <strong>Hung-Chun Tsui</strong>"}
+        rendered = render_publication_article(item, "en", homepage=True)
+        self.assertEqual(rendered.count("<strong>Hung-Chun Tsui</strong>"), 1)
+        self.assertNotIn("<strong><strong>", rendered)
+
+    def test_owner_name_is_not_globally_bolded_outside_publications(self) -> None:
+        self.assertEqual(rich_html("Hung-Chun Tsui"), "Hung-Chun Tsui")
+
+
+class StaticMathTests(unittest.TestCase):
+    def test_common_number_theory_tex_is_rendered_without_external_dependency(self) -> None:
+        rendered = rich_html(r"$\mathfrak{p}$-adic over $\mathbb{F}_q((t))$")
+        self.assertIn("𝔭", rendered)
+        self.assertIn("𝔽", rendered)
+        self.assertIn("<sub>q</sub>", rendered)
+        self.assertIn('data-tex-inline="\\mathfrak{p}"', rendered)
+
+    def test_inline_tex_has_mathjax_source_and_readable_fallback(self) -> None:
+        rendered = rich_html(r"$q$-shuffle and $\infty$-adic")
+        self.assertIn('data-tex-inline="q"', rendered)
+        self.assertIn('data-tex-inline="\\infty"', rendered)
+        self.assertIn("∞", rendered)
+        self.assertIn('</span>-shuffle', rendered)
+
+    def test_saved_html_preserves_emphasis_and_escapes_other_tags(self) -> None:
+        rendered = stored_rich_html(r'<em>u</em>-values and $q$-shuffle &lt;script&gt;bad&lt;/script&gt;')
+        self.assertIn('<em>u</em>-values', rendered)
+        self.assertIn('data-tex-inline="q"', rendered)
+        self.assertIn('&lt;script&gt;bad&lt;/script&gt;', rendered)
+        self.assertNotIn('<script>', rendered)
+
+    def test_saved_math_fallback_is_rehydrated_without_trusting_nested_html(self) -> None:
+        saved = rich_html(r"$\mathbb{F}_q$-adic and $\infty$-adic")
+        restored = stored_rich_html(saved)
+        self.assertIn('data-tex-inline="\\mathbb{F}_q"', restored)
+        self.assertIn('data-tex-inline="\\infty"', restored)
+        self.assertEqual(restored.count('data-tex-inline'), 2)
+
+
+if __name__ == "__main__":
+    unittest.main()
+        item = self.publication()
+        item.update({
+            "publication_state": "forthcoming",
+            "classification_mode": "auto",
+            "show_arxiv_in_status": False,
+            "pdf_url": "https://example.com/paper.pdf",
+            "doi_url": "https://doi.org/10.1093/imrn/example",
+            "journal_url": "https://academic.oup.com/imrn/example",
+            "journal": {
+                "journaltitle": "International Mathematics Research Notices",
+                "shortjournal": "IMRN",
+                "date": "",
+                "volume": "",
+                "number": "",
+                "pages": "",
+                "eid": "",
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/imrn/example",
+                "url": "https://academic.oup.com/imrn/example",
+            },
+        })
+        normalize_publication(item)
+        self.assertEqual(item["group_id"], "journal-articles")
+        self.assertEqual(item["category_id"], "publication-journal-articles")
+        self.assertEqual(
+            publication_status_text(item, "en"),
+            "To appear in [b]International Mathematics Research Notices (IMRN)[/b].",
+        )
+        self.assertNotIn("arXiv", publication_status_text(item, "en"))
         self.assertTrue(any(link["label"]["en"] == "arXiv" for link in item["links"]))
 
         biblatex = publication_bibtex(item)
