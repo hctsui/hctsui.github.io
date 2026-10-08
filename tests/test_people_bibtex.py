@@ -225,6 +225,7 @@ class BibtexTests(unittest.TestCase):
             "publication_state": "forthcoming",
             "classification_mode": "auto",
             "show_arxiv_in_status": False,
+            "pdf_url": "https://example.com/paper.pdf",
             "doi_url": "https://doi.org/10.1093/imrn/example",
             "journal_url": "https://academic.oup.com/imrn/example",
             "journal": {
