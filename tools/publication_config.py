@@ -210,10 +210,9 @@ def normalize_publication(entry: dict[str, Any]) -> dict[str, Any]:
         and str((link.get("label") or {}).get("en") or "").strip().casefold() not in canonical
     ]
     for label, url in (
+        ("Journal", entry.get("journal_url")),
         ("arXiv", entry.get("arxiv_url")),
         ("PDF", entry.get("pdf_url")),
-        ("DOI", entry.get("doi_url")),
-        ("Journal", entry.get("journal_url")),
         ("Code", entry.get("code_url")),
     ):
         if url:
