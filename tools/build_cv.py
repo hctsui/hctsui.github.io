@@ -167,8 +167,11 @@ def render_organization(entry: dict[str, Any], lang: str) -> str:
 
 
 def publication_links(entry: dict[str, Any], lang: str) -> str:
-    preferred = {"PDF": 0, "arXiv": 1, "Journal": 2, "DOI": 3, "Code": 4}
-    links = [x for x in entry.get("links", []) if x.get("url")]
+    preferred = {"Journal": 0, "arXiv": 1, "PDF": 2, "Code": 3}
+    links = [
+        x for x in entry.get("links", [])
+        if x.get("url") and str((x.get("label") or {}).get("en") or "").casefold() != "doi"
+    ]
     links.sort(key=lambda x: preferred.get((x.get("label") or {}).get("en", ""), 99))
     rendered = []
     for link in links:
