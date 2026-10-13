@@ -103,13 +103,13 @@
 | teaching | MATH5410 Modern Algebra I | MATH5410 近世代數（一） | `teaching-2026-09-12-math5410` |
 | teaching | MATH5640 Algebraic Geometry | MATH5640 代數幾何 | `teaching-Fall 2026-math5640` |
 | teaching | MATH1000 Precalculus | MATH1000 微積分預備課程 | `teaching-2026-09-12-math1000` |
-| teaching | MATH2410 Algebra I | MATH2410 代數（一） | `teaching-1-math2410-algebra-i` |
-| teaching | MATH2420 Algebra II | MATH2420 代數（二） | `teaching-2-math2420-algebra-ii` |
 | teaching | MATH2870 Discrete Mathematics | MATH2870 離散數學 | `teaching-3-math2870-discrete-mathematics` |
+| teaching | MATH2420 Algebra II | MATH2420 代數（二） | `teaching-2-math2420-algebra-ii` |
+| teaching | MATH2410 Algebra I | MATH2410 代數（一） | `teaching-1-math2410-algebra-i` |
 | teaching | MATH3450 Cryptography | MATH3450 密碼學 | `teaching-4-math3450-cryptography` |
-| teaching | MATH1410 Linear Algebra I | MATH1410 線性代數（一） | `teaching-5-math1410-linear-algebra-i` |
-| teaching | MATH1420 Linear Algebra II | MATH1420 線性代數（二） | `teaching-6-math1420-linear-algebra-ii` |
 | teaching | MATH3050 Complex Analysis | MATH3050 複變數函數論 | `teaching-7-math3050-complex-analysis` |
-| teaching | MATH2010 Advanced Calculus I | MATH2010 高等微積分（一） | `teaching-8-math2010-advanced-calculus-i` |
+| teaching | MATH1420 Linear Algebra II | MATH1420 線性代數（二） | `teaching-6-math1420-linear-algebra-ii` |
+| teaching | MATH1410 Linear Algebra I | MATH1410 線性代數（一） | `teaching-5-math1410-linear-algebra-i` |
 | teaching | MATH2020 Advanced Calculus II | MATH2020 高等微積分（二） | `teaching-9-math2020-advanced-calculus-ii` |
+| teaching | MATH2010 Advanced Calculus I | MATH2010 高等微積分（一） | `teaching-8-math2010-advanced-calculus-i` |
 

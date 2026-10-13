@@ -2271,7 +2271,7 @@
       },
       "date": "2025-04-22",
       "year": 2025,
-      "order": 6,
+      "order": 5,
       "arxiv": "2504.15697",
       "title": {
         "en": "Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
@@ -2352,7 +2352,7 @@
       },
       "date": "2025-04-26",
       "year": 2025,
-      "order": 5,
+      "order": 4,
       "arxiv": "2504.18879",
       "title": {
         "en": "On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
@@ -2433,7 +2433,7 @@
       },
       "date": "2026-03-11",
       "year": 2026,
-      "order": 4,
+      "order": 3,
       "arxiv": "2603.10376",
       "title": {
         "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
@@ -2835,7 +2835,7 @@
     {
       "id": "teaching-1-math2410-algebra-i",
       "type": "teaching",
-      "order": 3,
+      "order": 5,
       "term": {
         "en": "Fall 2025",
         "zh": "2025 秋"
@@ -2883,7 +2883,7 @@
     {
       "id": "teaching-3-math2870-discrete-mathematics",
       "type": "teaching",
-      "order": 5,
+      "order": 3,
       "term": {
         "en": "Spring 2026",
         "zh": "2026 春"
@@ -2931,7 +2931,7 @@
     {
       "id": "teaching-5-math1410-linear-algebra-i",
       "type": "teaching",
-      "order": 7,
+      "order": 9,
       "term": {
         "en": "Fall 2024",
         "zh": "2024 秋"
@@ -2979,7 +2979,7 @@
     {
       "id": "teaching-7-math3050-complex-analysis",
       "type": "teaching",
-      "order": 9,
+      "order": 7,
       "term": {
         "en": "Spring 2025",
         "zh": "2025 春"
@@ -3003,7 +3003,7 @@
     {
       "id": "teaching-8-math2010-advanced-calculus-i",
       "type": "teaching",
-      "order": 10,
+      "order": 11,
       "term": {
         "en": "Fall 2023",
         "zh": "2023 秋"
@@ -3027,7 +3027,7 @@
     {
       "id": "teaching-9-math2020-advanced-calculus-ii",
       "type": "teaching",
-      "order": 11,
+      "order": 10,
       "term": {
         "en": "Spring 2024",
         "zh": "2024 春"
