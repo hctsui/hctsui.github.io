@@ -3992,6 +3992,101 @@
       "index_before": 28,
       "index_after": 28,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-129-op-1",
+      "batch_issue": 129,
+      "applied_at": "2026-10-14T06:07:10.057669Z",
+      "expires_at": "2026-10-21T06:07:10.057669Z",
+      "reverted_by": null,
+      "request_digest": "25ee26d401a5efea68a5909f3b1a9c7e5e199fca9776937462ed44d356c51ba0",
+      "request_action": "update",
+      "action": "update",
+      "type": "conference",
+      "entry_id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+      "label": {
+        "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamics",
+        "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+      },
+      "before": {
+        "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+        "type": "conference",
+        "start_date": "2025-01-02",
+        "end_date": "2025-01-03",
+        "show_upcoming": false,
+        "title": {
+          "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic",
+          "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+        },
+        "title_html": {
+          "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic",
+          "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+        },
+        "url": "https://idv.sinica.edu.tw/mathas/202501SCV/index.html",
+        "description": {
+          "en": "Academia Sinica, Taipei, Taiwan",
+          "zh": "中央研究院, 臺北, 臺灣"
+        },
+        "description_html": {
+          "en": "Academia Sinica, Taipei, Taiwan",
+          "zh": "中央研究院, 臺北, 臺灣"
+        },
+        "slides_url": "",
+        "role": {
+          "en": "",
+          "zh": ""
+        },
+        "category_id": "activity-conferences",
+        "order": 19,
+        "display_placements": []
+      },
+      "after": {
+        "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+        "type": "conference",
+        "start_date": "2025-01-02",
+        "end_date": "2025-01-03",
+        "show_upcoming": false,
+        "title": {
+          "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamics",
+          "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+        },
+        "title_html": {
+          "en": "Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamics",
+          "zh": "Nevanlinna 理論、雙曲性與算術動力系統導論"
+        },
+        "url": "https://idv.sinica.edu.tw/mathas/202501SCV/index.html",
+        "description": {
+          "en": "Academia Sinica, Taipei, Taiwan",
+          "zh": "中央研究院, 臺北, 臺灣"
+        },
+        "description_html": {
+          "en": "Academia Sinica, Taipei, Taiwan",
+          "zh": "中央研究院, 臺北, 臺灣"
+        },
+        "slides_url": "",
+        "category_id": "activity-conferences",
+        "order": 19,
+        "display_placements": [],
+        "venue": {
+          "en": "Academia Sinica",
+          "zh": "中央研究院"
+        },
+        "city": {
+          "en": "Taipei",
+          "zh": "臺北"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "venue_html": {
+          "en": "Academia Sinica",
+          "zh": "中央研究院"
+        }
+      },
+      "index_before": 21,
+      "index_after": 21,
+      "undo_of": null
     }
   ]
 }

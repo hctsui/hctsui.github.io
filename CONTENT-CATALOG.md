@@ -90,7 +90,7 @@
 | conference | The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2 | 第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第二週 | `conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w` |
 | conference | The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1 | 第 17 屆日本數學會季節研究所「多重 zeta 值的發展」第一週 | `conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w` |
 | conference | The 60th TMS Annual Meeting | 中華民國數學會第 60 屆年會 | `conference-2025-01-14-the-60th-tms-annual-meeting` |
-| conference | Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamic | Nevanlinna 理論、雙曲性與算術動力系統導論 | `conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar` |
+| conference | Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamics | Nevanlinna 理論、雙曲性與算術動力系統導論 | `conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar` |
 | conference | NCTS One-Day Workshop on Number Theory | NCTS 一日工作坊 | `conference-2024-12-18-ncts` |
 | conference | Summer School on Arithmetic Geometry | 算術幾何暑期學校 | `conference-2024-07-01-entry` |
 | conference | The 59th TMS Annual Meeting | 中華民國數學會第 59 屆年會 | `conference-2024-01-22-the-59th-tms-annual-meeting` |
