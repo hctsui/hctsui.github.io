@@ -3873,6 +3873,125 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-128-op-1",
+      "batch_issue": 128,
+      "applied_at": "2026-10-14T05:59:32.439406Z",
+      "expires_at": "2026-10-21T05:59:32.439406Z",
+      "reverted_by": null,
+      "request_digest": "a3dbc97cfd090bcbcd865f18df4c2d1aa8e1f386bc5c7f03732c6881ef8b8261",
+      "request_action": "update",
+      "action": "update",
+      "type": "conference",
+      "entry_id": "conference-2026-12-28-12-postech-pmi-ncts",
+      "label": {
+        "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+        "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+      },
+      "before": {
+        "type": "conference",
+        "category_id": "activity-conferences",
+        "role": {
+          "en": "Speaker",
+          "zh": "講者"
+        },
+        "start_date": "2026-12-28",
+        "end_date": "2026-12-31",
+        "title": {
+          "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+          "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+        },
+        "venue": {
+          "en": "National Taiwan University",
+          "zh": "國立臺灣大學"
+        },
+        "city": {
+          "en": "Taipei",
+          "zh": "臺北"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=581",
+        "description": {
+          "en": "National Taiwan University, Taipei, Taiwan",
+          "zh": "國立臺灣大學, 臺北, 臺灣"
+        },
+        "description_html": {
+          "en": "National Taiwan University, Taipei, Taiwan",
+          "zh": "國立臺灣大學, 臺北, 臺灣"
+        },
+        "title_html": {
+          "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+          "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+        },
+        "id": "conference-2026-12-28-12-postech-pmi-ncts",
+        "display_placements": [],
+        "venue_html": {
+          "en": "National Taiwan University",
+          "zh": "國立臺灣大學"
+        },
+        "role_html": {
+          "en": "Speaker",
+          "zh": "講者"
+        },
+        "order": 0
+      },
+      "after": {
+        "type": "conference",
+        "category_id": "activity-conferences",
+        "role": {
+          "en": "Speaker",
+          "zh": "講者"
+        },
+        "start_date": "2026-12-28",
+        "end_date": "2026-12-31",
+        "title": {
+          "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+          "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+        },
+        "venue": {
+          "en": "National Taiwan University",
+          "zh": "國立臺灣大學"
+        },
+        "city": {
+          "en": "Taipei",
+          "zh": "臺北"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "https://ncts.ad-design.tw/news/Events/conferences/5926",
+        "description": {
+          "en": "National Taiwan University, Taipei, Taiwan",
+          "zh": "國立臺灣大學, 臺北, 臺灣"
+        },
+        "description_html": {
+          "en": "National Taiwan University, Taipei, Taiwan",
+          "zh": "國立臺灣大學, 臺北, 臺灣"
+        },
+        "title_html": {
+          "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
+          "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
+        },
+        "id": "conference-2026-12-28-12-postech-pmi-ncts",
+        "display_placements": [],
+        "venue_html": {
+          "en": "National Taiwan University",
+          "zh": "國立臺灣大學"
+        },
+        "role_html": {
+          "en": "Speaker",
+          "zh": "講者"
+        },
+        "order": 0
+      },
+      "index_before": 28,
+      "index_after": 28,
+      "undo_of": null
     }
   ]
 }
