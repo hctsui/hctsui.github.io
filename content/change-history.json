@@ -6048,6 +6048,636 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-131-op-1",
+      "batch_issue": 131,
+      "applied_at": "2026-10-15T23:49:44.125797Z",
+      "expires_at": "2026-10-22T23:49:44.125797Z",
+      "reverted_by": null,
+      "request_digest": "ea3f2a1d8f9c0011461e679f5835fc6c08af6cf2ea05d4874dd625baf9e94fbf",
+      "request_action": "update",
+      "action": "update",
+      "type": "talk",
+      "entry_id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
+      "label": {
+        "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的近期發展"
+      },
+      "before": {
+        "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
+        "type": "talk",
+        "start_date": "2026-07-06",
+        "end_date": "2026-07-06",
+        "show_upcoming": false,
+        "title": {
+          "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的近期發展"
+        },
+        "title_html": {
+          "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的近期發展"
+        },
+        "url": "",
+        "description": {
+          "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
+          "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+        },
+        "description_html": {
+          "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
+          "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+        },
+        "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
+        "category_id": "activity-talks",
+        "order": 1,
+        "display_placements": [],
+        "event": {
+          "en": "Tohoku University Number Theory Seminar",
+          "zh": "東北大學數論研討會"
+        },
+        "venue": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        }
+      },
+      "after": {
+        "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
+        "type": "talk",
+        "start_date": "2026-07-06",
+        "end_date": "2026-07-06",
+        "show_upcoming": false,
+        "title": {
+          "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的近期發展"
+        },
+        "title_html": {
+          "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的近期發展"
+        },
+        "url": "https://sites.google.com/view/tohoku-number-semiar/2026?authuser=0",
+        "description": {
+          "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
+          "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+        },
+        "description_html": {
+          "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
+          "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
+        },
+        "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
+        "category_id": "activity-talks",
+        "order": 1,
+        "display_placements": [],
+        "event": {
+          "en": "Tohoku University Number Theory Seminar",
+          "zh": "東北大學數論研討會"
+        },
+        "venue": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        }
+      },
+      "index_before": 1,
+      "index_after": 1,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-131-op-2",
+      "batch_issue": 131,
+      "applied_at": "2026-10-15T23:49:44.125797Z",
+      "expires_at": "2026-10-22T23:49:44.125797Z",
+      "reverted_by": null,
+      "request_digest": "ce0dd590fb0041fdf3ed1536900c10ef35cb5ec2dda593fa3a35e2da7e691344",
+      "request_action": "update",
+      "action": "update",
+      "type": "talk",
+      "entry_id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
+      "label": {
+        "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+        "zh": "正特徵多重 zeta 值的導子"
+      },
+      "before": {
+        "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
+        "type": "talk",
+        "start_date": "2026-06-12",
+        "end_date": "2026-06-12",
+        "show_upcoming": false,
+        "title": {
+          "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵多重 zeta 值的導子"
+        },
+        "title_html": {
+          "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵多重 zeta 值的導子"
+        },
+        "url": "",
+        "description": {
+          "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
+          "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+        },
+        "description_html": {
+          "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
+          "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+        },
+        "slides_url": "",
+        "category_id": "activity-talks",
+        "order": 2,
+        "display_placements": []
+      },
+      "after": {
+        "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
+        "type": "talk",
+        "start_date": "2026-06-12",
+        "end_date": "2026-06-12",
+        "show_upcoming": false,
+        "title": {
+          "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵多重 zeta 值的導子"
+        },
+        "title_html": {
+          "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
+          "zh": "正特徵多重 zeta 值的導子"
+        },
+        "url": "https://sites.google.com/view/workshoponarithmeticoffunction/scheduleabstract?authuser=0",
+        "description": {
+          "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
+          "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+        },
+        "description_html": {
+          "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
+          "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
+        },
+        "slides_url": "",
+        "category_id": "activity-talks",
+        "order": 2,
+        "display_placements": [],
+        "event": {
+          "en": "Workshop on Arithmetic of Function Fields",
+          "zh": "函數體算術工作坊"
+        },
+        "venue": {
+          "en": "National Cheng Kung University",
+          "zh": "國立成功大學"
+        },
+        "city": {
+          "en": "Tainan",
+          "zh": "臺南"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "venue_html": {
+          "en": "National Cheng Kung University",
+          "zh": "國立成功大學"
+        }
+      },
+      "index_before": 2,
+      "index_after": 2,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-131-op-3",
+      "batch_issue": 131,
+      "applied_at": "2026-10-15T23:49:44.125797Z",
+      "expires_at": "2026-10-22T23:49:44.125797Z",
+      "reverted_by": null,
+      "request_digest": "2eca6bda2704be89e29703fad34540dcf9db8f368faba47a9cee93ee6ec81ff7",
+      "request_action": "update",
+      "action": "update",
+      "type": "talk",
+      "entry_id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
+      "label": {
+        "en": "On Finite Multiple Harmonic $u$-series over Function Field",
+        "zh": "函數體上的有限多重調和 $u$-級數"
+      },
+      "before": {
+        "id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
+        "type": "talk",
+        "start_date": "2026-02-08",
+        "end_date": "2026-02-08",
+        "show_upcoming": false,
+        "title": {
+          "en": "On Finite Multiple Harmonic $u$-series over Function Field",
+          "zh": "函數體上的有限多重調和 $u$-級數"
+        },
+        "title_html": {
+          "en": "On Finite Multiple Harmonic $u$-series over Function Field",
+          "zh": "函數體上的有限多重調和 $u$-級數"
+        },
+        "url": "",
+        "description": {
+          "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
+          "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
+        },
+        "description_html": {
+          "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
+          "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
+        },
+        "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
+        "category_id": "activity-talks",
+        "order": 3,
+        "display_placements": [],
+        "event": {
+          "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
+          "zh": "名古屋—關西青年研究者 zeta 研討會"
+        },
+        "venue": {
+          "en": "Nagoya University",
+          "zh": "名古屋大學"
+        },
+        "city": {
+          "en": "Nagoya",
+          "zh": "名古屋"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Nagoya University",
+          "zh": "名古屋大學"
+        }
+      },
+      "after": {
+        "id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
+        "type": "talk",
+        "start_date": "2026-02-08",
+        "end_date": "2026-02-08",
+        "show_upcoming": false,
+        "title": {
+          "en": "On Finite Multiple Harmonic $u$-series over Function Field",
+          "zh": "函數體上的有限多重調和 $u$-級數"
+        },
+        "title_html": {
+          "en": "On Finite Multiple Harmonic <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-series over Function Field",
+          "zh": "函數體上的有限多重調和 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-級數"
+        },
+        "url": "https://sites.google.com/view/zetayoung19/speakers-program?authuser=0",
+        "description": {
+          "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
+          "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
+        },
+        "description_html": {
+          "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
+          "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
+        },
+        "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
+        "category_id": "activity-talks",
+        "order": 3,
+        "display_placements": [],
+        "event": {
+          "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
+          "zh": "名古屋—關西青年研究者 zeta 研討會"
+        },
+        "venue": {
+          "en": "Nagoya University",
+          "zh": "名古屋大學"
+        },
+        "city": {
+          "en": "Nagoya",
+          "zh": "名古屋"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Nagoya University",
+          "zh": "名古屋大學"
+        }
+      },
+      "index_before": 3,
+      "index_after": 3,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-131-op-4",
+      "batch_issue": 131,
+      "applied_at": "2026-10-15T23:49:44.125797Z",
+      "expires_at": "2026-10-22T23:49:44.125797Z",
+      "reverted_by": null,
+      "request_digest": "68223519001170d65fbdb690d92bb7fd832148c328562a5a01ad66c8efcdfccd",
+      "request_action": "update",
+      "action": "update",
+      "type": "talk",
+      "entry_id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
+      "label": {
+        "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+        "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+      },
+      "before": {
+        "id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
+        "type": "talk",
+        "start_date": "2025-09-30",
+        "end_date": "2025-09-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+          "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        },
+        "title_html": {
+          "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+          "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        },
+        "url": "",
+        "description": {
+          "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
+          "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+        },
+        "description_html": {
+          "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
+          "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+        },
+        "slides_url": "",
+        "category_id": "activity-talks",
+        "order": 4,
+        "display_placements": []
+      },
+      "after": {
+        "id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
+        "type": "talk",
+        "start_date": "2025-09-30",
+        "end_date": "2025-09-30",
+        "show_upcoming": false,
+        "title": {
+          "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+          "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        },
+        "title_html": {
+          "en": "On <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+          "zh": "多重 zeta 值的 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        },
+        "url": "https://sites.google.com/view/rimsmzv2025/home",
+        "description": {
+          "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
+          "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+        },
+        "description_html": {
+          "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
+          "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
+        },
+        "slides_url": "",
+        "category_id": "activity-talks",
+        "order": 4,
+        "display_placements": [],
+        "event": {
+          "en": "Various Aspects of Multiple Zeta Values",
+          "zh": "多重 zeta 值的各種面向"
+        },
+        "venue": {
+          "en": "Kyoto University",
+          "zh": "京都大學"
+        },
+        "city": {
+          "en": "Kyoto",
+          "zh": "京都"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Kyoto University",
+          "zh": "京都大學"
+        }
+      },
+      "index_before": 4,
+      "index_after": 4,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-131-op-5",
+      "batch_issue": 131,
+      "applied_at": "2026-10-15T23:49:44.125797Z",
+      "expires_at": "2026-10-22T23:49:44.125797Z",
+      "reverted_by": null,
+      "request_digest": "eccb809285f36b5ef059d0fa099b63b7ed092ddd39c8c6d05fde68fa5489e360",
+      "request_action": "update",
+      "action": "update",
+      "type": "talk",
+      "entry_id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
+      "label": {
+        "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
+      },
+      "before": {
+        "id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
+        "type": "talk",
+        "start_date": "2025-09-03",
+        "end_date": "2025-09-03",
+        "show_upcoming": false,
+        "title": {
+          "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
+        },
+        "title_html": {
+          "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
+        },
+        "url": "",
+        "description": {
+          "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
+          "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+        },
+        "description_html": {
+          "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
+          "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+        },
+        "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
+        "category_id": "activity-talks",
+        "order": 5,
+        "display_placements": [],
+        "event": {
+          "en": "Japan-Taiwan Number Theory Conference",
+          "zh": "日臺數論會議"
+        },
+        "venue": {
+          "en": "Kyukamura Shikanoshima",
+          "zh": "休暇村志賀島"
+        },
+        "city": {
+          "en": "Fukuoka",
+          "zh": "福岡"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Kyukamura Shikanoshima",
+          "zh": "休暇村志賀島"
+        }
+      },
+      "after": {
+        "id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
+        "type": "talk",
+        "start_date": "2025-09-03",
+        "end_date": "2025-09-03",
+        "show_upcoming": false,
+        "title": {
+          "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
+        },
+        "title_html": {
+          "en": "On <span class=\"math-inline\" data-tex-inline=\"q\">q</span>-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+          "zh": "正特徵多重 Eisenstein 級數的 <span class=\"math-inline\" data-tex-inline=\"q\">q</span>-洗牌關係"
+        },
+        "url": "https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html",
+        "description": {
+          "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
+          "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+        },
+        "description_html": {
+          "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
+          "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
+        },
+        "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
+        "category_id": "activity-talks",
+        "order": 5,
+        "display_placements": [],
+        "event": {
+          "en": "Japan-Taiwan Number Theory Conference",
+          "zh": "日臺數論會議"
+        },
+        "venue": {
+          "en": "Kyukamura Shikanoshima",
+          "zh": "休暇村志賀島"
+        },
+        "city": {
+          "en": "Fukuoka",
+          "zh": "福岡"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Kyukamura Shikanoshima",
+          "zh": "休暇村志賀島"
+        }
+      },
+      "index_before": 5,
+      "index_after": 5,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-131-op-6",
+      "batch_issue": 131,
+      "applied_at": "2026-10-15T23:49:44.125797Z",
+      "expires_at": "2026-10-22T23:49:44.125797Z",
+      "reverted_by": null,
+      "request_digest": "21daf3f1112f726b66d55c12dd142c3e5c34728a758abfb78a94ff17ea770ed3",
+      "request_action": "update",
+      "action": "update",
+      "type": "talk",
+      "entry_id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
+      "label": {
+        "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+        "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
+      },
+      "before": {
+        "id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
+        "type": "talk",
+        "start_date": "2025-04-17",
+        "end_date": "2025-04-17",
+        "show_upcoming": false,
+        "title": {
+          "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+          "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
+        },
+        "title_html": {
+          "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+          "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
+        },
+        "url": "",
+        "description": {
+          "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+        },
+        "slides_url": "",
+        "category_id": "activity-talks",
+        "order": 6,
+        "display_placements": []
+      },
+      "after": {
+        "id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
+        "type": "talk",
+        "start_date": "2025-04-17",
+        "end_date": "2025-04-17",
+        "show_upcoming": false,
+        "title": {
+          "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+          "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
+        },
+        "title_html": {
+          "en": "On the Uniqueness of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+          "zh": "Gross–Koblitz–Thakur 公式中 <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Gamma 函數的唯一性"
+        },
+        "url": "https://www.math.nthu.edu.tw/download.php?dir=seminar_event&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf&title=2025.04.17",
+        "description": {
+          "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
+        },
+        "slides_url": "",
+        "category_id": "activity-talks",
+        "order": 6,
+        "display_placements": [],
+        "event": {
+          "en": "NTHU Workshop on Number Theory",
+          "zh": "國立清華大學數論工作坊"
+        },
+        "venue": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "venue_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        }
+      },
+      "index_before": 6,
+      "index_after": 6,
+      "undo_of": null
     }
   ]
 }

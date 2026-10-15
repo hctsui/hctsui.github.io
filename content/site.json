@@ -1185,7 +1185,7 @@
         "en": "Recent Developments on Multiple Eisenstein Series in Positive Characteristic",
         "zh": "正特徵多重 Eisenstein 級數的近期發展"
       },
-      "url": "",
+      "url": "https://sites.google.com/view/tohoku-number-semiar/2026?authuser=0",
       "description": {
         "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
         "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
@@ -1233,7 +1233,7 @@
         "en": "Derivations of Multiple Zeta Values in Positive Characteristic",
         "zh": "正特徵多重 zeta 值的導子"
       },
-      "url": "",
+      "url": "https://sites.google.com/view/workshoponarithmeticoffunction/scheduleabstract?authuser=0",
       "description": {
         "en": "Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan",
         "zh": "函數體算術工作坊, 國立成功大學, 臺南, 臺灣"
@@ -1245,7 +1245,27 @@
       "slides_url": "",
       "category_id": "activity-talks",
       "order": 2,
-      "display_placements": []
+      "display_placements": [],
+      "event": {
+        "en": "Workshop on Arithmetic of Function Fields",
+        "zh": "函數體算術工作坊"
+      },
+      "venue": {
+        "en": "National Cheng Kung University",
+        "zh": "國立成功大學"
+      },
+      "city": {
+        "en": "Tainan",
+        "zh": "臺南"
+      },
+      "country": {
+        "en": "Taiwan",
+        "zh": "臺灣"
+      },
+      "venue_html": {
+        "en": "National Cheng Kung University",
+        "zh": "國立成功大學"
+      }
     },
     {
       "id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
@@ -1258,10 +1278,10 @@
         "zh": "函數體上的有限多重調和 $u$-級數"
       },
       "title_html": {
-        "en": "On Finite Multiple Harmonic $u$-series over Function Field",
-        "zh": "函數體上的有限多重調和 $u$-級數"
+        "en": "On Finite Multiple Harmonic <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-series over Function Field",
+        "zh": "函數體上的有限多重調和 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-級數"
       },
-      "url": "",
+      "url": "https://sites.google.com/view/zetayoung19/speakers-program?authuser=0",
       "description": {
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
         "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
@@ -1306,10 +1326,10 @@
         "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
       },
       "title_html": {
-        "en": "On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
-        "zh": "多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
+        "en": "On <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field",
+        "zh": "多重 zeta 值的 <span class=\"math-inline\" data-tex-inline=\"u\">u</span>-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述"
       },
-      "url": "",
+      "url": "https://sites.google.com/view/rimsmzv2025/home",
       "description": {
         "en": "Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan",
         "zh": "多重 zeta 值的各種面向, 京都大學, 京都, 日本"
@@ -1321,7 +1341,27 @@
       "slides_url": "",
       "category_id": "activity-talks",
       "order": 4,
-      "display_placements": []
+      "display_placements": [],
+      "event": {
+        "en": "Various Aspects of Multiple Zeta Values",
+        "zh": "多重 zeta 值的各種面向"
+      },
+      "venue": {
+        "en": "Kyoto University",
+        "zh": "京都大學"
+      },
+      "city": {
+        "en": "Kyoto",
+        "zh": "京都"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "venue_html": {
+        "en": "Kyoto University",
+        "zh": "京都大學"
+      }
     },
     {
       "id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
@@ -1334,10 +1374,10 @@
         "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
       },
       "title_html": {
-        "en": "On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵多重 Eisenstein 級數的 $q$-洗牌關係"
+        "en": "On <span class=\"math-inline\" data-tex-inline=\"q\">q</span>-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的 <span class=\"math-inline\" data-tex-inline=\"q\">q</span>-洗牌關係"
       },
-      "url": "",
+      "url": "https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html",
       "description": {
         "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
         "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
@@ -1382,10 +1422,10 @@
         "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
       },
       "title_html": {
-        "en": "On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
-        "zh": "Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性"
+        "en": "On the Uniqueness of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas",
+        "zh": "Gross–Koblitz–Thakur 公式中 <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Gamma 函數的唯一性"
       },
-      "url": "",
+      "url": "https://www.math.nthu.edu.tw/download.php?dir=seminar_event&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf&title=2025.04.17",
       "description": {
         "en": "NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan",
         "zh": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣"
@@ -1397,7 +1437,27 @@
       "slides_url": "",
       "category_id": "activity-talks",
       "order": 6,
-      "display_placements": []
+      "display_placements": [],
+      "event": {
+        "en": "NTHU Workshop on Number Theory",
+        "zh": "國立清華大學數論工作坊"
+      },
+      "venue": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "city": {
+        "en": "Hsinchu",
+        "zh": "新竹"
+      },
+      "country": {
+        "en": "Taiwan",
+        "zh": "臺灣"
+      },
+      "venue_html": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      }
     },
     {
       "id": "conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop",
