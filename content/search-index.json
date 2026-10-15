@@ -500,6 +500,13 @@
     },
     {
       "language": "en",
+      "title": "Graded Structures of v-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values",
+      "description": "National Tsing Hua University · NCTS Number Theory Seminar · NCTS Number Theory Seminar, National Tsing Hua University, Hsinchu, Taiwan · Hsinchu · Taiwan",
+      "url": "/activities.html#talk-2026-10-15-v-carlitz-zeta",
+      "kind": "talk"
+    },
+    {
+      "language": "en",
       "title": "On Finite Multiple Harmonic u-series over Function Field",
       "description": "Nagoya University · Nagoya-Kansai Zeta Workshop for Young Researchers · Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan · Nagoya · Japan",
       "url": "/activities.html#talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
@@ -1119,6 +1126,13 @@
       "title": "Gross–Koblitz–Thakur 公式中 v-進 Gamma 函數的唯一性",
       "description": "國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣",
       "url": "/zh/activities.html#talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
+      "kind": "talk"
+    },
+    {
+      "language": "zh",
+      "title": "v-進 Carlitz 多重對數函數與多重 zeta 值的分次結構",
+      "description": "國立清華大學 · NCTS 數論研討會 · NCTS 數論研討會, 國立清華大學, 新竹, 臺灣 · 新竹 · 臺灣",
+      "url": "/zh/activities.html#talk-2026-10-15-v-carlitz-zeta",
       "kind": "talk"
     },
     {

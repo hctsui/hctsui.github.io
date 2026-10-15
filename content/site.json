@@ -1196,7 +1196,7 @@
       },
       "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
       "category_id": "activity-talks",
-      "order": 0,
+      "order": 1,
       "display_placements": [],
       "event": {
         "en": "Tohoku University Number Theory Seminar",
@@ -1244,7 +1244,7 @@
       },
       "slides_url": "",
       "category_id": "activity-talks",
-      "order": 1,
+      "order": 2,
       "display_placements": []
     },
     {
@@ -1272,7 +1272,7 @@
       },
       "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
       "category_id": "activity-talks",
-      "order": 2,
+      "order": 3,
       "display_placements": [],
       "event": {
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
@@ -1320,7 +1320,7 @@
       },
       "slides_url": "",
       "category_id": "activity-talks",
-      "order": 3,
+      "order": 4,
       "display_placements": []
     },
     {
@@ -1348,7 +1348,7 @@
       },
       "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
       "category_id": "activity-talks",
-      "order": 4,
+      "order": 5,
       "display_placements": [],
       "event": {
         "en": "Japan-Taiwan Number Theory Conference",
@@ -1396,7 +1396,7 @@
       },
       "slides_url": "",
       "category_id": "activity-talks",
-      "order": 5,
+      "order": 6,
       "display_placements": []
     },
     {
@@ -2238,6 +2238,53 @@
         "zh": "國立清華大學"
       },
       "order": 21
+    },
+    {
+      "type": "talk",
+      "category_id": "activity-talks",
+      "start_date": "2026-10-15",
+      "end_date": "2026-10-15",
+      "title": {
+        "en": "Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values",
+        "zh": "$v$-進 Carlitz 多重對數函數與多重 zeta 值的分次結構"
+      },
+      "event": {
+        "en": "NCTS Number Theory Seminar",
+        "zh": "NCTS 數論研討會"
+      },
+      "venue": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "city": {
+        "en": "Hsinchu",
+        "zh": "新竹"
+      },
+      "country": {
+        "en": "Taiwan",
+        "zh": "臺灣"
+      },
+      "url": "https://ncts.ntu.edu.tw/news/Events/seminars/17301",
+      "slides_url": "",
+      "description": {
+        "en": "NCTS Number Theory Seminar, National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "NCTS 數論研討會, 國立清華大學, 新竹, 臺灣"
+      },
+      "description_html": {
+        "en": "NCTS Number Theory Seminar, National Tsing Hua University, Hsinchu, Taiwan",
+        "zh": "NCTS 數論研討會, 國立清華大學, 新竹, 臺灣"
+      },
+      "title_html": {
+        "en": "Graded Structures of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values",
+        "zh": "<span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Carlitz 多重對數函數與多重 zeta 值的分次結構"
+      },
+      "id": "talk-2026-10-15-v-carlitz-zeta",
+      "display_placements": [],
+      "venue_html": {
+        "en": "National Tsing Hua University",
+        "zh": "國立清華大學"
+      },
+      "order": 0
     }
   ],
   "honors": [

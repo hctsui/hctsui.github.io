@@ -60,6 +60,7 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
+| talk | Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values | $v$-進 Carlitz 多重對數函數與多重 zeta 值的分次結構 | `talk-2026-10-15-v-carlitz-zeta` |
 | talk | Recent Developments on Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的近期發展 | `talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p` |
 | talk | Derivations of Multiple Zeta Values in Positive Characteristic | 正特徵多重 zeta 值的導子 | `talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac` |
 | talk | On Finite Multiple Harmonic $u$-series over Function Field | 函數體上的有限多重調和 $u$-級數 | `talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie` |
