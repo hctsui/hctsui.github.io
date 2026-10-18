@@ -2116,12 +2116,32 @@
       },
       "slides_url": "",
       "role": {
-        "en": "",
-        "zh": ""
+        "en": "Speaker",
+        "zh": "講者"
       },
       "category_id": "activity-conferences",
       "order": 1,
-      "display_placements": []
+      "display_placements": [],
+      "venue": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      },
+      "city": {
+        "en": "Nagoya",
+        "zh": "名古屋"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "venue_html": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      },
+      "role_html": {
+        "en": "Speaker",
+        "zh": "講者"
+      }
     },
     {
       "type": "conference",

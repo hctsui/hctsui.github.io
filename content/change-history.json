@@ -8999,6 +8999,109 @@
       "index_before": 3,
       "index_after": 3,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-134-op-1",
+      "batch_issue": 134,
+      "applied_at": "2026-10-18T07:47:56.309085Z",
+      "expires_at": "2026-10-25T07:47:56.309085Z",
+      "reverted_by": null,
+      "request_digest": "c07c7bdb1336e07324f3d5ccd7b14e4af43f6fcb08e6d366d78a7dfbfccaa9fa",
+      "request_action": "update",
+      "action": "update",
+      "type": "conference",
+      "entry_id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
+      "label": {
+        "en": "The 2nd Multiple Eisenstein Series Research Meeting",
+        "zh": "第二屆多重 Eisenstein 級數研究會"
+      },
+      "before": {
+        "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
+        "type": "conference",
+        "start_date": "2026-11-08",
+        "end_date": "2026-11-08",
+        "show_upcoming": true,
+        "title": {
+          "en": "The 2nd Multiple Eisenstein Series Research Meeting",
+          "zh": "第二屆多重 Eisenstein 級數研究會"
+        },
+        "title_html": {
+          "en": "The 2nd Multiple Eisenstein Series Research Meeting",
+          "zh": "第二屆多重 Eisenstein 級數研究會"
+        },
+        "url": "https://eisensteinseries.github.io/MESMeeting/",
+        "description": {
+          "en": "Nagoya University, Nagoya, Japan",
+          "zh": "名古屋大學, 名古屋, 日本"
+        },
+        "description_html": {
+          "en": "Nagoya University, Nagoya, Japan",
+          "zh": "名古屋大學, 名古屋, 日本"
+        },
+        "slides_url": "",
+        "role": {
+          "en": "",
+          "zh": ""
+        },
+        "category_id": "activity-conferences",
+        "order": 1,
+        "display_placements": []
+      },
+      "after": {
+        "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
+        "type": "conference",
+        "start_date": "2026-11-08",
+        "end_date": "2026-11-08",
+        "show_upcoming": true,
+        "title": {
+          "en": "The 2nd Multiple Eisenstein Series Research Meeting",
+          "zh": "第二屆多重 Eisenstein 級數研究會"
+        },
+        "title_html": {
+          "en": "The 2nd Multiple Eisenstein Series Research Meeting",
+          "zh": "第二屆多重 Eisenstein 級數研究會"
+        },
+        "url": "https://eisensteinseries.github.io/MESMeeting/",
+        "description": {
+          "en": "Nagoya University, Nagoya, Japan",
+          "zh": "名古屋大學, 名古屋, 日本"
+        },
+        "description_html": {
+          "en": "Nagoya University, Nagoya, Japan",
+          "zh": "名古屋大學, 名古屋, 日本"
+        },
+        "slides_url": "",
+        "role": {
+          "en": "Speaker",
+          "zh": "講者"
+        },
+        "category_id": "activity-conferences",
+        "order": 1,
+        "display_placements": [],
+        "venue": {
+          "en": "Nagoya University",
+          "zh": "名古屋大學"
+        },
+        "city": {
+          "en": "Nagoya",
+          "zh": "名古屋"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "venue_html": {
+          "en": "Nagoya University",
+          "zh": "名古屋大學"
+        },
+        "role_html": {
+          "en": "Speaker",
+          "zh": "講者"
+        }
+      },
+      "index_before": 26,
+      "index_after": 26,
+      "undo_of": null
     }
   ]
 }
