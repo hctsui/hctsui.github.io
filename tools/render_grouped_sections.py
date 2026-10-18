@@ -13,10 +13,12 @@ from __future__ import annotations
 
 import cms_extensions
 import r2_build_fix
+import site_fixes
 
 # Install category/schema extensions before importing build_site so its
 # ``from category_config import ...`` bindings see the extended functions.
 cms_extensions.install()
+site_fixes.install_publication_labels()
 
 import build_site
 
@@ -25,6 +27,7 @@ import build_site
 # idempotent, so this is also safe if a caller already installed them.
 cms_extensions.patch_build_site(build_site)
 r2_build_fix.patch_build_site(build_site)
+site_fixes.patch_build_site(build_site)
 
 
 def main() -> None:

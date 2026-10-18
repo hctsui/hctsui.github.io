@@ -20,6 +20,7 @@ if str(TOOLS) not in sys.path:
 
 import cms_extensions
 import r2_build_fix
+import site_fixes
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +229,7 @@ def main() -> None:
         raise SystemExit(f"Tool not found: {target}")
 
     cms_extensions.install()
+    site_fixes.install_publication_labels()
     sys.argv = [str(target), *options.args]
     if target.name == "build_site.py":
         # Register BEFORE importing build_site.py. homepage_config registers its
@@ -238,6 +240,12 @@ def main() -> None:
         module = importlib.import_module("build_site")
         cms_extensions.patch_build_site(module)
         r2_build_fix.patch_build_site(module)
+        site_fixes.patch_build_site(module)
+        module.main()
+        return
+    if target.name == "build_cv.py":
+        module = importlib.import_module("build_cv")
+        site_fixes.patch_build_cv(module)
         module.main()
         return
     runpy.run_path(str(target), run_name="__main__")

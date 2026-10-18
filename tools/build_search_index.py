@@ -40,6 +40,8 @@ def plain(value: Any, lang: str = "en") -> str:
         lambda match: html.unescape(re.sub(r"<[^>]+>", "", static_math_html(match.group(1) or match.group(2)))),
         str(value or ""),
     )
+    # CMS rich-text emphasis markers must not leak into search results.
+    text = re.sub(r"\[/?(?:b|i|u)\]", "", text, flags=re.I)
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", text)).strip()
 
 def entry_title(item: dict[str, Any], lang: str) -> str:
