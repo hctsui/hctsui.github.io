@@ -2190,7 +2190,7 @@
         "en": "Taiwan",
         "zh": "臺灣"
       },
-      "url": "https://ncts.ad-design.tw/news/Events/conferences/5926",
+      "url": "https://ncts.ntu.edu.tw/news/Events/conferences/5926",
       "description": {
         "en": "National Taiwan University, Taipei, Taiwan",
         "zh": "國立臺灣大學, 臺北, 臺灣"
@@ -2474,7 +2474,7 @@
       },
       "date": "2025-04-22",
       "year": 2025,
-      "order": 5,
+      "order": 6,
       "arxiv": "2504.15697",
       "title": {
         "en": "Uniqueness of $v$-adic Gamma Functions in Gross–Koblitz-Type Formulas over Function Fields",
@@ -2555,7 +2555,7 @@
       },
       "date": "2025-04-26",
       "year": 2025,
-      "order": 4,
+      "order": 5,
       "arxiv": "2504.18879",
       "title": {
         "en": "On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic",
@@ -2636,7 +2636,7 @@
       },
       "date": "2026-03-11",
       "year": 2026,
-      "order": 3,
+      "order": 4,
       "arxiv": "2603.10376",
       "title": {
         "en": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
@@ -2869,7 +2869,7 @@
       },
       "id": "publication-2026-09-16-entry",
       "display_placements": [],
-      "order": 2
+      "order": 3
     },
     {
       "type": "publication",
@@ -2950,7 +2950,7 @@
       },
       "id": "publication-2026-09-25-infty-zeta-mishiba",
       "display_placements": [],
-      "order": 1
+      "order": 2
     },
     {
       "type": "publication",
@@ -3030,6 +3030,80 @@
         "zh": "arXiv：2609.37450。"
       },
       "id": "publication-2026-09-28-zeta-kaneko-zagier",
+      "display_placements": [],
+      "order": 1
+    },
+    {
+      "type": "publication",
+      "category_id": "publication-preprints",
+      "group_label": {
+        "en": "",
+        "zh": ""
+      },
+      "date": "2026-10-18",
+      "title": {
+        "en": "Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values",
+        "zh": "$v$-進 Carlitz 多重對數函數與 $v$-進多重 zeta 值的分次結構"
+      },
+      "publication_state": "preprint",
+      "publication_note": {
+        "en": "",
+        "zh": ""
+      },
+      "arxiv": "",
+      "show_arxiv_in_status": false,
+      "arxiv_url": "",
+      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf",
+      "journal": {
+        "journaltitle": "",
+        "shortjournal": "",
+        "date": "",
+        "volume": "",
+        "number": "",
+        "pages": "",
+        "eid": "",
+        "publisher": "",
+        "doi": "",
+        "url": ""
+      },
+      "code_url": "",
+      "bibtex": "",
+      "bibitem": "",
+      "authors": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "year": 2026,
+      "doi_url": "",
+      "journal_url": "",
+      "venue": {
+        "en": "",
+        "zh": ""
+      },
+      "classification_mode": "auto",
+      "group_id": "preprints",
+      "links": [
+        {
+          "label": {
+            "en": "PDF",
+            "zh": "PDF"
+          },
+          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf"
+        }
+      ],
+      "title_html": {
+        "en": "Graded Structures of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Carlitz Multiple Polylogarithms and <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Multiple Zeta Values",
+        "zh": "<span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Carlitz 多重對數函數與 <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進多重 zeta 值的分次結構"
+      },
+      "authors_html": {
+        "en": "Hung-Chun Tsui",
+        "zh": "崔鴻竣"
+      },
+      "venue_html": {
+        "en": "",
+        "zh": ""
+      },
+      "id": "publication-2026-10-18-v-carlitz-v-zeta",
       "display_placements": [],
       "order": 0
     }

@@ -41,6 +41,7 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
+| publication | Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values | $v$-進 Carlitz 多重對數函數與 $v$-進多重 zeta 值的分次結構 | `publication-2026-10-18-v-carlitz-v-zeta` |
 | publication | Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture | 正特徵多重 zeta 值：Kaneko-Zagier 型猜想 | `publication-2026-09-28-zeta-kaneko-zagier` |
 | publication | Mishiba's Conjecture on the Coaction of $\infty$-adic Multiple Zeta Values | $\infty$-進多重 zeta 值餘作用的 Mishiba 猜想 | `publication-2026-09-25-infty-zeta-mishiba` |
 | publication | On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result | 正特徵上的多重 Eisenstein 級數：直和定理 | `publication-2026-09-16-entry` |
