@@ -3077,9 +3077,9 @@
         "en": "",
         "zh": ""
       },
-      "arxiv": "",
-      "show_arxiv_in_status": false,
-      "arxiv_url": "",
+      "arxiv": "2610.25063",
+      "show_arxiv_in_status": true,
+      "arxiv_url": "https://arxiv.org/abs/2610.25063",
       "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf",
       "journal": {
         "journaltitle": "",
@@ -3104,12 +3104,19 @@
       "doi_url": "",
       "journal_url": "",
       "venue": {
-        "en": "",
-        "zh": ""
+        "en": "arXiv: 2610.25063.",
+        "zh": "arXiv：2610.25063。"
       },
       "classification_mode": "auto",
       "group_id": "preprints",
       "links": [
+        {
+          "label": {
+            "en": "arXiv",
+            "zh": "arXiv"
+          },
+          "url": "https://arxiv.org/abs/2610.25063"
+        },
         {
           "label": {
             "en": "PDF",
@@ -3127,8 +3134,8 @@
         "zh": "崔鴻竣"
       },
       "venue_html": {
-        "en": "",
-        "zh": ""
+        "en": "arXiv: 2610.25063.",
+        "zh": "arXiv：2610.25063。"
       },
       "id": "publication-2026-10-18-v-carlitz-v-zeta",
       "display_placements": [],

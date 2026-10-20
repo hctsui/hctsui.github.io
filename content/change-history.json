@@ -9102,6 +9102,180 @@
       "index_before": 26,
       "index_after": 26,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-135-op-1",
+      "batch_issue": 135,
+      "applied_at": "2026-10-20T04:11:11.066187Z",
+      "expires_at": "2026-10-27T04:11:11.066187Z",
+      "reverted_by": null,
+      "request_digest": "4789a1f75a17daf7be6122c0eeb49055d0ec99c781c9f50a9388b2f484b3447b",
+      "request_action": "update",
+      "action": "update",
+      "type": "publication",
+      "entry_id": "publication-2026-10-18-v-carlitz-v-zeta",
+      "label": {
+        "en": "Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values",
+        "zh": "$v$-進 Carlitz 多重對數函數與 $v$-進多重 zeta 值的分次結構"
+      },
+      "before": {
+        "type": "publication",
+        "category_id": "publication-preprints",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-10-18",
+        "title": {
+          "en": "Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values",
+          "zh": "$v$-進 Carlitz 多重對數函數與 $v$-進多重 zeta 值的分次結構"
+        },
+        "publication_state": "preprint",
+        "publication_note": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv": "",
+        "show_arxiv_in_status": false,
+        "arxiv_url": "",
+        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf",
+        "journal": {
+          "journaltitle": "",
+          "shortjournal": "",
+          "date": "",
+          "volume": "",
+          "number": "",
+          "pages": "",
+          "eid": "",
+          "publisher": "",
+          "doi": "",
+          "url": ""
+        },
+        "code_url": "",
+        "bibtex": "",
+        "bibitem": "",
+        "authors": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "year": 2026,
+        "doi_url": "",
+        "journal_url": "",
+        "venue": {
+          "en": "",
+          "zh": ""
+        },
+        "classification_mode": "auto",
+        "group_id": "preprints",
+        "links": [
+          {
+            "label": {
+              "en": "PDF",
+              "zh": "PDF"
+            },
+            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf"
+          }
+        ],
+        "title_html": {
+          "en": "Graded Structures of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Carlitz Multiple Polylogarithms and <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Multiple Zeta Values",
+          "zh": "<span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Carlitz 多重對數函數與 <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進多重 zeta 值的分次結構"
+        },
+        "authors_html": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "venue_html": {
+          "en": "",
+          "zh": ""
+        },
+        "id": "publication-2026-10-18-v-carlitz-v-zeta",
+        "display_placements": [],
+        "order": 0
+      },
+      "after": {
+        "type": "publication",
+        "category_id": "publication-preprints",
+        "group_label": {
+          "en": "",
+          "zh": ""
+        },
+        "date": "2026-10-18",
+        "title": {
+          "en": "Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values",
+          "zh": "$v$-進 Carlitz 多重對數函數與 $v$-進多重 zeta 值的分次結構"
+        },
+        "publication_state": "preprint",
+        "publication_note": {
+          "en": "",
+          "zh": ""
+        },
+        "arxiv": "2610.25063",
+        "show_arxiv_in_status": true,
+        "arxiv_url": "https://arxiv.org/abs/2610.25063",
+        "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf",
+        "journal": {
+          "journaltitle": "",
+          "shortjournal": "",
+          "date": "",
+          "volume": "",
+          "number": "",
+          "pages": "",
+          "eid": "",
+          "publisher": "",
+          "doi": "",
+          "url": ""
+        },
+        "code_url": "",
+        "bibtex": "",
+        "bibitem": "",
+        "authors": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "year": 2026,
+        "doi_url": "",
+        "journal_url": "",
+        "venue": {
+          "en": "arXiv: 2610.25063.",
+          "zh": "arXiv：2610.25063。"
+        },
+        "classification_mode": "auto",
+        "group_id": "preprints",
+        "links": [
+          {
+            "label": {
+              "en": "arXiv",
+              "zh": "arXiv"
+            },
+            "url": "https://arxiv.org/abs/2610.25063"
+          },
+          {
+            "label": {
+              "en": "PDF",
+              "zh": "PDF"
+            },
+            "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf"
+          }
+        ],
+        "title_html": {
+          "en": "Graded Structures of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Carlitz Multiple Polylogarithms and <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Multiple Zeta Values",
+          "zh": "<span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Carlitz 多重對數函數與 <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進多重 zeta 值的分次結構"
+        },
+        "authors_html": {
+          "en": "Hung-Chun Tsui",
+          "zh": "崔鴻竣"
+        },
+        "venue_html": {
+          "en": "arXiv: 2610.25063.",
+          "zh": "arXiv：2610.25063。"
+        },
+        "id": "publication-2026-10-18-v-carlitz-v-zeta",
+        "display_placements": [],
+        "order": 0
+      },
+      "index_before": 7,
+      "index_after": 7,
+      "undo_of": null
     }
   ]
 }
