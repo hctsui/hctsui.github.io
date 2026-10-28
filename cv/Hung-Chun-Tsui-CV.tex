@@ -1,452 +1,226 @@
-\documentclass[10pt, letterpaper]{article}
-\usepackage[
-    ignoreheadfoot,
-    top=2 cm,
-    bottom=2 cm,
-    left=2 cm,
-    right=2 cm,
-    footskip=1.0 cm
-]{geometry}
-\usepackage[explicit]{titlesec}
-\usepackage{tabularx}
-\usepackage{array}
-\usepackage[dvipsnames]{xcolor}
-\definecolor{primaryColor}{RGB}{0, 0, 0}
-\definecolor{secondaryColor}{RGB}{0, 0, 170}
-\usepackage{enumitem}
+% Hung-Chun Tsui -- CV adapted from the supplied reference layout.
+% Updated: 2026-10-28. Compile with pdflatex (twice), XeLaTeX also works.
+% Accent palette: academic website's brick-red #A34F3B.
+\documentclass[10pt,a4paper]{article}
+\usepackage[top=1.85cm,bottom=1.75cm,left=2.05cm,right=2.05cm,footskip=.9cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% \usepackage[osf,sc]{mathpazo}
+\usepackage{sourcesanspro}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{euscript,calrsfs}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\definecolor{cvAccent}{HTML}{A34F3B} % website's brick-red; change here if desired
+\definecolor{cvAccentDark}{HTML}{6F3628}
+\definecolor{cvMuted}{HTML}{68615C}
 \usepackage{fontawesome5}
-\usepackage{amsmath}
-\usepackage[
-    pdftitle={Hung-Chun Tsui CV},
-    pdfauthor={Hung-Chun Tsui},
-    pdfcreator={LaTeX with RenderCV},
-    colorlinks=true,
-    urlcolor=secondaryColor
-]{hyperref}
-\usepackage[pscoord]{eso-pic}
-\usepackage{calc}
-\usepackage{bookmark}
-\usepackage{lastpage}
-\usepackage{changepage}
-\usepackage{paracol}
-\usepackage{ifthen}
+\usepackage{tikz}
+\usepackage{tabularx,array}
+\usepackage{enumitem}
+\usepackage[explicit]{titlesec}
 \usepackage{needspace}
-\usepackage{iftex}
-\ifPDFTeX
-    \input{glyphtounicode}
-    \pdfgentounicode=1
-    \usepackage[T1]{fontenc}
-    \usepackage[utf8]{inputenc}
-    \usepackage{lmodern}
-\fi
-\usepackage[osf,sc]{mathpazo} \usepackage{euscript} \usepackage{calrsfs}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\AtBeginEnvironment{adjustwidth}{\partopsep0pt}
-\pagestyle{empty}
-\setcounter{secnumdepth}{0}
-\setlength{\parindent}{0pt}
-\setlength{\topskip}{0pt}
-\setlength{\columnsep}{0.15cm}
-\makeatletter
-\let\ps@customFooterStyle\ps@plain
-\patchcmd{\ps@customFooterStyle}{\thepage}{
-    \color{gray}\textit{\small Hung-Chun Tsui - Page \thepage{} of \pageref*{LastPage}}
-}{}{}
-\makeatother
-\pagestyle{customFooterStyle}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\titleformat{\section}{
-    \needspace{4\baselineskip}
-    \Large\color{primaryColor}
-}{}{}{
-    \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
-}[]
+\usepackage{fancyhdr,lastpage}
+\usepackage{eso-pic,calc}
+\usepackage{hyperref}
+\hypersetup{pdftitle={Hung-Chun Tsui - Curriculum Vitae},
+    pdfauthor={Hung-Chun Tsui},colorlinks=true,linkcolor=cvAccentDark,
+    urlcolor=cvAccentDark,pdfborder={0 0 0}}
+\usepackage{bookmark}
 
-\titlespacing{\section}{-1pt}{0.3 cm}{0.2 cm}
-\newcommand{\cvgroup}[1]{%
-    \needspace{3\baselineskip}%
-    \vspace{0.08cm}%
-    \noindent\hbox to \linewidth{%
-        {\large\bfseries #1}%
-        \hspace{0.16cm}%
-        {\color{primaryColor!35}\leaders\hrule height 0.55pt depth 0pt\hfill\kern0pt}%
-    }\par%
-    \vspace{0.08cm}%
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{one}{
-    \begin{adjustwidth}{0.2 cm + 0.00001 cm}{0.2 cm + 0.00001 cm}
-}{
-    \end{adjustwidth}
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{conf}[2][]{
-    \one
-    \def\secondColumn{#2}
-    \setcolumnwidth{14.5cm, \fill, 5 cm}
-    \begin{paracol}{2}
-}{
-    \switchcolumn \raggedleft \secondColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{pub}[2][]{
-    \one
-    \def\secondColumn{#2}
-    \setcolumnwidth{10.8cm,\fill}
-    \begin{paracol}{2}
-}{
-    \switchcolumn \raggedleft \secondColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{edu}[3][]{
-    \one
-    \def\thirdColumn{\mbox{#3}}
-    \setcolumnwidth{4.2cm,\fill,6.2cm}
-    \begin{paracol}{3}
-    {\raggedright\mbox{#2}} \switchcolumn
-}{
-    \switchcolumn \raggedleft \thirdColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{teaching}[3][]{
-    \one
-    \def\thirdColumn{\mbox{#3}}
-    \setcolumnwidth{7.4cm,\fill,3.2cm}
-    \begin{paracol}{3}
-    {\raggedright\mbox{#2}} \switchcolumn
-}{
-    \switchcolumn \raggedleft \thirdColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{header}{
-    \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
-}{
-    \par\kern\topsep
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setcounter{secnumdepth}{0}
+\setlength{\emergencystretch}{2em}
+\raggedbottom
+
+% Keep the original centered 30pt name, icon contact line, and page footer.
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot[C]{\small\itshape\color{cvMuted} Hung-Chun Tsui -- Page \thepage\ of \pageref*{LastPage}}
+
 \newcommand{\CVLastUpdated}{2026/10/28}
 \newcommand{\placelastupdatedtext}{%
   \AddToShipoutPictureFG*{%
-    \put(
-        \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
-        \LenToUnit{\paperheight-1.0 cm}
-    ){\vtop{{\null}\makebox[0pt][c]{
-        \small\color{gray}\textit{Last updated : \CVLastUpdated}\hspace{\widthof{Last updated : \CVLastUpdated}}
-    }}}%
+    \put(\LenToUnit{\paperwidth-2cm-0.15cm},\LenToUnit{\paperheight-0.92cm}){%
+      \makebox[0pt][r]{\footnotesize\itshape\color{cvMuted}Last updated: \CVLastUpdated}%
+    }%
   }%
-}%
+}
 
-\let\hrefWithoutArrow\href
-\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
+\newcommand{\cvsectionrule}{%
+  \noindent\makebox[\linewidth][l]{%
+   \begin{tikzpicture}[baseline=(current bounding box.south)]
+      \shade[left color=cvAccent, right color=white] (0,0) rectangle (\linewidth,2.8pt);
+   \end{tikzpicture}%
+  }%
+}
+\titleformat{\section}
+ {\needspace{3.5\baselineskip}\large\bfseries\color{black}}
+ {}{0pt}{#1}
+ [\vspace{-.23em}\cvsectionrule]
+\titlespacing*{\section}{0pt}{.60em}{.30em}
+\newcommand{\cvgroup}[1]{%
+ \needspace{2.5\baselineskip}\par\vspace{.26em}%
+ {\bfseries\normalsize #1}\par\vspace{.20em}%
+}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Compact named links: link icon and descriptive words, never raw URL strings.
+\usepackage{microtype}
+\newcommand{\cvlink}[2]{%
+  \nobreak\hspace{.48em}%
+  \mbox{\href{#1}{\textcolor{cvAccentDark}{%
+    \footnotesize\faLink\hspace{.27em}%
+    {\sffamily\bfseries\textls[50]{#2}}}}}%
+}
+\newcommand{\cvplace}[1]{{\color{cvMuted}#1}}
+% Date, title, and detail -- adapted from the reference CV's aligned date entries.
+% Fixed aligned date column, shared across visits, talks, teaching and education.
+\newlength{\cvDateWidth}
+\newlength{\cvDateGap}
+\setlength{\cvDateWidth}{2.85cm}
+\setlength{\cvDateGap}{.30cm}
+\newcommand{\cvdated}[3]{%
+  \needspace{2.3\baselineskip}%
+  \noindent\begin{minipage}[t]{\cvDateWidth}
+     \vspace{0pt}\strut{\small\color{cvMuted}#1}%
+  \end{minipage}%
+  \hspace{\cvDateGap}%
+  \begin{minipage}[t]{\dimexpr\linewidth-\cvDateWidth-\cvDateGap\relax}
+     \vspace{0pt}\strut{\bfseries #2}\par\noindent #3%
+  \end{minipage}\par\vspace{.22em}%
+}
+\newcommand{\cvedu}[4]{%
+ \needspace{3\baselineskip}%
+ \noindent\begin{minipage}[t]{\cvDateWidth}
+    \vspace{0pt}\strut{\small\color{cvMuted}#1}%
+ \end{minipage}%
+ \hspace{\cvDateGap}%
+ \begin{minipage}[t]{.22cm}
+    \vspace{0pt}\strut{\color{cvAccent}\footnotesize\faBookmark}%
+ \end{minipage}%
+ \hspace{.16cm}%
+ \begin{minipage}[t]{\dimexpr\linewidth-\cvDateWidth-\cvDateGap-.22cm-.16cm\relax}
+    \vspace{0pt}\strut{\bfseries #2}\par\noindent #3\par\noindent{\small\color{cvMuted}#4}%
+ \end{minipage}\par\vspace{.28em}%
+}
+\newcommand{\cvteaching}[3]{%
+ \needspace{1.5\baselineskip}%
+ \noindent\begin{minipage}[t]{\cvDateWidth}
+    \vspace{0pt}\strut{\small\color{cvMuted}#1}%
+ \end{minipage}%
+ \hspace{\cvDateGap}%
+ \begin{minipage}[t]{\dimexpr\linewidth-\cvDateWidth-\cvDateGap\relax}
+    \vspace{0pt}\strut{\bfseries #2}\hspace{.6em}{\small\color{cvMuted}(#3)}%
+ \end{minipage}\par\vspace{.27em}%
+}
+\newenvironment{cvpubs}{%
+ \begin{enumerate}[label=\arabic*.,leftmargin=1.65em,labelsep=.45em,
+    topsep=.05em,partopsep=0pt,itemsep=.30em,parsep=0pt]
+}{\end{enumerate}}
+
 \begin{document}
-    \newcommand{\AND}{\unskip
-        \cleaders\copy\ANDbox\hskip\wd\ANDbox
-        \ignorespaces
-    }
-    \newsavebox\ANDbox
-    \sbox\ANDbox{}
+\placelastupdatedtext
+\begin{center}
+  {\fontsize{30pt}{32pt}\selectfont\bfseries Hung-Chun Tsui}\par
+  \vspace{.27cm}
+  {\normalsize\color{cvAccentDark}%
+    \mbox{\href{https://www.nthu.edu.tw/}{\footnotesize\faMapMarker*\hspace{.12cm}National Tsing Hua University, Taiwan}}\hspace{.27cm}%
+    \mbox{\href{mailto:hctsui@gapp.nthu.edu.tw}{\footnotesize\faEnvelope[regular]\hspace{.12cm}hctsui@gapp.nthu.edu.tw}}\hspace{.27cm}%
+    \mbox{\href{https://hctsui.github.io/}{\footnotesize\faLink\hspace{.12cm}https://hctsui.github.io}}% 
+  }\par
+\end{center}
+\vspace{-.48em}
 
-    \placelastupdatedtext
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \begin{header}
-        \fontsize{30 pt}{30 pt}
-        \textbf{Hung-Chun Tsui}
-
-        \vspace{0.3 cm}
-
-        \normalsize
-        {\color{secondaryColor}\mbox{{\footnotesize\faMapMarker*}\hspace*{0.13cm} \hrefWithoutArrow{https://www.nthu.edu.tw/}{National Tsing Hua University, Taiwan}}}%
-        \kern 0.25 cm%
-        \AND%
-        \kern 0.25 cm%
-        \mbox{\hrefWithoutArrow{mailto:hctsui@gapp.nthu.edu.tw}{{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}hctsui@gapp.nthu.edu.tw}}%
-        \kern 0.25 cm%
-        \AND%
-        \kern 0.25 cm%
-        \mbox{\hrefWithoutArrow{https://hctsui.github.io/}{{\footnotesize\faLink}\hspace*{0.13cm}https://hctsui.github.io}}%
-    \end{header}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \vspace{0.3 cm - 0.3 cm}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Research Interests}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-Function field arithmetic
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-$t$-modules and $t$-motives
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-Multiple zeta values and multiple Eisenstein series
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Function field arithmetic; $t$-modules and $t$-motives; Multiple zeta values and multiple Eisenstein series.
+
 \section{Education}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{edu}{\textbf{PhD in Mathematics}}{Feb. 2025--Present}
-    \textbf{National Tsing Hua University} \\
-{\small (Direct admission)}
-\end{edu}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{edu}{\textbf{BS in Mathematics}}{Sep. 2021--Dec. 2024}
-    \textbf{National Tsing Hua University} \\
-{\small (Graduated with distinction)}
-\end{edu}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvedu{Feb. 2025--Present}{PhD in Mathematics}{National Tsing Hua University}{Direct admission}
+\cvedu{Sep. 2021--Dec. 2024}{BS in Mathematics}{National Tsing Hua University}{Graduated with distinction}
+
 \section{Publications and Preprints}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cvgroup{Journal Articles}
-\begin{pub}{Hung-Chun Tsui}
-{(1)} \textbf{On $u$-Multiple Zeta Values in Positive Characteristic}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://academic.oup.com/imrn/article-abstract/2026/20/rnag233/8914538}{Journal} | \hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2604.03618}{ArXiv}]}\\\textit{\textbf{International Mathematics Research Notices (IMRN)} 2026 (2026), no. 20, rnag233.}.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{cvpubs}
+\item \textbf{Hung-Chun Tsui}, ``On $u$-Multiple Zeta Values in Positive Characteristic,'', \emph{International Mathematics Research Notices (IMRN)} 2026 (2026), no. 20, rnag233.\cvlink{https://academic.oup.com/imrn/article-abstract/2026/20/rnag233/8914538}{Journal}\cvlink{https://arxiv.org/abs/2604.03618}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf}{PDF}
+\end{cvpubs}
 \cvgroup{Preprints}
-\begin{pub}{Hung-Chun Tsui}
-{(1)} \textbf{Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2610.25063}{ArXiv}]}\\\textit{arXiv: 2610.25063.}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{Hung-Chun Tsui}
-{(2)} \textbf{Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2609.37450}{ArXiv}]}\\\textit{arXiv: 2609.37450.}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{Hung-Chun Tsui}
-{(3)} \textbf{Mishiba's Conjecture on the Coaction of $\infty$-adic Multiple Zeta Values}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2609.30823}{ArXiv}]}\\\textit{arXiv: 2609.30823.}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui}
-{(4)} \textbf{On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2609.18777}{ArXiv}]}\\\textit{arXiv: 2609.18777.}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui}
-{(5)} \textbf{Algebra Structures of Multiple Eisenstein Series in Positive Characteristic}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2603.10376}{ArXiv}]}\\\textit{arXiv: 2603.10376.}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui}
-{(6)} \textbf{On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2504.18879}{ArXiv}]}\\\textit{arXiv: 2504.18879.}, 2025.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{Ting-Wei Chang and Hung-Chun Tsui}
-{(7)} \textbf{Uniqueness of $v$-adic Gamma Functions in Gross--Koblitz-Type Formulas over Function Fields}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2504.15697}{ArXiv}]}\\\textit{arXiv: 2504.15697.}, 2025.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{cvpubs}
+\item \textbf{Hung-Chun Tsui}, \emph{Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and $v$-adic Multiple Zeta Values}, 2026.\cvlink{https://arxiv.org/abs/2610.25063}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf}{PDF}
+\item \textbf{Hung-Chun Tsui}, \emph{Multiple Zeta Values in Positive Characteristic: A Kaneko-Zagier-Type Conjecture}, 2026.\cvlink{https://arxiv.org/abs/2609.37450}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf}{PDF}
+\item \textbf{Hung-Chun Tsui}, \emph{Mishiba's Conjecture on the Coaction of $\infty$-adic Multiple Zeta Values}, 2026.\cvlink{https://arxiv.org/abs/2609.30823}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf}{PDF}
+\item Chieh-Yu Chang, Song-Yun Chen, Fei-Jun Huang, and \textbf{Hung-Chun Tsui}, \emph{On Multiple Eisenstein Series in Positive Characteristic: Direct Sum Result}, 2026.\cvlink{https://arxiv.org/abs/2609.18777}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf}{PDF}
+\item Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and \textbf{Hung-Chun Tsui}, \emph{Algebra Structures of Multiple Eisenstein Series in Positive Characteristic}, 2026.\cvlink{https://arxiv.org/abs/2603.10376}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf}{PDF}
+\item Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and \textbf{Hung-Chun Tsui}, \emph{On $q$-Shuffle Relations for Multiple Eisenstein Series of Arbitrary Rank in Positive Characteristic}, 2025.\cvlink{https://arxiv.org/abs/2504.18879}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf}{PDF}
+\item Ting-Wei Chang and \textbf{Hung-Chun Tsui}, \emph{Uniqueness of $v$-adic Gamma Functions in Gross--Koblitz-Type Formulas over Function Fields}, 2025.\cvlink{https://arxiv.org/abs/2504.15697}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf}{PDF}
+\end{cvpubs}
+
 \section{Academic Visits}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/2 -- 2026/8/30}
-\textbf{Tohoku University}\\Sendai, Japan · Supported by Japan--Taiwan Exchange Association
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026/7/2--8/30}{Tohoku University}{Sendai, Japan · Supported by Japan--Taiwan Exchange Association}
+
 \section{Presentations}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/10/15}
-\hrefWithoutArrow{https://ncts.ntu.edu.tw/news/Events/seminars/17301}{\textbf{Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values}}\\NCTS Number Theory Seminar, National Tsing Hua University, Hsinchu, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/6}
-\hrefWithoutArrow{https://sites.google.com/view/tohoku-number-semiar/2026?authuser=0}{\textbf{Recent Developments on Multiple Eisenstein Series in Positive Characteristic}}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf}{slides}]}\\Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/6/12}
-\hrefWithoutArrow{https://sites.google.com/view/workshoponarithmeticoffunction/scheduleabstract?authuser=0}{\textbf{Derivations of Multiple Zeta Values in Positive Characteristic}}\\Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/2/8}
-\hrefWithoutArrow{https://sites.google.com/view/zetayoung19/speakers-program?authuser=0}{\textbf{On Finite Multiple Harmonic $u$-series over Function Field}}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf}{slides}]}\\Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/30}
-\hrefWithoutArrow{https://sites.google.com/view/rimsmzv2025/home}{\textbf{On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko--Zagier Conjecture over Function Field}}\\Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/3}
-\hrefWithoutArrow{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{\textbf{On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic}}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf}{slides}]}\\Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/4/17}
-\hrefWithoutArrow{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{\textbf{On the Uniqueness of $v$-adic Gamma Functions in the Gross--Koblitz--Thakur Formulas}}\\NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026/10/15}{\href{https://ncts.ntu.edu.tw/news/Events/seminars/17301}{Graded Structures of $v$-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values}}{NCTS Number Theory Seminar, National Tsing Hua University, Hsinchu, Taiwan}
+\cvdated{2026/7/6}{\href{https://sites.google.com/view/tohoku-number-semiar/2026?authuser=0}{Recent Developments on Multiple Eisenstein Series in Positive Characteristic}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf}{Slides}}{Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan}
+\cvdated{2026/6/12}{\href{https://sites.google.com/view/workshoponarithmeticoffunction/scheduleabstract?authuser=0}{Derivations of Multiple Zeta Values in Positive Characteristic}}{Workshop on Arithmetic of Function Fields, National Cheng Kung University, Tainan, Taiwan}
+\cvdated{2026/2/8}{\href{https://sites.google.com/view/zetayoung19/speakers-program?authuser=0}{On Finite Multiple Harmonic $u$-series over Function Field}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf}{Slides}}{Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan}
+\cvdated{2025/9/30}{\href{https://sites.google.com/view/rimsmzv2025/home}{On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko--Zagier Conjecture over Function Field}}{Various Aspects of Multiple Zeta Values, Kyoto University, Kyoto, Japan}
+\cvdated{2025/9/3}{\href{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf}{Slides}}{Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan}
+\cvdated{2025/4/17}{\href{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{On the Uniqueness of $v$-adic Gamma Functions in the Gross--Koblitz--Thakur Formulas}}{NTHU Workshop on Number Theory, National Tsing Hua University, Hsinchu, Taiwan}
+
 \section{Honors and Awards}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026}
-\textbf{Taiwan--Japan Young Scientific Talent Exchange Program}\\Japan--Taiwan Exchange Association
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025}
-\textbf{NSTC Graduate Research Fellowship}\\National Science and Technology Council
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024}
-\textbf{Chow Hung-Ching Scholarship}\\Academia Sinica
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024}
-\textbf{TMS Outstanding Students Prize}\\Taiwan Mathematical Society
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026}{Taiwan--Japan Young Scientific Talent Exchange Program}{Japan--Taiwan Exchange Association}
+\cvdated{2025}{NSTC Graduate Research Fellowship}{National Science and Technology Council}
+\cvdated{2024}{Chow Hung-Ching Scholarship}{Academia Sinica}
+\cvdated{2024}{TMS Outstanding Students Prize}{Taiwan Mathematical Society}
+
 \section{Conferences and Workshops}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/8/24 -- 2026/8/28}
-\hrefWithoutArrow{https://edu.tsuda.ac.jp/~t-hara/ss2026/index.html}{\textbf{The 33rd Number Theory Summer School: Arithmetic of Function Fields}}\\Yataro, Nagasaki, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/18}
-\hrefWithoutArrow{https://sites.google.com/site/kmzsince2011/past/2026?authuser=0}{\textbf{The 72nd Kansai Multiple Zeta Workshop}}\\Tohoku University, Sendai, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/7 -- 2026/7/10}
-\hrefWithoutArrow{https://hiro2.pm.tokushima-u.ac.jp/~hiroki/hiroshima26.html}{\textbf{The 25th Sendai--Hiroshima Number Theory Conference}}\\Tohoku University, Sendai, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/6/11 -- 2026/6/12}
-\hrefWithoutArrow{https://sites.google.com/view/workshoponarithmeticoffunction/home}{\textbf{Workshop on Arithmetic of Function Fields}} \quad {\color{secondaryColor}(Speaker)}\\National Cheng Kung University, Tainan, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/2/8 -- 2026/2/11}
-\hrefWithoutArrow{https://sites.google.com/view/zetayoung19?authuser=0}{\textbf{Nagoya-Kansai Zeta Workshop for Young Researchers}} \quad {\color{secondaryColor}(Speaker)}\\Nagoya University, Nagoya, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/1/21 -- 2026/1/22}
-\hrefWithoutArrow{https://2026tms-en.tms.org.tw/}{\textbf{The 61st TMS Annual Meeting}}\\National Chung Cheng University, Chiayi, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/12/15 -- 2025/12/19}
-\hrefWithoutArrow{https://www.math.sinica.edu.tw/202512taipeiag}{\textbf{2025 Taipei Conference on Arithmetic Geometry}}\\Academia Sinica, Taipei, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/29 -- 2025/10/3}
-\hrefWithoutArrow{https://sites.google.com/view/rimsmzv2025/home}{\textbf{Various Aspects of Multiple Zeta Values}} \quad {\color{secondaryColor}(Speaker)}\\Kyoto University, Kyoto, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/1 -- 2025/9/5}
-\hrefWithoutArrow{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{\textbf{Japan-Taiwan Number Theory Conference}} \quad {\color{secondaryColor}(Speaker)}\\Kyukamura Shikanoshima, Fukuoka, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/8/25 -- 2025/8/29}
-\hrefWithoutArrow{https://www.math.ntnu.edu.tw/workshop/eantc2025/}{\textbf{The 11th East Asia Number Theory Conference}}\\National Taiwan University, Taipei, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/6/30 -- 2025/7/4}
-\hrefWithoutArrow{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-2025/iwasawa-2025?authuser=0}{\textbf{Iwasawa 2025}}\\National Taiwan University, Taipei, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/6/25 -- 2025/6/27}
-\hrefWithoutArrow{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-summerschool/}{\textbf{Iwasawa Theory Taipei Summer School}}\\National Taiwan University, Taipei, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/4/17}
-\hrefWithoutArrow{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{\textbf{NTHU Workshop on Number Theory}}\\National Tsing Hua University, Hsinchu, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/2/17 -- 2025/2/22}
-\hrefWithoutArrow{https://www.apu.ac.jp/~rintaro/MK60/indexE.html}{\textbf{The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2}}\\Kindai University, Osaka, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/2/10 -- 2025/2/15}
-\hrefWithoutArrow{https://sites.google.com/view/the-17th-msj-siw1}{\textbf{The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1}}\\Kyushu University Nishijin Plaza, Fukuoka, Japan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/1/14 -- 2025/1/15}
-\hrefWithoutArrow{https://2025tms-en.tms.org.tw/}{\textbf{The 60th TMS Annual Meeting}}\\National Central University, Taoyuan, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/1/2 -- 2025/1/3}
-\hrefWithoutArrow{https://idv.sinica.edu.tw/mathas/202501SCV/index.html}{\textbf{Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamics}}\\Academia Sinica, Taipei, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024/12/18}
-\hrefWithoutArrow{https://ncts.ntu.edu.tw/events_2_detail.php?nid=478}{\textbf{NCTS One-Day Workshop on Number Theory}}\\National Tsing Hua University, Hsinchu, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024/7/1 -- 2024/7/4}
-\hrefWithoutArrow{https://ncts.ntu.edu.tw/events_3_detail.php?nid=343}{\textbf{Summer School on Arithmetic Geometry}}\\National Tsing Hua University, Hsinchu, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024/1/22 -- 2024/1/23}
-\hrefWithoutArrow{https://2024tms.tms.org.tw/}{\textbf{The 59th TMS Annual Meeting}}\\National Chengchi University, Taipei, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2023/1/16 -- 2023/1/17}
-\hrefWithoutArrow{https://www.math.nthu.edu.tw/~2022TMS/home_en.html}{\textbf{The 58th TMS Annual Meeting}}\\National Tsing Hua University, Hsinchu, Taiwan
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026/8/24--8/28}{\href{https://edu.tsuda.ac.jp/~t-hara/ss2026/index.html}{The 33rd Number Theory Summer School: Arithmetic of Function Fields}}{Yataro, Nagasaki, Japan}
+\cvdated{2026/7/18}{\href{https://sites.google.com/site/kmzsince2011/past/2026?authuser=0}{The 72nd Kansai Multiple Zeta Workshop}}{Tohoku University, Sendai, Japan}
+\cvdated{2026/7/7--7/10}{\href{https://hiro2.pm.tokushima-u.ac.jp/~hiroki/hiroshima26.html}{The 25th Sendai--Hiroshima Number Theory Conference}}{Tohoku University, Sendai, Japan}
+\cvdated{2026/6/11--6/12}{\href{https://sites.google.com/view/workshoponarithmeticoffunction/home}{Workshop on Arithmetic of Function Fields} {\normalfont\color{cvAccentDark}(Speaker)}}{National Cheng Kung University, Tainan, Taiwan}
+\cvdated{2026/2/8--2/11}{\href{https://sites.google.com/view/zetayoung19?authuser=0}{Nagoya-Kansai Zeta Workshop for Young Researchers} {\normalfont\color{cvAccentDark}(Speaker)}}{Nagoya University, Nagoya, Japan}
+\cvdated{2026/1/21--1/22}{\href{https://2026tms-en.tms.org.tw/}{The 61st TMS Annual Meeting}}{National Chung Cheng University, Chiayi, Taiwan}
+\cvdated{2025/12/15--12/19}{\href{https://www.math.sinica.edu.tw/202512taipeiag}{2025 Taipei Conference on Arithmetic Geometry}}{Academia Sinica, Taipei, Taiwan}
+\cvdated{2025/9/29--10/3}{\href{https://sites.google.com/view/rimsmzv2025/home}{Various Aspects of Multiple Zeta Values} {\normalfont\color{cvAccentDark}(Speaker)}}{Kyoto University, Kyoto, Japan}
+\cvdated{2025/9/1--9/5}{\href{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{Japan-Taiwan Number Theory Conference} {\normalfont\color{cvAccentDark}(Speaker)}}{Kyukamura Shikanoshima, Fukuoka, Japan}
+\cvdated{2025/8/25--8/29}{\href{https://www.math.ntnu.edu.tw/workshop/eantc2025/}{The 11th East Asia Number Theory Conference}}{National Taiwan University, Taipei, Taiwan}
+\cvdated{2025/6/30--7/4}{\href{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-2025/iwasawa-2025?authuser=0}{Iwasawa 2025}}{National Taiwan University, Taipei, Taiwan}
+\cvdated{2025/6/25--6/27}{\href{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-summerschool/}{Iwasawa Theory Taipei Summer School}}{National Taiwan University, Taipei, Taiwan}
+\cvdated{2025/4/17}{\href{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{NTHU Workshop on Number Theory}}{National Tsing Hua University, Hsinchu, Taiwan}
+\cvdated{2025/2/17--2/22}{\href{https://www.apu.ac.jp/~rintaro/MK60/indexE.html}{The 17th MSJ-SI Developments of Multiple Zeta Values, Week 2}}{Kindai University, Osaka, Japan}
+\cvdated{2025/2/10--2/15}{\href{https://sites.google.com/view/the-17th-msj-siw1}{The 17th MSJ-SI Developments of Multiple Zeta Values, Week 1}}{Kyushu University Nishijin Plaza, Fukuoka, Japan}
+\cvdated{2025/1/14--1/15}{\href{https://2025tms-en.tms.org.tw/}{The 60th TMS Annual Meeting}}{National Central University, Taoyuan, Taiwan}
+\cvdated{2025/1/2--1/3}{\href{https://idv.sinica.edu.tw/mathas/202501SCV/index.html}{Introduction to Nevanlinna Theory, Hyperbolicity and Arithmetic Dynamics}}{Academia Sinica, Taipei, Taiwan}
+\cvdated{2024/12/18}{\href{https://ncts.ntu.edu.tw/events_2_detail.php?nid=478}{NCTS One-Day Workshop on Number Theory}}{National Tsing Hua University, Hsinchu, Taiwan}
+\cvdated{2024/7/1--7/4}{\href{https://ncts.ntu.edu.tw/events_3_detail.php?nid=343}{Summer School on Arithmetic Geometry}}{National Tsing Hua University, Hsinchu, Taiwan}
+\cvdated{2024/1/22--1/23}{\href{https://2024tms.tms.org.tw/}{The 59th TMS Annual Meeting}}{National Chengchi University, Taipei, Taiwan}
+\cvdated{2023/1/16--1/17}{\href{https://www.math.nthu.edu.tw/~2022TMS/home_en.html}{The 58th TMS Annual Meeting}}{National Tsing Hua University, Hsinchu, Taiwan}
+
 \section{Teaching Experience}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cvgroup{National Tsing Hua University}
-\begin{teaching}{MATH5410 Modern Algebra I}{Fall 2026}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH5640 Algebraic Geometry}{Fall 2026}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH1000 Precalculus}{Fall 2026}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2870 Discrete Mathematics}{Spring 2026}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2420 Algebra II}{Spring 2026}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2410 Algebra I}{Fall 2025}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH3450 Cryptography}{Fall 2025}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH3050 Complex Analysis}{Spring 2025}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH1420 Linear Algebra II}{Spring 2025}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH1410 Linear Algebra I}{Fall 2024}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2020 Advanced Calculus II}{Spring 2024}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2010 Advanced Calculus I}{Fall 2023}
-    Teaching Assistant
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvteaching{Fall 2026}{MATH5410 Modern Algebra I}{Teaching Assistant}
+\cvteaching{Fall 2026}{MATH5640 Algebraic Geometry}{Teaching Assistant}
+\cvteaching{Fall 2026}{MATH1000 Precalculus}{Teaching Assistant}
+\cvteaching{Spring 2026}{MATH2870 Discrete Mathematics}{Teaching Assistant}
+\cvteaching{Spring 2026}{MATH2420 Algebra II}{Teaching Assistant}
+\cvteaching{Fall 2025}{MATH2410 Algebra I}{Teaching Assistant}
+\cvteaching{Fall 2025}{MATH3450 Cryptography}{Teaching Assistant}
+\cvteaching{Spring 2025}{MATH3050 Complex Analysis}{Teaching Assistant}
+\cvteaching{Spring 2025}{MATH1420 Linear Algebra II}{Teaching Assistant}
+\cvteaching{Fall 2024}{MATH1410 Linear Algebra I}{Teaching Assistant}
+\cvteaching{Spring 2024}{MATH2020 Advanced Calculus II}{Teaching Assistant}
+\cvteaching{Fall 2023}{MATH2010 Advanced Calculus I}{Teaching Assistant}
+
 \section{Personal Information}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{@{} p{3cm} @{\hspace{0.2cm}} p{12cm} @{}}
-        \textbf{Languages} & Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1) \\
-        \textbf{Address} & No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.) \\
-        \textbf{Email} & hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com \\
-        \textbf{Website} & \hrefWithoutArrow{https://hctsui.github.io}{https://hctsui.github.io} \\
-        \textbf{ORCID} & \hrefWithoutArrow{https://orcid.org/0009-0009-7445-5634}{0009-0009-7445-5634} \\
-    \end{tabular}
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}p{2.8cm}@{\hspace{.30cm}}>{\raggedright\arraybackslash}X@{}}
+\textbf{Languages} & Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1) \\
+\textbf{Address} & No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.) \\
+\textbf{Email} & hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com \\
+\textbf{Website} & \href{https://hctsui.github.io}{https://hctsui.github.io} \\
+\textbf{ORCID} & \href{https://orcid.org/0009-0009-7445-5634}{0009-0009-7445-5634} \\
+\end{tabularx}
+
 \end{document}

@@ -1,464 +1,236 @@
-% !TEX program = xelatex
-\documentclass[10pt, letterpaper]{article}
-\usepackage[UTF8,fontset=none]{ctex}
-\setCJKmainfont{Noto Serif CJK TC}
-\setCJKsansfont{Noto Sans CJK TC}
-\setCJKmonofont{Noto Sans Mono CJK TC}
-\usepackage[
-    ignoreheadfoot,
-    top=2 cm,
-    bottom=2 cm,
-    left=2 cm,
-    right=2 cm,
-    footskip=1.0 cm
-]{geometry}
-\usepackage[explicit]{titlesec}
-\usepackage{tabularx}
-\usepackage{array}
-\usepackage[dvipsnames]{xcolor}
-\definecolor{primaryColor}{RGB}{0, 0, 0}
-\definecolor{secondaryColor}{RGB}{0, 0, 170}
-\usepackage{enumitem}
+% 崔鴻竣 -- 中文學術履歷（依個人網站資料整理）
+% 更新：2026-10-28。必須使用 XeLaTeX 編譯兩次。
+% Accent palette: academic website's brick-red #A34F3B.
+\documentclass[10pt,a4paper]{article}
+\usepackage[top=1.85cm,bottom=1.75cm,left=2.05cm,right=2.05cm,footskip=.9cm]{geometry}
+% Latin remains Source Sans Pro; change ONE line to try a Chinese font.
+% Noto Sans CJK TC       : modern sans-serif (default)
+% Noto Serif CJK TC      : elegant Ming-style serif
+% AR PL UMing TW         : traditional Ming
+% AR PL KaitiM Big5     : Kai-style
+% AR PL Mingti2L Big5   : slim Ming-style
+% Noto Sans Mono CJK TC  : geometric monospaced look
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{sourcesanspro}
+\newcommand{\CVChineseFont}{Noto Sans Mono CJK TC} % <--- change only this line
+\setCJKmainfont[AutoFakeSlant=0.12,AutoFakeBold=2]{\CVChineseFont}
+\setCJKsansfont[AutoFakeSlant=0.12,AutoFakeBold=2]{\CVChineseFont}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{euscript,calrsfs}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\definecolor{cvAccent}{HTML}{A34F3B} % website's brick-red; change here if desired
+\definecolor{cvAccentDark}{HTML}{6F3628}
+\definecolor{cvMuted}{HTML}{68615C}
 \usepackage{fontawesome5}
-\usepackage{amsmath}
-\usepackage[
-    pdftitle={崔鴻竣履歷},
-    pdfauthor={崔鴻竣},
-    pdfcreator={LaTeX with RenderCV},
-    colorlinks=true,
-    urlcolor=secondaryColor
-]{hyperref}
-\usepackage[pscoord]{eso-pic}
-\usepackage{calc}
-\usepackage{bookmark}
-\usepackage{lastpage}
-\usepackage{changepage}
-\usepackage{paracol}
-\usepackage{ifthen}
+\usepackage{tikz}
+\usepackage{tabularx,array}
+\usepackage{enumitem}
+\usepackage[explicit]{titlesec}
 \usepackage{needspace}
-\usepackage{iftex}
-\ifPDFTeX
-    \input{glyphtounicode}
-    \pdfgentounicode=1
-    \usepackage[T1]{fontenc}
-    \usepackage[utf8]{inputenc}
-    \usepackage{lmodern}
-\fi
-\ifXeTeX
-    \setmainfont{TeXGyrePagella}
-    \setsansfont{TeXGyreHeros}
-    \usepackage{mathpazo}
-\else
-    \usepackage[osf,sc]{mathpazo}
-\fi
-\usepackage{euscript} \usepackage{calrsfs}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\AtBeginEnvironment{adjustwidth}{\partopsep0pt}
-\pagestyle{empty}
-\setcounter{secnumdepth}{0}
-\setlength{\parindent}{0pt}
-\setlength{\topskip}{0pt}
-\setlength{\columnsep}{0.15cm}
-\makeatletter
-\let\ps@customFooterStyle\ps@plain
-\patchcmd{\ps@customFooterStyle}{\thepage}{
-    \color{gray}\textit{\small 崔鴻竣－第 \thepage{} 頁／共 \pageref*{LastPage} 頁}
-}{}{}
-\makeatother
-\pagestyle{customFooterStyle}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\titleformat{\section}{
-    \needspace{4\baselineskip}
-    \Large\color{primaryColor}
-}{}{}{
-    \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
-}[]
+\usepackage{fancyhdr,lastpage}
+\usepackage{eso-pic,calc}
+\usepackage{hyperref}
+\hypersetup{pdftitle={崔鴻竣 - 學術履歷},
+    pdfauthor={崔鴻竣 Hung-Chun Tsui},colorlinks=true,linkcolor=cvAccentDark,
+    urlcolor=cvAccentDark,pdfborder={0 0 0}}
+\usepackage{bookmark}
 
-\titlespacing{\section}{-1pt}{0.3 cm}{0.2 cm}
-\newcommand{\cvgroup}[1]{%
-    \needspace{3\baselineskip}%
-    \vspace{0.08cm}%
-    \noindent\hbox to \linewidth{%
-        {\large\bfseries #1}%
-        \hspace{0.16cm}%
-        {\color{primaryColor!35}\leaders\hrule height 0.55pt depth 0pt\hfill\kern0pt}%
-    }\par%
-    \vspace{0.08cm}%
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{one}{
-    \begin{adjustwidth}{0.2 cm + 0.00001 cm}{0.2 cm + 0.00001 cm}
-}{
-    \end{adjustwidth}
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{conf}[2][]{
-    \one
-    \def\secondColumn{#2}
-    \setcolumnwidth{14.5cm, \fill, 5 cm}
-    \begin{paracol}{2}
-}{
-    \switchcolumn \raggedleft \secondColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{pub}[2][]{
-    \one
-    \def\secondColumn{#2}
-    \setcolumnwidth{10.8cm,\fill}
-    \begin{paracol}{2}
-}{
-    \switchcolumn \raggedleft \secondColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{edu}[3][]{
-    \one
-    \def\thirdColumn{\mbox{#3}}
-    \setcolumnwidth{4.2cm,\fill,6.2cm}
-    \begin{paracol}{3}
-    {\raggedright\mbox{#2}} \switchcolumn
-}{
-    \switchcolumn \raggedleft \thirdColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{teaching}[3][]{
-    \one
-    \def\thirdColumn{\mbox{#3}}
-    \setcolumnwidth{7.4cm,\fill,3.2cm}
-    \begin{paracol}{3}
-    {\raggedright\mbox{#2}} \switchcolumn
-}{
-    \switchcolumn \raggedleft \thirdColumn
-    \end{paracol}
-    \endone
-    \vspace{0.1cm}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{header}{
-    \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
-}{
-    \par\kern\topsep
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setcounter{secnumdepth}{0}
+\setlength{\emergencystretch}{2em}
+\raggedbottom
+\linespread{1.15} % Chinese text: 1.12--1.20 usually feels comfortable
+
+% Keep the original centered 30pt name, icon contact line, and page footer.
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot[C]{\small\itshape\color{cvMuted} 崔鴻竣 -- 第 \thepage\ 頁／共 \pageref*{LastPage} 頁}
+
 \newcommand{\CVLastUpdated}{2026/10/28}
 \newcommand{\placelastupdatedtext}{%
   \AddToShipoutPictureFG*{%
-    \put(
-        \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
-        \LenToUnit{\paperheight-1.0 cm}
-    ){\vtop{{\null}\makebox[0pt][c]{
-        \small\color{gray}\textit{最後更新：\CVLastUpdated}\hspace{\widthof{最後更新：\CVLastUpdated}}
-    }}}%
+    \put(\LenToUnit{\paperwidth-2cm-0.15cm},\LenToUnit{\paperheight-0.92cm}){%
+      \makebox[0pt][r]{\footnotesize\itshape\color{cvMuted}最後更新：\CVLastUpdated}%
+    }%
   }%
-}%
+}
 
-\let\hrefWithoutArrow\href
-\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
+\newcommand{\cvsectionrule}{%
+  \noindent\makebox[\linewidth][l]{%
+   \begin{tikzpicture}[baseline=(current bounding box.south)]
+      \shade[left color=cvAccent, right color=white] (0,0) rectangle (\linewidth,2.8pt);
+   \end{tikzpicture}%
+  }%
+}
+\titleformat{\section}
+ {\needspace{3.5\baselineskip}\large\bfseries\color{black}}
+ {}{0pt}{#1}
+ [\vspace{-.23em}\cvsectionrule]
+\titlespacing*{\section}{0pt}{.68em}{.36em}
+\newcommand{\cvgroup}[1]{%
+ \needspace{2.5\baselineskip}\par\vspace{.26em}%
+ {\bfseries\normalsize #1}\par\vspace{.20em}%
+}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Compact named links: link icon and descriptive words, never raw URL strings.
+% fontspec tracking replaces microtype's \textls; works with XeLaTeX.
+\newcommand{\cvlink}[2]{%
+  \nobreak\hspace{.48em}%
+  \mbox{\href{#1}{\textcolor{cvAccentDark}{%
+    \footnotesize\faLink\hspace{.27em}%
+    {\sffamily\bfseries\addfontfeatures{LetterSpace=5}#2}}}}%
+}
+\newcommand{\cvplace}[1]{{\color{cvMuted}#1}}
+% Date, title, and detail -- adapted from the reference CV's aligned date entries.
+% Fixed aligned date column, shared across visits, talks, teaching and education.
+\newlength{\cvDateWidth}
+\newlength{\cvDateGap}
+\setlength{\cvDateWidth}{3.10cm}
+\setlength{\cvDateGap}{.30cm}
+\newcommand{\cvdated}[3]{%
+  \needspace{2.3\baselineskip}%
+  \noindent\begin{minipage}[t]{\cvDateWidth}
+     \vspace{0pt}\strut{\small\color{cvMuted}#1}%
+  \end{minipage}%
+  \hspace{\cvDateGap}%
+  \begin{minipage}[t]{\dimexpr\linewidth-\cvDateWidth-\cvDateGap\relax}
+     \vspace{0pt}\strut{\bfseries #2}\par\noindent #3%
+  \end{minipage}\par\vspace{.34em}%
+}
+\newcommand{\cvedu}[4]{%
+ \needspace{3\baselineskip}%
+ \noindent\begin{minipage}[t]{\cvDateWidth}
+    \vspace{0pt}\strut{\small\color{cvMuted}#1}%
+ \end{minipage}%
+ \hspace{\cvDateGap}%
+ \begin{minipage}[t]{.22cm}
+    \vspace{0pt}\strut{\color{cvAccent}\footnotesize\faBookmark}%
+ \end{minipage}%
+ \hspace{.16cm}%
+ \begin{minipage}[t]{\dimexpr\linewidth-\cvDateWidth-\cvDateGap-.22cm-.16cm\relax}
+    \vspace{0pt}\strut{\bfseries #2}\par\noindent #3\par\noindent{\small\color{cvMuted}#4}%
+ \end{minipage}\par\vspace{.36em}%
+}
+\newcommand{\cvteaching}[3]{%
+ \needspace{1.5\baselineskip}%
+ \noindent\begin{minipage}[t]{\cvDateWidth}
+    \vspace{0pt}\strut{\small\color{cvMuted}#1}%
+ \end{minipage}%
+ \hspace{\cvDateGap}%
+ \begin{minipage}[t]{\dimexpr\linewidth-\cvDateWidth-\cvDateGap\relax}
+    \vspace{0pt}\strut{\bfseries #2}\hspace{.6em}{\small\color{cvMuted}(#3)}%
+ \end{minipage}\par\vspace{.34em}%
+}
+\newenvironment{cvpubs}{%
+ \begin{enumerate}[label=\arabic*.,leftmargin=1.65em,labelsep=.45em,
+    topsep=.08em,partopsep=0pt,itemsep=.43em,parsep=0pt]
+}{\end{enumerate}}
+
 \begin{document}
-    \newcommand{\AND}{\unskip
-        \cleaders\copy\ANDbox\hskip\wd\ANDbox
-        \ignorespaces
-    }
-    \newsavebox\ANDbox
-    \sbox\ANDbox{}
+\placelastupdatedtext
+\begin{center}
+  {\fontsize{30pt}{32pt}\selectfont\bfseries 崔鴻竣}\hspace{.55em}{\fontsize{15pt}{20pt}\selectfont Hung-Chun Tsui}\par
+  \vspace{.27cm}
+  {\normalsize\color{cvAccentDark}%
+    \mbox{\href{https://www.nthu.edu.tw/}{\footnotesize\faMapMarker*\hspace{.12cm}國立清華大學，臺灣}}\hspace{.27cm}%
+    \mbox{\href{mailto:hctsui@gapp.nthu.edu.tw}{\footnotesize\faEnvelope[regular]\hspace{.12cm}hctsui@gapp.nthu.edu.tw}}\hspace{.27cm}%
+    \mbox{\href{https://hctsui.github.io/}{\footnotesize\faLink\hspace{.12cm}https://hctsui.github.io}}% 
+  }\par
+\end{center}
+\vspace{-.48em}
 
-    \placelastupdatedtext
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \begin{header}
-        \fontsize{30 pt}{30 pt}
-        \textbf{崔鴻竣}
-
-        \vspace{0.3 cm}
-
-        \normalsize
-        {\color{secondaryColor}\mbox{{\footnotesize\faMapMarker*}\hspace*{0.13cm} \hrefWithoutArrow{https://www.nthu.edu.tw/}{國立清華大學，臺灣}}}%
-        \kern 0.25 cm%
-        \AND%
-        \kern 0.25 cm%
-        \mbox{\hrefWithoutArrow{mailto:hctsui@gapp.nthu.edu.tw}{{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}hctsui@gapp.nthu.edu.tw}}%
-        \kern 0.25 cm%
-        \AND%
-        \kern 0.25 cm%
-        \mbox{\hrefWithoutArrow{https://hctsui.github.io/}{{\footnotesize\faLink}\hspace*{0.13cm}https://hctsui.github.io}}%
-    \end{header}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \vspace{0.3 cm - 0.3 cm}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{研究領域}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-函數體上的算術
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-$t$-模與 $t$-動機
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-多重 $\zeta$ 值與多重 Eisenstein 級數
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+函數體上的算術；$t$-模與 $t$-動機；多重 $\zeta$ 值與多重 Eisenstein 級數。
+
 \section{學歷}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{edu}{\textbf{數學博士班}}{2025 年 2 月至今}
-    \textbf{國立清華大學} \\
-{\small (逕讀博士)}
-\end{edu}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{edu}{\textbf{數學學士}}{2021 年 9 月至 2024 年 12 月}
-    \textbf{國立清華大學} \\
-{\small (成績優異畢業)}
-\end{edu}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvedu{2025 年 2 月至今}{數學博士班}{國立清華大學}{逕讀博士}
+\cvedu{2021 年 9 月至 2024 年 12 月}{數學學士}{國立清華大學}{成績優異畢業}
+
 \section{論文與預印本}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cvgroup{期刊論文}
-\begin{pub}{崔鴻竣}
-{(1)} \textbf{正特徵的 $u$-多重 $\zeta$ 值}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://academic.oup.com/imrn/article-abstract/2026/20/rnag233/8914538}{Journal} | \hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2604.03618}{ArXiv}]}\\\textit{\textbf{International Mathematics Research Notices (IMRN)} 2026 (2026)，第 20，rnag233。}.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{cvpubs}
+\item \textbf{崔鴻竣}, 「正特徵的 $u$-多重 $\zeta$ 值」, \emph{International Mathematics Research Notices (IMRN)} 2026 (2026)，第 20，rnag233.\cvlink{https://academic.oup.com/imrn/article-abstract/2026/20/rnag233/8914538}{Journal}\cvlink{https://arxiv.org/abs/2604.03618}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf}{PDF}
+\end{cvpubs}
 \cvgroup{預印本}
-\begin{pub}{崔鴻竣}
-{(1)} \textbf{$v$-進 Carlitz 多重對數函數與 $v$-進多重 $\zeta$ 值的分次結構}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2610.25063}{ArXiv}]}\\\textit{arXiv：2610.25063。}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{崔鴻竣}
-{(2)} \textbf{正特徵多重 $\zeta$ 值：Kaneko-Zagier 型猜想}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2609.37450}{ArXiv}]}\\\textit{arXiv：2609.37450。}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{崔鴻竣}
-{(3)} \textbf{$\infty$-進多重 $\zeta$ 值餘作用的 Mishiba 猜想}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2609.30823}{ArXiv}]}\\\textit{arXiv：2609.30823。}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{張介玉, 陳松筠, 黃斐浚, 崔鴻竣}
-{(4)} \textbf{正特徵上的多重 Eisenstein 級數：直和定理}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2609.18777}{ArXiv}]}\\\textit{arXiv：2609.18777。}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣}
-{(5)} \textbf{正特徵多重 Eisenstein 級數的代數結構}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2603.10376}{ArXiv}]}\\\textit{arXiv：2603.10376。}, 2026.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣}
-{(6)} \textbf{正特徵任意秩多重 Eisenstein 級數的 $q$-洗牌關係}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2504.18879}{ArXiv}]}\\\textit{arXiv：2504.18879。}, 2025.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{pub}{張庭瑋, 崔鴻竣}
-{(7)} \textbf{函數體上 Gross--Koblitz 型公式中 $v$-進 $\Gamma$ 函數的唯一性}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf}{PDF} | \hrefWithoutArrow{https://arxiv.org/abs/2504.15697}{ArXiv}]}\\\textit{arXiv：2504.15697。}, 2025.
-\end{pub}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{cvpubs}
+\item \textbf{崔鴻竣}, \emph{$v$-進 Carlitz 多重對數函數與 $v$-進多重 $\zeta$ 值的分次結構}, 2026.\cvlink{https://arxiv.org/abs/2610.25063}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf}{PDF}
+\item \textbf{崔鴻竣}, \emph{正特徵多重 $\zeta$ 值：Kaneko-Zagier 型猜想}, 2026.\cvlink{https://arxiv.org/abs/2609.37450}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf}{PDF}
+\item \textbf{崔鴻竣}, \emph{$\infty$-進多重 $\zeta$ 值餘作用的 Mishiba 猜想}, 2026.\cvlink{https://arxiv.org/abs/2609.30823}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf}{PDF}
+\item 張介玉, 陳松筠, 黃斐浚, \textbf{崔鴻竣}, \emph{正特徵上的多重 Eisenstein 級數：直和定理}, 2026.\cvlink{https://arxiv.org/abs/2609.18777}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf}{PDF}
+\item 張庭瑋, 陳松筠, 黃斐浚, \textbf{崔鴻竣}, \emph{正特徵多重 Eisenstein 級數的代數結構}, 2026.\cvlink{https://arxiv.org/abs/2603.10376}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf}{PDF}
+\item 張庭瑋, 陳松筠, 黃斐浚, \textbf{崔鴻竣}, \emph{正特徵任意秩多重 Eisenstein 級數的 $q$-洗牌關係}, 2025.\cvlink{https://arxiv.org/abs/2504.18879}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf}{PDF}
+\item 張庭瑋, \textbf{崔鴻竣}, \emph{函數體上 Gross--Koblitz 型公式中 $v$-進 $\Gamma$ 函數的唯一性}, 2025.\cvlink{https://arxiv.org/abs/2504.15697}{ArXiv}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf}{PDF}
+\end{cvpubs}
+
 \section{學術訪問}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/2 -- 2026/8/30}
-\textbf{東北大學}\\仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026/7/2--8/30}{東北大學}{仙台, 日本 · 本次訪問經費由公益財團法人日本台灣交流協會提供}
+
 \section{學術報告}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/10/15}
-\hrefWithoutArrow{https://ncts.ntu.edu.tw/news/Events/seminars/17301}{\textbf{$v$-進 Carlitz 多重對數函數與多重 $\zeta$ 值的分次結構}}\\NCTS 數論研討會, 國立清華大學, 新竹, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/6}
-\hrefWithoutArrow{https://sites.google.com/view/tohoku-number-semiar/2026?authuser=0}{\textbf{正特徵多重 Eisenstein 級數的近期發展}}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf}{投影片}]}\\東北大學數論研討會, 東北大學, 仙台, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/6/12}
-\hrefWithoutArrow{https://sites.google.com/view/workshoponarithmeticoffunction/scheduleabstract?authuser=0}{\textbf{正特徵多重 $\zeta$ 值的導子}}\\函數體算術工作坊, 國立成功大學, 臺南, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/2/8}
-\hrefWithoutArrow{https://sites.google.com/view/zetayoung19/speakers-program?authuser=0}{\textbf{函數體上的有限多重調和 $u$-級數}}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf}{投影片}]}\\名古屋---關西青年研究者 $\zeta$ 研討會, 名古屋大學, 名古屋, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/30}
-\hrefWithoutArrow{https://sites.google.com/view/rimsmzv2025/home}{\textbf{多重 $\zeta$ 值的 $u$-類比與函數體上 Kaneko--Zagier 猜想的一種可能表述}}\\多重 $\zeta$ 值的各種面向, 京都大學, 京都, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/3}
-\hrefWithoutArrow{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{\textbf{正特徵多重 Eisenstein 級數的 $q$-洗牌關係}}\\{\small\color{secondaryColor}[\hrefWithoutArrow{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf}{投影片}]}\\日臺數論會議, 休暇村志賀島, 福岡, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/4/17}
-\hrefWithoutArrow{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{\textbf{Gross--Koblitz--Thakur 公式中 $v$-進 $\Gamma$ 函數的唯一性}}\\國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026/10/15}{\href{https://ncts.ntu.edu.tw/news/Events/seminars/17301}{$v$-進 Carlitz 多重對數函數與多重 $\zeta$ 值的分次結構}}{NCTS 數論研討會, 國立清華大學, 新竹, 臺灣}
+\cvdated{2026/7/6}{\href{https://sites.google.com/view/tohoku-number-semiar/2026?authuser=0}{正特徵多重 Eisenstein 級數的近期發展}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf}{Slides}}{東北大學數論研討會, 東北大學, 仙台, 日本}
+\cvdated{2026/6/12}{\href{https://sites.google.com/view/workshoponarithmeticoffunction/scheduleabstract?authuser=0}{正特徵多重 $\zeta$ 值的導子}}{函數體算術工作坊, 國立成功大學, 臺南, 臺灣}
+\cvdated{2026/2/8}{\href{https://sites.google.com/view/zetayoung19/speakers-program?authuser=0}{函數體上的有限多重調和 $u$-級數}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf}{Slides}}{名古屋---關西青年研究者 $\zeta$ 研討會, 名古屋大學, 名古屋, 日本}
+\cvdated{2025/9/30}{\href{https://sites.google.com/view/rimsmzv2025/home}{多重 $\zeta$ 值的 $u$-類比與函數體上 Kaneko--Zagier 猜想的一種可能表述}}{多重 $\zeta$ 值的各種面向, 京都大學, 京都, 日本}
+\cvdated{2025/9/3}{\href{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{正特徵多重 Eisenstein 級數的 $q$-洗牌關係}\cvlink{https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf}{Slides}}{日臺數論會議, 休暇村志賀島, 福岡, 日本}
+\cvdated{2025/4/17}{\href{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{Gross--Koblitz--Thakur 公式中 $v$-進 $\Gamma$ 函數的唯一性}}{國立清華大學數論工作坊, 國立清華大學, 新竹, 臺灣}
+
 \section{獎項與榮譽}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026}
-\textbf{臺日青年科研人才交流計畫}\\公益財團法人日本台灣交流協會
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025}
-\textbf{國科會博士生研究獎學金}\\國家科學及技術委員會
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024}
-\textbf{周鴻經獎學金}\\中央研究院
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024}
-\textbf{中技社數學傑出大學生獎}\\中華民國數學會
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026}{臺日青年科研人才交流計畫}{公益財團法人日本台灣交流協會}
+\cvdated{2025}{國科會博士生研究獎學金}{國家科學及技術委員會}
+\cvdated{2024}{周鴻經獎學金}{中央研究院}
+\cvdated{2024}{中技社數學傑出大學生獎}{中華民國數學會}
+
 \section{會議與工作坊}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/8/24 -- 2026/8/28}
-\hrefWithoutArrow{https://edu.tsuda.ac.jp/~t-hara/ss2026/index.html}{\textbf{第 33 屆數論暑期學校：函數體的算術}}\\矢太樓, 長崎, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/18}
-\hrefWithoutArrow{https://sites.google.com/site/kmzsince2011/past/2026?authuser=0}{\textbf{第 72 回關西多重 $\zeta$ 值研討會}}\\東北大學, 仙台, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/7/7 -- 2026/7/10}
-\hrefWithoutArrow{https://hiro2.pm.tokushima-u.ac.jp/~hiroki/hiroshima26.html}{\textbf{第 25 屆仙台---廣島數論會議}}\\東北大學, 仙台, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/6/11 -- 2026/6/12}
-\hrefWithoutArrow{https://sites.google.com/view/workshoponarithmeticoffunction/home}{\textbf{函數體算術工作坊}} \quad {\color{secondaryColor}（講者）}\\國立成功大學, 臺南, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/2/8 -- 2026/2/11}
-\hrefWithoutArrow{https://sites.google.com/view/zetayoung19?authuser=0}{\textbf{名古屋---關西青年研究者 $\zeta$ 研討會}} \quad {\color{secondaryColor}（講者）}\\名古屋大學, 名古屋, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2026/1/21 -- 2026/1/22}
-\hrefWithoutArrow{https://2026tms-en.tms.org.tw/}{\textbf{中華民國數學會第 61 屆年會}}\\國立中正大學, 嘉義, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/12/15 -- 2025/12/19}
-\hrefWithoutArrow{https://www.math.sinica.edu.tw/202512taipeiag}{\textbf{2025 臺北算術幾何會議}}\\中央研究院, 臺北, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/29 -- 2025/10/3}
-\hrefWithoutArrow{https://sites.google.com/view/rimsmzv2025/home}{\textbf{多重 $\zeta$ 值的各種面向}} \quad {\color{secondaryColor}（講者）}\\京都大學, 京都, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/9/1 -- 2025/9/5}
-\hrefWithoutArrow{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{\textbf{日臺數論會議}} \quad {\color{secondaryColor}（講者）}\\休暇村志賀島, 福岡, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/8/25 -- 2025/8/29}
-\hrefWithoutArrow{https://www.math.ntnu.edu.tw/workshop/eantc2025/}{\textbf{第 11 屆東亞數論會議}}\\國立臺灣大學, 臺北, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/6/30 -- 2025/7/4}
-\hrefWithoutArrow{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-2025/iwasawa-2025?authuser=0}{\textbf{Iwasawa 2025 國際會議}}\\國立臺灣大學, 臺北, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/6/25 -- 2025/6/27}
-\hrefWithoutArrow{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-summerschool/}{\textbf{Iwasawa 理論臺北暑期學校}}\\國立臺灣大學, 臺北, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/4/17}
-\hrefWithoutArrow{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{\textbf{國立清華大學數論研討會}}\\國立清華大學, 新竹, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/2/17 -- 2025/2/22}
-\hrefWithoutArrow{https://www.apu.ac.jp/~rintaro/MK60/indexE.html}{\textbf{第 17 屆日本數學會季節研究所「多重 $\zeta$ 值的發展」第二週}}\\近畿大學, 大阪, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/2/10 -- 2025/2/15}
-\hrefWithoutArrow{https://sites.google.com/view/the-17th-msj-siw1}{\textbf{第 17 屆日本數學會季節研究所「多重 $\zeta$ 值的發展」第一週}}\\九州大學西新廣場, 福岡, 日本
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/1/14 -- 2025/1/15}
-\hrefWithoutArrow{https://2025tms-en.tms.org.tw/}{\textbf{中華民國數學會第 60 屆年會}}\\國立中央大學, 桃園, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2025/1/2 -- 2025/1/3}
-\hrefWithoutArrow{https://idv.sinica.edu.tw/mathas/202501SCV/index.html}{\textbf{Nevanlinna 理論、雙曲性與算術動力系統導論}}\\中央研究院, 臺北, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024/12/18}
-\hrefWithoutArrow{https://ncts.ntu.edu.tw/events_2_detail.php?nid=478}{\textbf{NCTS 一日工作坊}}\\國立清華大學, 新竹, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024/7/1 -- 2024/7/4}
-\hrefWithoutArrow{https://ncts.ntu.edu.tw/events_3_detail.php?nid=343}{\textbf{算術幾何暑期學校}}\\國立清華大學, 新竹, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2024/1/22 -- 2024/1/23}
-\hrefWithoutArrow{https://2024tms.tms.org.tw/}{\textbf{中華民國數學會第 59 屆年會}}\\國立政治大學, 臺北, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{conf}{2023/1/16 -- 2023/1/17}
-\hrefWithoutArrow{https://www.math.nthu.edu.tw/~2022TMS/home_en.html}{\textbf{中華民國數學會第 58 屆年會}}\\國立清華大學, 新竹, 臺灣
-\end{conf}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvdated{2026/8/24--8/28}{\href{https://edu.tsuda.ac.jp/~t-hara/ss2026/index.html}{第 33 屆數論暑期學校：函數體的算術}}{矢太樓, 長崎, 日本}
+\cvdated{2026/7/18}{\href{https://sites.google.com/site/kmzsince2011/past/2026?authuser=0}{第 72 回關西多重 $\zeta$ 值研討會}}{東北大學, 仙台, 日本}
+\cvdated{2026/7/7--7/10}{\href{https://hiro2.pm.tokushima-u.ac.jp/~hiroki/hiroshima26.html}{第 25 屆仙台---廣島數論會議}}{東北大學, 仙台, 日本}
+\cvdated{2026/6/11--6/12}{\href{https://sites.google.com/view/workshoponarithmeticoffunction/home}{函數體算術工作坊} {\normalfont\color{cvAccentDark}(講者)}}{國立成功大學, 臺南, 臺灣}
+\cvdated{2026/2/8--2/11}{\href{https://sites.google.com/view/zetayoung19?authuser=0}{名古屋---關西青年研究者 $\zeta$ 研討會} {\normalfont\color{cvAccentDark}(講者)}}{名古屋大學, 名古屋, 日本}
+\cvdated{2026/1/21--1/22}{\href{https://2026tms-en.tms.org.tw/}{中華民國數學會第 61 屆年會}}{國立中正大學, 嘉義, 臺灣}
+\cvdated{2025/12/15--12/19}{\href{https://www.math.sinica.edu.tw/202512taipeiag}{2025 臺北算術幾何會議}}{中央研究院, 臺北, 臺灣}
+\cvdated{2025/9/29--10/3}{\href{https://sites.google.com/view/rimsmzv2025/home}{多重 $\zeta$ 值的各種面向} {\normalfont\color{cvAccentDark}(講者)}}{京都大學, 京都, 日本}
+\cvdated{2025/9/1--9/5}{\href{https://www.cck.dendai.ac.jp/math/~namikawa/2025JapanTaiwan/2025JapanTaiwan.html}{日臺數論會議} {\normalfont\color{cvAccentDark}(講者)}}{休暇村志賀島, 福岡, 日本}
+\cvdated{2025/8/25--8/29}{\href{https://www.math.ntnu.edu.tw/workshop/eantc2025/}{第 11 屆東亞數論會議}}{國立臺灣大學, 臺北, 臺灣}
+\cvdated{2025/6/30--7/4}{\href{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-2025/iwasawa-2025?authuser=0}{Iwasawa 2025 國際會議}}{國立臺灣大學, 臺北, 臺灣}
+\cvdated{2025/6/25--6/27}{\href{https://sites.google.com/ncts.ntu.edu.tw/iwasawa-summerschool/}{Iwasawa 理論臺北暑期學校}}{國立臺灣大學, 臺北, 臺灣}
+\cvdated{2025/4/17}{\href{https://www.math.nthu.edu.tw/download.php?dir=seminar_event\&filename=19eeb11766f7313f8b3696d3069dd8e7.pdf\&title=2025.04.17}{國立清華大學數論研討會}}{國立清華大學, 新竹, 臺灣}
+\cvdated{2025/2/17--2/22}{\href{https://www.apu.ac.jp/~rintaro/MK60/indexE.html}{第 17 屆日本數學會季節研究所「多重 $\zeta$ 值的發展」第二週}}{近畿大學, 大阪, 日本}
+\cvdated{2025/2/10--2/15}{\href{https://sites.google.com/view/the-17th-msj-siw1}{第 17 屆日本數學會季節研究所「多重 $\zeta$ 值的發展」第一週}}{九州大學西新廣場, 福岡, 日本}
+\cvdated{2025/1/14--1/15}{\href{https://2025tms-en.tms.org.tw/}{中華民國數學會第 60 屆年會}}{國立中央大學, 桃園, 臺灣}
+\cvdated{2025/1/2--1/3}{\href{https://idv.sinica.edu.tw/mathas/202501SCV/index.html}{Nevanlinna 理論、雙曲性與算術動力系統導論}}{中央研究院, 臺北, 臺灣}
+\cvdated{2024/12/18}{\href{https://ncts.ntu.edu.tw/events_2_detail.php?nid=478}{NCTS 一日工作坊}}{國立清華大學, 新竹, 臺灣}
+\cvdated{2024/7/1--7/4}{\href{https://ncts.ntu.edu.tw/events_3_detail.php?nid=343}{算術幾何暑期學校}}{國立清華大學, 新竹, 臺灣}
+\cvdated{2024/1/22--1/23}{\href{https://2024tms.tms.org.tw/}{中華民國數學會第 59 屆年會}}{國立政治大學, 臺北, 臺灣}
+\cvdated{2023/1/16--1/17}{\href{https://www.math.nthu.edu.tw/~2022TMS/home_en.html}{中華民國數學會第 58 屆年會}}{國立清華大學, 新竹, 臺灣}
+
 \section{教學經歷}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cvgroup{國立清華大學}
-\begin{teaching}{MATH5410 近世代數（一）}{2026 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH5640 代數幾何}{2026 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH1000 微積分預備課程}{2026 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2870 離散數學}{2026 春}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2420 代數（二）}{2026 春}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2410 代數（一）}{2025 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH3450 密碼學}{2025 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH3050 複變數函數論}{2025 春}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH1420 線性代數（二）}{2025 春}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH1410 線性代數（一）}{2024 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2020 高等微積分（二）}{2024 春}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{teaching}{MATH2010 高等微積分（一）}{2023 秋}
-    助教
-\end{teaching}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cvteaching{2026 秋}{MATH5410 近世代數（一）}{助教}
+\cvteaching{2026 秋}{MATH5640 代數幾何}{助教}
+\cvteaching{2026 秋}{MATH1000 微積分預備課程}{助教}
+\cvteaching{2026 春}{MATH2870 離散數學}{助教}
+\cvteaching{2026 春}{MATH2420 代數（二）}{助教}
+\cvteaching{2025 秋}{MATH2410 代數（一）}{助教}
+\cvteaching{2025 秋}{MATH3450 密碼學}{助教}
+\cvteaching{2025 春}{MATH3050 複變數函數論}{助教}
+\cvteaching{2025 春}{MATH1420 線性代數（二）}{助教}
+\cvteaching{2024 秋}{MATH1410 線性代數（一）}{助教}
+\cvteaching{2024 春}{MATH2020 高等微積分（二）}{助教}
+\cvteaching{2023 秋}{MATH2010 高等微積分（一）}{助教}
+
 \section{個人資訊}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{one}
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{@{} p{3cm} @{\hspace{0.2cm}} p{12cm} @{}}
-        \textbf{語言} & 中文（母語） | 英文（CEFR C1） | 日文（CEFR A1） \\
-        \textbf{地址} & 臺灣 300044 新竹市東區光復路二段 101 號 \\
-        \textbf{電子郵件} & hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com \\
-        \textbf{網站} & \hrefWithoutArrow{https://hctsui.github.io}{https://hctsui.github.io} \\
-        \textbf{ORCID} & \hrefWithoutArrow{https://orcid.org/0009-0009-7445-5634}{0009-0009-7445-5634} \\
-    \end{tabular}
-\end{one}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}p{2.8cm}@{\hspace{.30cm}}>{\raggedright\arraybackslash}X@{}}
+\textbf{語言} & 中文（母語） | 英文（CEFR C1） | 日文（CEFR A1） \\
+\textbf{地址} & 臺灣 300044 新竹市東區光復路二段 101 號 \\
+\textbf{電子郵件} & hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com \\
+\textbf{網站} & \href{https://hctsui.github.io}{https://hctsui.github.io} \\
+\textbf{ORCID} & \href{https://orcid.org/0009-0009-7445-5634}{0009-0009-7445-5634} \\
+\end{tabularx}
+
 \end{document}

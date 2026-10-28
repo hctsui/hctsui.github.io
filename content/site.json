@@ -1,7 +1,7 @@
 {
   "schema_version": 3,
   "settings": {
-    "timezone": "Asia/Tokyo",
+    "timezone": "Asia/Taipei",
     "homepage_publication_limit": 3,
     "homepage": {
       "publications": {
@@ -1120,6 +1120,11 @@
         },
         "show_contact_shortcut": true
       }
+    },
+    "auto_update": {
+      "enabled": true,
+      "time": "00:15",
+      "timezone": "Asia/Taipei"
     }
   },
   "activities": [

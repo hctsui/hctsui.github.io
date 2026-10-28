@@ -4,7 +4,7 @@ on:
   # AUTO_DAILY_SCHEDULE_BEGIN -- managed from Admin > 自動更新
   schedule:
     - cron: "15 0 * * *"
-      timezone: "Asia/Tokyo"
+      timezone: "Asia/Taipei"
   # AUTO_DAILY_SCHEDULE_END
   workflow_dispatch:
 
