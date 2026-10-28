@@ -41,17 +41,17 @@
     pane.hidden=!active;
     if(active){
       root.querySelectorAll('#generalSettingsPane,#contactFormSettingsPane,#seoSettingsPane,#analyticsSettingsPane,#r2SettingsPane').forEach(el=>el.hidden=true);
-      tabs.querySelectorAll(':scope > .button').forEach(el=>{if(el!==button)el.classList.remove('active');});
+      tabs.querySelectorAll(':scope > .button.active').forEach(el=>{if(el!==button)el.classList.remove('active');});
     }
     if(button.classList.contains('active')!==active)button.classList.toggle('active',active);
   }
   function setVisibility(on){
     active=on;ensureUi();const root=panel();if(!root)return;
     const pane=root.querySelector('#autoUpdateSettingsPane');if(pane)pane.hidden=!on;
-    const button=sectionTabs()?.querySelector('[data-auto-update-settings-section]');button?.classList.toggle('active',on);
+    const button=sectionTabs()?.querySelector('[data-auto-update-settings-section]');if(button&&button.classList.contains('active')!==on)button.classList.toggle('active',on);
     if(on){
       root.querySelectorAll('#generalSettingsPane,#contactFormSettingsPane,#seoSettingsPane,#analyticsSettingsPane,#r2SettingsPane').forEach(el=>el.hidden=true);
-      sectionTabs()?.querySelectorAll('.button').forEach(el=>{if(el!==button)el.classList.remove('active');});
+      sectionTabs()?.querySelectorAll(':scope > .button.active').forEach(el=>{if(el!==button)el.classList.remove('active');});
       renderPane();
     }
   }
@@ -121,9 +121,25 @@
     draft[field.dataset.autoField]=field.type==='checkbox'?field.checked:field.value;
     save();
   });
-  // Side panels may be re-rendered by other Admin managers; remain idempotent.
-  const observer=new MutationObserver(()=>{if(sectionTabs())ensureUi();});
-  observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  // Repair only if the Settings tab, R2 button, or this pane is replaced.
+  // Do NOT observe class attributes: ensureUi() changes the selected tab's
+  // classes, and observing those writes can cause an infinite microtask loop
+  // that freezes the entire Admin page when 自動更新 is opened.
+  const settingsRoot=panel();
+  if(settingsRoot){
+    const observer=new MutationObserver(()=>{
+      const tabs=sectionTabs(),root=panel();
+      if(!tabs||!root)return;
+      const button=tabs.querySelector(':scope > [data-auto-update-settings-section]');
+      const r2=tabs.querySelector(':scope > [data-r2-settings-section]');
+      const pane=root.querySelector('#autoUpdateSettingsPane');
+      // An ordinary pane update never requires repair; the UI must remain
+      // untouched or this observer would observe its own changes repeatedly.
+      if(button&&pane&&(!r2||button.previousElementSibling===r2))return;
+      ensureUi();
+    });
+    observer.observe(settingsRoot,{childList:true,subtree:true});
+  }
   fetch('../content/site.json',{cache:'no-store'}).then(response=>{if(!response.ok)throw new Error('HTTP '+response.status);return response.json();}).then(data=>{
     const s=data.settings||{};
     siteSettings=Object.fromEntries(['general','footer','seo','analytics','contact_form','error_page'].map(key=>[key,clone(s[key]||{})]));
