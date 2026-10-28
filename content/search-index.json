@@ -234,16 +234,23 @@
     },
     {
       "language": "en",
-      "title": "Function Field Arithmetic",
+      "title": "Function field arithmetic",
       "description": "",
       "url": "/cv.html#interest-function-field-arithmetic",
       "kind": "interest"
     },
     {
       "language": "en",
-      "title": "Multiple Zeta Values and Multiple Eisenstein Series in Positive Characteristic",
+      "title": "Multiple zeta values and multiple Eisenstein series",
       "description": "",
       "url": "/cv.html#interest-positive-characteristic-mzv-mes",
+      "kind": "interest"
+    },
+    {
+      "language": "en",
+      "title": "t-modules and t-motives",
+      "description": "",
+      "url": "/cv.html#generic-2026-10-28-t-t",
       "kind": "interest"
     },
     {
@@ -871,6 +878,13 @@
     },
     {
       "language": "zh",
+      "title": "t-模與 t-動機",
+      "description": "",
+      "url": "/zh/cv.html#generic-2026-10-28-t-t",
+      "kind": "interest"
+    },
+    {
+      "language": "zh",
       "title": "函數體上的算術",
       "description": "",
       "url": "/zh/cv.html#interest-function-field-arithmetic",
@@ -878,7 +892,7 @@
     },
     {
       "language": "zh",
-      "title": "正特徵下的多重 zeta 值與多重 Eisenstein 級數",
+      "title": "多重 zeta 值與多重 Eisenstein 級數",
       "description": "",
       "url": "/zh/cv.html#interest-positive-characteristic-mzv-mes",
       "kind": "interest"

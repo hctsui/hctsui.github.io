@@ -3469,7 +3469,7 @@
       "category_id": "cv-research",
       "order": 0,
       "title": {
-        "en": "Function Field Arithmetic",
+        "en": "Function field arithmetic",
         "zh": "函數體上的算術"
       },
       "description": {
@@ -3477,14 +3477,34 @@
         "zh": ""
       },
       "title_html": {
-        "en": "Function Field Arithmetic",
+        "en": "Function field arithmetic",
         "zh": "函數體上的算術"
       },
       "description_html": {
         "en": "",
         "zh": ""
       },
-      "display_placements": []
+      "display_placements": [],
+      "start_date": "",
+      "end_date": "",
+      "date_label": {
+        "en": "",
+        "zh": ""
+      },
+      "organization": {
+        "en": "",
+        "zh": ""
+      },
+      "url": "",
+      "display_style": "interest",
+      "organization_html": {
+        "en": "",
+        "zh": ""
+      },
+      "date_label_html": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "interest-positive-characteristic-mzv-mes",
@@ -3492,14 +3512,42 @@
       "category_id": "cv-research",
       "order": 1,
       "title": {
-        "en": "Multiple Zeta Values and Multiple Eisenstein Series in Positive Characteristic",
-        "zh": "正特徵下的多重 zeta 值與多重 Eisenstein 級數"
+        "en": "Multiple zeta values and multiple Eisenstein series",
+        "zh": "多重 zeta 值與多重 Eisenstein 級數"
       },
       "description": {
         "en": "",
         "zh": ""
       },
-      "display_placements": []
+      "display_placements": [],
+      "start_date": "",
+      "end_date": "",
+      "date_label": {
+        "en": "",
+        "zh": ""
+      },
+      "organization": {
+        "en": "",
+        "zh": ""
+      },
+      "url": "",
+      "display_style": "interest",
+      "title_html": {
+        "en": "Multiple zeta values and multiple Eisenstein series",
+        "zh": "多重 zeta 值與多重 Eisenstein 級數"
+      },
+      "description_html": {
+        "en": "",
+        "zh": ""
+      },
+      "organization_html": {
+        "en": "",
+        "zh": ""
+      },
+      "date_label_html": {
+        "en": "",
+        "zh": ""
+      }
     },
     {
       "id": "education-phd-nthu",
@@ -3797,6 +3845,49 @@
       "personal_key": "position",
       "display_style": "contact",
       "display_placements": []
+    },
+    {
+      "type": "interest",
+      "category_id": "cv-research",
+      "start_date": "",
+      "end_date": "",
+      "date_label": {
+        "en": "",
+        "zh": ""
+      },
+      "title": {
+        "en": "$t$-modules and $t$-motives",
+        "zh": "$t$-模與 $t$-動機"
+      },
+      "organization": {
+        "en": "",
+        "zh": ""
+      },
+      "description": {
+        "en": "",
+        "zh": ""
+      },
+      "url": "",
+      "id": "generic-2026-10-28-t-t",
+      "display_style": "interest",
+      "display_placements": [],
+      "title_html": {
+        "en": "<span class=\"math-inline\" data-tex-inline=\"t\">t</span>-modules and <span class=\"math-inline\" data-tex-inline=\"t\">t</span>-motives",
+        "zh": "<span class=\"math-inline\" data-tex-inline=\"t\">t</span>-模與 <span class=\"math-inline\" data-tex-inline=\"t\">t</span>-動機"
+      },
+      "description_html": {
+        "en": "",
+        "zh": ""
+      },
+      "organization_html": {
+        "en": "",
+        "zh": ""
+      },
+      "date_label_html": {
+        "en": "",
+        "zh": ""
+      },
+      "order": 15
     }
   ]
 }
