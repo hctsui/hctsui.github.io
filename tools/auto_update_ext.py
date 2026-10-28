@@ -195,22 +195,27 @@ def _install_search_visibility() -> None:
 
 
 def _install_admin_script() -> None:
-    # All existing deploy workflows run Python before publishing admin/index.html.
-    # Insert the separate UI module without replacing the 160-kB admin index.
+    """Inject the script into the ACTUAL deployed Admin HTML, idempotently."""
     root = Path(__file__).resolve().parents[1]
     page = root / "admin/index.html"
     if not page.is_file():
-        return
+        raise FileNotFoundError(f"Admin page was not found: {page}")
     raw = page.read_text(encoding="utf-8")
-    script = '<script src="auto-update.js?v=20261028-1"></script>'
-    if script in raw:
-        return
-    marker = '<script src="github-submit.js'
-    pos = raw.find(marker)
-    if pos == -1:
-        raise RuntimeError("Cannot inject daily-update Admin JS: GitHub submit script missing")
-    raw = raw[:pos] + script + "\n    " + raw[pos:]
-    page.write_text(raw, encoding="utf-8")
+    # This source file is not independently loaded by the existing Admin.
+    # The previous release forgot to add a script tag reliably.
+    script = '<script src="auto-update.js?v=20261028-2"></script>'
+    old = re.compile(r'<script\s+src=["\']auto-update\.js(?:\?[^"\']*)?["\']\s*></script>', re.I)
+    if old.search(raw):
+        new = old.sub(script, raw)
+    else:
+        marker = re.search(r'<script\s+src=["\']github-submit\.js[^"\']*["\']\s*></script>', raw, re.I)
+        if not marker:
+            raise RuntimeError('Cannot load daily-update Admin JS: GitHub submit script missing')
+        new = raw[:marker.start()] + script + "\n    " + raw[marker.start():]
+    if new != raw:
+        page.write_text(new, encoding="utf-8")
+    if script not in page.read_text(encoding="utf-8"):
+        raise RuntimeError('Could not verify Admin auto-update script injection')
 
 
 def install() -> None:
@@ -227,3 +232,11 @@ def install() -> None:
         _install_search_visibility()
     if (Path(__file__).resolve().parents[1] / "admin/index.html").is_file():
         _install_admin_script()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 2 and sys.argv[1] == "inject-admin":
+        _install_admin_script()
+        print("Verified admin/index.html loads auto-update.js")
+    else:
+        raise SystemExit("Usage: python3 tools/auto_update_ext.py inject-admin")

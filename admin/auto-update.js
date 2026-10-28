@@ -39,6 +39,10 @@
     let pane=root.querySelector('#autoUpdateSettingsPane');
     if(!pane){pane=document.createElement('div');pane.id='autoUpdateSettingsPane';pane.hidden=true;root.append(pane);}
     pane.hidden=!active;
+    if(active){
+      root.querySelectorAll('#generalSettingsPane,#contactFormSettingsPane,#seoSettingsPane,#analyticsSettingsPane,#r2SettingsPane').forEach(el=>el.hidden=true);
+      tabs.querySelectorAll(':scope > .button').forEach(el=>{if(el!==button)el.classList.remove('active');});
+    }
     if(button.classList.contains('active')!==active)button.classList.toggle('active',active);
   }
   function setVisibility(on){
@@ -68,7 +72,7 @@
           <div class="field"><label for="autoDailyTime">每天執行時間</label><input id="autoDailyTime" data-auto-field="time" type="time" step="60" value="${esc(draft.time)}"></div>
           <div class="field"><label for="autoDailyZone">時區（IANA）</label><input id="autoDailyZone" data-auto-field="timezone" list="autoDailyTimezones" value="${esc(draft.timezone)}" spellcheck="false"><datalist id="autoDailyTimezones">${ZONES.map(x=>`<option value="${esc(x)}"></option>`).join('')}</datalist></div>
         </div>
-        <p class="field-hint">預設為每天 00:15（Asia/Tokyo）。GitHub Actions 每 15 分鐘檢查一次設定；實際開始可能比指定時間晚，取決於 GitHub 排程延遲。選用的時區也會用來決定網站當日日期。</p>
+        <p class="field-hint">預設為每天 00:15（Asia/Tokyo）。儲存後 GitHub Actions 會把每日排程改為指定時間及時區，不需要反覆檢查。GitHub 可能延遲啟動；時區也會用於網站日期判斷。首次使用需要設定具備 Workflows 寫入權限的 GitHub Token。</p>
         <div class="site-settings-subnote"><strong>預計時間</strong><span data-auto-summary></span></div>
         <div data-auto-update-status class="notice ${error?'error':isDirty?'success':''}" role="status">${esc(error|| (isDirty?'有尚未送出的自動更新設定，請使用上方 Batch 送出。':'目前沒有未送出的變更。'))}</div>
         <div class="actions" style="margin-top:14px"><button class="button" data-auto-revert type="button" ${isDirty?'':'disabled'}>還原此項設定</button></div>
