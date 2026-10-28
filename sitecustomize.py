@@ -1,4 +1,7 @@
-"""Load the CMS schema extensions for repository-local Python commands."""
+"""Load the CMS schema extensions for repository-local Python commands.
+
+Also enables the content visibility and editable daily-update settings layer.
+"""
 from __future__ import annotations
 
 import sys
@@ -11,6 +14,12 @@ try:
     import cms_extensions
     cms_extensions.install()
 except Exception:
-    # Individual wrapper scripts report actionable errors. Keeping this import
-    # soft avoids breaking unrelated one-off Python commands in the repository.
+    # Keep the existing behavior for unrelated local Python commands.
     pass
+
+# On an actual repository checkout, load the additive extension.  Fail loudly
+# if a deploy script encounters a broken extension instead of publishing a
+# site with silently missing visibility/schedule protections.
+if (TOOLS / "auto_update_ext.py").is_file():
+    import auto_update_ext
+    auto_update_ext.install()
