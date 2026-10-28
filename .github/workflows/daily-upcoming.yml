@@ -1,9 +1,11 @@
-name: Move expired Upcoming entries
+name: Daily website update (Admin-configured time and timezone)
 
 on:
+  # AUTO_DAILY_SCHEDULE_BEGIN -- managed from Admin > 自動更新
   schedule:
-    # 00:15 in Japan/Taiwan time (15:15 UTC on the previous date)
-    - cron: "15 15 * * *"
+    - cron: "15 0 * * *"
+      timezone: "Asia/Tokyo"
+  # AUTO_DAILY_SCHEDULE_END
   workflow_dispatch:
 
 concurrency:
@@ -17,7 +19,9 @@ permissions:
 jobs:
   update-upcoming:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     outputs:
       changed: ${{ steps.changes.outputs.changed }}
 
@@ -28,7 +32,14 @@ jobs:
           ref: cms
           fetch-depth: 0
 
-      - name: Rebuild using today's date
+      - name: Check editable time and timezone
+        id: due
+        env:
+          FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' }}
+        run: python3 tools/daily_update_schedule.py check
+
+      - name: Rebuild at configured local time
+        if: steps.due.outputs.run == 'true'
         run: |
           python3 -m unittest discover -s tests
           python3 tools/run_with_extensions.py tools/build_site.py
@@ -43,13 +54,15 @@ jobs:
           python3 tools/run_with_extensions.py tools/build_catalog.py
           python3 tools/validate_translations.py
           python3 tools/run_validate_site.py
+          python3 tools/daily_update_schedule.py mark
 
       - name: Detect whether generated content changed
+        if: steps.due.outputs.run == 'true'
         id: changes
         run: |
           if [ -z "$(git status --porcelain -- \
             CONTENT-CATALOG.md \
-            content/media.json content/search-index.json \
+            content/media.json content/search-index.json content/daily-update-state.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html')" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -59,19 +72,19 @@ jobs:
           fi
 
       - name: Commit generated changes
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.due.outputs.run == 'true' && steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CONTENT-CATALOG.md \
-            content/media.json content/search-index.json \
+            content/media.json content/search-index.json content/daily-update-state.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html'
-          git commit -m "Rebuild website and both CVs"
+          git commit -m "Rebuild website at configured daily time"
           git push origin HEAD:cms
 
       - name: Publish generated changes
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.due.outputs.run == 'true' && steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run deploy-cms-pages.yml --ref cms

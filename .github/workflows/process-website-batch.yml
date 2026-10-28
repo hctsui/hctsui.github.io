@@ -18,6 +18,8 @@ jobs:
     if: "startsWith(github.event.issue.title, '[Website: Batch]') && github.event.issue.author_association == 'OWNER'"
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
       - name: Check out cms branch
@@ -25,6 +27,9 @@ jobs:
         with:
           ref: cms
           fetch-depth: 0
+          # Required to synchronize the daily cron when the Admin time changes.
+          # Create a fine-grained PAT with Contents+Workflows: write once.
+          token: ${{ secrets.AUTO_UPDATE_WORKFLOW_TOKEN || github.token }}
 
       - name: Configure Git
         run: |
@@ -35,6 +40,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
+        env:
+          AUTO_UPDATE_WORKFLOW_TOKEN_PRESENT: ${{ secrets.AUTO_UPDATE_WORKFLOW_TOKEN != '' }}
         run: |
           set -euo pipefail
           applied=false
@@ -52,6 +59,13 @@ jobs:
             python3 tools/run_process_batch_request.py \
               "$GITHUB_EVENT_PATH" \
               --result-file /tmp/result.json
+            python3 tools/sync_daily_schedule.py
+            if ! git diff --quiet -- .github/workflows/daily-upcoming.yml; then
+              if [ "${AUTO_UPDATE_WORKFLOW_TOKEN_PRESENT:-false}" != "true" ]; then
+                echo "::error::Admin scheduled time was saved, but modifying workflow schedules requires a GitHub fine-grained PAT with Contents and Workflows write permission. Add repository secret AUTO_UPDATE_WORKFLOW_TOKEN."
+                exit 1
+              fi
+            fi
             # Compatibility marker: python3 tools/build_site.py
             python3 tools/run_with_extensions.py tools/build_site.py
             python3 tools/build_dossier.py
@@ -70,7 +84,7 @@ jobs:
             # Compatibility wrapper for: python3 tools/validate_site.py
             python3 tools/run_validate_site.py
 
-            git add content/site.json content/translations.json content/people.json content/arxiv-suggestions.json content/notifications.json content/change-history.json content/media.json content/search-index.json \
+            git add .github/workflows/daily-upcoming.yml content/site.json content/translations.json content/people.json content/arxiv-suggestions.json content/notifications.json content/change-history.json content/media.json content/search-index.json \
               CONTENT-CATALOG.md cv/*.tex \
               '*.html' zh
 

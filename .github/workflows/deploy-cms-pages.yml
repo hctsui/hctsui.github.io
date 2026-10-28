@@ -20,6 +20,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -110,6 +112,11 @@ jobs:
           test -f sitemap.xml
           test -f contact.html
           test -f zh/contact.html
+          test -f admin/auto-update.js
+          test -f tools/auto_update_ext.py
+          test -f tools/sync_daily_schedule.py
+          test -f admin/auto-update.js
+          test -f tools/daily_update_schedule.py
 
       - name: Rebuild website and both LaTeX CVs
         run: |
@@ -135,6 +142,7 @@ jobs:
           test -s sitemap.xml
           test -s cv/Hung-Chun-Tsui-CV.tex
           test -s cv/Hung-Chun-Tsui-CV-zh.tex
+          grep -q 'auto-update.js' admin/index.html
 
       - name: Compile English PDF CV
         uses: xu-cheng/latex-action@v4
@@ -186,6 +194,11 @@ jobs:
             "Hung-Chun-Tsui-CV-zh.pdf"
 
           ls -lh files/Hung-Chun-Tsui-CV*.pdf
+
+      - name: Ensure Admin loads the automatic update button
+        run: |
+          python3 tools/auto_update_ext.py inject-admin
+          grep -q 'auto-update.js?v=20261028-2' admin/index.html
 
       - name: Prepare public website
         run: |
