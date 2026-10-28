@@ -11,8 +11,8 @@
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
 | interest | Function field arithmetic | 函數體上的算術 | `interest-function-field-arithmetic` |
-| interest | Multiple zeta values and multiple Eisenstein series | 多重 zeta 值與多重 Eisenstein 級數 | `interest-positive-characteristic-mzv-mes` |
 | interest | $t$-modules and $t$-motives | $t$-模與 $t$-動機 | `generic-2026-10-28-t-t` |
+| interest | Multiple zeta values and multiple Eisenstein series | 多重 zeta 值與多重 Eisenstein 級數 | `interest-positive-characteristic-mzv-mes` |
 
 ### Education / 學歷
 
