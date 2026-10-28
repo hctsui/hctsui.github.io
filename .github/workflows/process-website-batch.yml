@@ -37,10 +37,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Apply batch safely
-        env:
-          GH_TOKEN: ${{ github.token }}
         shell: bash
         env:
+          GH_TOKEN: ${{ github.token }}
           AUTO_UPDATE_WORKFLOW_TOKEN_PRESENT: ${{ secrets.AUTO_UPDATE_WORKFLOW_TOKEN != '' }}
         run: |
           set -euo pipefail
