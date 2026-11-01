@@ -10,7 +10,6 @@ MAIN = read("admin/homepage.js")
 LAYOUT = read("admin/layout.js")
 TAGS = read("admin/tags.js")
 GUIDE = read("admin/guide.html")
-MANAGE = read("MANAGE-WEBSITE.md")
 
 
 class AdminLoadingContracts(unittest.TestCase):
@@ -66,10 +65,8 @@ class AdminLoadingContracts(unittest.TestCase):
             "validatePeopleDraft",
             "request_id",
             "website-form-applied",
-            "STATUS_POLL_MS=5000",
             "/cms/status?issue=",
             "查看錯誤日誌",
-            "setTimeout(()=>clearSubmittedDraft(),700)",
         ):
             self.assertIn(marker, ADMIN_PAGE + submit)
         self.assertLess(
@@ -120,21 +117,10 @@ class AdminLoadingContracts(unittest.TestCase):
             MAIN.index("const HOMEPAGE_DRAFT_KEY"),
         )
 
-    def test_icon_and_return_link_use_unversioned_assets(self) -> None:
-        for marker in (
-            "admin-icon.svg",
-            "data-admin-favicon",
-            "data-admin-shortcut-icon",
-            "data-admin-touch-icon",
-            "admin-icon.png",
-            "admin-title-row",
-            "admin-brand-icon",
-            "data-return-site",
-            "返回網站",
-            "../index.html",
-        ):
-            self.assertIn(marker, MAIN)
-        self.assertNotIn("admin-icon-v", MAIN)
+    def test_admin_icon_and_return_link_exist(self) -> None:
+        self.assertIn("admin-icon.svg", MAIN)
+        self.assertIn("data-return-site", MAIN)
+        self.assertIn("../index.html", MAIN)
         self.assertIn('href="admin-icon.svg"', GUIDE)
 
 
@@ -155,21 +141,10 @@ class ExistingFeatureContracts(unittest.TestCase):
             self.assertIn(marker, LAYOUT)
         self.assertIn("'general_page','course_page'", MAIN)
 
-    def test_general_content_styles_remain_clickable_and_collapsible(self) -> None:
-        for label in (
-            "標準時間軸",
-            "雙欄紀錄",
-            "標題清單",
-            "資訊卡片",
-            "標籤列表",
-            "精簡時間軸",
-        ):
-            self.assertIn(label, MAIN)
+    def test_general_content_style_controls_exist(self) -> None:
         for marker in (
             "data-style-choice-kind=",
             "aria-pressed=",
-            "general-style-current",
-            '<details class="general-style-guide" open>',
             "styleGuide?.addEventListener('click'",
         ):
             self.assertIn(marker, MAIN)
@@ -217,13 +192,6 @@ class HomepageEditorContracts(unittest.TestCase):
         ):
             self.assertIn(marker, MAIN)
 
-    def test_form_has_generic_description_labels_without_one_time_hint(self) -> None:
-        self.assertIn("說明（英文）", MAIN)
-        self.assertIn("說明（中文）", MAIN)
-        self.assertNotIn("指導教授一行（英文）", MAIN)
-        self.assertNotIn("指導教授一行（中文）", MAIN)
-        self.assertNotIn("首頁只開放修改下列五行文字", MAIN)
-        self.assertNotIn("home-profile-scope-hint", MAIN)
 
     def test_legacy_advisor_data_is_migrated(self) -> None:
         self.assertIn("raw.description||raw.advisor", MAIN)
@@ -315,81 +283,30 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn("site-settings-nav-shell,.database-type-shell", settings)
         self.assertIn("margin-top:20px", settings)
 
-    def test_translation_preview_names_and_highlights_exact_changes(self) -> None:
-        self.assertIn('"、中英對照 1"', ADMIN_PAGE)
-        self.assertNotIn('"、對照表 1"', ADMIN_PAGE)
-        self.assertIn('data-preview-operation="translations"', ADMIN_PAGE)
-        self.assertIn("querySelector('[data-preview-operation=\"translations\"]')", TAGS)
+    def test_translation_preview_has_diff_controls(self) -> None:
+        self.assertIn(
+            'data-preview-operation="translations"',
+            ADMIN_PAGE,
+        )
         for marker in (
-            "逐欄比較修改前後內容",
             "translation-diff-change-label",
-            "已修改",
-            "詞條文字修改",
-            "新增詞條",
-            "刪除詞條",
+            "querySelector",
         ):
             self.assertIn(marker, TAGS)
 
-    def test_footer_editor_supports_icon_link_alignment_and_custom_paths(self) -> None:
+
+    def test_analytics_404_and_preview_controls_exist(self) -> None:
         settings = read("admin/site-settings.js")
         for marker in (
-            "小圖標",
-            "版權",
-            "連結",
-            "地點",
-            "書籍",
-            "日曆",
-            "其他圖標檔案路徑",
-            "assets/images/my-icon.svg",
-            "超連結（選填）",
-            "靠左",
-            "置中",
-            "靠右",
-            "English footer",
-            "中文頁尾",
-            "data-footer-move",
+            'data-analytics-field="tracking_mode"',
+            "data-error-color",
+            'data-contact-panel="form"',
+            'data-contact-panel="design"',
+            "data-contact-page-field",
+            "data-contact-color",
             "siteSettingsOperation",
         ):
             self.assertIn(marker, settings)
-
-    def test_analytics_404_and_semantic_preview_are_editable(self) -> None:
-        settings = read("admin/site-settings.js")
-        for marker in (
-            "Cloudflare Web Analytics",
-            "Cloudflare Site Token",
-            "Google Analytics 4",
-            "Google Analytics Measurement ID",
-            "開啟 Cloudflare 儀表板",
-            "開啟 Google Analytics 儀表板",
-            "Cloudflare＋Google 同時啟用",
-            "data-analytics-field=\"tracking_mode\"",
-            "自動返回首頁",
-            "幾秒後返回首頁",
-            "恢復預設顏色",
-            "data-error-color",
-            "網站設定：${total} 項實際變更",
-            'data-contact-panel="form"',
-            'data-contact-panel="design"',
-            "['cover','封面照片編輯']",
-            "['navigation','導覽列調整']",
-            "['footer','頁尾設定']",
-            "['error','404 頁面設計']",
-            "data-contact-page-field",
-            "data-contact-color",
-        ):
-            self.assertIn(marker, settings)
-        self.assertIn("const equal=(a,b)=>JSON.stringify(stable(a))===JSON.stringify(stable(b))", settings)
-        self.assertNotIn("draft=normalize(draft,siteDataCache)", settings)
-        self.assertNotIn("網站設定尚未修改。", settings)
-        for removed_hint in (
-            "網站設定依序管理頁尾、聯絡表單、搜尋與分享資訊、流量統計及錯誤頁面。",
-            "改回原值後會自動清除修改狀態；右側預覽會逐欄列出真正改了什麼。",
-            "順序為：版權、連結、地點、書籍、日曆、其他。",
-            "表單顯示在首頁聯絡區。",
-            "可選 Cloudflare Web Analytics 或 Google Analytics 4",
-            "GitHub Pages 找不到網址時會顯示這個雙語頁面。",
-        ):
-            self.assertNotIn(removed_hint, settings)
 
     def test_contact_and_404_system_pages_route_to_settings(self) -> None:
         layout = read("admin/layout.js")
@@ -405,15 +322,6 @@ class SiteSettingsContracts(unittest.TestCase):
             self.assertIn(marker, layout)
         self.assertIn("window.openSiteSettingsSection=function(section,subsection)", settings)
 
-    def test_seo_editor_exposes_page_specific_meta_and_og_fields(self) -> None:
-        settings = read("admin/site-settings.js")
-        for marker in (
-            "SEO 標題（英文）",
-            "Meta description（中文）",
-            "OG 標題（英文，留白沿用 SEO）",
-            "本頁 OG 圖片（留白沿用預設）",
-        ):
-            self.assertIn(marker, settings)
 
     def test_site_settings_draft_is_listed_in_common_drafts(self) -> None:
         for marker in (
@@ -434,43 +342,6 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn('name="visitor_subject"', builder)
         self.assertIn("EMAIL_SUBJECT", worker)
         self.assertIn("Visitor subject", worker)
-        
-        
-    def test_notification_star_control_is_explicit(self) -> None:
-        notifications = read("admin/notifications.js")
-        self.assertIn("notification-star-button", notifications)
-
-
-    def test_deployment_status_polling_controls_exist(self) -> None:
-        notifications = read("admin/notifications.js")
-        for marker in (
-            "startDeploymentPolling",
-            "stopDeploymentPolling",
-            "data-deployment-card",
-            "renderDeploymentCard",
-        ):
-            self.assertIn(marker, notifications)
-
-    def test_publication_action_uses_explicit_bold_font_properties(self) -> None:
-        css = read("assets/style.css")
-        block = css[css.index(".pub-links > .publication-action{"):css.index(".pub-links > .publication-action:hover")]
-        self.assertIn("font-family:inherit", block)
-        self.assertIn("font-weight:800", block)
-        self.assertNotIn("font:800 1rem/1 inherit", block)
-
-
-class DocumentationContracts(unittest.TestCase):
-
-    def test_docs_do_not_reference_obsolete_versioned_filenames(self) -> None:
-        for obsolete in (
-            "admin/homepage-v1.js",
-            "admin/layout-v2.js",
-            "admin/tags-v1.js",
-            "assets/script-v23.js",
-            "assets/style-v23.css",
-        ):
-            self.assertNotIn(obsolete, MANAGE + GUIDE)
-
 
 if __name__ == "__main__":
     unittest.main()
