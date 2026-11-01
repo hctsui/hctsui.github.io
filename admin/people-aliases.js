@@ -178,6 +178,8 @@
 
   const ACTIVE_DRAFT_KEYS=[
     'hctsui-batch-v12',
+    'hctsui-batch-v13',
+    'hctsui-batch-v14',
     'hctsui-translations-draft-v1',
     'hctsui-translations-stale-v1',
     'hctsui-headings-draft-v1',
