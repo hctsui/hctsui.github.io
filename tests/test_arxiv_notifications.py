@@ -119,7 +119,7 @@ class StaticArxivUiTests(unittest.TestCase):
 
     def test_arxiv_workflow_uses_daily_schedule(self) -> None:
         daily = (
-            ROOT / ".github/workflows/daily-upcoming.yml"
+            ROOT / ".github/workflows/daily-update.yml"
         ).read_text(encoding="utf-8")
         manual = (
             ROOT / ".github/workflows/check-arxiv.yml"
