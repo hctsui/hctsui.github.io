@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "content/site.json"
-WORKFLOW = ROOT / ".github/workflows/daily-upcoming.yml"
+WORKFLOW = ROOT / ".github/workflows/daily-update.yml"
 START = "  # AUTO_DAILY_SCHEDULE_BEGIN -- managed from Admin > 自動更新"
 END = "  # AUTO_DAILY_SCHEDULE_END"
 
