@@ -1,4 +1,4 @@
-name: Daily website update (Admin-configured time and timezone)
+name: Daily website update and notifications
 
 on:
   # AUTO_DAILY_SCHEDULE_BEGIN -- managed from Admin > 自動更新
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: hctsui-daily-content-update
+  group: hctsui-automation-writes
   cancel-in-progress: false
 
 permissions:
@@ -19,7 +19,7 @@ permissions:
 jobs:
   update-upcoming:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     env:
       PYTHONPATH: ${{ github.workspace }}
     outputs:
@@ -41,7 +41,25 @@ jobs:
       - name: Check new arXiv publications
         if: steps.due.outputs.run == 'true'
         continue-on-error: true
+        timeout-minutes: 5
         run: python3 tools/check_arxiv.py
+
+      - name: Check Crossref publication status
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python3 tools/check_publication_status.py
+
+      - name: Check external links
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        timeout-minutes: 15
+        run: python3 tools/check_links.py
+
+      - name: Clean expired notifications
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        run: python3 tools/cleanup_notifications.py
 
       - name: Rebuild at configured local time
         if: steps.due.outputs.run == 'true'
@@ -68,7 +86,7 @@ jobs:
           if [ -z "$(git status --porcelain -- \
             CONTENT-CATALOG.md \
             content/media.json content/search-index.json content/daily-update-state.json \
-            content/arxiv-suggestions.json \
+            content/arxiv-suggestions.json content/notifications.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html')" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -84,7 +102,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CONTENT-CATALOG.md \
             content/media.json content/search-index.json content/daily-update-state.json \
-            content/arxiv-suggestions.json \
+            content/arxiv-suggestions.json content/notifications.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html'
           git commit -m "Rebuild website at configured daily time"
