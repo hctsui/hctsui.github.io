@@ -1,9 +1,6 @@
 name: Check managed links
 
 on:
-  schedule:
-    - cron: "20 10 1 * *"
-      timezone: "Asia/Tokyo"
   workflow_dispatch:
 
 concurrency:
