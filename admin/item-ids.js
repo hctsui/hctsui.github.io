@@ -44,13 +44,6 @@
     }).join('')||'<p class="muted">沒有符合的項目。</p>';
   }
   window.renderItemIds=render;
-  const show=mode=>{
-    const ids=byId('itemIdsPane'),trans=byId('translationsPane');if(!ids||!trans)return;
-    const on=mode==='ids';ids.hidden=!on;trans.hidden=on;
-    byId('openItemIds').classList.toggle('active',on);
-    byId('openTranslations').classList.toggle('active',!on);
-    if(on)render();
-  };
   function stage(old,newId){
     if(typeof site==='undefined'||!site)return;
     const item=all().find(x=>x.id===old);
@@ -75,9 +68,6 @@
     const types=byId('itemIdType');if(!types)return;
     const choices=[...new Set(all().map(x=>x.type))].sort();
     types.innerHTML='<option value="">全部</option>'+choices.map(t=>`<option value="${html(t)}">${html(t)}</option>`).join('');
-    const a=byId('openItemIds'),b=byId('openTranslations');
-    a?.addEventListener('click',()=>show('ids'));
-    b?.addEventListener('click',()=>show('translations'));
     byId('itemIdSearch')?.addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();render();});
     types.addEventListener('change',e=>{kind=e.target.value;render();});
     byId('itemIdRecords')?.addEventListener('click',e=>{

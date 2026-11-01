@@ -253,20 +253,32 @@
     `;document.head.append(style);
   }
   function setDatabaseType(type){
-    const active=type==='people'?'people':'translations';
-    document.querySelectorAll('[data-database-type]').forEach(button=>button.classList.toggle('active',button.dataset.databaseType===active));
+    const active=['ids','translations','people'].includes(type)?type:'translations';
+    document.querySelectorAll('[data-database-type]').forEach(button=>{
+      const selected=button.dataset.databaseType===active;
+      button.classList.toggle('active',selected);
+      button.setAttribute('aria-selected',String(selected));
+    });
     const translationsPane=document.querySelector('#translationDatabasePane');
     const peoplePane=document.querySelector('#peopleDatabasePane');
+    const itemIdsPane=document.querySelector('#itemIdsPane');
     if(translationsPane)translationsPane.hidden=active!=='translations';
     if(peoplePane)peoplePane.hidden=active!=='people';
+    if(itemIdsPane)itemIdsPane.hidden=active!=='ids';
     localStorage.setItem('hctsui-database-type',active);
     if(active==='people')renderPeopleManager();
+    if(active==='ids'&&typeof window.renderItemIds==='function')window.renderItemIds();
   }
   function installPanel(){
     const dictionaryButton=document.querySelector('[data-tab="dictionary"]');
     if(dictionaryButton)dictionaryButton.textContent='資料庫';
     const dictionaryTab=document.querySelector('#dictionaryTab');
     if(!dictionaryTab)return;
+    // Keep the three database panels as siblings. Previously the generic
+    // translation wrapper accidentally swallowed the Item ID panel.
+    const itemIdsPane=dictionaryTab.querySelector('#itemIdsPane');
+    if(itemIdsPane)itemIdsPane.remove();
+    dictionaryTab.querySelector('#databaseSubnav')?.remove();
     let translationPane=document.querySelector('#translationDatabasePane');
     if(!translationPane){
       translationPane=document.createElement('div');
@@ -274,8 +286,9 @@
       while(dictionaryTab.firstChild)translationPane.append(dictionaryTab.firstChild);
       dictionaryTab.append(translationPane);
     }
+    if(itemIdsPane)dictionaryTab.append(itemIdsPane);
     if(!document.querySelector('#databaseTypeTabs')){
-      dictionaryTab.insertAdjacentHTML('afterbegin',`<div class="database-type-shell"><div class="database-type-tabs" id="databaseTypeTabs"><button class="button active" type="button" data-database-type="translations">中英對照</button><button class="button" type="button" data-database-type="people">人名連結</button></div></div>`);
+      dictionaryTab.insertAdjacentHTML('afterbegin',`<div class="database-type-shell"><div class="database-type-tabs" id="databaseTypeTabs"><button class="button" type="button" data-database-type="ids">項目ID</button><button class="button active" type="button" data-database-type="translations">中英對照</button><button class="button" type="button" data-database-type="people">人名連結</button></div></div>`);
     }
     if(!document.querySelector('#peopleDatabasePane'))dictionaryTab.insertAdjacentHTML('beforeend',`<div id="peopleDatabasePane" hidden><p class="muted">集中管理中英文姓名、其他拼法與學術網址。整個網站的可見文字都會精確比對；作者欄位只顯示候選，必須手動點選才會填入。</p><div class="toolbar"><div class="field" style="flex:1"><label>搜尋姓名、其他拼法或 URL</label><input id="peopleSearch" autocomplete="off"></div><button class="button" id="addPerson" type="button">新增人名</button><button class="button" id="resetPeople" type="button">放棄修改</button></div><div id="peopleStatus" class="notice"></div><div id="peopleAudit"></div><div id="peopleRows" class="scroll"></div></div>`);
     document.querySelector('#databaseTypeTabs')?.addEventListener('click',event=>{const button=event.target.closest('[data-database-type]');if(button)setDatabaseType(button.dataset.databaseType);});
