@@ -69,6 +69,7 @@
 | talk | On $u$-analogues of Multiple Zeta Values and a Possible Formulation of Kaneko–Zagier Conjecture over Function Field | 多重 zeta 值的 $u$-類比與函數體上 Kaneko–Zagier 猜想的一種可能表述 | `talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-` |
 | talk | On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的 $q$-洗牌關係 | `talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-` |
 | talk | On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas | Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性 | `talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro` |
+| talk | A Direct Sum Theorem for Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的直和定理 | `talk-2026-11-08-eisenstein` |
 
 ### Conferences and Workshops / 會議與工作坊
 

@@ -2370,6 +2370,53 @@
         "zh": "國立清華大學"
       },
       "order": 0
+    },
+    {
+      "type": "talk",
+      "category_id": "activity-talks",
+      "start_date": "2026-11-08",
+      "end_date": "2026-11-08",
+      "title": {
+        "en": "A Direct Sum Theorem for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的直和定理"
+      },
+      "event": {
+        "en": "The 2nd Multiple Eisenstein Series Research Meeting",
+        "zh": "第二屆多重 Eisenstein 級數研究會"
+      },
+      "venue": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      },
+      "city": {
+        "en": "Nagoya",
+        "zh": "名古屋"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "url": "https://eisensteinseries.github.io/MESMeeting/",
+      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-11-8-the-2nd-multiple-eisenstein-series-research-meeting.pdf",
+      "description": {
+        "en": "The 2nd Multiple Eisenstein Series Research Meeting, Nagoya University, Nagoya, Japan",
+        "zh": "第二屆多重 Eisenstein 級數研究會, 名古屋大學, 名古屋, 日本"
+      },
+      "description_html": {
+        "en": "The 2nd Multiple Eisenstein Series Research Meeting, Nagoya University, Nagoya, Japan",
+        "zh": "第二屆多重 Eisenstein 級數研究會, 名古屋大學, 名古屋, 日本"
+      },
+      "title_html": {
+        "en": "A Direct Sum Theorem for Multiple Eisenstein Series in Positive Characteristic",
+        "zh": "正特徵多重 Eisenstein 級數的直和定理"
+      },
+      "id": "talk-2026-11-08-eisenstein",
+      "display_placements": [],
+      "venue_html": {
+        "en": "Nagoya University",
+        "zh": "名古屋大學"
+      },
+      "order": 7
     }
   ],
   "honors": [
