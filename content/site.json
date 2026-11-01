@@ -8,18 +8,18 @@
         "mode": "manual",
         "limit": 3,
         "selected_ids": [
-          "publication-2604.03618-4",
-          "publication-2026-10-18-v-carlitz-v-zeta",
-          "publication-2026-09-16-entry"
+          "publication-2604-03618",
+          "publication-2610-25063",
+          "publication-2609-18777"
         ]
       },
       "activities": {
         "mode": "soonest",
         "limit": 3,
         "selected_ids": [
-          "conference-2026-number-theory-summer-school",
-          "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
-          "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          "conference-2026-08-24-the-33rd-number-theory-summer-school-arithm",
+          "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop",
+          "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research"
         ]
       }
     },
@@ -67,24 +67,30 @@
     },
     "entry_order": {
       "conference": [
-        "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
-        "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
-        "conference-2026-number-theory-summer-school",
-        "conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop",
-        "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference",
+        "conference-2027-03-15-the-19th-msj-si-complex-algebraic-and-arith",
+        "conference-2027-03-08-the-19th-msj-si-complex-algebraic-and-arith",
+        "conference-2026-12-28-the-12th-postech-pmi-ncts-joint-workshop-on",
+        "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research",
+        "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop",
+        "conference-2026-08-24-the-33rd-number-theory-summer-school-arithm",
+        "conference-2026-07-18-the-72nd-kansai-multiple-zeta-workshop",
+        "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-con",
         "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
-        "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers",
+        "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-resea",
         "conference-2026-01-21-the-61st-tms-annual-meeting",
-        "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
+        "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geomet",
         "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
         "conference-2025-09-01-japan-taiwan-number-theory-conference",
         "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
         "conference-2025-06-30-iwasawa-2025",
         "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
-        "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w",
-        "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+        "conference-2025-04-17-nthu-workshop-on-number-theory",
+        "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-ze",
+        "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-ze",
         "conference-2025-01-14-the-60th-tms-annual-meeting",
-        "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+        "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperboli",
+        "conference-2024-12-18-ncts-one-day-workshop-on-number-theory",
+        "conference-2024-07-01-summer-school-on-arithmetic-geometry",
         "conference-2024-01-22-the-59th-tms-annual-meeting",
         "conference-2023-01-16-the-58th-tms-annual-meeting"
       ],
@@ -95,12 +101,14 @@
         "honor-2024-tms-outstanding-students-prize"
       ],
       "talk": [
-        "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
-        "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
-        "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
-        "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
-        "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
-        "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro"
+        "talk-2026-11-08-a-direct-sum-theorem-for-multiple-eisenstei",
+        "talk-2026-10-15-graded-structures-of-math-adic-carlitz-mult",
+        "talk-2026-07-06-recent-developments-on-multiple-eisenstein",
+        "talk-2026-06-12-derivations-of-multiple-zeta-values-in-posi",
+        "talk-2026-02-08-on-finite-multiple-harmonic-math-series-ove",
+        "talk-2025-09-30-on-math-analogues-of-multiple-zeta-values-a",
+        "talk-2025-09-03-on-math-shuffle-relations-for-multiple-eise",
+        "talk-2025-04-17-on-the-uniqueness-of-math-adic-gamma-functi"
       ],
       "visit": [
         "visit-2026-07-02-tohoku-university"
@@ -1181,7 +1189,7 @@
       "display_placements": []
     },
     {
-      "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein-series-in-p",
+      "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein",
       "type": "talk",
       "start_date": "2026-07-06",
       "end_date": "2026-07-06",
@@ -1229,7 +1237,7 @@
       }
     },
     {
-      "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-positive-charac",
+      "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-posi",
       "type": "talk",
       "start_date": "2026-06-12",
       "end_date": "2026-06-12",
@@ -1277,7 +1285,7 @@
       }
     },
     {
-      "id": "talk-2026-02-08-on-finite-multiple-harmonic-u-series-over-function-fie",
+      "id": "talk-2026-02-08-on-finite-multiple-harmonic-math-series-ove",
       "type": "talk",
       "start_date": "2026-02-08",
       "end_date": "2026-02-08",
@@ -1325,7 +1333,7 @@
       }
     },
     {
-      "id": "talk-2025-09-30-on-u-analogues-of-multiple-zeta-values-and-a-possible-",
+      "id": "talk-2025-09-30-on-math-analogues-of-multiple-zeta-values-a",
       "type": "talk",
       "start_date": "2025-09-30",
       "end_date": "2025-09-30",
@@ -1373,7 +1381,7 @@
       }
     },
     {
-      "id": "talk-2025-09-03-on-q-shuffle-relations-for-multiple-eisenstein-series-",
+      "id": "talk-2025-09-03-on-math-shuffle-relations-for-multiple-eise",
       "type": "talk",
       "start_date": "2025-09-03",
       "end_date": "2025-09-03",
@@ -1421,7 +1429,7 @@
       }
     },
     {
-      "id": "talk-2025-04-17-on-the-uniqueness-of-v-adic-gamma-functions-in-the-gro",
+      "id": "talk-2025-04-17-on-the-uniqueness-of-math-adic-gamma-functi",
       "type": "talk",
       "start_date": "2025-04-17",
       "end_date": "2025-04-17",
@@ -1469,7 +1477,7 @@
       }
     },
     {
-      "id": "conference-2026-07-17-the-72nd-kansai-multiple-zeta-workshop",
+      "id": "conference-2026-07-18-the-72nd-kansai-multiple-zeta-workshop",
       "type": "conference",
       "start_date": "2026-07-18",
       "end_date": "2026-07-18",
@@ -1513,7 +1521,7 @@
       }
     },
     {
-      "id": "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-conference",
+      "id": "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-con",
       "type": "conference",
       "start_date": "2026-07-07",
       "end_date": "2026-07-10",
@@ -1577,7 +1585,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-researchers",
+      "id": "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-resea",
       "type": "conference",
       "start_date": "2026-02-08",
       "end_date": "2026-02-11",
@@ -1641,7 +1649,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geometry",
+      "id": "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geomet",
       "type": "conference",
       "start_date": "2025-12-15",
       "end_date": "2025-12-19",
@@ -1833,7 +1841,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+      "id": "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-ze",
       "type": "conference",
       "start_date": "2025-02-17",
       "end_date": "2025-02-22",
@@ -1865,7 +1873,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-zeta-values-w",
+      "id": "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-ze",
       "type": "conference",
       "start_date": "2025-02-10",
       "end_date": "2025-02-15",
@@ -1929,7 +1937,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperbolicity-and-ar",
+      "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperboli",
       "type": "conference",
       "start_date": "2025-01-02",
       "end_date": "2025-01-03",
@@ -2037,7 +2045,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-number-theory-summer-school",
+      "id": "conference-2026-08-24-the-33rd-number-theory-summer-school-arithm",
       "type": "conference",
       "start_date": "2026-08-24",
       "end_date": "2026-08-28",
@@ -2069,7 +2077,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+      "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop",
       "type": "conference",
       "start_date": "2026-11-07",
       "end_date": "2026-11-07",
@@ -2101,7 +2109,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6",
+      "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research",
       "type": "conference",
       "start_date": "2026-11-08",
       "end_date": "2026-11-08",
@@ -2186,7 +2194,7 @@
         "en": "NTHU Workshop on Number Theory",
         "zh": "國立清華大學數論研討會"
       },
-      "id": "conference-2025-04-17-entry",
+      "id": "conference-2025-04-17-nthu-workshop-on-number-theory",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2232,7 +2240,7 @@
         "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
         "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
       },
-      "id": "conference-2026-12-28-12-postech-pmi-ncts",
+      "id": "conference-2026-12-28-the-12th-postech-pmi-ncts-joint-workshop-on",
       "display_placements": [],
       "venue_html": {
         "en": "National Taiwan University",
@@ -2278,7 +2286,7 @@
         "en": "NCTS One-Day Workshop on Number Theory",
         "zh": "NCTS 一日工作坊"
       },
-      "id": "conference-2024-12-18-ncts",
+      "id": "conference-2024-12-18-ncts-one-day-workshop-on-number-theory",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2320,7 +2328,7 @@
         "en": "Summer School on Arithmetic Geometry",
         "zh": "算術幾何暑期學校"
       },
-      "id": "conference-2024-07-01-entry",
+      "id": "conference-2024-07-01-summer-school-on-arithmetic-geometry",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2367,7 +2375,7 @@
         "en": "Graded Structures of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values",
         "zh": "<span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Carlitz 多重對數函數與多重 zeta 值的分次結構"
       },
-      "id": "talk-2026-10-15-v-carlitz-zeta",
+      "id": "talk-2026-10-15-graded-structures-of-math-adic-carlitz-mult",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2414,7 +2422,7 @@
         "en": "A Direct Sum Theorem for Multiple Eisenstein Series in Positive Characteristic",
         "zh": "正特徵多重 Eisenstein 級數的直和定理"
       },
-      "id": "talk-2026-11-08-eisenstein",
+      "id": "talk-2026-11-08-a-direct-sum-theorem-for-multiple-eisenstei",
       "display_placements": [],
       "venue_html": {
         "en": "Nagoya University",
@@ -2456,7 +2464,7 @@
         "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 1",
         "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第一週"
       },
-      "id": "conference-2027-03-08-19",
+      "id": "conference-2027-03-08-the-19th-msj-si-complex-algebraic-and-arith",
       "display_placements": [],
       "venue_html": {
         "en": "Waseda University",
@@ -2498,7 +2506,7 @@
         "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 2",
         "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第二週"
       },
-      "id": "conference-2027-03-15-19",
+      "id": "conference-2027-03-15-the-19th-msj-si-complex-algebraic-and-arith",
       "display_placements": [],
       "venue_html": {
         "en": "The University of Tokyo",
@@ -2611,7 +2619,7 @@
   ],
   "publications": [
     {
-      "id": "publication-2504.15697-1",
+      "id": "publication-2504-15697",
       "type": "publication",
       "publication_state": "preprint",
       "classification_mode": "auto",
@@ -2692,7 +2700,7 @@
       "display_placements": []
     },
     {
-      "id": "publication-2504.18879-2",
+      "id": "publication-2504-18879",
       "type": "publication",
       "publication_state": "preprint",
       "classification_mode": "auto",
@@ -2773,7 +2781,7 @@
       "display_placements": []
     },
     {
-      "id": "publication-2603.10376-3",
+      "id": "publication-2603-10376",
       "type": "publication",
       "publication_state": "preprint",
       "classification_mode": "auto",
@@ -2862,7 +2870,7 @@
       "display_placements": []
     },
     {
-      "id": "publication-2604.03618-4",
+      "id": "publication-2604-03618",
       "type": "publication",
       "publication_state": "published",
       "classification_mode": "auto",
@@ -3034,7 +3042,7 @@
         "en": "arXiv: 2609.18777.",
         "zh": "arXiv：2609.18777。"
       },
-      "id": "publication-2026-09-16-entry",
+      "id": "publication-2609-18777",
       "display_placements": [],
       "order": 3
     },
@@ -3115,7 +3123,7 @@
         "en": "arXiv: 2609.30823.",
         "zh": "arXiv：2609.30823。"
       },
-      "id": "publication-2026-09-25-infty-zeta-mishiba",
+      "id": "publication-2609-30823",
       "display_placements": [],
       "order": 2
     },
@@ -3196,7 +3204,7 @@
         "en": "arXiv: 2609.37450.",
         "zh": "arXiv：2609.37450。"
       },
-      "id": "publication-2026-09-28-zeta-kaneko-zagier",
+      "id": "publication-2609-37450",
       "display_placements": [],
       "order": 1
     },
@@ -3277,14 +3285,14 @@
         "en": "arXiv: 2610.25063.",
         "zh": "arXiv：2610.25063。"
       },
-      "id": "publication-2026-10-18-v-carlitz-v-zeta",
+      "id": "publication-2610-25063",
       "display_placements": [],
       "order": 0
     }
   ],
   "teaching": [
     {
-      "id": "teaching-1-math2410-algebra-i",
+      "id": "teaching-2025-fall-math2410",
       "type": "teaching",
       "order": 5,
       "term": {
@@ -3308,7 +3316,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2-math2420-algebra-ii",
+      "id": "teaching-2026-spring-math2420",
       "type": "teaching",
       "order": 4,
       "term": {
@@ -3332,7 +3340,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-3-math2870-discrete-mathematics",
+      "id": "teaching-2026-spring-math2870",
       "type": "teaching",
       "order": 3,
       "term": {
@@ -3356,7 +3364,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-4-math3450-cryptography",
+      "id": "teaching-2025-fall-math3450",
       "type": "teaching",
       "order": 6,
       "term": {
@@ -3380,7 +3388,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-5-math1410-linear-algebra-i",
+      "id": "teaching-2024-fall-math1410",
       "type": "teaching",
       "order": 9,
       "term": {
@@ -3404,7 +3412,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-6-math1420-linear-algebra-ii",
+      "id": "teaching-2025-spring-math1420",
       "type": "teaching",
       "order": 8,
       "term": {
@@ -3428,7 +3436,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-7-math3050-complex-analysis",
+      "id": "teaching-2025-spring-math3050",
       "type": "teaching",
       "order": 7,
       "term": {
@@ -3452,7 +3460,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-8-math2010-advanced-calculus-i",
+      "id": "teaching-2023-fall-math2010",
       "type": "teaching",
       "order": 11,
       "term": {
@@ -3476,7 +3484,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-9-math2020-advanced-calculus-ii",
+      "id": "teaching-2024-spring-math2020",
       "type": "teaching",
       "order": 10,
       "term": {
@@ -3526,7 +3534,7 @@
       },
       "group_id": "national-tsing-hua-university",
       "order": 2,
-      "id": "teaching-2026-09-12-math1000",
+      "id": "teaching-2026-fall-math1000",
       "display_placements": [],
       "role_html": {
         "en": "Teaching Assistant",
@@ -3560,7 +3568,7 @@
       },
       "group_id": "national-tsing-hua-university",
       "order": 0,
-      "id": "teaching-2026-09-12-math5410",
+      "id": "teaching-2026-fall-math5410",
       "display_placements": [],
       "role_html": {
         "en": "Teaching Assistant",
@@ -3594,7 +3602,7 @@
       },
       "group_id": "national-tsing-hua-university",
       "order": 1,
-      "id": "teaching-Fall 2026-math5640",
+      "id": "teaching-2026-fall-math5640",
       "display_placements": [],
       "role_html": {
         "en": "Teaching Assistant",
@@ -4008,7 +4016,7 @@
         "zh": ""
       },
       "url": "",
-      "id": "generic-2026-10-28-t-t",
+      "id": "interest-math-modules-and-math-motives",
       "display_style": "interest",
       "display_placements": [],
       "title_html": {

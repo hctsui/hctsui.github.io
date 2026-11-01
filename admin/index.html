@@ -836,7 +836,10 @@
             <div id="orderEditor" class="scroll"></div>
             <div class="actions">
               <button class="button primary" id="saveOrder">
-                將排序加入本次批次
+                儲存手動排序
+              </button>
+              <button class="button" id="saveAutomaticOrder">
+                改為依日期／學期自動排序
               </button>
             </div>
             <details class="order-homepage-panel">
@@ -1122,13 +1125,23 @@
             `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`,
         ).join("");
       }
-      const DRAFT_KEY = "hctsui-batch-v12",
+      const DRAFT_KEY = "hctsui-batch-v13",
         TRANSLATION_DRAFT_KEY = "hctsui-translations-draft-v1",
         STALE_TRANSLATION_KEY = "hctsui-translations-stale-v1";
       let site,
         history = { operations: [] },
         originalTranslations = { schema_version: 1, pairs: [] },
         translations = { schema_version: 1, pairs: [] };
+      // One-time migration: discard stale ID-bearing drafts from pre-migration
+      // versions; never reinterpret old IDs as a new record ID.
+      if (!localStorage.getItem("hctsui-clean-id-migration-20261102")) {
+        for (const key of ["hctsui-batch-v12", "hctsui-homepage-draft-v1",
+              "hctsui-layout-draft-v3", "hctsui-headings-draft-v1",
+              "hctsui-personal-profile-draft-v1", "hctsui-general-layout-links-v1"]) {
+          localStorage.removeItem(key);
+        }
+        localStorage.setItem("hctsui-clean-id-migration-20261102", "1");
+      }
       let draft = loadDraft(),
         orderState = null,
         currentEditor = null,
@@ -1436,16 +1449,26 @@
         return new Set(allRecords(d).map((x) => x.id));
       }
       function newId(t, anchor, name) {
-        let b =
-            `${t}-${anchor || new Date().toISOString().slice(0, 10)}-${slug(name)}`.replace(
-              /-+/g,
-              "-",
-            ),
-          ids = idSet(effectiveSite()),
-          r = b,
-          n = 2;
-        while (ids.has(r)) r = `${b}-${n++}`;
-        return r;
+        let base;
+        if (t === "teaching") {
+          const text = String(anchor || "");
+          const year = text.match(/(?:19|20)\d{2}/)?.[0] || "undated";
+          const season = /spring|春/i.test(text) ? "spring" :
+            /summer|夏/i.test(text) ? "summer" :
+            /fall|autumn|秋/i.test(text) ? "fall" :
+            /winter|冬/i.test(text) ? "winter" : "term";
+          const courseCode = String(name || "").match(/[A-Za-z]{2,8}\s*\d{2,6}[A-Za-z]?/)?.[0];
+          base = `teaching-${year}-${season}-${slug(courseCode || name)}`;
+        } else if (t === "publication") {
+          // Use an immutable creation-time key, not the mutable journal status.
+          base = `publication-${slug(anchor || new Date().toISOString().slice(0,10))}-${slug(name)}`;
+        } else {
+          base = `${t}-${slug(anchor || new Date().toISOString().slice(0,10))}-${slug(name)}`;
+        }
+        const ids = idSet(effectiveSite());
+        let result = base, counter = 2;
+        while (ids.has(result)) result = `${base}-${counter++}`;
+        return result;
       }
       function contentOps() {
         return draft.filter((x) =>
@@ -1606,7 +1629,14 @@
                 gs.findIndex((g) => g.id === a.group_id) -
                 gs.findIndex((g) => g.id === b.group_id);
             }
-            return gr || manualRank(d, a) - manualRank(d, b);
+            if (gr) return gr;
+            const automaticKinds = new Set(["teaching", "publication", "conference", "talk", "visit", "organization", "honor"]);
+            if (a.type === b.type && automaticKinds.has(a.type) &&
+                !(d.settings?.manually_ordered_kinds || []).includes(a.type)) {
+              const chronological = recordDate(b).localeCompare(recordDate(a));
+              if (chronological) return chronological;
+            }
+            return manualRank(d, a) - manualRank(d, b);
           });
         return arr;
       }
@@ -3348,12 +3378,17 @@
       }
       function captureOrder(d, kind) {
         let items = allRecords(d).filter((x) => x.type === kind);
+        let sort_mode = (d.settings?.manually_ordered_kinds || []).includes(kind) ? "manual" : "auto";
+        if (sort_mode === "auto") items.sort((a, b) =>
+          recordDate(b).localeCompare(recordDate(a)) ||
+          (a.order ?? 999) - (b.order ?? 999));
         if (!["publication", "teaching"].includes(kind)) {
           let stored = d.settings?.entry_order?.[kind] || [],
             set = new Set(items.map((x) => x.id));
           return {
             kind,
-            entries: [
+            sort_mode,
+            entries: sort_mode === "auto" ? items.map((x) => x.id) : [
               ...stored.filter((id) => set.has(id)),
               ...items.map((x) => x.id).filter((id) => !stored.includes(id)),
             ],
@@ -3362,6 +3397,7 @@
         let gs = groupData(d, kind);
         return {
           kind,
+          sort_mode,
           groups: gs
             .map((g) => ({
               id: g.id,
@@ -3369,7 +3405,9 @@
               preset: !!g.preset,
               entries: items
                 .filter((x) => x.group_id === g.id)
-                .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+                .sort((a, b) => sort_mode === "auto" ?
+                  recordDate(b).localeCompare(recordDate(a)) || (a.order ?? 999) - (b.order ?? 999) :
+                  (a.order ?? 999) - (b.order ?? 999))
                 .map((x) => x.id),
             }))
             .filter((g) => g.entries.length),
@@ -3378,6 +3416,11 @@
       function applyOrderLocal(d, state) {
         if (!state) return;
         let kind = state.kind;
+        d.settings = d.settings || {};
+        let manualKinds = new Set(d.settings.manually_ordered_kinds || []);
+        if (state.sort_mode === "manual") manualKinds.add(kind);
+        else if (state.sort_mode === "auto") manualKinds.delete(kind);
+        d.settings.manually_ordered_kinds = [...manualKinds];
         if (state.entries) {
           d.settings = d.settings || {};
           d.settings.entry_order = d.settings.entry_order || {};
@@ -3478,15 +3521,17 @@
           )
           .join("");
       }
-      function saveOrder() {
+      function saveOrder(mode = "manual") {
         let kind = orderState.kind,
           old = draft.find((x) => x.op === "reorder" && x.type === kind),
           before = old?.before || captureOrder(effectiveSite(), kind),
-          op = { op: "reorder", type: kind, before, after: clone(orderState) };
+          after = clone(orderState);
+        after.sort_mode = mode;
+        let op = { op: "reorder", type: kind, before, after };
         draft = draft.filter((x) => !(x.op === "reorder" && x.type === kind));
         draft.push(op);
         saveLocal();
-        flash("排序已加入本次批次");
+        flash(mode === "auto" ? "已啟用依日期自動排序，往後新增項目也會依時間排列" : "手動排序已加入本次批次");
       }
       function renderHistory() {
         let q = norm($("#historySearch").value),
@@ -4010,7 +4055,11 @@
         let b = e.target.closest("[data-order-sort]");
         if (b) quickSortOrder(b.dataset.orderSort);
       };
-      $("#saveOrder").onclick = saveOrder;
+      $("#saveOrder").onclick = () => saveOrder("manual");
+      $("#saveAutomaticOrder").onclick = () => {
+        quickSortOrder("newest");
+        saveOrder("auto");
+      };
       $("#orderEditor").onclick = (e) => {
         let b = e.target.closest("button");
         if (!b || !orderState) return;
