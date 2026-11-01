@@ -1,9 +1,7 @@
 name: Check arXiv publications
 
 on:
-  schedule:
-    - cron: "15 9 * * *"
-      timezone: "Asia/Taipei"
+  workflow_dispatch:
 
 concurrency:
   group: hctsui-automation-writes
