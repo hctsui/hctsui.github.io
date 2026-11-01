@@ -989,7 +989,7 @@
       "enabled": true,
       "mode": "worker",
       "web3forms_access_key": "",
-      "worker_url": "https://hctsui-website-worker.hctsui-math.workers.dev",
+      "worker_url": "https://api.hctsui.org",
       "turnstile_site_key": "0x4AAAAAAEDAWfBne1jtRv8u",
       "email_subject": "[hctsui.org] New contact message",
       "title": {
@@ -1108,8 +1108,8 @@
         }
       },
       "cover": {
-        "image": "https://hctsui-website-worker.hctsui-math.workers.dev/media/images/photo-960.webp",
-        "fallback": "https://hctsui-website-worker.hctsui-math.workers.dev/media/images/photo.jpg",
+        "image": "https://files.hctsui.org/images/photo-960.webp",
+        "fallback": "https://files.hctsui.org/images/photo.jpg",
         "alt": {
           "en": "Landscape photograph",
           "zh": "風景照片"
@@ -1225,7 +1225,7 @@
         "en": "Tohoku University Number Theory Seminar, Tohoku University, Sendai, Japan",
         "zh": "東北大學數論研討會, 東北大學, 仙台, 日本"
       },
-      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
+      "slides_url": "https://files.hctsui.org/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
       "category_id": "activity-talks",
       "order": 2,
       "display_placements": [],
@@ -1321,7 +1321,7 @@
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers, Nagoya University, Nagoya, Japan",
         "zh": "名古屋—關西青年研究者 zeta 研討會, 名古屋大學, 名古屋, 日本"
       },
-      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
+      "slides_url": "https://files.hctsui.org/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
       "category_id": "activity-talks",
       "order": 4,
       "display_placements": [],
@@ -1417,7 +1417,7 @@
         "en": "Japan-Taiwan Number Theory Conference, Kyukamura Shikanoshima, Fukuoka, Japan",
         "zh": "日臺數論會議, 休暇村志賀島, 福岡, 日本"
       },
-      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
+      "slides_url": "https://files.hctsui.org/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
       "category_id": "activity-talks",
       "order": 6,
       "display_placements": [],
@@ -2423,7 +2423,7 @@
         "zh": "日本"
       },
       "url": "https://eisensteinseries.github.io/MESMeeting/",
-      "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-11-8-the-2nd-multiple-eisenstein-series-research-meeting.pdf",
+      "slides_url": "https://files.hctsui.org/slides/2026-11-8-the-2nd-multiple-eisenstein-series-research-meeting.pdf",
       "description": {
         "en": "The 2nd Multiple Eisenstein Series Research Meeting, Nagoya University, Nagoya, Japan",
         "zh": "第二屆多重 Eisenstein 級數研究會, 名古屋大學, 名古屋, 日本"
@@ -2699,7 +2699,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf"
+          "url": "https://files.hctsui.org/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf"
         }
       ],
       "group_id": "preprints",
@@ -2709,7 +2709,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2504.15697",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2025-uniqueness-of-v-adic-gamma-functions-in-gross-koblitz-type-formulas-over-function-fields.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2780,7 +2780,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf"
+          "url": "https://files.hctsui.org/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf"
         }
       ],
       "group_id": "preprints",
@@ -2790,7 +2790,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2504.18879",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2025-on-q-shuffle-relations-for-multiple-eisenstein-series-of-arbitrary-rank-in-positive-characteristic.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2861,7 +2861,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf"
+          "url": "https://files.hctsui.org/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf"
         }
       ],
       "homepage_title_html": {
@@ -2879,7 +2879,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2603.10376",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2026-algebra-structures-of-multiple-eisenstein-series-in-positive-characteristic.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -2957,7 +2957,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
+          "url": "https://files.hctsui.org/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf"
         }
       ],
       "homepage_title_html": {
@@ -2975,7 +2975,7 @@
         "zh": ""
       },
       "arxiv_url": "https://arxiv.org/abs/2604.03618",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2026-on-u-multiple-zeta-values-in-positive-characteristic.pdf",
       "doi_url": "https://doi.org/10.1093/imrn/rnag233",
       "journal_url": "https://academic.oup.com/imrn/article-abstract/2026/20/rnag233/8914538",
       "code_url": "",
@@ -3020,7 +3020,7 @@
       },
       "arxiv": "2609.18777",
       "arxiv_url": "https://arxiv.org/abs/2609.18777",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -3045,7 +3045,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf"
+          "url": "https://files.hctsui.org/papers/2026-on-multiple-eisenstein-series-in-positive-characteristic-direct-sum-result.pdf"
         }
       ],
       "title_html": {
@@ -3101,7 +3101,7 @@
       },
       "arxiv": "2609.30823",
       "arxiv_url": "https://arxiv.org/abs/2609.30823",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -3126,7 +3126,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf"
+          "url": "https://files.hctsui.org/papers/2026-mishiba-conjecture-on-the-coaction-of-infty-adic-multiple-zeta-values.pdf"
         }
       ],
       "title_html": {
@@ -3182,7 +3182,7 @@
       },
       "arxiv": "2609.37450",
       "arxiv_url": "https://arxiv.org/abs/2609.37450",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf",
       "doi_url": "",
       "journal_url": "",
       "code_url": "",
@@ -3207,7 +3207,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf"
+          "url": "https://files.hctsui.org/papers/2026-multiple-zeta-values-in-positive-characteristic-a-kaneko-zagier-type-conjecture.pdf"
         }
       ],
       "title_html": {
@@ -3246,7 +3246,7 @@
       "arxiv": "2610.25063",
       "show_arxiv_in_status": true,
       "arxiv_url": "https://arxiv.org/abs/2610.25063",
-      "pdf_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf",
+      "pdf_url": "https://files.hctsui.org/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf",
       "journal": {
         "journaltitle": "",
         "shortjournal": "",
@@ -3288,7 +3288,7 @@
             "en": "PDF",
             "zh": "PDF"
           },
-          "url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf"
+          "url": "https://files.hctsui.org/papers/2026-graded-structures-of-v-adic-carlitz-multiple-polylogarithms-and-v-adic-multiple-zeta-values.pdf"
         }
       ],
       "title_html": {

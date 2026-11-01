@@ -1,7 +1,7 @@
 /* Authenticated, provider-neutral traffic report for the Admin site settings. */
 (function installAnalyticsReport(){
   const SESSION_KEY='hctsui-github-submit-session-v1';
-  const DEFAULT_API='https://hctsui-website-worker.hctsui-math.workers.dev';
+  const DEFAULT_API='https://api.hctsui.org';
   const state={provider:'cloudflare',range:'7d',workerUrl:'',sequence:0,mounted:false};
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{localStorage.removeItem(SESSION_KEY);return null}};

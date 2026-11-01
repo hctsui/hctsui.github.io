@@ -5,7 +5,7 @@
   const SESSION_KEY='hctsui-github-submit-session-v1';
   const PENDING_KEY='hctsui-github-submit-pending-v1';
   const AUTO_KEY='hctsui-github-submit-after-login-v1';
-  const DEFAULT_API='https://hctsui-website-worker.hctsui-math.workers.dev';
+  const DEFAULT_API='https://api.hctsui.org';
   const STATUS_POLL_MS=5000;
   let statusTimer=0;
   let clearingCompletedDraft=false;

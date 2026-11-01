@@ -9,7 +9,7 @@
   window.__hctsuiWorkerDeploymentPollingInstalled=true;
 
   const SESSION_KEY='hctsui-github-submit-session-v1';
-  const DEFAULT_WORKER='https://hctsui-website-worker.hctsui-math.workers.dev';
+  const DEFAULT_WORKER='https://api.hctsui.org';
   const POLL_MS=5000;
   let workerOriginPromise=null;
   let installed=false;

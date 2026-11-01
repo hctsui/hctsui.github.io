@@ -6,7 +6,7 @@
   window.__hctsuiR2StorageInstalled=true;
 
   const SESSION_KEY='hctsui-github-submit-session-v1';
-  const DEFAULT_WORKER='https://hctsui-website-worker.hctsui-math.workers.dev';
+  const DEFAULT_WORKER='https://api.hctsui.org';
   const MAX_UPLOAD_BYTES=100*1024*1024;
   const MAX_IMAGE_SOURCE=25*1024*1024;
   let configPromise=null;
@@ -65,10 +65,13 @@
     return result;
   }
 
-  function normalizeLibrary(payload){
+  function normalizeLibrary(payload,cfg){
     const items=(Array.isArray(payload?.items)?payload.items:[]).filter(item=>item?.key&&!String(item.key).endsWith('/.keep')).map(item=>{
       const key=String(item.key),folder=String(item.folder||key.split('/')[0]||'other');
-      return {...item,key,folder,name:item.name||key.split('/').pop()||key};
+      // The Worker may still return a legacy workers.dev URL. Always expose
+      // the configured public R2 custom domain in the Admin picker.
+      const url=`${cfg.public_base}/${key.split('/').map(encodeURIComponent).join('/')}`;
+      return {...item,key,folder,url,name:item.name||key.split('/').pop()||key};
     });
     items.sort((a,b)=>a.key.localeCompare(b.key));
     const groups={};
@@ -79,7 +82,7 @@
 
   async function loadLibrary(force=false){
     if(force)libraryPromise=null;
-    if(!libraryPromise)libraryPromise=api('/cms/media').then(normalizeLibrary).catch(reason=>{libraryPromise=null;throw reason;});
+    if(!libraryPromise)libraryPromise=api('/cms/media').then(async payload=>normalizeLibrary(payload,await config())).catch(reason=>{libraryPromise=null;throw reason;});
     return libraryPromise;
   }
 
