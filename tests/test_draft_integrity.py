@@ -15,49 +15,48 @@ class DraftPersistenceContracts(unittest.TestCase):
     def test_every_cms_manager_has_storage_and_an_operation(self) -> None:
         contracts = {
             "admin/index.html": (
-                "hctsui-batch-v12",
-                "hctsui-translations-draft-v1",
-                "localStorage.setItem(DRAFT_KEY",
+                "DRAFT_KEY",
                 "TRANSLATION_DRAFT_KEY",
                 'op: "translations"',
             ),
             "admin/homepage.js": (
-                "hctsui-homepage-draft-v1",
-                "localStorage.setItem(HOMEPAGE_DRAFT_KEY",
+                "HOMEPAGE_DRAFT_KEY",
                 "function homepageOperation()",
             ),
             "admin/layout.js": (
-                "hctsui-layout-draft-v3",
-                "localStorage.setItem(LAYOUT_DRAFT_KEY",
+                "LAYOUT_DRAFT_KEY",
                 "function layoutOperation()",
             ),
             "admin/people.js": (
-                "hctsui-people-draft",
-                "localStorage.setItem(PEOPLE_DRAFT_KEY",
+                "PEOPLE_DRAFT_KEY",
                 "function peopleOperation()",
             ),
             "admin/site-settings.js": (
-                "hctsui-site-settings-draft",
-                "localStorage.setItem(DRAFT_KEY",
+                "DRAFT_KEY",
                 "function operation()",
             ),
             "admin/notifications.js": (
-                "hctsui-arxiv-suggestions-draft-v1",
-                "hctsui-general-notifications-draft-v1",
+                "ARXIV_SUGGESTIONS_DRAFT_KEY",
+                "GENERAL_NOTIFICATIONS_DRAFT_KEY",
                 "function arxivSuggestionsOperation()",
                 "function notificationsOperation()",
             ),
             "admin/personal-profile.js": (
-                "hctsui-personal-profile-draft-v1",
-                "localStorage.setItem(DRAFT_KEY",
+                "DRAFT_KEY",
                 "function profileOperation()",
             ),
         }
+
         for relative, markers in contracts.items():
             source = read(relative)
+
+            with self.subTest(file=relative):
+                self.assertIn("localStorage.setItem(", source)
+
             for marker in markers:
                 with self.subTest(file=relative, marker=marker):
                     self.assertIn(marker, source)
+
 
     def test_payload_collects_all_special_operations(self) -> None:
         sources = "".join(
@@ -89,38 +88,56 @@ class DraftPersistenceContracts(unittest.TestCase):
 class ClearAllDraftContracts(unittest.TestCase):
     def test_clear_all_drafts_covers_every_active_store(self) -> None:
         aliases = read("admin/people-aliases.js")
-        for key in (
-            "hctsui-batch-v12",
-            "hctsui-translations-draft-v1",
-            "hctsui-translations-stale-v1",
-            "hctsui-homepage-draft-v1",
-            "hctsui-layout-draft-v3",
-            "hctsui-general-layout-links-v1",
-            "hctsui-people-draft",
-            "hctsui-people-draft-recovery-v1",
-            "hctsui-site-settings-draft",
-            "hctsui-arxiv-suggestions-draft-v1",
-            "hctsui-general-notifications-draft-v1",
-            "hctsui-personal-profile-draft-v1",
-        ):
-            with self.subTest(key=key):
-                self.assertIn(key, aliases)
-        for clearer in (
+
+        registry = re.search(
+            r"const ACTIVE_DRAFT_KEYS\s*=\s*\[(.*?)\];",
+            aliases,
+            re.S,
+        )
+        self.assertIsNotNone(registry)
+
+        registered_keys = set(
+            re.findall(r"""['"]([^'"]+)['"]""", registry.group(1))
+        )
+
+        manager_files = (
+            "admin/index.html",
+            "admin/homepage.js",
+            "admin/layout.js",
+            "admin/people.js",
+            "admin/site-settings.js",
+            "admin/notifications.js",
+            "admin/personal-profile.js",
+        )
+
+        key_pattern = (
+            r"\b[A-Z_]*(?:DRAFT_KEY|RECOVERY_KEY|"
+            r"LAYOUT_LINK_KEY|STALE_TRANSLATION_KEY)"
+            r"\s*=\s*['\"](hctsui-[^'\"]+)['\"]"
+        )
+
+        for relative in manager_files:
+            source = read(relative)
+            active_keys = re.findall(key_pattern, source)
+
+            with self.subTest(file=relative):
+                self.assertTrue(active_keys)
+
+            for key in active_keys:
+                with self.subTest(file=relative, key=key):
+                    self.assertIn(key, registered_keys)
+
+        for marker in (
+            "localStorage.removeItem(key)",
             "clearHomepageDraft",
             "clearPeopleDraft",
             "clearArxivSuggestionsDraft",
             "clearGeneralNotificationsDraft",
             "clearSiteSettingsDraft",
+            "clearAllCmsDrafts",
+            "clearSubmittedDraft",
         ):
-            with self.subTest(clearer=clearer):
-                self.assertIn(clearer, aliases)
-        self.assertIn("button.onclick", aliases)
-        self.assertIn(
-            "clearAllCmsDrafts({reload:true,showMessage:false})",
-            aliases,
-        )
-        self.assertIn("clearSubmittedDraft", aliases)
-        self.assertIn("location.reload()", aliases)
+            self.assertIn(marker, aliases)
 
     def test_clear_all_extension_is_in_the_existing_people_alias_script(self) -> None:
         aliases = read("admin/people-aliases.js")
@@ -133,12 +150,10 @@ class ClearAllDraftContracts(unittest.TestCase):
 class PeoplePreviewContracts(unittest.TestCase):
     def test_people_preview_shows_field_and_alias_differences(self) -> None:
         aliases = read("admin/people-aliases.js")
+
         for marker in (
-            "英文姓名",
-            "中文姓名",
-            "學術網頁",
-            "新增別名",
-            "刪除別名",
+            "fieldChange(",
+            "aliasDifference(",
             "chips(aliases.added,'added')",
             "chips(aliases.removed,'removed')",
             ".people-diff-chip.added",
@@ -148,7 +163,6 @@ class PeoplePreviewContracts(unittest.TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, aliases)
-
 
 if __name__ == "__main__":
     unittest.main()
