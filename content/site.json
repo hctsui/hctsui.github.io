@@ -8,18 +8,18 @@
         "mode": "manual",
         "limit": 3,
         "selected_ids": [
-          "publication-2604-03618",
-          "publication-2610-25063",
-          "publication-2609-18777"
+          "publication-2604004",
+          "publication-2610008",
+          "publication-2609005"
         ]
       },
       "activities": {
         "mode": "soonest",
         "limit": 3,
         "selected_ids": [
-          "conference-2026-08-24-the-33rd-number-theory-summer-school-arithm",
-          "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop",
-          "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research"
+          "conference-2608241",
+          "conference-2611071",
+          "conference-2611081"
         ]
       }
     },
@@ -67,51 +67,51 @@
     },
     "entry_order": {
       "conference": [
-        "conference-2027-03-15-the-19th-msj-si-complex-algebraic-and-arith",
-        "conference-2027-03-08-the-19th-msj-si-complex-algebraic-and-arith",
-        "conference-2026-12-28-the-12th-postech-pmi-ncts-joint-workshop-on",
-        "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research",
-        "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop",
-        "conference-2026-08-24-the-33rd-number-theory-summer-school-arithm",
-        "conference-2026-07-18-the-72nd-kansai-multiple-zeta-workshop",
-        "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-con",
-        "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
-        "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-resea",
-        "conference-2026-01-21-the-61st-tms-annual-meeting",
-        "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geomet",
-        "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
-        "conference-2025-09-01-japan-taiwan-number-theory-conference",
-        "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
-        "conference-2025-06-30-iwasawa-2025",
-        "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
-        "conference-2025-04-17-nthu-workshop-on-number-theory",
-        "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-ze",
-        "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-ze",
-        "conference-2025-01-14-the-60th-tms-annual-meeting",
-        "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperboli",
-        "conference-2024-12-18-ncts-one-day-workshop-on-number-theory",
-        "conference-2024-07-01-summer-school-on-arithmetic-geometry",
-        "conference-2024-01-22-the-59th-tms-annual-meeting",
-        "conference-2023-01-16-the-58th-tms-annual-meeting"
+        "conference-2703151",
+        "conference-2703081",
+        "conference-2612281",
+        "conference-2611081",
+        "conference-2611071",
+        "conference-2608241",
+        "conference-2607181",
+        "conference-2607071",
+        "conference-2606111",
+        "conference-2602081",
+        "conference-2601211",
+        "conference-2512151",
+        "conference-2509291",
+        "conference-2509011",
+        "conference-2508251",
+        "conference-2506301",
+        "conference-2506251",
+        "conference-2504171",
+        "conference-2502171",
+        "conference-2502101",
+        "conference-2501141",
+        "conference-2501021",
+        "conference-2412181",
+        "conference-2407011",
+        "conference-2401221",
+        "conference-2301161"
       ],
       "honor": [
-        "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
-        "honor-2025-nstc-graduate-research-fellowship",
-        "honor-2024-chow-hung-ching-scholarship",
-        "honor-2024-tms-outstanding-students-prize"
+        "honor-26392004",
+        "honor-25158003",
+        "honor-24158001",
+        "honor-24158002"
       ],
       "talk": [
-        "talk-2026-11-08-a-direct-sum-theorem-for-multiple-eisenstei",
-        "talk-2026-10-15-graded-structures-of-math-adic-carlitz-mult",
-        "talk-2026-07-06-recent-developments-on-multiple-eisenstein",
-        "talk-2026-06-12-derivations-of-multiple-zeta-values-in-posi",
-        "talk-2026-02-08-on-finite-multiple-harmonic-math-series-ove",
-        "talk-2025-09-30-on-math-analogues-of-multiple-zeta-values-a",
-        "talk-2025-09-03-on-math-shuffle-relations-for-multiple-eise",
-        "talk-2025-04-17-on-the-uniqueness-of-math-adic-gamma-functi"
+        "talk-2611081",
+        "talk-2610151",
+        "talk-2607061",
+        "talk-2606121",
+        "talk-2602081",
+        "talk-2509301",
+        "talk-2509031",
+        "talk-2504171"
       ],
       "visit": [
-        "visit-2026-07-02-tohoku-university"
+        "visit-2607001"
       ],
       "organization": []
     },
@@ -1137,11 +1137,25 @@
       "enabled": true,
       "time": "00:15",
       "timezone": "Asia/Taipei"
+    },
+    "id_counters": {
+      "publication": 8,
+      "teaching": 12,
+      "visit": 1,
+      "honor": 4,
+      "talk": 0,
+      "conference": 0,
+      "organization": 0,
+      "interest": 3,
+      "education": 2,
+      "contact": 3,
+      "personal": 8,
+      "generic": 0
     }
   },
   "activities": [
     {
-      "id": "visit-2026-07-02-tohoku-university",
+      "id": "visit-2607001",
       "type": "visit",
       "start_date": "2026-07-02",
       "end_date": "2026-08-30",
@@ -1189,7 +1203,7 @@
       "display_placements": []
     },
     {
-      "id": "talk-2026-07-06-recent-developments-on-multiple-eisenstein",
+      "id": "talk-2607061",
       "type": "talk",
       "start_date": "2026-07-06",
       "end_date": "2026-07-06",
@@ -1237,7 +1251,7 @@
       }
     },
     {
-      "id": "talk-2026-06-12-derivations-of-multiple-zeta-values-in-posi",
+      "id": "talk-2606121",
       "type": "talk",
       "start_date": "2026-06-12",
       "end_date": "2026-06-12",
@@ -1285,7 +1299,7 @@
       }
     },
     {
-      "id": "talk-2026-02-08-on-finite-multiple-harmonic-math-series-ove",
+      "id": "talk-2602081",
       "type": "talk",
       "start_date": "2026-02-08",
       "end_date": "2026-02-08",
@@ -1333,7 +1347,7 @@
       }
     },
     {
-      "id": "talk-2025-09-30-on-math-analogues-of-multiple-zeta-values-a",
+      "id": "talk-2509301",
       "type": "talk",
       "start_date": "2025-09-30",
       "end_date": "2025-09-30",
@@ -1381,7 +1395,7 @@
       }
     },
     {
-      "id": "talk-2025-09-03-on-math-shuffle-relations-for-multiple-eise",
+      "id": "talk-2509031",
       "type": "talk",
       "start_date": "2025-09-03",
       "end_date": "2025-09-03",
@@ -1429,7 +1443,7 @@
       }
     },
     {
-      "id": "talk-2025-04-17-on-the-uniqueness-of-math-adic-gamma-functi",
+      "id": "talk-2504171",
       "type": "talk",
       "start_date": "2025-04-17",
       "end_date": "2025-04-17",
@@ -1477,7 +1491,7 @@
       }
     },
     {
-      "id": "conference-2026-07-18-the-72nd-kansai-multiple-zeta-workshop",
+      "id": "conference-2607181",
       "type": "conference",
       "start_date": "2026-07-18",
       "end_date": "2026-07-18",
@@ -1521,7 +1535,7 @@
       }
     },
     {
-      "id": "conference-2026-07-07-the-25th-sendai-hiroshima-number-theory-con",
+      "id": "conference-2607071",
       "type": "conference",
       "start_date": "2026-07-07",
       "end_date": "2026-07-10",
@@ -1553,7 +1567,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-06-11-workshop-on-arithmetic-of-function-fields",
+      "id": "conference-2606111",
       "type": "conference",
       "start_date": "2026-06-11",
       "end_date": "2026-06-12",
@@ -1585,7 +1599,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-02-08-nagoya-kansai-zeta-workshop-for-young-resea",
+      "id": "conference-2602081",
       "type": "conference",
       "start_date": "2026-02-08",
       "end_date": "2026-02-11",
@@ -1617,7 +1631,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-01-21-the-61st-tms-annual-meeting",
+      "id": "conference-2601211",
       "type": "conference",
       "start_date": "2026-01-21",
       "end_date": "2026-01-22",
@@ -1649,7 +1663,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-12-15-2025-taipei-conference-on-arithmetic-geomet",
+      "id": "conference-2512151",
       "type": "conference",
       "start_date": "2025-12-15",
       "end_date": "2025-12-19",
@@ -1681,7 +1695,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-09-29-various-aspects-of-multiple-zeta-values",
+      "id": "conference-2509291",
       "type": "conference",
       "start_date": "2025-09-29",
       "end_date": "2025-10-03",
@@ -1713,7 +1727,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-09-01-japan-taiwan-number-theory-conference",
+      "id": "conference-2509011",
       "type": "conference",
       "start_date": "2025-09-01",
       "end_date": "2025-09-05",
@@ -1745,7 +1759,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-08-25-the-11th-east-asia-number-theory-conference",
+      "id": "conference-2508251",
       "type": "conference",
       "start_date": "2025-08-25",
       "end_date": "2025-08-29",
@@ -1777,7 +1791,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-06-30-iwasawa-2025",
+      "id": "conference-2506301",
       "type": "conference",
       "start_date": "2025-06-30",
       "end_date": "2025-07-04",
@@ -1809,7 +1823,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-06-25-iwasawa-theory-taipei-summer-school",
+      "id": "conference-2506251",
       "type": "conference",
       "start_date": "2025-06-25",
       "end_date": "2025-06-27",
@@ -1841,7 +1855,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-02-17-the-17th-msj-si-developments-of-multiple-ze",
+      "id": "conference-2502171",
       "type": "conference",
       "start_date": "2025-02-17",
       "end_date": "2025-02-22",
@@ -1873,7 +1887,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-02-10-the-17th-msj-si-developments-of-multiple-ze",
+      "id": "conference-2502101",
       "type": "conference",
       "start_date": "2025-02-10",
       "end_date": "2025-02-15",
@@ -1905,7 +1919,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-01-14-the-60th-tms-annual-meeting",
+      "id": "conference-2501141",
       "type": "conference",
       "start_date": "2025-01-14",
       "end_date": "2025-01-15",
@@ -1937,7 +1951,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2025-01-02-introduction-to-nevanlinna-theory-hyperboli",
+      "id": "conference-2501021",
       "type": "conference",
       "start_date": "2025-01-02",
       "end_date": "2025-01-03",
@@ -1981,7 +1995,7 @@
       }
     },
     {
-      "id": "conference-2024-01-22-the-59th-tms-annual-meeting",
+      "id": "conference-2401221",
       "type": "conference",
       "start_date": "2024-01-22",
       "end_date": "2024-01-23",
@@ -2013,7 +2027,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2023-01-16-the-58th-tms-annual-meeting",
+      "id": "conference-2301161",
       "type": "conference",
       "start_date": "2023-01-16",
       "end_date": "2023-01-17",
@@ -2045,7 +2059,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-08-24-the-33rd-number-theory-summer-school-arithm",
+      "id": "conference-2608241",
       "type": "conference",
       "start_date": "2026-08-24",
       "end_date": "2026-08-28",
@@ -2077,7 +2091,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop",
+      "id": "conference-2611071",
       "type": "conference",
       "start_date": "2026-11-07",
       "end_date": "2026-11-07",
@@ -2109,7 +2123,7 @@
       "display_placements": []
     },
     {
-      "id": "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research",
+      "id": "conference-2611081",
       "type": "conference",
       "start_date": "2026-11-08",
       "end_date": "2026-11-08",
@@ -2194,7 +2208,7 @@
         "en": "NTHU Workshop on Number Theory",
         "zh": "國立清華大學數論研討會"
       },
-      "id": "conference-2025-04-17-nthu-workshop-on-number-theory",
+      "id": "conference-2504171",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2240,7 +2254,7 @@
         "en": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
         "zh": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會"
       },
-      "id": "conference-2026-12-28-the-12th-postech-pmi-ncts-joint-workshop-on",
+      "id": "conference-2612281",
       "display_placements": [],
       "venue_html": {
         "en": "National Taiwan University",
@@ -2286,7 +2300,7 @@
         "en": "NCTS One-Day Workshop on Number Theory",
         "zh": "NCTS 一日工作坊"
       },
-      "id": "conference-2024-12-18-ncts-one-day-workshop-on-number-theory",
+      "id": "conference-2412181",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2328,7 +2342,7 @@
         "en": "Summer School on Arithmetic Geometry",
         "zh": "算術幾何暑期學校"
       },
-      "id": "conference-2024-07-01-summer-school-on-arithmetic-geometry",
+      "id": "conference-2407011",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2375,7 +2389,7 @@
         "en": "Graded Structures of <span class=\"math-inline\" data-tex-inline=\"v\">v</span>-adic Carlitz Multiple Polylogarithms and Multiple Zeta Values",
         "zh": "<span class=\"math-inline\" data-tex-inline=\"v\">v</span>-進 Carlitz 多重對數函數與多重 zeta 值的分次結構"
       },
-      "id": "talk-2026-10-15-graded-structures-of-math-adic-carlitz-mult",
+      "id": "talk-2610151",
       "display_placements": [],
       "venue_html": {
         "en": "National Tsing Hua University",
@@ -2422,7 +2436,7 @@
         "en": "A Direct Sum Theorem for Multiple Eisenstein Series in Positive Characteristic",
         "zh": "正特徵多重 Eisenstein 級數的直和定理"
       },
-      "id": "talk-2026-11-08-a-direct-sum-theorem-for-multiple-eisenstei",
+      "id": "talk-2611081",
       "display_placements": [],
       "venue_html": {
         "en": "Nagoya University",
@@ -2464,7 +2478,7 @@
         "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 1",
         "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第一週"
       },
-      "id": "conference-2027-03-08-the-19th-msj-si-complex-algebraic-and-arith",
+      "id": "conference-2703081",
       "display_placements": [],
       "venue_html": {
         "en": "Waseda University",
@@ -2506,7 +2520,7 @@
         "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 2",
         "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第二週"
       },
-      "id": "conference-2027-03-15-the-19th-msj-si-complex-algebraic-and-arith",
+      "id": "conference-2703151",
       "display_placements": [],
       "venue_html": {
         "en": "The University of Tokyo",
@@ -2517,7 +2531,7 @@
   ],
   "honors": [
     {
-      "id": "honor-2026-taiwan-japan-young-scientific-talent-exchange-program",
+      "id": "honor-26392004",
       "type": "honor",
       "year": 2026,
       "order": 0,
@@ -2539,10 +2553,11 @@
         "zh": "公益財團法人日本台灣交流協會"
       },
       "category_id": "cv-honors",
-      "display_placements": []
+      "display_placements": [],
+      "country_numeric": "392"
     },
     {
-      "id": "honor-2025-nstc-graduate-research-fellowship",
+      "id": "honor-25158003",
       "type": "honor",
       "year": 2025,
       "order": 1,
@@ -2564,10 +2579,11 @@
         "zh": "國家科學及技術委員會"
       },
       "category_id": "cv-honors",
-      "display_placements": []
+      "display_placements": [],
+      "country_numeric": "158"
     },
     {
-      "id": "honor-2024-chow-hung-ching-scholarship",
+      "id": "honor-24158001",
       "type": "honor",
       "year": 2024,
       "order": 2,
@@ -2589,10 +2605,11 @@
         "zh": "中央研究院"
       },
       "category_id": "cv-honors",
-      "display_placements": []
+      "display_placements": [],
+      "country_numeric": "158"
     },
     {
-      "id": "honor-2024-tms-outstanding-students-prize",
+      "id": "honor-24158002",
       "type": "honor",
       "year": 2024,
       "order": 3,
@@ -2614,12 +2631,13 @@
         "zh": "中華民國數學會"
       },
       "category_id": "cv-honors",
-      "display_placements": []
+      "display_placements": [],
+      "country_numeric": "158"
     }
   ],
   "publications": [
     {
-      "id": "publication-2504-15697",
+      "id": "publication-2504001",
       "type": "publication",
       "publication_state": "preprint",
       "classification_mode": "auto",
@@ -2700,7 +2718,7 @@
       "display_placements": []
     },
     {
-      "id": "publication-2504-18879",
+      "id": "publication-2504002",
       "type": "publication",
       "publication_state": "preprint",
       "classification_mode": "auto",
@@ -2781,7 +2799,7 @@
       "display_placements": []
     },
     {
-      "id": "publication-2603-10376",
+      "id": "publication-2603003",
       "type": "publication",
       "publication_state": "preprint",
       "classification_mode": "auto",
@@ -2870,7 +2888,7 @@
       "display_placements": []
     },
     {
-      "id": "publication-2604-03618",
+      "id": "publication-2604004",
       "type": "publication",
       "publication_state": "published",
       "classification_mode": "auto",
@@ -3042,7 +3060,7 @@
         "en": "arXiv: 2609.18777.",
         "zh": "arXiv：2609.18777。"
       },
-      "id": "publication-2609-18777",
+      "id": "publication-2609005",
       "display_placements": [],
       "order": 3
     },
@@ -3123,7 +3141,7 @@
         "en": "arXiv: 2609.30823.",
         "zh": "arXiv：2609.30823。"
       },
-      "id": "publication-2609-30823",
+      "id": "publication-2609006",
       "display_placements": [],
       "order": 2
     },
@@ -3204,7 +3222,7 @@
         "en": "arXiv: 2609.37450.",
         "zh": "arXiv：2609.37450。"
       },
-      "id": "publication-2609-37450",
+      "id": "publication-2609007",
       "display_placements": [],
       "order": 1
     },
@@ -3285,14 +3303,14 @@
         "en": "arXiv: 2610.25063.",
         "zh": "arXiv：2610.25063。"
       },
-      "id": "publication-2610-25063",
+      "id": "publication-2610008",
       "display_placements": [],
       "order": 0
     }
   ],
   "teaching": [
     {
-      "id": "teaching-2025-fall-math2410",
+      "id": "teaching-2503006",
       "type": "teaching",
       "order": 5,
       "term": {
@@ -3316,7 +3334,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2026-spring-math2420",
+      "id": "teaching-2601009",
       "type": "teaching",
       "order": 4,
       "term": {
@@ -3340,7 +3358,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2026-spring-math2870",
+      "id": "teaching-2601008",
       "type": "teaching",
       "order": 3,
       "term": {
@@ -3364,7 +3382,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2025-fall-math3450",
+      "id": "teaching-2503007",
       "type": "teaching",
       "order": 6,
       "term": {
@@ -3388,7 +3406,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2024-fall-math1410",
+      "id": "teaching-2403003",
       "type": "teaching",
       "order": 9,
       "term": {
@@ -3412,7 +3430,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2025-spring-math1420",
+      "id": "teaching-2501005",
       "type": "teaching",
       "order": 8,
       "term": {
@@ -3436,7 +3454,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2025-spring-math3050",
+      "id": "teaching-2501004",
       "type": "teaching",
       "order": 7,
       "term": {
@@ -3460,7 +3478,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2023-fall-math2010",
+      "id": "teaching-2303001",
       "type": "teaching",
       "order": 11,
       "term": {
@@ -3484,7 +3502,7 @@
       "display_placements": []
     },
     {
-      "id": "teaching-2024-spring-math2020",
+      "id": "teaching-2401002",
       "type": "teaching",
       "order": 10,
       "term": {
@@ -3534,7 +3552,7 @@
       },
       "group_id": "national-tsing-hua-university",
       "order": 2,
-      "id": "teaching-2026-fall-math1000",
+      "id": "teaching-2603012",
       "display_placements": [],
       "role_html": {
         "en": "Teaching Assistant",
@@ -3568,7 +3586,7 @@
       },
       "group_id": "national-tsing-hua-university",
       "order": 0,
-      "id": "teaching-2026-fall-math5410",
+      "id": "teaching-2603010",
       "display_placements": [],
       "role_html": {
         "en": "Teaching Assistant",
@@ -3602,7 +3620,7 @@
       },
       "group_id": "national-tsing-hua-university",
       "order": 1,
-      "id": "teaching-2026-fall-math5640",
+      "id": "teaching-2603011",
       "display_placements": [],
       "role_html": {
         "en": "Teaching Assistant",
@@ -3612,7 +3630,7 @@
   ],
   "profile_items": [
     {
-      "id": "interest-function-field-arithmetic",
+      "id": "interest-2600001",
       "type": "interest",
       "category_id": "cv-research",
       "order": 0,
@@ -3655,7 +3673,7 @@
       }
     },
     {
-      "id": "interest-positive-characteristic-mzv-mes",
+      "id": "interest-2600003",
       "type": "interest",
       "category_id": "cv-research",
       "order": 2,
@@ -3698,7 +3716,7 @@
       }
     },
     {
-      "id": "education-phd-nthu",
+      "id": "education-2500002",
       "type": "education",
       "category_id": "cv-education",
       "order": 0,
@@ -3723,7 +3741,7 @@
       "display_placements": []
     },
     {
-      "id": "education-bs-nthu",
+      "id": "education-2100001",
       "type": "education",
       "category_id": "cv-education",
       "order": 1,
@@ -3748,7 +3766,7 @@
       "display_placements": []
     },
     {
-      "id": "personal-languages",
+      "id": "personal-2600004",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 6,
@@ -3770,7 +3788,7 @@
       "display_style": "personal"
     },
     {
-      "id": "personal-address",
+      "id": "personal-2600005",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 7,
@@ -3792,7 +3810,7 @@
       "display_style": "personal"
     },
     {
-      "id": "personal-email",
+      "id": "personal-2600006",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 8,
@@ -3814,7 +3832,7 @@
       "display_style": "personal"
     },
     {
-      "id": "personal-website",
+      "id": "personal-2600007",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 9,
@@ -3837,7 +3855,7 @@
       "display_style": "personal"
     },
     {
-      "id": "personal-orcid",
+      "id": "personal-2600008",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 10,
@@ -3860,7 +3878,7 @@
       "display_style": "personal"
     },
     {
-      "id": "contact-institutional-email",
+      "id": "contact-2600001",
       "type": "contact",
       "category_id": "personal-profile",
       "order": 3,
@@ -3883,7 +3901,7 @@
       "display_style": "contact"
     },
     {
-      "id": "contact-personal-email",
+      "id": "contact-2600002",
       "type": "contact",
       "category_id": "personal-profile",
       "order": 4,
@@ -3906,7 +3924,7 @@
       "display_style": "contact"
     },
     {
-      "id": "contact-affiliation",
+      "id": "personal-2600002",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 1,
@@ -3931,7 +3949,7 @@
       "display_style": "contact"
     },
     {
-      "id": "contact-address-office",
+      "id": "contact-2600003",
       "type": "contact",
       "category_id": "personal-profile",
       "order": 5,
@@ -3961,7 +3979,7 @@
       "display_style": "contact"
     },
     {
-      "id": "profile-name",
+      "id": "personal-2600001",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 0,
@@ -3978,7 +3996,7 @@
       "display_placements": []
     },
     {
-      "id": "profile-position",
+      "id": "personal-2600003",
       "type": "personal",
       "category_id": "personal-profile",
       "order": 2,
@@ -4016,7 +4034,7 @@
         "zh": ""
       },
       "url": "",
-      "id": "interest-math-modules-and-math-motives",
+      "id": "interest-2600002",
       "display_style": "interest",
       "display_placements": [],
       "title_html": {

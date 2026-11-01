@@ -55,6 +55,7 @@
       renderPane();
     }
   }
+  window.__deactivateAutoUpdateSettings = () => setVisibility(false);
   const ZONES=['Asia/Taipei','Asia/Tokyo','UTC','Asia/Hong_Kong','Asia/Singapore','Asia/Shanghai','Asia/Seoul','Europe/London','Europe/Paris','America/New_York','America/Los_Angeles','Australia/Sydney'];
   function renderPane(){
     const root=panel()?.querySelector('#autoUpdateSettingsPane');if(!root)return;

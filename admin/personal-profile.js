@@ -15,7 +15,14 @@
   const own=(object,key)=>Object.prototype.hasOwnProperty.call(object||{},key);
   const pair=(value,fallback={en:'',zh:''})=>({en:String(own(value,'en')?value.en:fallback.en||'').trim(),zh:String(own(value,'zh')?value.zh:fallback.zh||'').trim()});
   const stable=value=>JSON.stringify(value&&typeof value==='object'?Object.keys(value).sort().reduce((out,key)=>(out[key]=value[key]&&typeof value[key]==='object'&&!Array.isArray(value[key])?JSON.parse(stable(value[key])):value[key],out),{}):value);
-  function findItem(id){return (site?.profile_items||[]).find(item=>item?.id===id)||null}
+  const SEMANTIC_IDS={
+    'profile-name':'name','contact-affiliation':'affiliation','profile-position':'position',
+    'contact-institutional-email':'institutional_email','contact-personal-email':'personal_email',
+    'contact-address-office':'office','personal-languages':'languages',
+    'personal-address':'address','personal-email':'email','personal-website':'website','personal-orcid':'orcid'};
+  function findItem(id){const key=SEMANTIC_IDS[id];return (site?.profile_items||[]).find(item=>
+    (key && item?.personal_key===key) || item?.id===id)||null}
+
   function description(id){return pair(findItem(id)?.description)}
   function inferProfile(){
     const source=site?.settings?.personal_profile||{},seoName=site?.settings?.seo?.site_name||{};
@@ -60,7 +67,20 @@
     category.page_id=PDF_CV_PAGE_ID;category.kind='personal';category.label=pair(category.label,{en:'Details',zh:'個人資料'});category.title=pair(category.title,{en:'Personal Information',zh:'個人資訊'});category.intro=pair(category.intro);category.show_on_web=false;category.show_on_cv=true;
     const order=Array.isArray(site.settings.cv_category_order)?site.settings.cv_category_order:(site.settings.cv_category_order=[]);if(!order.includes(CV_PERSONAL_CATEGORY_ID))order.push(CV_PERSONAL_CATEGORY_ID);return category;
   }
-  function upsertProfileItem(items,id){let item=items.find(row=>row?.id===id);if(!item){item={id};items.push(item)}return item}
+  function upsertProfileItem(items,id){
+    const key=SEMANTIC_IDS[id];
+    let item=items.find(row=>(key&&row?.personal_key===key)||row?.id===id);
+    if(!item){
+      const type=id.startsWith('contact-')&&id!=='contact-affiliation'?'contact':'personal';
+      const used=new Set(items.map(row=>row.id));
+      const count=(site?.settings?.id_counters?.[type]||0)+1;
+      let n=count,generated;
+      do{generated=type+'-'+String(new Date().getFullYear()).slice(-2)+String(n++).padStart(5,'0');}while(used.has(generated));
+      item={id:generated};items.push(item);
+    }
+    return item
+  }
+
   function setProfileItem(item,{type,title,description,key,style,url='',defaults=[],order}){
     const merged=new Map(placementRows(item.display_placements,PROFILE_CATEGORY_ID).map(row=>[row.category_id,row]));
     for(const row of defaults)if(!merged.has(row.category_id))merged.set(row.category_id,row);
@@ -74,7 +94,7 @@
     for(const item of items){
       if(!item||(!managed.has(item.id)&&!['personal','contact'].includes(item.type)))continue;
       const old=String(item.category_id||''),rows=placementRows(item.display_placements,PROFILE_CATEGORY_ID);
-      if(old&&old!==PROFILE_CATEGORY_ID&&!(item.id==='contact-affiliation'&&old==='home-contact')&&!rows.some(row=>row.category_id===old))rows.push({category_id:old,order:Number(item.order)||0});
+      if(old&&old!==PROFILE_CATEGORY_ID&&!(item.personal_key==='affiliation'&&old==='home-contact')&&!rows.some(row=>row.category_id===old))rows.push({category_id:old,order:Number(item.order)||0});
       item.category_id=PROFILE_CATEGORY_ID;item.display_placements=rows;
     }
     const combined=[profile.institutional_email,profile.personal_email].filter(Boolean).join(' | '),orcidUrl=profile.orcid?(String(profile.orcid).startsWith('http')?profile.orcid:`https://orcid.org/${profile.orcid}`):'';
@@ -299,7 +319,7 @@
   layoutCatalogRecords=function(){
     init();const rows=baseLayoutCatalogRecords(),data=typeof effectiveSite==='function'?effectiveSite():site,actual=data?.profile_items||[];
     const specs=[['name','profile-name',{en:'Name',zh:'姓名'}],['affiliation','contact-affiliation',{en:'Affiliation',zh:'所屬單位'}],['position','profile-position',{en:'Position',zh:'職位'}]];
-    for(const [key,id,title] of specs)if(!actual.some(item=>item?.id===id))rows.push({id:`personal-profile:${key}`,type:'personal',_personal_profile_key:key,title:copy(title),description:copy(profileDraft[key]),category_id:PROFILE_CATEGORY_ID,order:-20+specs.findIndex(row=>row[0]===key)});
+    for(const [key,id,title] of specs)if(!actual.some(item=>item?.personal_key===key))rows.push({id:`personal-profile:${key}`,type:'personal',_personal_profile_key:key,title:copy(title),description:copy(profileDraft[key]),category_id:PROFILE_CATEGORY_ID,order:-20+specs.findIndex(row=>row[0]===key)});
     return rows;
   };
 

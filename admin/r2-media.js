@@ -317,6 +317,7 @@
       const node=panel.querySelector(`#${id}`);if(node&&r2Active)node.hidden=true;
     }
     pane.hidden=!r2Active;
+    if(r2Active){const auto=panel.querySelector('#autoUpdateSettingsPane');if(auto)auto.hidden=true;}
   }
 
   async function activateR2(input=null,force=false){
@@ -324,6 +325,10 @@
     const outerTab=document.querySelector('[data-tab="siteSettings"]');
     if(outerTab&&!outerTab.classList.contains('active'))outerTab.click();
     installSettingsPane();
+    // Auto-update is another sibling settings tab, not a nested R2 view.
+    // The R2 capture handler stops subsequent click handlers, so deactivate
+    // auto-update explicitly before showing the media library.
+    window.__deactivateAutoUpdateSettings?.();
     if(!r2Active)rememberNativeVisualState();
     r2Active=true;
     setR2VisualState();
@@ -500,6 +505,10 @@
       const nativeButton=event.target.closest('[data-site-settings-section]');
       if(nativeButton?.dataset.siteSettingsSection)nativeSection=nativeButton.dataset.siteSettingsSection;
       deactivateR2();
+    }
+    if(event.target.closest('[data-auto-update-settings-section]')){
+      deactivateR2({restore:false});
+      return;
     }
     const button=event.target.closest('[data-r2-settings-section]');
     if(!button)return;

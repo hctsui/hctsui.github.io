@@ -17,3 +17,8 @@ if (TOOLS/'auto_update_ext.py').is_file():
 if (TOOLS/'chronological_ids.py').is_file():
     import chronological_ids
     chronological_ids.install()
+
+# Canonical item IDs, semantic managed-profile references and atomic rename batches.
+if (TOOLS/'item_id_system.py').is_file():
+    import item_id_system
+    item_id_system.install()

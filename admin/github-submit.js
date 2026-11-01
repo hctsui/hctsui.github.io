@@ -46,9 +46,9 @@
     return '';
   }
 
-  function beginLogin(autoSubmit=false){
-    if(autoSubmit)localStorage.setItem(AUTO_KEY,'1');
-    else localStorage.removeItem(AUTO_KEY);
+  function beginLogin(){
+    // Authentication must never imply permission to submit a draft.
+    localStorage.removeItem(AUTO_KEY);
     location.assign(`${apiBase()}/cms/auth/start`);
   }
 
@@ -111,7 +111,7 @@
     const error=validationError(),batch=payload();
     if(error)return flash(error);
     if(!batch.operations.length)return flash('尚無變更');
-    if(!await checkSession())return beginLogin(true);
+    if(!await checkSession()){flash('請先登入 GitHub；登入後請再次確認並按送出。');return beginLogin();}
     button.disabled=true;manualButton.disabled=true;button.textContent='正在安全送出…';
     try{
       const fingerprint=await operationFingerprint(batch);
@@ -124,7 +124,7 @@
         body:JSON.stringify({request_id:pending.request_id,payload:batch}),
       });
       const result=await response.json().catch(()=>({}));
-      if(response.status===401){localStorage.removeItem(SESSION_KEY);return beginLogin(true)}
+      if(response.status===401){localStorage.removeItem(SESSION_KEY);flash('登入已過期，重新登入後請手動再按一次送出。');return beginLogin();}
       if(!response.ok||!result.success)throw new Error(result.message||'送出失敗，請稍後重試');
       pending.issue=result.issue;pending.submitted_at=new Date().toISOString();
       localStorage.setItem(PENDING_KEY,JSON.stringify(pending));
@@ -192,7 +192,7 @@
 
   button.onclick=directSubmit;
   manualButton.onclick=manualSubmit;
-  loginButton.onclick=()=>beginLogin(false);
+  loginButton.onclick=()=>beginLogin();
   logoutButton.onclick=()=>{localStorage.removeItem(SESSION_KEY);localStorage.removeItem(AUTO_KEY);checkSession();flash('已在這台裝置登出 GitHub 送出功能')};
   document.querySelector('#confirmSubmitted').onclick=async()=>{
     await refreshIssueStatus();
@@ -200,11 +200,11 @@
 
   const loggedIn=consumeLoginResult();
   document.querySelector('#confirmSubmitted')?.classList.add('hidden');
+  // Clear older versions' automatic-submit marker on every page load.
+  // Explicit re-click after login is required, with the restored draft visible.
+  localStorage.removeItem(AUTO_KEY);
   checkSession().then(async()=>{
     await refreshIssueStatus();
-    if(loggedIn&&localStorage.getItem(AUTO_KEY)==='1'){
-      localStorage.removeItem(AUTO_KEY);
-      directSubmit();
-    }
+    if(loggedIn)flash('GitHub 已登入，請確認草稿後自行按「直接送出修改」。');
   });
 })();

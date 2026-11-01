@@ -861,6 +861,17 @@
             <div id="historyList" class="scroll"></div>
           </div>
           <div id="dictionaryTab" hidden>
+            <div class="toolbar" id="databaseSubnav" style="gap:8px;margin-bottom:12px">
+              <button class="button" id="openItemIds" type="button">項目ID</button>
+              <button class="button active" id="openTranslations" type="button">中英對照</button>
+            </div>
+            <div id="itemIdsPane" hidden>
+              <div class="toolbar"><div class="field" style="flex:1"><label>搜尋項目或 ID</label><input id="itemIdSearch" autocomplete="off" placeholder="搜尋標題、課號、ID" /></div>
+              <div class="field"><label>類型</label><select id="itemIdType"><option value="">全部</option></select></div></div>
+              <p class="muted">更改 ID 後會同步更新首頁精選、類別排序、網站錨點與搜尋索引。舊 ID 不保留，原有連結可能失效。</p>
+              <div id="itemIdRecords" class="records"></div>
+            </div>
+            <div id="translationsPane">
             <p class="muted">
               只做完整欄位的精確比對，不做模糊或 AI
               翻譯；多個篩選標籤採「全部符合」。
@@ -964,6 +975,7 @@
             <div id="dictionaryStatus" class="notice"></div>
             <div id="translationAudit"></div>
             <div id="dictionaryRows" class="scroll"></div>
+            </div><!-- translationsPane -->
           </div>
         </section>
         <section class="panel">
@@ -989,7 +1001,7 @@
           </div>
           <div class="actions"><button class="button" id="copyPayload">複製技術資料</button></div>
         </section>
-      </div>
+</div>
     </main>
     <div class="flash" id="flash"></div>
     <script>
@@ -1047,6 +1059,7 @@
         delete: "刪除",
         undo: "還原",
         reorder: "排序",
+        rename_id: "更改 ID",
         translations: "中英對照",
         layout: "頁面與類別",
         homepage: "首頁精選",
@@ -1125,7 +1138,7 @@
             `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`,
         ).join("");
       }
-      const DRAFT_KEY = "hctsui-batch-v13",
+      const DRAFT_KEY = "hctsui-batch-v14",
         TRANSLATION_DRAFT_KEY = "hctsui-translations-draft-v1",
         STALE_TRANSLATION_KEY = "hctsui-translations-stale-v1";
       let site,
@@ -1134,13 +1147,13 @@
         translations = { schema_version: 1, pairs: [] };
       // One-time migration: discard stale ID-bearing drafts from pre-migration
       // versions; never reinterpret old IDs as a new record ID.
-      if (!localStorage.getItem("hctsui-clean-id-migration-20261102")) {
-        for (const key of ["hctsui-batch-v12", "hctsui-homepage-draft-v1",
+      if (!localStorage.getItem("hctsui-canonical-id-migration-v2")) {
+        for (const key of ["hctsui-batch-v12", "hctsui-batch-v13", "hctsui-homepage-draft-v1",
               "hctsui-layout-draft-v3", "hctsui-headings-draft-v1",
               "hctsui-personal-profile-draft-v1", "hctsui-general-layout-links-v1"]) {
           localStorage.removeItem(key);
         }
-        localStorage.setItem("hctsui-clean-id-migration-20261102", "1");
+        localStorage.setItem("hctsui-canonical-id-migration-v2", "1");
       }
       let draft = loadDraft(),
         orderState = null,
@@ -1448,31 +1461,69 @@
       function idSet(d) {
         return new Set(allRecords(d).map((x) => x.id));
       }
-      function newId(t, anchor, name) {
-        let base;
-        if (t === "teaching") {
-          const text = String(anchor || "");
-          const year = text.match(/(?:19|20)\d{2}/)?.[0] || "undated";
-          const season = /spring|春/i.test(text) ? "spring" :
-            /summer|夏/i.test(text) ? "summer" :
-            /fall|autumn|秋/i.test(text) ? "fall" :
-            /winter|冬/i.test(text) ? "winter" : "term";
-          const courseCode = String(name || "").match(/[A-Za-z]{2,8}\s*\d{2,6}[A-Za-z]?/)?.[0];
-          base = `teaching-${year}-${season}-${slug(courseCode || name)}`;
-        } else if (t === "publication") {
-          // Use an immutable creation-time key, not the mutable journal status.
-          base = `publication-${slug(anchor || new Date().toISOString().slice(0,10))}-${slug(name)}`;
-        } else {
-          base = `${t}-${slug(anchor || new Date().toISOString().slice(0,10))}-${slug(name)}`;
+      const ISO_COUNTRY_CODES = new Set("004 008 010 012 016 020 024 028 031 032 036 040 044 048 050 051 052 056 060 064 068 070 072 074 076 084 086 090 092 096 100 104 108 112 116 120 124 132 136 140 144 148 152 156 158 162 166 170 174 175 178 180 184 188 191 192 196 203 204 208 212 214 218 222 226 231 232 233 234 238 239 242 246 248 250 254 258 260 262 266 268 270 275 276 288 292 296 300 304 308 312 316 320 324 328 332 334 336 340 344 348 352 356 360 364 368 372 376 380 384 388 392 398 400 404 408 410 414 417 418 422 426 428 430 434 438 440 442 446 450 454 458 462 466 470 474 478 480 484 492 496 498 499 500 504 508 512 516 520 524 528 531 533 534 535 540 548 554 558 562 566 570 574 578 580 581 583 584 585 586 591 598 600 604 608 612 616 620 624 626 630 634 638 642 643 646 652 654 659 660 662 663 666 670 674 678 682 686 688 690 694 702 703 704 705 706 710 716 724 728 729 732 740 744 748 752 756 760 762 764 768 772 776 780 784 788 792 795 796 798 800 804 807 818 826 831 832 833 834 840 850 854 858 860 862 876 882 887 894".split(" "));
+      function makeDefaultId(t, record) {
+        const d = effectiveSite(), existing = idSet(d);
+        const counters = d.settings?.id_counters || {};
+        const pad = (n, width) => String(n).padStart(width, "0");
+        const date = String(record.start_date || record.date || new Date().toISOString().slice(0, 10));
+        const yy = date.slice(2, 4), mm = date.slice(5, 7), dd = date.slice(8, 10);
+        if (t === "talk" || t === "conference") {
+          const prefix = `${t}-${yy}${mm}${dd}`;
+          for (let i = 1; i < 100000; i++) {
+            const value = `${prefix}${i}`;
+            if (!existing.has(value)) return value;
+          }
+          throw new Error("同一天的活動 ID 已達上限");
         }
-        const ids = idSet(effectiveSite());
-        let result = base, counter = 2;
-        while (ids.has(result)) result = `${base}-${counter++}`;
-        return result;
+        let prefix, width = 3;
+        if (t === "teaching") {
+          const raw = `${record.term?.en || ""} ${record.term?.zh || ""}`;
+          const year = raw.match(/(?:19|20)\d{2}/)?.[0]?.slice(-2) || "26";
+          const season = /spring|春/i.test(raw) ? "01" : /summer|夏/i.test(raw) ? "02" :
+            /fall|autumn|秋/i.test(raw) ? "03" : /winter|冬/i.test(raw) ? "04" : "05";
+          prefix = `teaching-${year}${season}`;
+        } else if (t === "honor") {
+          let code = String(record.country_numeric || "").trim();
+          if (!ISO_COUNTRY_CODES.has(code)) throw new Error("榮譽項目請填寫有效的 ISO 3166-1 三碼數字國碼");
+          prefix = `honor-${String(record.year || new Date().getFullYear()).slice(-2)}${code}`;
+        } else if (t === "publication" || t === "visit") {
+          prefix = `${t}-${yy}${mm}`;
+        } else {
+          width = 5;
+          let year = String(record.start_date || record.date || record.year || new Date().getFullYear()).match(/(?:19|20)\d{2}/)?.[0] || String(new Date().getFullYear());
+          prefix = `${t}-${year.slice(-2)}`;
+        }
+        const top = 10 ** width;
+        let seq = Number(counters[t] || 0) + 1;
+        // Drafts and manually renamed IDs are also reserved.
+        for (; seq < top; seq++) {
+          const candidate = `${prefix}${pad(seq, width)}`;
+          if (!existing.has(candidate)) return candidate;
+        }
+        throw new Error(`${t} 的 ${width} 碼流水號已達上限`);
+      }
+      function newId(t, anchor, name, record) {
+        return makeDefaultId(t, record || { date: String(anchor || "") });
+      }
+      function renameReferencesLocal(value, oldId, newId) {
+        if (Array.isArray(value)) return value.map(x => renameReferencesLocal(x, oldId, newId));
+        if (value && typeof value === "object") {
+          return Object.fromEntries(Object.entries(value).map(([key, item]) => [
+            key === oldId ? newId : key, renameReferencesLocal(item, oldId, newId)]));
+        }
+        if (typeof value !== "string") return value;
+        if (value === oldId) return newId;
+        if (value.startsWith(oldId + "--at--")) return newId + value.slice(oldId.length);
+        const i = value.lastIndexOf("#");
+        const fragment = i >= 0 ? value.slice(i+1) : "";
+        if (fragment === oldId) return value.slice(0,i+1)+newId;
+        if (fragment.startsWith(oldId+"--at--")) return value.slice(0,i+1)+newId+fragment.slice(oldId.length);
+        return value;
       }
       function contentOps() {
         return draft.filter((x) =>
-          ["add", "update", "delete", "undo", "reorder"].includes(x.op),
+          ["add", "update", "delete", "undo", "reorder", "rename_id"].includes(x.op),
         );
       }
       function effectiveSite() {
@@ -1502,6 +1553,10 @@
           }
           if (op.op === "reorder") {
             applyOrderLocal(d, op.after);
+            continue;
+          }
+          if (op.op === "rename_id") {
+            d = renameReferencesLocal(d, op.id, op.new_id);
             continue;
           }
           let a = d[section(op.type)] || [];
@@ -1692,6 +1747,7 @@
         ],
         honor: [
           ["year", "年份", "number"],
+          ["country_numeric", "獎項國家 ISO 3166-1 數字國碼（臺灣 158、日本 392）", "text"],
           ["title", "名稱", "pair"],
           ["organization", "頒發機構", "pair"],
           ["url", "連結", "url"],
@@ -1952,6 +2008,7 @@
           s.course_code = parts.code;
           s.course_title = parts.title;
         }
+        if (type === "honor" && !record) s.country_numeric = "158";
         return s;
       }
       function pairFields(path, label, value = {}, term = false) {
@@ -2938,15 +2995,13 @@
         }
         if (type === "honor") {
           o.year = Number(o.year) || new Date().getFullYear();
+          o.country_numeric = String(o.country_numeric || "158").trim();
+          if (!ISO_COUNTRY_CODES.has(o.country_numeric)) throw new Error("獎項國碼應為有效的 ISO 3166-1 三位數字");
           o.title_html = htmlPair(o.title);
           o.organization_html = htmlPair(o.organization);
         }
         if (!o.id)
-          o.id = newId(
-            type,
-            o.start_date || o.date || o.year || o.term?.en,
-            title(o),
-          );
+          o.id = newId(type, o.start_date || o.date || o.year || o.term?.en, title(o), o);
         return { o, notes };
       }
       function bindDateFields(root) {
@@ -3282,6 +3337,7 @@
       function draftOperationName(o) {
         if (!o) return "未命名";
         if (o.op === "reorder") return orderDraftName(o);
+        if (o.op === "rename_id") return `${o.id} → ${o.new_id}`;
         if (o.op === "undo") return historyTitle(o.history);
         return (
           title(o.after || o.before || o.history) || LABEL[o.type] || "未命名"
@@ -3371,6 +3427,7 @@
         let heading = `<div class="notice"><strong>草稿預覽 · ${esc(actionLabel(o.op))}</strong><div>${esc(draftOperationName(o))}</div></div>`;
         let body;
         if (o.op === "reorder") body = orderDiffHtml(o.before, o.after, o.type);
+        else if (o.op === "rename_id") body = `<div class="preview-card"><strong>項目 ID</strong><p>${esc(o.id)} → ${esc(o.new_id)}</p></div>`;
         else if (o.op === "undo") body = undoPreviewHtml(o.history);
         else
           body = changePreviewHtml(o.type, o.before || null, o.after || null);
@@ -3632,10 +3689,13 @@
       }
       function payload() {
         let ops = contentOps()
-            .filter((x) => x.op !== "reorder")
+            .filter((x) => x.op !== "reorder" && x.op !== "rename_id")
             .map(cleanOp),
           orders = contentOps()
             .filter((x) => x.op === "reorder")
+            .map(cleanOp),
+          renames = contentOps()
+            .filter((x) => x.op === "rename_id")
             .map(cleanOp);
         ops.push(...orders);
         if (dictionaryDirty())
@@ -3662,6 +3722,9 @@
         }
         if (typeof headingsDirty === "function" && headingsDirty())
           ops.push(headingOperation());
+        // Renames execute after layout/homepage/order edits so those operations
+        // can still safely refer to the original IDs in the same atomic batch.
+        ops.push(...renames);
         return {
           schema_version: 2,
           created_at: new Date().toISOString(),
@@ -3687,6 +3750,7 @@
             delete: 0,
             undo: 0,
             reorder: 0,
+            rename_id: 0,
             translations: 0,
             headings: 0,
             people: 0,
@@ -3710,7 +3774,7 @@
         $("#summary").textContent = errs.length
           ? "資料有衝突，請先修正。"
           : ops.length
-            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}${c.translations ? "、中英對照 1" : ""}${c.people ? "、人名連結 1" : ""}${c.arxiv_suggestions ? "、arXiv 通知 1" : ""}${c.notifications ? "、通知中心 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
+            ? `新增 ${c.add}、修改 ${c.update}、刪除 ${c.delete}、還原 ${c.undo}、排序 ${c.reorder}、更改 ID ${c.rename_id}${c.translations ? "、中英對照 1" : ""}${c.people ? "、人名連結 1" : ""}${c.arxiv_suggestions ? "、arXiv 通知 1" : ""}${c.notifications ? "、通知中心 1" : ""}${c.site_settings ? "、網站設定 1" : ""}${c.headings ? "、網站標題 1" : ""}`
             : "尚無變更。";
         $("#preview").innerHTML = ops
           .map((o) => {
@@ -3727,6 +3791,8 @@
               return siteSettingsPreviewHtml(o);
             if (o.op === "reorder")
               return `<details class="diff"><summary><strong>${esc(orderDraftName(o))}</strong></summary>${orderDiffHtml(o.before, o.after, o.type)}</details>`;
+            if (o.op === "rename_id")
+              return `<details class="diff"><summary><strong>${esc(LABEL[o.type] || o.type)} · 項目 ID</strong>：${esc(o.id)} → ${esc(o.new_id)}</summary><p class="muted">所有內部引用同步更新，舊 ID 不保留。</p></details>`;
             if (o.op === "undo") {
               let h = (history.operations || []).find(
                 (x) => x.history_id === o.history_id,
@@ -3840,6 +3906,7 @@
         return `<div class="preview-card"><div class="field"><label>還原內容</label><div class="preview-value">${esc(historyTitle(h))}</div></div></div>`;
       }
       function renderAll() {
+        if (typeof window.renderItemIds === "function") window.renderItemIds();
         renderPreview();
         if (typeof renderHeadings === "function") renderHeadings();
         if (typeof renderPeopleManager === "function") renderPeopleManager();
@@ -4197,10 +4264,11 @@
     <script src="homepage.js?v=20260920-2"></script>
     <script src="people.js?v=20260802-3"></script>
     <script src="notifications.js?v=20260802-2"></script>
-    <script src="media.js?v=20260920-1"></script>
+    <script src="media.js?v=20261102-1"></script>
     <script src="site-settings.js?v=20260802-2"></script>
     <script src="auto-update.js?v=20261028-2"></script>
-    <script src="github-submit.js?v=20260802-2"></script>
+    <script src="github-submit.js?v=20261102-1"></script>
+    <script src="item-ids.js?v=20261102-1"></script>
     <script src="analytics-report.js?v=20260802-2"></script>
   </body>
 </html>
