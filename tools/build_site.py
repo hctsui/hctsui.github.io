@@ -742,11 +742,11 @@ def render_contact_form(data: dict[str, Any], lang: str) -> str:
     intro = esc(config.get("intro", {}).get(lang) or "")
     labels = {key: esc(config.get(key, {}).get(lang) or "") for key in ("name_label", "email_label", "subject_label", "message_label", "submit_label", "success_message", "privacy_note")}
     hidden = ''
-    fixed_subject = str(config.get("email_subject") or "[hctsui.github.io] New contact message").strip()
+    fixed_subject = str(config.get("email_subject") or "[hctsui.org] New contact message").strip()
     if mode == "email_only":
         hidden += f'<input type="hidden" name="access_key" value="{esc(config.get("web3forms_access_key") or "")}">'
         hidden += f'<input type="hidden" name="subject" value="{esc(fixed_subject)}">'
-        hidden += '<input type="hidden" name="from_name" value="hctsui.github.io contact form">'
+        hidden += '<input type="hidden" name="from_name" value="hctsui.org contact form">'
     else:
         hidden += f'<input type="hidden" name="email_subject" value="{esc(fixed_subject)}">'
     hidden += '<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="contact-botcheck" aria-hidden="true">'
@@ -906,7 +906,7 @@ def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
     intro = rich_html(header["intro"][lang])
     download = ""
     if page_id == "cv":
-        href = "https://hctsui.github.io/files/Hung-Chun-Tsui-CV-zh.pdf" if lang == "zh" else "https://hctsui.github.io/files/Hung-Chun-Tsui-CV.pdf"
+        href = "https://hctsui.org/files/Hung-Chun-Tsui-CV-zh.pdf" if lang == "zh" else "https://hctsui.org/files/Hung-Chun-Tsui-CV.pdf"
         text = "下載 PDF 履歷" if lang == "zh" else "Download PDF CV"
         download = f'<a class="button primary cv-download" href="{href}" rel="noopener" target="_blank">{text}</a>'
     return f'<section class="page-hero"><div class="container"><p class="section-label">{label}</p><h1 class="page-title">{title}</h1><p class="page-intro">{intro}</p>{download}</div></section>'
