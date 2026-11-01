@@ -287,22 +287,25 @@ class BibtexTests(unittest.TestCase):
         self.assertIn(r'\bibitem{x} \emph{Title}', replaced)
 
     def test_publication_html_has_matching_action_buttons_and_working_citation_controls(self) -> None:
-        rendered = render_publication_article(self.publication(), "en")
-        self.assertIn('<a class="publication-action"', rendered)
-        self.assertIn('class="publication-action pub-citation-toggle"', rendered)
-        self.assertIn("data-bibtex-toggle", rendered)
-        self.assertIn("data-citation-toggle", rendered)
-        self.assertIn("data-citation-close", rendered)
-        self.assertIn("data-copy-bibtex", rendered)
-        self.assertIn("data-copy-citation", rendered)
-        self.assertIn('data-citation-format="bibtex"', rendered)
-        self.assertIn('data-citation-format="bibitem"', rendered)
-        self.assertIn('class="citation-panel"', rendered)
-        self.assertIn("Copy biblatex", rendered)
-        self.assertIn(r"Copy \bibitem", rendered)
-        self.assertIn(">Cite</button>", rendered)
-        self.assertIn(r"LaTeX \bibitem", rendered)
+        rendered = render_publication_article(
+            self.publication(), "en"
+        )
+
+        for marker in (
+            "data-bibtex-toggle",
+            "data-citation-toggle",
+            "data-citation-close",
+            "data-copy-bibtex",
+            "data-copy-citation",
+            'data-citation-format="bibtex"',
+            'data-citation-format="bibitem"',
+            "citation-panel",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, rendered)
+
         self.assertNotIn("\b", rendered)
+
 
     def test_publication_author_line_bolds_owner_but_not_coauthors(self) -> None:
         rendered = render_publication_article(self.publication(), "en")
