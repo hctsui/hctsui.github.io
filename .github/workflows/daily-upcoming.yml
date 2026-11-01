@@ -37,6 +37,11 @@ jobs:
         env:
           FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' }}
         run: python3 tools/daily_update_schedule.py check
+      
+      - name: Check new arXiv publications
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        run: python3 tools/check_arxiv.py
 
       - name: Rebuild at configured local time
         if: steps.due.outputs.run == 'true'
@@ -63,6 +68,7 @@ jobs:
           if [ -z "$(git status --porcelain -- \
             CONTENT-CATALOG.md \
             content/media.json content/search-index.json content/daily-update-state.json \
+            content/arxiv-suggestions.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html')" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -78,6 +84,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CONTENT-CATALOG.md \
             content/media.json content/search-index.json content/daily-update-state.json \
+            content/arxiv-suggestions.json \
             cv/Hung-Chun-Tsui-CV.tex cv/Hung-Chun-Tsui-CV-zh.tex \
             '*.html' 'zh/*.html'
           git commit -m "Rebuild website at configured daily time"
