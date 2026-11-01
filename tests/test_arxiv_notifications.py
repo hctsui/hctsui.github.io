@@ -117,28 +117,26 @@ class StaticArxivUiTests(unittest.TestCase):
             self.assertIn(marker, script)
 
 
-    def test_arxiv_workflow_can_publish_suggestions(self) -> None:
-        workflow = (
+    def test_arxiv_workflow_uses_daily_schedule(self) -> None:
+        daily = (
+            ROOT / ".github/workflows/daily-upcoming.yml"
+        ).read_text(encoding="utf-8")
+        manual = (
             ROOT / ".github/workflows/check-arxiv.yml"
         ).read_text(encoding="utf-8")
-        admin = (
-            ROOT / "admin/index.html"
-        ).read_text(encoding="utf-8")
 
-        for marker in (
-            "schedule:",
-            "workflow_dispatch:",
-            "python3 tools/check_arxiv.py",
-            "git push origin HEAD:cms",
-            "gh workflow run deploy-cms-pages.yml --ref cms",
-            "actions: write",
-        ):
-            self.assertIn(marker, workflow)
-
-        self.assertRegex(
-            admin,
-            r'<script src="notifications\.js\?v=[^"]+"></script>',
+        self.assertIn("python3 tools/check_arxiv.py", daily)
+        self.assertIn(
+            "content/arxiv-suggestions.json",
+            daily,
         )
+        self.assertIn(
+            "gh workflow run deploy-cms-pages.yml --ref cms",
+            daily,
+        )
+        self.assertIn("workflow_dispatch:", manual)
+        self.assertNotIn("schedule:", manual)
+
 
 
 if __name__ == "__main__":
