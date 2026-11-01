@@ -2,6 +2,30 @@
   "schema_version": 1,
   "people": [
     {
+      "id": "new-person-5",
+      "name": {
+        "en": "Daichi Matsuzuki",
+        "zh": "松月大知"
+      },
+      "aliases": [
+        "Matsuzuki Daichi",
+        "Matsuzuki, Daichi"
+      ],
+      "url": "https://sites.google.com/view/daichi-matsuzuki-homepage/home"
+    },
+    {
+      "id": "new-person-4",
+      "name": {
+        "en": "Yoshinori Mishiba",
+        "zh": "三柴善範"
+      },
+      "aliases": [
+        "Mishiba Yoshinori",
+        "Mishiba, Yoshinori"
+      ],
+      "url": ""
+    },
+    {
       "id": "new-person-3",
       "name": {
         "en": "Oğuz Gezmiş",
