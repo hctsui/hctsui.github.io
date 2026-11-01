@@ -75,6 +75,8 @@
 
 | Type | English title | 中文名稱 | Entry ID |
 |---|---|---|---|
+| conference | The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 2 | 第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第二週 | `conference-2027-03-15-19` |
+| conference | The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 1 | 第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第一週 | `conference-2027-03-08-19` |
 | conference | The 12th POSTECH PMI NCTS Joint Workshop on Number Theory | 第 12 屆 POSTECH PMI NCTS 數論聯合研討會 | `conference-2026-12-28-12-postech-pmi-ncts` |
 | conference | The 2nd Multiple Eisenstein Series Research Meeting | 第二屆多重 Eisenstein 級數研究會 | `conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6` |
 | conference | The 73rd Kansai Multiple Zeta Workshop | 第 73 回關西多重 zeta 值研討會 | `conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4` |

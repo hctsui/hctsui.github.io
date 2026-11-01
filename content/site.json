@@ -1493,7 +1493,7 @@
       },
       "slides_url": "",
       "category_id": "activity-conferences",
-      "order": 4,
+      "order": 6,
       "display_placements": [],
       "venue": {
         "en": "Tohoku University",
@@ -1541,7 +1541,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 5,
+      "order": 7,
       "display_placements": []
     },
     {
@@ -1573,7 +1573,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 6,
+      "order": 8,
       "display_placements": []
     },
     {
@@ -1605,7 +1605,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 7,
+      "order": 9,
       "display_placements": []
     },
     {
@@ -1637,7 +1637,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 8,
+      "order": 10,
       "display_placements": []
     },
     {
@@ -1669,7 +1669,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 9,
+      "order": 11,
       "display_placements": []
     },
     {
@@ -1701,7 +1701,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 10,
+      "order": 12,
       "display_placements": []
     },
     {
@@ -1733,7 +1733,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 11,
+      "order": 13,
       "display_placements": []
     },
     {
@@ -1765,7 +1765,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 12,
+      "order": 14,
       "display_placements": []
     },
     {
@@ -1797,7 +1797,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 13,
+      "order": 15,
       "display_placements": []
     },
     {
@@ -1829,7 +1829,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 14,
+      "order": 16,
       "display_placements": []
     },
     {
@@ -1861,7 +1861,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 16,
+      "order": 18,
       "display_placements": []
     },
     {
@@ -1893,7 +1893,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 17,
+      "order": 19,
       "display_placements": []
     },
     {
@@ -1925,7 +1925,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 18,
+      "order": 20,
       "display_placements": []
     },
     {
@@ -1953,7 +1953,7 @@
       },
       "slides_url": "",
       "category_id": "activity-conferences",
-      "order": 19,
+      "order": 21,
       "display_placements": [],
       "venue": {
         "en": "Academia Sinica",
@@ -2001,7 +2001,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 22,
+      "order": 24,
       "display_placements": []
     },
     {
@@ -2033,7 +2033,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 23,
+      "order": 25,
       "display_placements": []
     },
     {
@@ -2065,7 +2065,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 3,
+      "order": 5,
       "display_placements": []
     },
     {
@@ -2097,7 +2097,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 2,
+      "order": 4,
       "display_placements": []
     },
     {
@@ -2129,7 +2129,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 1,
+      "order": 3,
       "display_placements": [],
       "venue": {
         "en": "Nagoya University",
@@ -2192,7 +2192,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 15
+      "order": 17
     },
     {
       "type": "conference",
@@ -2242,7 +2242,7 @@
         "en": "Speaker",
         "zh": "講者"
       },
-      "order": 0
+      "order": 2
     },
     {
       "type": "conference",
@@ -2284,7 +2284,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 20
+      "order": 22
     },
     {
       "type": "conference",
@@ -2326,7 +2326,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 21
+      "order": 23
     },
     {
       "type": "talk",
@@ -2419,6 +2419,90 @@
       "venue_html": {
         "en": "Nagoya University",
         "zh": "名古屋大學"
+      },
+      "order": 0
+    },
+    {
+      "type": "conference",
+      "category_id": "activity-conferences",
+      "start_date": "2027-03-08",
+      "end_date": "2027-03-12",
+      "title": {
+        "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 1",
+        "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第一週"
+      },
+      "venue": {
+        "en": "Waseda University",
+        "zh": "早稻田大學"
+      },
+      "city": {
+        "en": "Tokyo",
+        "zh": "東京"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "url": "https://sites.google.com/view/caad2027?pli=1&authuser=0",
+      "description": {
+        "en": "Waseda University, Tokyo, Japan",
+        "zh": "早稻田大學, 東京, 日本"
+      },
+      "description_html": {
+        "en": "Waseda University, Tokyo, Japan",
+        "zh": "早稻田大學, 東京, 日本"
+      },
+      "title_html": {
+        "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 1",
+        "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第一週"
+      },
+      "id": "conference-2027-03-08-19",
+      "display_placements": [],
+      "venue_html": {
+        "en": "Waseda University",
+        "zh": "早稻田大學"
+      },
+      "order": 1
+    },
+    {
+      "type": "conference",
+      "category_id": "activity-conferences",
+      "start_date": "2027-03-15",
+      "end_date": "2027-03-19",
+      "title": {
+        "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 2",
+        "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第二週"
+      },
+      "venue": {
+        "en": "The University of Tokyo",
+        "zh": "東京大學"
+      },
+      "city": {
+        "en": "Tokyo",
+        "zh": "東京"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "url": "https://sites.google.com/view/caad2027?pli=1&authuser=0",
+      "description": {
+        "en": "The University of Tokyo, Tokyo, Japan",
+        "zh": "東京大學, 東京, 日本"
+      },
+      "description_html": {
+        "en": "The University of Tokyo, Tokyo, Japan",
+        "zh": "東京大學, 東京, 日本"
+      },
+      "title_html": {
+        "en": "The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 2",
+        "zh": "第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第二週"
+      },
+      "id": "conference-2027-03-15-19",
+      "display_placements": [],
+      "venue_html": {
+        "en": "The University of Tokyo",
+        "zh": "東京大學"
       },
       "order": 0
     }
