@@ -6709,6 +6709,61 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-142-op-1",
+      "batch_issue": 142,
+      "applied_at": "2026-11-01T13:09:10.791804Z",
+      "expires_at": "2026-11-08T13:09:10.791804Z",
+      "reverted_by": null,
+      "request_digest": "62320d33d4b30d377e9c4cbc94c25046f2fc449269b8ba58883d3848ba2b701b",
+      "request_action": "homepage",
+      "action": "homepage",
+      "type": "homepage",
+      "entry_id": "homepage",
+      "label": {
+        "en": "Homepage selections",
+        "zh": "首頁精選"
+      },
+      "before": {
+        "publications": {
+          "mode": "latest",
+          "limit": 3,
+          "selected_ids": []
+        },
+        "activities": {
+          "mode": "soonest",
+          "limit": 3,
+          "selected_ids": [
+            "conference-2026-number-theory-summer-school",
+            "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+            "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          ]
+        }
+      },
+      "after": {
+        "publications": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "publication-2026-10-18-v-carlitz-v-zeta",
+            "publication-2026-09-28-zeta-kaneko-zagier",
+            "publication-2604.03618-4"
+          ]
+        },
+        "activities": {
+          "mode": "soonest",
+          "limit": 3,
+          "selected_ids": [
+            "conference-2026-number-theory-summer-school",
+            "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+            "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          ]
+        }
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }

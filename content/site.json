@@ -5,9 +5,13 @@
     "homepage_publication_limit": 3,
     "homepage": {
       "publications": {
-        "mode": "latest",
+        "mode": "manual",
         "limit": 3,
-        "selected_ids": []
+        "selected_ids": [
+          "publication-2026-10-18-v-carlitz-v-zeta",
+          "publication-2026-09-28-zeta-kaneko-zagier",
+          "publication-2604.03618-4"
+        ]
       },
       "activities": {
         "mode": "soonest",
