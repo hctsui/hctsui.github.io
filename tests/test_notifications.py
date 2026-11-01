@@ -61,6 +61,7 @@ class NotificationStoreTests(unittest.TestCase):
 
 
 class AutomatedNotificationTests(unittest.TestCase):
+    
     def test_crossref_candidate_creates_publish_notification(self):
         site = {"publications": [{
             "id": "paper-1", "year": 2026, "group_id": "preprints",
@@ -84,6 +85,36 @@ class AutomatedNotificationTests(unittest.TestCase):
         updated, broken, resolved = link_mod.run(site, {"people": []}, {}, fixture={"https://example.test/dead": 404})
         self.assertEqual((broken, resolved), (1, 0))
         self.assertEqual(updated["notifications"][0]["type"], "broken_link")
+
+    
+    def test_link_checker_only_flags_confirmed_404_or_410(self):
+        url = "https://example.test/paper.pdf"
+        site = {
+            "publications": [{
+                "id": "paper-1",
+                "title": {"en": "Test Paper"},
+                "pdf_url": url,
+            }],
+            "settings": {"footer": {"items": []}},
+        }
+
+        for status in (200, 403, 429, 404, 410):
+            with self.subTest(status=status):
+                updated, broken, resolved = link_mod.run(
+                    site,
+                    {"people": []},
+                    {},
+                    fixture={url: status},
+                )
+
+                expected = int(status in (404, 410))
+
+                self.assertEqual(broken, expected)
+                self.assertEqual(resolved, 0)
+                self.assertEqual(
+                    len(updated["notifications"]),
+                    expected,
+                )
 
     def test_cleanup_keeps_starred_old_notification(self):
         old = (datetime.now(timezone.utc) - timedelta(days=90)).isoformat().replace("+00:00", "Z")
