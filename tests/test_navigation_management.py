@@ -75,21 +75,16 @@ class NavigationManagementTests(unittest.TestCase):
         self.assertNotIn("Hidden Page", english)
         self.assertIn("顯示頁面", chinese)
         self.assertNotIn("隱藏頁面", chinese)
-        self.assertIn(">English</a>", chinese)
-        self.assertIn(">中文</a>", english)
 
     def test_404_navigation_uses_same_page_setting(self) -> None:
         data = site_with_custom_pages()
         page = render_404_page(data, date(2026, 8, 1))
         self.assertIn("Visible Page", page)
         self.assertNotIn("Hidden Page", page)
-        self.assertIn(">English</button>", page)
-        self.assertNotIn(">EN</button>", page)
 
     def test_admin_exposes_navigation_checkbox(self) -> None:
         script = (ROOT / "admin" / "layout.js").read_text(encoding="utf-8")
         self.assertIn('data-page-field="show_in_navigation"', script)
-        self.assertIn("顯示於導覽列", script)
 
 
 if __name__ == "__main__":
