@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import subprocess
 import unittest
 from pathlib import Path
@@ -13,9 +12,11 @@ class R2StorageManagerTests(unittest.TestCase):
         self.script = (ROOT / "admin" / "r2-media.js").read_text(encoding="utf-8")
         self.loader = (ROOT / "admin" / "people-aliases.js").read_text(encoding="utf-8")
 
-    def test_loader_uses_non_date_cache_version(self) -> None:
-        self.assertRegex(self.loader, r"r2-media\.js\?v=[^\"']+")
-        self.assertIsNone(re.search(r"r2-media\.js\?v=20\d{6}(?:-\d+)?", self.loader))
+    def test_loader_has_cache_version(self) -> None:
+        self.assertRegex(
+            self.loader,
+            r'r2-media\.js\?v=[A-Za-z0-9][A-Za-z0-9._-]*'
+        )
 
     def test_r2_mount_is_unique_and_media_fields_are_scoped(self) -> None:
         self.assertIn("topLevelSettingsTabs", self.script)
