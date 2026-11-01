@@ -54,12 +54,29 @@ def iter_entry_urls(entry: dict[str, Any], target_type: str) -> Iterable[dict[st
 
 def collect_links(site: dict[str, Any], people: dict[str, Any]) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
-    for entry in site.get("publications", []):
-        if isinstance(entry, dict):
-            rows.extend(iter_entry_urls(entry, "publication"))
-    for entry in site.get("items", []):
-        if isinstance(entry, dict):
-            rows.extend(iter_entry_urls(entry, str(entry.get("type") or "item")))
+    for section in (
+        "publications",
+        "items",
+        "activities",
+        "honors",
+        "teaching",
+        "profile_items",
+    ):
+        for entry in site.get(section, []):
+            if not isinstance(entry, dict):
+                continue
+
+            if section == "publications":
+                target_type = "publication"
+            elif section == "honors":
+                target_type = "honor"
+            elif section == "teaching":
+                target_type = "teaching"
+            else:
+                target_type = str(entry.get("type") or "item")
+
+            rows.extend(iter_entry_urls(entry, target_type))
+
     for person in people.get("people", []) if isinstance(people, dict) else []:
         if isinstance(person, dict) and is_http(person.get("url")):
             rows.append({
