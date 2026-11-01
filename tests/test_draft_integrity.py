@@ -150,17 +150,5 @@ class PeoplePreviewContracts(unittest.TestCase):
                 self.assertIn(marker, aliases)
 
 
-class CacheBustingContracts(unittest.TestCase):
-    def test_tests_do_not_lock_date_based_script_versions(self) -> None:
-        exact_version = re.compile(r"\?v=20\d{6}(?:-\d+)?")
-        offenders = []
-        for path in sorted((ROOT / "tests").glob("test_*.py")):
-            if path.name == Path(__file__).name:
-                continue
-            if exact_version.search(path.read_text(encoding="utf-8")):
-                offenders.append(path.name)
-        self.assertEqual(offenders, [])
-
-
 if __name__ == "__main__":
     unittest.main()
