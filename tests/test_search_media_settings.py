@@ -54,7 +54,7 @@ class SearchMediaSettingsTests(unittest.TestCase):
                 from urllib.parse import urlparse
                 parsed = urlparse(value)
                 self.assertTrue(parsed.netloc, f"Invalid image URL: {value}")
-                )
+                
             else:
                 self.assertTrue(
                     value.startswith("assets/images/"),
