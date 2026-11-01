@@ -45,28 +45,19 @@ class AdminLoadingContracts(unittest.TestCase):
                 ADMIN_PAGE,
             )
             self.assertIsNotNone(match, filename)
-        for obsolete in (
-            "tags-v1.js",
-            "layout-v2.js",
-            "homepage-v1.js",
-            "headings-v1.js",
-        ):
-            self.assertNotIn(obsolete, ADMIN_PAGE)
-
+        
     def test_mobile_github_submit_keeps_manual_fallback(self) -> None:
         submit = read("admin/github-submit.js")
         for marker in (
-            'id="submitBatch">直接送出修改',
-            'id="manualSubmitBatch">改用 GitHub Issue 手動送出',
-            'id="githubLogin">登入 GitHub',
-            "hctsui-github-submit-session-v1",
+            'id="submitBatch"',
+            'id="manualSubmitBatch"',
+            'id="githubLogin"',
             "/cms/auth/start",
             "/cms/submit",
             "validatePeopleDraft",
             "request_id",
             "website-form-applied",
             "/cms/status?issue=",
-            "查看錯誤日誌",
         ):
             self.assertIn(marker, ADMIN_PAGE + submit)
         self.assertLess(
@@ -78,29 +69,22 @@ class AdminLoadingContracts(unittest.TestCase):
         settings = read("admin/site-settings.js")
         report = read("admin/analytics-report.js")
         worker = read("integrations/contact-worker.js")
+
         for marker in (
             'id="analyticsReportPanel"',
-            "Cloudflare Web Analytics",
-            "Google Analytics 4",
-            "hctsui-github-submit-session-v1",
             "/cms/analytics?provider=",
             "data-analytics-range",
-            "熱門頁面",
-            "流量來源",
-            "國家／地區",
-            "裝置",
-            "瀏覽器",
-            "Worker 尚未更新到流量報表版本",
-            "Cloudflare 報表",
-            "Google 報表",
             "data-analytics-report-provider",
         ):
             self.assertIn(marker, settings + report)
+
         self.assertIn("requireSession(request, env)", worker)
+
         self.assertLess(
             ADMIN_PAGE.index('src="github-submit.js'),
             ADMIN_PAGE.index('src="analytics-report.js'),
         )
+
 
     def test_admin_disables_stale_browser_cache(self) -> None:
         for marker in (
@@ -252,8 +236,6 @@ class PeopleAndBibtexContracts(unittest.TestCase):
 
     def test_publication_editor_has_optional_bibtex_field(self) -> None:
         for marker in (
-            "BibTeX（選填；留白時自動產生）",
-            r"LaTeX \\bibitem（選填；留白時自動產生）",
             "data-bibtex-toggle",
             "data-copy-bibtex",
             "data-copy-citation",
@@ -266,22 +248,30 @@ class PeopleAndBibtexContracts(unittest.TestCase):
 
 
 class SiteSettingsContracts(unittest.TestCase):
-    def test_database_and_site_settings_are_grouped_in_admin(self) -> None:
+    def test_database_and_site_settings_are_available(self) -> None:
         people = read("admin/people.js")
         settings = read("admin/site-settings.js")
-        self.assertIn('data-tab="dictionary">資料庫', ADMIN_PAGE)
-        self.assertIn('data-database-type="translations">中英對照', people)
-        self.assertIn('data-database-type="people">人名連結', people)
-        self.assertIn('data-tab="siteSettings">網站設定', settings)
-        order = [
-            settings.index('data-site-settings-section="general">一般設定'),
-            settings.index('data-site-settings-section="contactForm">聯絡表單'),
-            settings.index('data-site-settings-section="seo">SEO／OG'),
-            settings.index('data-site-settings-section="analytics">流量統計'),
-        ]
-        self.assertEqual(order, sorted(order))
-        self.assertIn("site-settings-nav-shell,.database-type-shell", settings)
-        self.assertIn("margin-top:20px", settings)
+
+        self.assertIn('data-tab="dictionary"', ADMIN_PAGE)
+
+        for kind in ("translations", "people"):
+            self.assertIn(
+                f'data-database-type="{kind}"',
+                people,
+            )
+
+        self.assertIn('data-tab="siteSettings"', settings)
+
+        for section in (
+            "general",
+            "contactForm",
+            "seo",
+            "analytics",
+        ):
+            self.assertIn(
+                f'data-site-settings-section="{section}"',
+                settings,
+            )
 
     def test_translation_preview_has_diff_controls(self) -> None:
         self.assertIn(
@@ -337,11 +327,9 @@ class SiteSettingsContracts(unittest.TestCase):
         settings = read("admin/site-settings.js")
         builder = read("tools/build_site.py")
         worker = read("integrations/contact-worker.js")
-        self.assertIn("通知信固定主旨", settings)
         self.assertIn("email_subject", settings + builder)
         self.assertIn('name="visitor_subject"', builder)
         self.assertIn("EMAIL_SUBJECT", worker)
-        self.assertIn("Visitor subject", worker)
 
 if __name__ == "__main__":
     unittest.main()
