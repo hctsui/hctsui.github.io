@@ -434,13 +434,14 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn('name="visitor_subject"', builder)
         self.assertIn("EMAIL_SUBJECT", worker)
         self.assertIn("Visitor subject", worker)
-
-   def test_notification_star_control_is_explicit(self) -> None:
+        
+        
+    def test_notification_star_control_is_explicit(self) -> None:
         notifications = read("admin/notifications.js")
         self.assertIn("notification-star-button", notifications)
 
 
-     def test_deployment_status_polling_controls_exist(self) -> None:
+    def test_deployment_status_polling_controls_exist(self) -> None:
         notifications = read("admin/notifications.js")
         for marker in (
             "startDeploymentPolling",
