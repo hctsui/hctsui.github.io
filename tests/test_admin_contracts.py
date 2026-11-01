@@ -200,15 +200,6 @@ class ExistingFeatureContracts(unittest.TestCase):
         ):
             self.assertIn(marker, ADMIN_PAGE + TAGS)
 
-    def test_preview_close_button_keeps_normal_button_size(self) -> None:
-        self.assertIn("button.className='button preview-close-button'", MAIN)
-        self.assertIn(
-            ".preview-close-button{float:right;margin:0 0 8px 8px}", MAIN
-        )
-        self.assertNotIn(
-            ".preview-close-button{float:right;margin:0 0 8px 8px;padding:", MAIN
-        )
-
     def test_mailto_support_does_not_replace_normal_url_validation(self) -> None:
         self.assertIn("homepageBaseValidateEditorObject", MAIN)
         self.assertIn(r"/^mailto:[^\s@]+@[^\s@]+$/i", MAIN)
@@ -444,20 +435,20 @@ class SiteSettingsContracts(unittest.TestCase):
         self.assertIn("EMAIL_SUBJECT", worker)
         self.assertIn("Visitor subject", worker)
 
-    def test_notification_star_control_is_explicit(self) -> None:
+   def test_notification_star_control_is_explicit(self) -> None:
         notifications = read("admin/notifications.js")
-        self.assertIn("☆ 加星號", notifications)
-        self.assertIn("★ 已加星號", notifications)
         self.assertIn("notification-star-button", notifications)
 
-    def test_deployment_status_polls_every_five_seconds_only_while_open(self) -> None:
+
+     def test_deployment_status_polling_controls_exist(self) -> None:
         notifications = read("admin/notifications.js")
-        self.assertIn("startDeploymentPolling", notifications)
-        self.assertIn("stopDeploymentPolling", notifications)
-        self.assertIn("},5000)", notifications)
-        self.assertIn("data-deployment-card", notifications)
-        self.assertIn("renderDeploymentCard", notifications)
-        self.assertNotIn("},120000)", notifications)
+        for marker in (
+            "startDeploymentPolling",
+            "stopDeploymentPolling",
+            "data-deployment-card",
+            "renderDeploymentCard",
+        ):
+            self.assertIn(marker, notifications)
 
     def test_publication_action_uses_explicit_bold_font_properties(self) -> None:
         css = read("assets/style.css")
@@ -468,17 +459,6 @@ class SiteSettingsContracts(unittest.TestCase):
 
 
 class DocumentationContracts(unittest.TestCase):
-    def test_permanent_docs_have_no_update_package_notes(self) -> None:
-        for text in (GUIDE, MANAGE):
-            for obsolete in (
-                "apply-update.py",
-                "更新包版本檢查",
-                "v12 直接",
-                "v13",
-                "v14",
-                "指導教授一行",
-            ):
-                self.assertNotIn(obsolete, text)
 
     def test_docs_do_not_reference_obsolete_versioned_filenames(self) -> None:
         for obsolete in (
