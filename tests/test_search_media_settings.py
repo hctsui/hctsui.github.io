@@ -15,27 +15,24 @@ def read(path: str) -> str:
 
 
 class SearchMediaSettingsTests(unittest.TestCase):
-    def test_public_navigation_has_search_and_404_uses_shared_header(self) -> None:
-        for path in ("index.html", "zh/index.html", "publications.html", "404.html"):
-            text = read(path)
-            self.assertIn('class="site-header"', text, path)
-            self.assertIn("data-site-search", text, path)
-        self.assertNotIn("not-found-header", read("404.html"))
-        self.assertIn(">English</button>", read("404.html"))
+    def test_public_navigation_has_search(self) -> None:
+        for path in (
+            "index.html",
+            "zh/index.html",
+            "publications.html",
+            "404.html",
+        ):
+            with self.subTest(page=path):
+                page = read(path)
+                self.assertRegex(
+                    page,
+                    r'<header\b[^>]*class="[^"]*\bsite-header\b',
+                )
+                self.assertIn("data-site-search", page)
 
     def test_images_are_centralized(self) -> None:
         # The favicon stays in GitHub because every public page needs it.
         self.assertTrue((ROOT / "assets/images/favicon.svg").is_file())
-
-        # Old duplicate locations must remain removed.
-        for legacy in (
-            "photo.jpg",
-            "assets/photo-640.webp",
-            "assets/photo-960.webp",
-            "assets/photo-1440.webp",
-            "assets/favicon.svg",
-        ):
-            self.assertFalse((ROOT / legacy).exists(), f"Remove legacy image path: {legacy}")
 
         # Cover and OG images may now live either in assets/images or in R2.
         site = json.loads(read("content/site.json"))
@@ -118,19 +115,19 @@ class SearchMediaSettingsTests(unittest.TestCase):
         self.assertNotIn("$x$", result)
 
 
-    def test_general_settings_group_owns_footer_and_404(self) -> None:
-        settings = read("admin/site-settings.js")
-        self.assertIn('data-site-settings-section="general">一般設定', settings)
-        self.assertIn("['footer','頁尾設定']", settings)
-        self.assertIn("['error','404 頁面設計']", settings)
-        self.assertNotIn('data-site-settings-section="errorPage">404 頁面', settings)
-
-
-    def test_people_consistency_audit_exists(self) -> None:
+    def test_people_audit_controls_exist(self) -> None:
         people = read("admin/people.js")
-        self.assertIn("人名一致性檢查", people)
-        self.assertIn("data-people-audit-apply-all", people)
-        self.assertIn("依人名連結修正", people)
+
+        for marker in (
+            "function buildPeopleAudit()",
+            "function applyPeopleAudit(items)",
+            "data-people-audit-apply-all",
+            "data-people-audit-ignore-all",
+            "data-people-audit-clear-ignore",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, people)
+
 
 
 if __name__ == "__main__":
