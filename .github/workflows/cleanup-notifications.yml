@@ -1,9 +1,6 @@
 name: Clean old notifications
 
 on:
-  schedule:
-    - cron: "10 8 * * 0"
-      timezone: "Asia/Tokyo"
   workflow_dispatch:
 
 concurrency:
