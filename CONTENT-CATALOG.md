@@ -1,6 +1,6 @@
 # Website content catalog / 網站內容目錄
 
-由網站資料自動整理。項目以目前的永久 Entry ID 表示；顯示順序依事件日期或學期，與 ID 無關。
+這個檔案由程式自動產生。所有項目都依照其頁面與類別列出；需要編輯或刪除時，複製最右欄的 `Entry ID`。
 
 ## Home / 首頁
 
@@ -121,18 +121,3 @@
 | teaching | MATH2020 Advanced Calculus II | MATH2020 高等微積分（二） | `teaching-2401002` |
 | teaching | MATH2010 Advanced Calculus I | MATH2010 高等微積分（一） | `teaching-2303001` |
 
-## Other managed records / 其他管理資料
-
-| Type | English title | 中文名稱 | Entry ID |
-|---|---|---|---|
-| personal | Languages | 語言 | `personal-2600004` |
-| personal | Address | 地址 | `personal-2600005` |
-| personal | Email | 電子郵件 | `personal-2600006` |
-| personal | Website | 網站 | `personal-2600007` |
-| personal | ORCID | ORCID | `personal-2600008` |
-| contact | Institutional email | 學校信箱 | `contact-2600001` |
-| contact | Personal email | 個人信箱 | `contact-2600002` |
-| personal | Affiliation | 所屬單位 | `personal-2600002` |
-| contact | Address & office | 地址與辦公室 | `contact-2600003` |
-| personal | Name | 姓名 | `personal-2600001` |
-| personal | Position | 職位 | `personal-2600003` |
