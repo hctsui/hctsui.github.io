@@ -26,7 +26,7 @@ class RequiredFileTests(unittest.TestCase):
             "content/people.json", "content/arxiv-suggestions.json", "tools/arxiv_suggestions.py",
             "tools/check_arxiv.py", "tools/render_grouped_sections.py", "tools/update_cv_links.py",
             "tools/validate_site.py", "tools/validate_translations.py",
-            ".github/workflows/process-website-batch.yml", ".github/workflows/daily-upcoming.yml",
+            ".github/workflows/process-website-batch.yml", ".github/workflows/daily-update.yml",
             ".github/workflows/deploy-cms-pages.yml", ".github/workflows/check-arxiv.yml",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
@@ -58,7 +58,7 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
     def test_active_workflows_do_not_regenerate_old_forms(self) -> None:
         for relative in (
             ".github/workflows/process-website-batch.yml",
-            ".github/workflows/daily-upcoming.yml",
+            ".github/workflows/daily-update.yml",
             ".github/workflows/deploy-cms-pages.yml",
             ".github/workflows/check-arxiv.yml",
         ):
@@ -68,7 +68,7 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
             self.assertIn("python3 -m unittest discover -s tests", text, relative)
 
     def test_daily_build_uses_the_complete_extension_pipeline(self) -> None:
-        workflow = read(".github/workflows/daily-upcoming.yml")
+        workflow = read(".github/workflows/daily-update.yml")
         for marker in (
             "python3 tools/run_with_extensions.py tools/build_site.py",
             "python3 tools/build_dossier.py", "python3 tools/inject_prefetch.py",
@@ -81,7 +81,7 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
     def test_action_created_cms_updates_explicitly_dispatch_deployment(self) -> None:
         for relative in (
             ".github/workflows/process-website-batch.yml",
-            ".github/workflows/daily-upcoming.yml",
+            ".github/workflows/daily-update.yml",
         ):
             workflow = read(relative)
             self.assertIn("git push origin HEAD:cms", workflow)
