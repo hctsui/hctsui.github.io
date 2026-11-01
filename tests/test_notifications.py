@@ -98,16 +98,50 @@ class AutomatedNotificationTests(unittest.TestCase):
 
 class StaticNotificationIntegrationTests(unittest.TestCase):
     def test_admin_and_workflows_are_wired(self):
-        admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
-        script = (ROOT / "admin/notifications.js").read_text(encoding="utf-8")
-        self.assertRegex(admin, r'<script src="notifications\.js\?v=[^"]+"></script>')
-        for token in ["通知中心", "data-general-star", "notificationSearch", "fetchDeploymentStatus", "轉為 Published", "前往修改"]:
-            self.assertIn(token, script)
-        for path in [
-            ".github/workflows/check-publication-status.yml", ".github/workflows/check-links.yml",
-            ".github/workflows/cleanup-notifications.yml", ".github/workflows/ingest-contact.yml",
-        ]:
-            self.assertTrue((ROOT / path).exists(), path)
+        admin = (ROOT / "admin/index.html").read_text(
+            encoding="utf-8"
+        )
+        script = (ROOT / "admin/notifications.js").read_text(
+            encoding="utf-8"
+        )
+        daily = (
+            ROOT / ".github/workflows/daily-update.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertRegex(
+            admin,
+            r'<script src="notifications\.js\?v=[^"]+"></script>',
+        )
+
+        for marker in (
+            "data-general-star",
+            "data-publish-notification",
+            "data-open-target",
+            "notificationSearch",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, script)
+
+        for command in (
+            "python3 tools/check_arxiv.py",
+            "python3 tools/check_publication_status.py",
+            "python3 tools/check_links.py",
+            "python3 tools/cleanup_notifications.py",
+        ):
+            with self.subTest(command=command):
+                self.assertIn(command, daily)
+
+        self.assertIn("content/arxiv-suggestions.json", daily)
+        self.assertIn("content/notifications.json", daily)
+        self.assertIn(
+            "gh workflow run deploy-cms-pages.yml --ref cms",
+            daily,
+        )
+
+        self.assertTrue(
+            (ROOT / ".github/workflows/ingest-contact.yml").is_file()
+        )
+
 
     def test_worker_never_dispatches_private_fields(self):
         worker = (ROOT / "integrations/contact-worker.js").read_text(encoding="utf-8")
