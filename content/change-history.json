@@ -6764,6 +6764,65 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-143-op-1",
+      "batch_issue": 143,
+      "applied_at": "2026-11-01T13:18:34.357608Z",
+      "expires_at": "2026-11-08T13:18:34.357608Z",
+      "reverted_by": null,
+      "request_digest": "8c3ad91fbc79d737db744b938c76ac9578497df592bf54c2a0673e3fea10f3db",
+      "request_action": "homepage",
+      "action": "homepage",
+      "type": "homepage",
+      "entry_id": "homepage",
+      "label": {
+        "en": "Homepage selections",
+        "zh": "首頁精選"
+      },
+      "before": {
+        "publications": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "publication-2026-10-18-v-carlitz-v-zeta",
+            "publication-2026-09-28-zeta-kaneko-zagier",
+            "publication-2604.03618-4"
+          ]
+        },
+        "activities": {
+          "mode": "soonest",
+          "limit": 3,
+          "selected_ids": [
+            "conference-2026-number-theory-summer-school",
+            "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+            "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          ]
+        }
+      },
+      "after": {
+        "publications": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "publication-2604.03618-4",
+            "publication-2026-10-18-v-carlitz-v-zeta",
+            "publication-2026-09-16-entry"
+          ]
+        },
+        "activities": {
+          "mode": "soonest",
+          "limit": 3,
+          "selected_ids": [
+            "conference-2026-number-theory-summer-school",
+            "conference-2026-11-07-the-73rd-kansai-multiple-zeta-workshop-3a84dd4",
+            "conference-2026-11-08-the-2nd-multiple-eisenstein-series-research-me-b47a5f6"
+          ]
+        }
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
