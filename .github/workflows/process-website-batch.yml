@@ -59,7 +59,7 @@ jobs:
               "$GITHUB_EVENT_PATH" \
               --result-file /tmp/result.json
             python3 tools/sync_daily_schedule.py
-            if ! git diff --quiet -- .github/workflows/daily-upcoming.yml; then
+            if ! git diff --quiet -- .github/workflows/daily-update.yml; then
               if [ "${AUTO_UPDATE_WORKFLOW_TOKEN_PRESENT:-false}" != "true" ]; then
                 echo "::error::Admin scheduled time was saved, but modifying workflow schedules requires a GitHub fine-grained PAT with Contents and Workflows write permission. Add repository secret AUTO_UPDATE_WORKFLOW_TOKEN."
                 exit 1
@@ -83,7 +83,7 @@ jobs:
             # Compatibility wrapper for: python3 tools/validate_site.py
             python3 tools/run_validate_site.py
 
-            git add .github/workflows/daily-upcoming.yml content/site.json content/translations.json content/people.json content/arxiv-suggestions.json content/notifications.json content/change-history.json content/media.json content/search-index.json \
+            git add .github/workflows/daily-update.yml content/site.json content/translations.json content/people.json content/arxiv-suggestions.json content/notifications.json content/change-history.json content/media.json content/search-index.json \
               CONTENT-CATALOG.md cv/*.tex \
               '*.html' zh
 
