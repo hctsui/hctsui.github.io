@@ -1201,7 +1201,7 @@
       },
       "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-7-6-tohuku-university-number-theory-seminar.pdf",
       "category_id": "activity-talks",
-      "order": 1,
+      "order": 2,
       "display_placements": [],
       "event": {
         "en": "Tohoku University Number Theory Seminar",
@@ -1249,7 +1249,7 @@
       },
       "slides_url": "",
       "category_id": "activity-talks",
-      "order": 2,
+      "order": 3,
       "display_placements": [],
       "event": {
         "en": "Workshop on Arithmetic of Function Fields",
@@ -1297,7 +1297,7 @@
       },
       "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2026-2-8-nagoya-kansai-zeta-workshop-for-young-researchers.pdf",
       "category_id": "activity-talks",
-      "order": 3,
+      "order": 4,
       "display_placements": [],
       "event": {
         "en": "Nagoya-Kansai Zeta Workshop for Young Researchers",
@@ -1345,7 +1345,7 @@
       },
       "slides_url": "",
       "category_id": "activity-talks",
-      "order": 4,
+      "order": 5,
       "display_placements": [],
       "event": {
         "en": "Various Aspects of Multiple Zeta Values",
@@ -1393,7 +1393,7 @@
       },
       "slides_url": "https://hctsui-website-worker.hctsui-math.workers.dev/media/slides/2025-9-3-japan-taiwan-number-theory-conference.pdf",
       "category_id": "activity-talks",
-      "order": 5,
+      "order": 6,
       "display_placements": [],
       "event": {
         "en": "Japan-Taiwan Number Theory Conference",
@@ -1441,7 +1441,7 @@
       },
       "slides_url": "",
       "category_id": "activity-talks",
-      "order": 6,
+      "order": 7,
       "display_placements": [],
       "event": {
         "en": "NTHU Workshop on Number Theory",
@@ -2369,7 +2369,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 0
+      "order": 1
     },
     {
       "type": "talk",
@@ -2416,7 +2416,7 @@
         "en": "Nagoya University",
         "zh": "名古屋大學"
       },
-      "order": 7
+      "order": 0
     }
   ],
   "honors": [
