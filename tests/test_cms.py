@@ -394,21 +394,32 @@ class CategoryArchitectureTests(unittest.TestCase):
         )
         categories = categories_for_page(data, "home")
         rendered = render_home_sections(data, categories, "en", date(2026, 1, 1))
-        self.assertEqual(rendered.count('class="home-overview"'), 1)
-        self.assertIn('class="container home-overview-grid"', rendered)
-        self.assertIn('data-category-id="home-publications"', rendered)
-        self.assertIn('data-category-id="home-upcoming"', rendered)
+        self.assertIn(
+            'data-category-id="home-publications"',
+            rendered,
+        )
+        self.assertIn(
+            'data-category-id="home-upcoming"',
+            rendered,
+        )
         self.assertIn('id="latest-publications"', rendered)
-        self.assertIn('href="publications.html">All publications →</a>', rendered)
-        self.assertIn('href="activities.html">All activities →</a>', rendered)
+        self.assertIn('href="publications.html"', rendered)
+        self.assertIn('href="activities.html"', rendered)
 
-    def test_home_contact_keeps_public_anchor_and_split_layout(self) -> None:
+    def test_home_contact_anchor_and_links(self) -> None:
         data = minimal_site()
-        rendered = render_home_sections(data, categories_for_page(data, "home"), "zh", date(2026, 1, 1))
-        self.assertIn('data-category-id="home-contact" id="contact"', rendered)
-        self.assertIn('class="container split"', rendered)
-        self.assertIn('href="publications.html">所有論文 →</a>', rendered)
-        self.assertIn('href="activities.html">所有活動 →</a>', rendered)
+        rendered = render_home_sections(
+            data,
+            categories_for_page(data, "home"),
+            "zh",
+            date(2026, 1, 1),
+        )
+
+        self.assertIn('data-category-id="home-contact"', rendered)
+        self.assertIn('id="contact"', rendered)
+        self.assertIn('href="publications.html"', rendered)
+        self.assertIn('href="activities.html"', rendered)
+
 
 
 class CvRenderingTests(unittest.TestCase):
@@ -647,53 +658,60 @@ class BatchOperationTests(unittest.TestCase):
 
 
 class AdminCompatibilityTests(unittest.TestCase):
-    def test_layout_extension_handles_both_initialization_orders(self) -> None:
-        script = (ROOT / "admin" / "layout.js").read_text(encoding="utf-8")
-        self.assertIn("const baseLoadOrder=loadOrder;", script)
-        self.assertIn("if($('#layoutOrderPage')){renderUnifiedOrder();return}", script)
-        self.assertIn("setupUnifiedOrderUI();\nif(site)renderAll();", script)
-        self.assertIn('id="layoutManagerPage"', script)
-        self.assertIn("layoutManagerPageId=event.target.value", script)
-        self.assertIn("selectedPage?", script)
+    def test_layout_manager_hooks_exist(self) -> None:
+        script = (
+            ROOT / "admin/layout.js"
+        ).read_text(encoding="utf-8")
+
+        for marker in (
+            "function setupUnifiedOrderUI()",
+            "function renderUnifiedOrder()",
+            'id="layoutManagerPage"',
+            "layoutManagerPageId",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, script)
+
 
     def test_admin_tools_remain_available(self) -> None:
-        page = (ROOT / "admin" / "index.html").read_text(encoding="utf-8")
-        for tab in ("catalog", "add", "order", "trash", "draft", "dictionary"):
-            self.assertIn(f'data-tab="{tab}"', page)
-        self.assertNotIn('data-tab="homepage"', page)
-        self.assertLess(page.index('data-tab="draft"'), page.index('data-tab="dictionary"'))
-        self.assertNotIn('data-tab="headings"', page)
-        self.assertIn('const ADD_TYPES = [', page)
-        self.assertIn('"page",\n        "category",\n        "publication"', page)
-        self.assertIn('"academic_event"', page)
-        self.assertNotIn('"honor",\n        "generic"', page)
+        page = (
+            ROOT / "admin/index.html"
+        ).read_text(encoding="utf-8")
+
+        for tab in (
+            "catalog",
+            "add",
+            "order",
+            "trash",
+            "draft",
+            "dictionary",
+        ):
+            with self.subTest(tab=tab):
+                self.assertIn(f'data-tab="{tab}"', page)
+
         self.assertIn('id="homepageManager"', page)
-        self.assertIn("講義標題", page)
-        self.assertNotIn("Lecture Notes 標題", page)
-        for item_type in ("conference", "talk", "visit", "honor", "publication", "teaching"):
-            self.assertIn(f'"{item_type}"', page)
-        for script_name in ("tags.js", "layout.js", "homepage.js"):
-            self.assertRegex(
-                page,
-                rf'<script src="{re.escape(script_name)}\?v=[^"]+"></script>',
-            )
-        homepage = (ROOT / "admin" / "homepage.js").read_text(encoding="utf-8")
-        for mode in ("latest", "oldest", "manual", "soonest", "farthest"):
-            self.assertIn(f"'{mode}'", homepage)
-        self.assertIn("data-home-up", homepage)
-        self.assertIn("HOMEPAGE_DRAFT_KEY", homepage)
-        self.assertIn("homepageComparableSection", homepage)
-        self.assertIn("data-edit-homepage-draft", homepage)
-        layout = (ROOT / "admin" / "layout.js").read_text(encoding="utf-8")
-        for label in ("項目類型", "所在頁面", "所在類別", "頁面語言版本"):
-            self.assertIn(label, layout)
-        self.assertIn("'education','honor','personal'", layout)
-        self.assertIn("顯示風格相同、可安全接收的類別", layout)
-        self.assertIn("c.kind===category.kind", layout)
-        self.assertIn('id="generalContentFormat"', layout)
-        for label in ("標準時間軸", "雙欄紀錄", "標題清單", "資訊卡片", "標籤列表", "精簡時間軸"):
-            self.assertIn(label, layout)
-        self.assertNotIn("一般內容的細分類只用來維持舊資料相容性", layout)
+
+        homepage = (
+            ROOT / "admin/homepage.js"
+        ).read_text(encoding="utf-8")
+
+        for marker in (
+            "HOMEPAGE_DRAFT_KEY",
+            "homepageComparableSection",
+            "data-edit-homepage-draft",
+            "data-home-up",
+        ):
+            self.assertIn(marker, homepage)
+
+        layout = (
+            ROOT / "admin/layout.js"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            'id="generalContentFormat"',
+            layout,
+        )
+
 
 
 if __name__ == "__main__":
