@@ -72,17 +72,21 @@ class PersonalProfileExtensionTests(unittest.TestCase):
         self.assertEqual(categories["personal-profile"]["page_id"], "personal-profile")
         self.assertEqual(categories["cv-personal"]["page_id"], "pdf-cv")
         self.assertIn("cv-personal", data["settings"]["cv_category_order"])
-        items = {row["id"]: row for row in data["profile_items"]}
-        for item_id in ("profile-name", "contact-affiliation", "profile-position"):
-            self.assertEqual(items[item_id]["category_id"], "personal-profile")
+        # IDs are editable; managed profile records are identified by their
+        # stable personal_key, not by the obsolete names used before migration.
+        items = {row["personal_key"]: row for row in data["profile_items"] if row.get("personal_key")}
+        for key in ("name", "affiliation", "position"):
+            self.assertEqual(items[key]["category_id"], "personal-profile")
         self.assertNotIn(
             "home-contact",
-            {row["category_id"] for row in items["contact-affiliation"]["display_placements"]},
+            {row["category_id"] for row in items["affiliation"]["display_placements"]},
         )
         self.assertIn(
             "home-contact",
-            {row["category_id"] for row in items["contact-institutional-email"]["display_placements"]},
+            {row["category_id"] for row in items["institutional_email"]["display_placements"]},
         )
+        self.assertEqual(len(data["profile_items"]), len({row["id"] for row in data["profile_items"]}))
+        self.assertEqual(len(items), len(data["profile_items"]), "profile sync must not produce duplicate managed items")
 
     def test_normalize_placements_removes_primary_and_duplicates(self) -> None:
         rows = extensions.normalize_placements(

@@ -191,6 +191,10 @@ def install():
         if key:
             found=next((x for x in profile_items if isinstance(x,dict) and x.get('personal_key')==key),None)
             if found:return found
+            # Existing pre-migration records may not yet have personal_key. Reuse
+            # their record rather than creating a second managed profile item.
+            legacy=next((x for x in profile_items if isinstance(x,dict) and x.get('id')==item_id),None)
+            if legacy:return legacy
             # A new database without managed profile items also gets canonical
             # IDs. Existing migrated databases preserve their user-selected IDs.
             data={'settings':{'id_counters':{}},'profile_items':profile_items}
