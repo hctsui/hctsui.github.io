@@ -784,7 +784,7 @@
     ],
     "seo": {
       "schema_version": 1,
-      "base_url": "https://hctsui.github.io",
+      "base_url": "https://hctsui.org",
       "site_name": {
         "en": "Hung-Chun Tsui",
         "zh": "崔鴻竣"
@@ -991,7 +991,7 @@
       "web3forms_access_key": "",
       "worker_url": "https://hctsui-website-worker.hctsui-math.workers.dev",
       "turnstile_site_key": "0x4AAAAAAEDAWfBne1jtRv8u",
-      "email_subject": "[hctsui.github.io] New contact message",
+      "email_subject": "[hctsui.org] New contact message",
       "title": {
         "en": "Send a message",
         "zh": "傳送訊息"
@@ -1070,7 +1070,7 @@
       },
       "institutional_email": "hctsui@gapp.nthu.edu.tw",
       "personal_email": "hctsui.math@gmail.com",
-      "website": "https://hctsui.github.io",
+      "website": "https://hctsui.org",
       "orcid": "0009-0009-7445-5634",
       "address": {
         "en": "No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
@@ -3841,10 +3841,10 @@
         "zh": "網站"
       },
       "description": {
-        "en": "https://hctsui.github.io",
-        "zh": "https://hctsui.github.io"
+        "en": "https://hctsui.org",
+        "zh": "https://hctsui.org"
       },
-      "url": "https://hctsui.github.io",
+      "url": "https://hctsui.org",
       "display_placements": [
         {
           "category_id": "cv-personal",

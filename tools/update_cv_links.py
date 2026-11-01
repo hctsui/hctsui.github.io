@@ -2,7 +2,10 @@
 """Point English and Chinese website buttons to their matching generated CV."""
 from __future__ import annotations
 import hashlib
+import json
 import re
+
+from site_settings_config import current_site_settings
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,11 +17,13 @@ PATTERN = re.compile(r'(<a\b[^>]*\bclass="[^"]*\bcv-download\b[^"]*"[^>]*\bhref=
 
 
 def main() -> None:
+    site = json.loads((ROOT / "content" / "site.json").read_text(encoding="utf-8"))
+    base_url = current_site_settings(site)["seo"]["base_url"].rstrip("/")
     for page, tex_file, pdf_path in TARGETS:
         if not tex_file.exists():
             raise SystemExit(f"Missing generated LaTeX source: {tex_file.relative_to(ROOT)}")
         version = hashlib.sha256(tex_file.read_bytes()).hexdigest()[:12]
-        url = f"https://hctsui.github.io/{pdf_path}?v={version}"
+        url = f"{base_url}/{pdf_path}?v={version}"
         text = page.read_text(encoding="utf-8")
         updated, count = PATTERN.subn(rf"\g<1>{url}\g<2>", text, count=1)
         if count != 1:

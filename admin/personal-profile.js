@@ -33,7 +33,7 @@
       position:pair(source.position,description('profile-position').en||description('profile-position').zh?description('profile-position'):{en:'PhD Student',zh:'博士生'}),
       institutional_email:String(source.institutional_email||findItem('contact-institutional-email')?.description?.en||'').trim(),
       personal_email:String(source.personal_email||findItem('contact-personal-email')?.description?.en||'').trim(),
-      website:String(source.website||findItem('personal-website')?.description?.en||findItem('personal-website')?.url||'https://hctsui.github.io').trim(),
+      website:String(source.website||findItem('personal-website')?.description?.en||findItem('personal-website')?.url||'https://hctsui.org').trim(),
       orcid:String(source.orcid||findItem('personal-orcid')?.description?.en||'').trim(),
       address:pair(source.address,description('personal-address')),
       office:pair(source.office,description('contact-address-office')),

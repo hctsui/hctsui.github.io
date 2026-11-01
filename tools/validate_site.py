@@ -254,25 +254,36 @@ admin_text = (ROOT / "admin/index.html").read_text(encoding="utf-8")
 if any(marker in admin_text for marker in (cloudflare_marker, google_marker)) or "static.cloudflareinsights.com/beacon.min.js" in admin_text or "googletagmanager.com/gtag/js" in admin_text:
     errors.append("admin/index.html must not contain a public analytics tracking script")
 
+base_url = current_site_settings(data)["seo"]["base_url"].rstrip("/")
 robots_path = ROOT / "robots.txt"
 sitemap_path = ROOT / "sitemap.xml"
 if not robots_path.exists():
     errors.append("robots.txt is missing")
 else:
     robots_text = robots_path.read_text(encoding="utf-8")
-    for fragment in ("Disallow: /admin/", "Disallow: /dossier.html", "Disallow: /zh/dossier.html", "Sitemap: https://hctsui.github.io/sitemap.xml"):
+    for fragment in (
+        "Disallow: /admin/",
+        "Disallow: /dossier.html",
+        "Disallow: /zh/dossier.html",
+        f"Sitemap: {base_url}/sitemap.xml",
+    ):
         if fragment not in robots_text:
             errors.append(f"robots.txt: missing search privacy contract {fragment!r}")
 if not sitemap_path.exists():
     errors.append("sitemap.xml is missing")
 else:
     sitemap_text = sitemap_path.read_text(encoding="utf-8")
-    for fragment in ("https://hctsui.github.io/", "https://hctsui.github.io/publications.html", "https://hctsui.github.io/zh/publications.html"):
-        if f"<loc>{fragment}</loc>" not in sitemap_text:
-            errors.append(f"sitemap.xml: missing public URL {fragment!r}")
+    for url in (
+        f"{base_url}/",
+        f"{base_url}/publications.html",
+        f"{base_url}/zh/publications.html",
+    ):
+        if f"<loc>{url}</loc>" not in sitemap_text:
+            errors.append(f"sitemap.xml: missing public URL {url!r}")
     for excluded in ("/admin/", "/dossier.html", "/zh/dossier.html", "/content/"):
         if excluded in sitemap_text:
             errors.append(f"sitemap.xml: private URL must be excluded {excluded!r}")
+
 for rel in ("dossier.html", "zh/dossier.html"):
     if '<meta name="robots" content="noindex,nofollow">' not in (ROOT / rel).read_text(encoding="utf-8"):
         errors.append(f"{rel}: missing noindex,nofollow")
