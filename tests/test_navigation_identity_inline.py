@@ -13,30 +13,31 @@ class InlineNavigationAndIdentityContracts(unittest.TestCase):
 
     def test_inline_navigation_editor_uses_layout_draft(self) -> None:
         script = read("admin/navigation-settings.js")
+
         for marker in (
             "data-inline-navigation-editor",
-            "layoutDraft.pages",
-            "page.show_in_navigation=visible",
-            "saveLayoutDraft(message)",
             "data-inline-nav-move",
             "data-inline-nav-visible",
-            "直接調整導覽列",
+            "function movePage(",
+            "function setPageVisibility(",
+            "saveLayoutDraft(",
         ):
-            self.assertIn(marker, script)
-        self.assertIn("const oldButton=card.querySelector(\'[data-open-page-manager]\')", script)
-        self.assertIn("oldButton?.remove()", script)
+            with self.subTest(marker=marker):
+                self.assertIn(marker, script)
 
-    def test_identity_help_explains_desktop_and_mobile_locations(self) -> None:
+    def test_identity_preview_controls_exist(self) -> None:
         script = read("admin/navigation-settings.js")
+
         for marker in (
-            "公開網站導覽列最左上角",
-            "點擊後返回首頁",
-            "手機或窄螢幕",
-            "品牌名稱（英文，左上角）",
-            "手機選單按鈕（中文）",
             "data-identity-placement-guide",
+            "data-identity-preview-brand-en",
+            "data-identity-preview-brand-zh",
+            "data-identity-preview-menu-en",
+            "data-identity-preview-menu-zh",
+            "updateIdentityPreview(event.target)",
         ):
-            self.assertIn(marker, script)
+            with self.subTest(marker=marker):
+                self.assertIn(marker, script)
 
     def test_extension_javascript_parses(self) -> None:
         node_check("admin/navigation-settings.js")
