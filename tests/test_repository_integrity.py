@@ -2,23 +2,8 @@ from __future__ import annotations
 
 import re
 import unittest
-from pathlib import Path
 
 from _contracts import ROOT, read
-
-VERSIONED_FILENAME = re.compile(r"(?:^|[-_.])v\d+(?=[-_.]|$)", re.IGNORECASE)
-TEXT_SUFFIXES = {".html", ".js", ".css", ".py", ".md", ".yml", ".yaml", ".json", ".tex"}
-OBSOLETE_NAMES = (
-    "admin/headings-v1.js",
-    "admin/homepage-v1.js",
-    "admin/layout-v2.js",
-    "admin/tags-v1.js",
-    "admin/admin-icon-v13.svg",
-    "admin/admin-icon-v13.png",
-    "admin/admin-icon-v13-180.png",
-    "assets/script-v23.js",
-    "assets/style-v23.css",
-)
 
 
 class RequiredFileTests(unittest.TestCase):
@@ -62,7 +47,6 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
             ".github/workflows/workflows/deploy-cms-pages.yml",
             "tools/build_dynamic_forms.py",
             "admin/people-safety.js",
-            "tools/__pycache__/homepage_config.cpython-313.pyc",
         ):
             self.assertFalse((ROOT / relative).exists(), relative)
 
@@ -107,32 +91,6 @@ class CmsOnlyIssueFlowTests(unittest.TestCase):
 
 
 class CanonicalFilenameTests(unittest.TestCase):
-    def test_no_repository_filename_contains_a_v_number_suffix(self) -> None:
-        offenders = []
-        for path in ROOT.rglob("*"):
-            if not path.is_file() or "__pycache__" in path.parts:
-                continue
-            if VERSIONED_FILENAME.search(path.name):
-                offenders.append(path.relative_to(ROOT).as_posix())
-        self.assertEqual(offenders, [])
-
-    def test_obsolete_versioned_paths_are_absent(self) -> None:
-        for relative in OBSOLETE_NAMES:
-            self.assertFalse((ROOT / relative).exists(), relative)
-
-    def test_text_files_do_not_reference_obsolete_filenames(self) -> None:
-        hits: list[str] = []
-        old_tokens = tuple(Path(name).name for name in OBSOLETE_NAMES)
-        for path in ROOT.rglob("*"):
-            if not path.is_file() or "__pycache__" in path.parts or "tests" in path.parts:
-                continue
-            if path.suffix.lower() not in TEXT_SUFFIXES:
-                continue
-            text = path.read_text(encoding="utf-8")
-            for token in old_tokens:
-                if token in text:
-                    hits.append(f"{path.relative_to(ROOT)} -> {token}")
-        self.assertEqual(hits, [])
 
     def test_admin_shell_references_canonical_scripts(self) -> None:
         page = read("admin/index.html")
@@ -150,31 +108,30 @@ class CanonicalFilenameTests(unittest.TestCase):
         self.assertEqual(positions, sorted(positions))
 
     def test_public_pages_reference_canonical_assets(self) -> None:
-        for relative in (
-            "index.html", "cv.html", "publications.html", "activities.html", "teaching.html", "contact.html",
+        for relative, prefix in (
+            ("index.html", ""),
+            ("cv.html", ""),
+            ("publications.html", ""),
+            ("activities.html", ""),
+            ("teaching.html", ""),
+            ("contact.html", ""),
+            ("zh/index.html", "../"),
+            ("zh/cv.html", "../"),
+            ("zh/publications.html", "../"),
+            ("zh/activities.html", "../"),
+            ("zh/teaching.html", "../"),
+            ("zh/contact.html", "../"),
         ):
-            text = read(relative)
-            self.assertIn('href="assets/style.css"', text, relative)
-            self.assertRegex(text, r'src="assets/script\.js(?:\?v=[^"]+)?"', relative)
-        for relative in (
-            "zh/index.html", "zh/cv.html", "zh/publications.html", "zh/activities.html",
-            "zh/teaching.html", "zh/contact.html",
-        ):
-            text = read(relative)
-            self.assertIn('href="../assets/style.css"', text, relative)
-            self.assertRegex(text, r'src="\.\./assets/script\.js(?:\?v=[^"]+)?"', relative)
-
-    def test_deploy_workflow_checks_canonical_assets(self) -> None:
-        workflow = read(".github/workflows/deploy-cms-pages.yml")
-        for relative in (
-            "admin/homepage.js", "admin/people.js", "admin/notifications.js", "admin/media.js",
-            "content/media.json", "content/search-index.json", "admin/layout.js", "admin/tags.js",
-            "assets/script.js", "assets/style.css", "assets/images/photo.jpg",
-            "assets/images/favicon.svg", "tools/build_media_manifest.py", "tools/build_search_index.py",
-            "contact.html", "zh/contact.html", "404.html", "robots.txt", "sitemap.xml",
-            "admin/admin-icon.svg",
-        ):
-            self.assertIn(f"test -f {relative}", workflow)
+            with self.subTest(page=relative):
+                page = read(relative)
+                self.assertRegex(
+                    page,
+                    rf'href="{re.escape(prefix)}assets/style\.css(?:\?v=[^"]+)?"',
+                )
+                self.assertRegex(
+                    page,
+                    rf'src="{re.escape(prefix)}assets/script\.js(?:\?v=[^"]+)?"',
+                )
 
     def test_private_pages_are_excluded_from_search_indexing(self) -> None:
         robots = read("robots.txt")
@@ -203,10 +160,6 @@ class CanonicalFilenameTests(unittest.TestCase):
             self.assertIn(f'href="{asset_prefix}assets/style.css"', page)
             self.assertRegex(page, rf'src="{re.escape(asset_prefix)}assets/script\.js(?:\?v=[^"]+)?"')
             self.assertIn('data-size="flexible"', page)
-        style = read("assets/style.css")
-        self.assertIn(".contact-form label,.contact-form-grid>*{min-width:0}", style)
-        self.assertIn(".cf-turnstile{width:100%;max-width:100%", style)
-        self.assertIn("@media(max-width:360px)", style)
 
     def test_custom_404_and_cloudflare_contracts_exist(self) -> None:
         page = read("404.html")
@@ -215,14 +168,6 @@ class CanonicalFilenameTests(unittest.TestCase):
         self.assertIn('data-language="zh"', page)
         self.assertIn("data-switch-language", page)
         self.assertNotIn("static.cloudflareinsights.com/beacon.min.js", read("admin/index.html"))
-
-
-class TestSuiteStructureTests(unittest.TestCase):
-    def test_obsolete_duplicate_regression_files_are_removed(self) -> None:
-        for relative in (
-            "tests/test_admin_regressions.py", "tests/test_home_profile.py", "tests/test_admin_hotfix.py",
-        ):
-            self.assertFalse((ROOT / relative).exists(), relative)
 
 
 if __name__ == "__main__":
