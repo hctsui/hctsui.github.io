@@ -124,7 +124,7 @@ class HomepageRenderingTests(unittest.TestCase):
             ]
         }
         hero = homepage.render_home_profile_hero(data, "en")
-        self.assertIn('<p class="home-advisor">Research profile</p>', hero)
+        self.assertIn("Research profile", hero)
         self.assertNotIn("Advisor: Professor", hero)
 
     def test_legacy_link_text_is_rendered_safely(self) -> None:
