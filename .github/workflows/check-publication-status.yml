@@ -1,9 +1,6 @@
 name: Check publication status
 
 on:
-  schedule:
-    - cron: "35 9 * * 3"
-      timezone: "Asia/Tokyo"
   workflow_dispatch:
 
 concurrency:
