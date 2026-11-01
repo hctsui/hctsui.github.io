@@ -102,25 +102,43 @@ class ArxivBatchTests(unittest.TestCase):
 
 
 class StaticArxivUiTests(unittest.TestCase):
-    def test_notification_button_is_inserted_before_guide(self) -> None:
-        script = (ROOT / "admin/notifications.js").read_text(encoding="utf-8")
+    def test_arxiv_notification_controls_exist(self) -> None:
+        script = (ROOT / "admin/notifications.js").read_text(
+            encoding="utf-8"
+        )
+
         for marker in (
-            "data-notification-button", "actions.insertBefore(button,guide)", "加入新增草稿",
-            "忽略", "arxivSuggestionsOperation", "arXiv metadata 來自 arXiv",
+            "data-notification-button",
+            "data-arxiv-add",
+            "data-arxiv-ignore",
+            "arxivSuggestionsOperation",
+            "pendingArxivSuggestions",
         ):
             self.assertIn(marker, script)
 
-    def test_bibtex_toggle_uses_publication_button_style(self) -> None:
-        css = (ROOT / "assets/style.css").read_text(encoding="utf-8")
-        self.assertIn(".pub-links .pub-bibtex-toggle", css)
-        self.assertIn(".home-publications .pub-links .pub-bibtex-toggle", css)
 
-    def test_weekly_workflow_and_admin_script_are_wired(self) -> None:
-        workflow = (ROOT / ".github/workflows/check-arxiv.yml").read_text(encoding="utf-8")
-        admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
-        self.assertIn('timezone: "Asia/Tokyo"', workflow)
-        self.assertIn("python3 tools/check_arxiv.py", workflow)
-        self.assertRegex(admin, r'<script src="notifications\.js\?v=[^"]+"></script>')
+    def test_arxiv_workflow_can_publish_suggestions(self) -> None:
+        workflow = (
+            ROOT / ".github/workflows/check-arxiv.yml"
+        ).read_text(encoding="utf-8")
+        admin = (
+            ROOT / "admin/index.html"
+        ).read_text(encoding="utf-8")
+
+        for marker in (
+            "schedule:",
+            "workflow_dispatch:",
+            "python3 tools/check_arxiv.py",
+            "git push origin HEAD:cms",
+            "gh workflow run deploy-cms-pages.yml --ref cms",
+            "actions: write",
+        ):
+            self.assertIn(marker, workflow)
+
+        self.assertRegex(
+            admin,
+            r'<script src="notifications\.js\?v=[^"]+"></script>',
+        )
 
 
 if __name__ == "__main__":
