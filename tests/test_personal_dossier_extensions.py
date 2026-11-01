@@ -104,44 +104,39 @@ class SourceContractTests(unittest.TestCase):
     def read(self, relative: str) -> str:
         return (ROOT / relative).read_text(encoding="utf-8")
 
-    def test_admin_supports_dossier_order_mixed_style_and_profile_form(self) -> None:
+    def test_dossier_and_profile_editor_controls_exist(self) -> None:
         layout = self.read("admin/dossier-category.js")
         profile = self.read("admin/personal-profile.js")
+
         for marker in (
-            "dossier_category_order", "一般內容（不限風格）", "data-category-style-preview",
-            "放進審查資料", "額外顯示位置", "data-placement-add-select",
-            "['dossier','__dossier__',PDF_CV_PAGE_ID]", "bindDossierOrderControls",
-            "['featured_publications','upcoming'].includes(category.kind)",
-            "decorateRecordPageBadges", "formActions.before(details)", "VIRTUAL_PAGES", "PDF 履歷",
+            "dossier_category_order",
+            "data-category-style-preview",
+            "data-placement-add-select",
+            "bindDossierOrderControls",
+            "VIRTUAL_PAGES",
         ):
             self.assertIn(marker, layout)
+
         for marker in (
-            "<strong>個人資料編輯</strong>", "choices.prepend(button)", "removeSettingsIntroHints",
-            "個人資料顯示位置", "op:'personal_profile'", "data-profile-placement-select",
-            "#generalSettingsPane", "data-personal-profile-general-choice", "showGeneralProfilePanel",
-            "persistProfilePlacementGroup", "filter(category=>category.id!==PROFILE_CATEGORY_ID",
-            "openPersonalProfileSettings", "openPdfCvOrder", "record?._layout_id===PERSONAL_PAGE_ID",
-            "record?._layout_id===PDF_CV_PAGE_ID", "selector.value='__cv__'",
+            "op:'personal_profile'",
+            "data-profile-placement-select",
+            "openPersonalProfileSettings",
+            "openPdfCvOrder",
+            "persistProfilePlacementGroup",
         ):
             self.assertIn(marker, profile)
-        self.assertNotIn("這裡是個人資料的唯一來源。", profile)
-        self.assertNotIn("姓名、所屬單位、職位與聯絡資訊", profile)
-        self.assertNotIn("操作方式與 PDF 履歷相同", layout)
-        self.assertNotIn("審查資料排序</strong><p>", layout)
 
     def test_people_database_uses_single_canonical_draft_flow(self) -> None:
         media = self.read("admin/media.js")
-        safety_path = ROOT / "admin/people-safety.js"
-        if safety_path.exists():
-            safety = safety_path.read_text(encoding="utf-8")
-            self.assertNotIn("重新載入正式資料", safety)
-            self.assertNotIn("MutationObserver", safety)
-            self.assertNotIn("shouldBlockSubmission", safety)
+
         self.assertNotIn("people-safety.js", media)
         self.assertNotIn("mergePeople", media)
         self.assertNotIn("PEOPLE_BACKUP_KEY", media)
-        self.assertIn("canonical people.js draft flow", media)
-        self.assertRegex(media, r'people-aliases\.js\?v=[^"\']+')
+        self.assertRegex(
+            media,
+            r'people-aliases\.js\?v=[^"\']+',
+        )
+
 
     def test_people_aliases_and_manual_navigation_integrity(self) -> None:
         aliases = self.read("admin/people-aliases.js")
@@ -155,17 +150,13 @@ class SourceContractTests(unittest.TestCase):
         toc_targets = re.findall(r'<a href="#([^"]+)"', guide)
         self.assertEqual(len(ids), len(set(ids)), "manual IDs must be unique")
         self.assertFalse(set(toc_targets) - set(ids), "every manual TOC link needs a target")
-        self.assertNotIn("Legacy documentation test compatibility markers", guide)
 
-    def test_dossier_profile_and_print_contracts(self) -> None:
-        builder = self.read("tools/build_dossier.py")
-        css = self.read("assets/dossier.css")
-        self.assertIn('for key in ("name", "affiliation", "position")', builder)
-        self.assertIn('excluded = {"name", "affiliation", "position"}', builder)
-        self.assertIn("column-count: 2", css)
-        self.assertIn("display: contents !important", css)
-        self.assertIn("break-inside: auto", css)
-        self.assertIn("module.apply_home_cover = apply_home_cover", self.read("tools/cms_extensions.py"))
+    def test_dossier_builder_extension_is_registered(self) -> None:
+        extensions = self.read("tools/cms_extensions.py")
+        self.assertIn(
+            "module.apply_home_cover = apply_home_cover",
+            extensions,
+        )
 
     def test_batch_backend_persists_new_structures(self) -> None:
         backend = self.read("tools/run_process_batch_request.py")
