@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Website Admin / 網站管理
-    url: https://hctsui.github.io/admin/
+    url: https://hctsui.org/admin/
     about: Use the Admin page for all website and CV content changes.
   - name: Website manager guide / 網站管理說明
     url: https://github.com/hctsui/hctsui.github.io/blob/cms/MANAGE-WEBSITE.md
