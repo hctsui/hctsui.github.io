@@ -106,9 +106,12 @@ class SearchMediaSettingsTests(unittest.TestCase):
         self.assertTrue(any(item.get("language") == "zh" for item in index["items"]))
 
     def test_search_labels_keep_math_readable_without_delimiters(self) -> None:
-        titles = [item["title"] for item in json.loads(read("content/search-index.json"))["items"]]
-        self.assertTrue(any("q-shuffle" in title for title in titles))
-        self.assertFalse(any("$q$" in title for title in titles))
+        from build_search_index import plain
+
+        result = plain("An $x$-shuffle identity")
+        self.assertIn("x-shuffle", result)
+        self.assertNotIn("$x$", result)
+
 
     def test_general_settings_group_owns_footer_and_404(self) -> None:
         settings = read("admin/site-settings.js")
