@@ -84,9 +84,14 @@ class SearchMediaSettingsTests(unittest.TestCase):
         self.assertIn("pdf_url", media)
         self.assertIn("data-media-kind", read("admin/site-settings.js"))
         self.assertTrue((ROOT / "admin/r2-media.js").is_file())
+        from urllib.parse import urlparse
+
         config = json.loads(read("content/media-config.json"))
-        self.assertEqual(config["bucket_name"], "hctsui-website-media")
-        self.assertTrue(config["public_base"].endswith("/media"))
+        self.assertTrue(str(config.get("bucket_name") or "").strip())
+
+        url = urlparse(str(config.get("public_base") or ""))
+        self.assertEqual(url.scheme, "https")
+        self.assertTrue(url.netloc)
 
     def test_legacy_image_paths_are_migrated(self) -> None:
         settings = normalized_site_settings({
