@@ -30,6 +30,8 @@ jobs:
 
       - name: Commit link notifications
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           if git diff --quiet -- content/notifications.json; then
@@ -42,3 +44,4 @@ jobs:
           git commit -m "Update broken-link notifications"
           git pull --rebase origin cms
           git push origin HEAD:cms
+          gh workflow run deploy-cms-pages.yml --ref cms
