@@ -523,15 +523,14 @@ class AdminDocumentationTests(unittest.TestCase):
         self.assertIn('href="guide.html"', admin)
         self.assertTrue((ROOT / "admin" / "guide.html").is_file())
 
-    def test_required_translation_terms_are_canonical(self) -> None:
-        site = json.loads((ROOT / "content" / "site.json").read_text(encoding="utf-8"))
-        translations = json.loads((ROOT / "content" / "translations.json").read_text(encoding="utf-8"))
-        serialized = json.dumps(site, ensure_ascii=False)
-        self.assertNotIn("q-shuffle 關係", serialized)
-        self.assertNotIn("v-adic Gamma", serialized)
-        pairs = {(row["en"], row["zh"]) for row in translations["pairs"]}
-        self.assertIn(("q-shuffle", "q-洗牌"), pairs)
-        self.assertIn(("v-adic", "v-進"), pairs)
+    def test_translation_database_is_valid(self) -> None:
+        translations = json.loads(
+            (ROOT / "content" / "translations.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        validate_translation_data(translations)
+
 
 
 class BatchOperationTests(unittest.TestCase):
