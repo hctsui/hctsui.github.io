@@ -43,7 +43,7 @@ class SiteSettingsTests(unittest.TestCase):
     def test_defaults_are_backward_compatible(self) -> None:
         data = site_data()
         settings = current_site_settings(data)
-        self.assertEqual(settings["seo"]["base_url"], "https://hctsui.github.io")
+        self.assertEqual(settings["seo"]["base_url"], "https://hctsui.org")
         self.assertEqual(settings["analytics"]["tracking_mode"], "off")
         self.assertEqual(settings["error_page"]["auto_redirect"]["seconds"], 8)
         self.assertIn("contact", settings["seo"]["pages"])
@@ -88,7 +88,7 @@ class SiteSettingsTests(unittest.TestCase):
         rendered = apply_seo_metadata(source, data, page, "en")
         for marker in (
             '<meta name="description"',
-            '<link rel="canonical" href="https://hctsui.github.io/publications.html">',
+            '<link rel="canonical" href="https://hctsui.org/publications.html">',
             '<meta property="og:title"',
             '<meta property="og:image"',
             '<meta name="twitter:card" content="summary_large_image">',
@@ -102,11 +102,11 @@ class SiteSettingsTests(unittest.TestCase):
         sitemap = render_sitemap_xml(data)
         for path in ("/admin/", "/dossier.html", "/zh/dossier.html", "/content/"):
             self.assertIn(f"Disallow: {path}", robots)
-        self.assertIn("Sitemap: https://hctsui.github.io/sitemap.xml", robots)
+        self.assertIn("Sitemap: https://hctsui.org/sitemap.xml", robots)
         for url in (
-            "https://hctsui.github.io/", "https://hctsui.github.io/zh/",
-            "https://hctsui.github.io/publications.html", "https://hctsui.github.io/zh/publications.html",
-            "https://hctsui.github.io/contact.html",
+            "https://hctsui.org/", "https://hctsui.org/zh/",
+            "https://hctsui.org/publications.html", "https://hctsui.org/zh/publications.html",
+            "https://hctsui.org/contact.html",
         ):
             self.assertIn(f"<loc>{url}</loc>", sitemap)
         for excluded in ("admin", "dossier", "content"):
@@ -126,7 +126,7 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertIn("footer-center", rendered)
         self.assertIn("footer-right", rendered)
         self.assertIn('class="footer-custom-icon"', rendered)
-        self.assertIn('src="https://hctsui.github.io/assets/images/project.svg"', rendered)
+        self.assertIn('src="https://hctsui.org/assets/images/project.svg"', rendered)
         self.assertIn('target="_blank"', rendered)
         self.assertIn("2026 Hung-Chun Tsui", rendered)
         self.assertIn("Updated 2026/8/1", rendered)
@@ -203,7 +203,7 @@ class SiteSettingsTests(unittest.TestCase):
         data = site_data()
         settings = current_site_settings(data)
         self.assertFalse(settings["contact_form"]["enabled"])
-        self.assertEqual(settings["contact_form"]["email_subject"], "[hctsui.github.io] New contact message")
+        self.assertEqual(settings["contact_form"]["email_subject"], "[hctsui.org] New contact message")
         self.assertEqual(render_contact_form(data, "en"), "")
         settings["contact_form"].update({
             "enabled": True, "mode": "worker",
@@ -216,7 +216,7 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertIn('class="cf-turnstile"', rendered)
         self.assertIn('data-size="flexible"', rendered)
         self.assertIn('data-sitekey="site-key-public"', rendered)
-        self.assertIn('name="email_subject" value="[hctsui.github.io] New contact message"', rendered)
+        self.assertIn('name="email_subject" value="[hctsui.org] New contact message"', rendered)
         self.assertIn('name="visitor_subject"', rendered)
         self.assertNotIn('<input name="subject"', rendered)
         self.assertNotIn("TURNSTILE_SECRET", rendered)
@@ -278,7 +278,7 @@ class SiteSettingsTests(unittest.TestCase):
         rendered = render_contact_form(data, "en")
         self.assertIn('name="subject" value="[Website] Contact form"', rendered)
         self.assertIn('name="visitor_subject"', rendered)
-        self.assertIn('name="from_name" value="hctsui.github.io contact form"', rendered)
+        self.assertIn('name="from_name" value="hctsui.org contact form"', rendered)
         self.assertNotIn('<input name="subject" maxlength=', rendered)
 
     def test_404_page_supports_colors_bilingual_content_and_redirect(self) -> None:
