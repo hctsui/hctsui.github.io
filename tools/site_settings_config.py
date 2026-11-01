@@ -136,7 +136,7 @@ def default_seo(data: dict[str, Any] | None = None) -> dict[str, Any]:
         }
     return {
         "schema_version": 1,
-        "base_url": "https://hctsui.github.io",
+        "base_url": "https://hctsui.org",
         "site_name": {"en": "Hung-Chun Tsui", "zh": "崔鴻竣"},
         "default_image": "assets/images/photo-1440.webp",
         "pages": pages,
@@ -243,7 +243,7 @@ def default_contact_form() -> dict[str, Any]:
         "web3forms_access_key": "",
         "worker_url": "",
         "turnstile_site_key": "",
-        "email_subject": "[hctsui.github.io] New contact message",
+        "email_subject": "[hctsui.org] New contact message",
         "title": {"en": "Send a message", "zh": "傳送訊息"},
         "intro": {
             "en": "For academic invitations or research correspondence, you may use this form.",
