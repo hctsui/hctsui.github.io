@@ -3,6 +3,60 @@
   "retention_days": 60,
   "notifications": [
     {
+      "id": "broken-link-conference-conference-2407011-url-https-ncts-ntu-edu-tw-even-f7511c1818",
+      "key": "broken-link:conference:conference-2407011:url:https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+      "type": "broken_link",
+      "title": "外部連結失效：算術幾何暑期學校",
+      "message": "url 回傳 HTTP 404：https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+      "created_at": "2026-11-02T23:29:11.315835Z",
+      "updated_at": "2026-11-02T23:29:11.315855Z",
+      "starred": false,
+      "read": false,
+      "status": "open",
+      "source_url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+      "payload": {
+        "url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+        "target_type": "conference",
+        "entry_id": "conference-2407011",
+        "field": "url",
+        "label": "算術幾何暑期學校",
+        "http_status": 404
+      },
+      "actions": [
+        {
+          "id": "edit",
+          "label": "前往修改"
+        }
+      ]
+    },
+    {
+      "id": "broken-link-conference-conference-2412181-url-https-ncts-ntu-edu-tw-even-b76b7a1a6a",
+      "key": "broken-link:conference:conference-2412181:url:https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+      "type": "broken_link",
+      "title": "外部連結失效：NCTS 一日工作坊",
+      "message": "url 回傳 HTTP 404：https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+      "created_at": "2026-11-02T23:29:10.098367Z",
+      "updated_at": "2026-11-02T23:29:10.098403Z",
+      "starred": false,
+      "read": false,
+      "status": "open",
+      "source_url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+      "payload": {
+        "url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+        "target_type": "conference",
+        "entry_id": "conference-2412181",
+        "field": "url",
+        "label": "NCTS 一日工作坊",
+        "http_status": 404
+      },
+      "actions": [
+        {
+          "id": "edit",
+          "label": "前往修改"
+        }
+      ]
+    },
+    {
       "id": "contact-79e2e4d2-cc47-455b-ac02-8deaa9daf7bc-ba7d12d87e",
       "key": "contact:79e2e4d2-cc47-455b-ac02-8deaa9daf7bc",
       "type": "contact",
