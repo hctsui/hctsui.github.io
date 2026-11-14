@@ -65,9 +65,14 @@ class CompactDesignTests(unittest.TestCase):
         self.assertIn("Course information will be posted here.", render_course_page(data, course, "en"))
 
     def test_contact_keeps_worker_and_managed_details(self) -> None:
-        markup = render_contact_page_main(load_data(), "en")
+        data = load_data()
+        duplicate = copy.deepcopy(next(x for x in data["profile_items"] if x["id"] == "contact-2600001"))
+        duplicate["id"] = "contact-institutional-email"
+        data["profile_items"].append(duplicate)
+        markup = render_contact_page_main(data, "en")
         self.assertIn("Get in touch", markup)
         self.assertIn("Institutional email", markup)
+        self.assertEqual(markup.count('href="mailto:hctsui@gapp.nthu.edu.tw"'), 1)
         self.assertIn('data-contact-mode="worker"', markup)
         self.assertIn('name="botcheck"', markup)
         self.assertIn('class="cf-turnstile"', markup)
