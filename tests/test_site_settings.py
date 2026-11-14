@@ -47,7 +47,7 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(settings["analytics"]["tracking_mode"], "off")
         self.assertEqual(settings["error_page"]["auto_redirect"]["seconds"], 8)
         self.assertIn("contact", settings["seo"]["pages"])
-        self.assertEqual(settings["contact_form"]["page_design"]["title"]["en"], "Contact Form")
+        self.assertEqual(settings["contact_form"]["page_design"]["title"]["en"], "Contact")
         validate_site_settings(settings, data)
 
     def test_admin_and_python_contact_defaults_match_for_conflict_check(self) -> None:
