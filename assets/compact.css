@@ -205,6 +205,8 @@ body,body[data-page]{font-size:13.5px;line-height:1.46;color:var(--compact-body)
 .home-upcoming .timeline-item{padding:10px 0}.home-upcoming .timeline-item h3{font-size:14px}.home-upcoming .timeline-item p{font-size:11.3px}
 .contact-section{background:#304858;padding:26px 0}.contact-section h2{font-size:25px}
 .site-footer{background:#243947;padding:11px 0}
+body[data-page="home"] .contact-section{background:#304858}
+body[data-page="home"] .site-footer{background:#243947}
 .page-hero,.contact-page-hero,.dossier-page .dossier-hero{background:#f5f7f7;border-bottom:1px solid #dde5e7;padding:29px 0 22px}
 .page-title,.contact-page-hero h1{font-size:clamp(38px,4.5vw,52px);line-height:1.05}
 .section-jumps a{color:#486170!important}
