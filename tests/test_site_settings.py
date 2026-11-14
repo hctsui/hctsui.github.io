@@ -56,8 +56,8 @@ class SiteSettingsTests(unittest.TestCase):
         self.assertEqual(
             before["contact_form"]["privacy_note"],
             {
-                "en": "Your message will be delivered privately by Web3Forms.",
-                "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。",
+                "en": "Your message is delivered privately and is not stored in the public website.",
+                "zh": "訊息會私下寄送，不會存入公開網站資料。",
             },
         )
         admin_before = copy.deepcopy(before)
