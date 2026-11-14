@@ -622,6 +622,21 @@ def render_contact(items: list[dict[str, Any]], lang: str, *, extra_card: str = 
     return '<div class="contact-grid">' + "".join(cards) + '</div>'
 
 
+def managed_contact_items(data: dict[str, Any]) -> list[dict[str, Any]]:
+    """Prefer current managed contacts when legacy aliases contain the same details."""
+    items = [x for x in data.get("profile_items", []) if x.get("type") == "contact" and x.get("category_id") == "personal-profile"]
+    items.sort(key=lambda x: int(x.get("order", 0)))
+    seen: set[str] = set()
+    unique = []
+    for item in items:
+        key = (str(item.get("url") or "").strip() or plain_value(item, "description", "en").strip()).casefold()
+        if key and key in seen:
+            continue
+        seen.add(key)
+        unique.append(item)
+    return unique
+
+
 def contact_form_home_card(data: dict[str, Any], lang: str) -> str:
     config = current_site_settings(data).get("contact_form", {})
     if not config.get("enabled"):
@@ -804,8 +819,7 @@ def render_contact_page_main(data: dict[str, Any], lang: str) -> str:
     design = config["page_design"]
     title = rich_html(design["title"][lang])
     form = render_contact_form(data, lang)
-    details = [x for x in data.get("profile_items", []) if x.get("type") == "contact" and x.get("category_id") == "personal-profile"]
-    details.sort(key=lambda x: int(x.get("order", 0)))
+    details = managed_contact_items(data)
     details_title = "聯絡方式" if lang == "zh" else "Get in touch"
     if not form:
         unavailable = "聯絡表單目前尚未開放。" if lang == "zh" else "The contact form is currently unavailable."
@@ -829,8 +843,7 @@ def render_home_contact(
     """Keep the original split contact layout and its public #contact anchor."""
     items = category_items(data, category, today)
     if not items:
-        items = [x for x in data.get("profile_items", []) if x.get("type") == "contact" and x.get("category_id") == "personal-profile"]
-        items.sort(key=lambda x: int(x.get("order", 0)))
+        items = managed_contact_items(data)
     title = rich_html(category.get("title", {}).get(lang, ""))
     intro = rich_html(category.get("intro", {}).get(lang, ""))
     cid = esc(category["id"])
