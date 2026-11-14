@@ -258,7 +258,7 @@ def default_contact_form() -> dict[str, Any]:
         "privacy_note": {"en": "Your message will be delivered privately by Web3Forms.", "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。"},
         "page_design": {
             "eyebrow": {"en": "Contact", "zh": "聯絡"},
-            "title": {"en": "Contact Form", "zh": "聯絡表單"},
+            "title": {"en": "Contact", "zh": "聯絡"},
             "description": {
                 "en": "Use this form for academic invitations, research correspondence, or other inquiries.",
                 "zh": "如有學術邀請、研究交流或其他詢問，可使用此表單聯絡。",
@@ -266,12 +266,12 @@ def default_contact_form() -> dict[str, Any]:
             "show_navigation": True,
             "show_footer": True,
             "colors": {
-                "background": "#f7f3ed",
+            "background": "#ffffff",
                 "surface": "#ffffff",
-                "accent": "#8d493d",
-                "text": "#2d2926",
-                "muted": "#6c625c",
-                "button": "#8d493d",
+            "accent": "#2c4758",
+            "text": "#26313d",
+            "muted": "#69727a",
+            "button": "#2c4758",
                 "button_text": "#ffffff",
             },
         },
@@ -333,12 +333,12 @@ def default_error_page() -> dict[str, Any]:
         "show_footer": True,
         "auto_redirect": {"enabled": False, "seconds": 8},
         "colors": {
-            "background": "#f7f3ed",
+            "background": "#f8f6f2",
             "surface": "#ffffff",
-            "accent": "#8d493d",
-            "text": "#2d2926",
-            "muted": "#6c625c",
-            "button": "#2d2926",
+            "accent": "#9a5540",
+            "text": "#26313d",
+            "muted": "#69727a",
+            "button": "#2c4758",
             "button_text": "#ffffff",
         },
     }
@@ -543,12 +543,12 @@ def validate_site_settings(value: Any, data: dict[str, Any] | None = None) -> No
             raise ValueError("Contact form is enabled in Web3Forms Email mode, but the Access Key is missing or invalid. Fill the Access Key, switch modes, or disable the contact form.")
     if contact["enabled"] and contact["mode"] == "worker" and not contact["worker_url"]:
         raise ValueError("Contact form is enabled in Cloudflare Worker notification mode, but the Worker URL is missing or invalid. Fill the Worker URL, switch to Web3Forms Email mode, or disable the contact form.")
-    for field in ("eyebrow", "title", "description"):
+    for field in ("title", "description"):
         for lang in ("en", "zh"):
             if not contact["page_design"][field][lang]:
                 raise ValueError(f"Contact page {field} is required for {lang}.")
     error_page = normalized["error_page"]
-    for field in ("eyebrow", "title", "description", "home_label"):
+    for field in ("title", "description", "home_label"):
         for lang in ("en", "zh"):
             if not error_page[field][lang]:
                 raise ValueError(f"404 {field} is required for {lang}.")

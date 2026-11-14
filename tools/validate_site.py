@@ -11,9 +11,10 @@ from category_config import all_items, categories_for_page, migrate_category_dat
 from homepage_config import validate_homepage_config
 from people_config import load_people, validate_people
 from site_settings_config import current_site_settings, validate_site_settings
+from process_request import migrate_data
 
 ROOT = Path(__file__).resolve().parents[1]
-data = migrate_category_data(json.loads((ROOT / "content/site.json").read_text(encoding="utf-8")))
+data = migrate_category_data(migrate_data(json.loads((ROOT / "content/site.json").read_text(encoding="utf-8"))))
 errors: list[str] = []
 
 try:

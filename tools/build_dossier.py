@@ -2,6 +2,7 @@
 """Build bilingual Academic Dossier pages from selected managed categories."""
 from __future__ import annotations
 
+import copy
 import html
 import json
 import re
@@ -12,6 +13,7 @@ from typing import Any
 import cms_extensions
 cms_extensions.install()
 import process_request as core
+import build_site as site
 from category_config import items_for_category, migrate_category_data, normalized_categories
 from markup_config import rich_html as safe_rich_html, stored_rich_html
 
@@ -194,12 +196,10 @@ def category_cards(data: dict[str, Any], lang: str) -> tuple[list[str], list[str
             items = items[:6]
         if not items:
             continue
-        label = pair(category.get("label"), lang)
         title = pair(category.get("title"), lang)
         body = entries(items, lang, ordered=category.get("kind") == "publication")
         card = (
             '<section class="dossier-card" data-dossier-category="' + esc(cid) + '">'
-            + (f'<p class="dossier-card-label">{esc(label)}</p>' if label else "")
             + f'<h2>{esc(title)}</h2>{body}</section>'
         )
         (left if category.get("kind") in compact_kinds else right).append(card)
@@ -207,51 +207,16 @@ def category_cards(data: dict[str, Any], lang: str) -> tuple[list[str], list[str
 
 
 def navigation(data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
-    zh = lang == "zh"
-    pages = [p for p in data.get("settings", {}).get("pages", []) if isinstance(p, dict)]
-    if not any(p.get("id") == "dossier" for p in pages):
+    context = copy.deepcopy(data)
+    pages = context.setdefault("settings", {}).setdefault("pages", [])
+    if not any(row.get("id") == "dossier" for row in pages):
         pages.append(page)
-    pages.sort(key=lambda p: int(p.get("order", 999)))
-    links = []
-    for current in pages:
-        if current.get("show_in_navigation") is False:
-            continue
-        path = pair(current.get("path"), lang)
-        if not path:
-            continue
-        if zh and path.startswith("zh/"):
-            path = path[3:]
-        links.append(f'<a data-nav="{esc(current.get("id"))}" href="{esc(path)}">{esc(pair(current.get("name"), lang))}</a>')
-    links.append(f'<a data-nav="contact" href="index.html#contact">{"聯絡" if zh else "Contact"}</a>')
-    search_path = "../content/search-index.json" if zh else "content/search-index.json"
-    search_id = f"site-search-{lang}-dossier"
-    links.append(
-        f'<div class="site-search" data-site-search><label class="sr-only" for="{search_id}">{"搜尋這個網站" if zh else "Search this website"}</label>'
-        f'<input id="{search_id}" type="search" autocomplete="off" placeholder="{"搜尋" if zh else "Search"}" aria-label="{"搜尋這個網站" if zh else "Search this website"}" data-search-index="{search_path}" data-search-language="{lang}">'
-        '<div class="site-search-results" data-search-results hidden></div></div>'
-    )
-    links.append(f'<a class="language-toggle" href="{"../dossier.html" if zh else "zh/dossier.html"}">{"English" if zh else "中文"}</a>')
-    brand = pair(data.get("settings", {}).get("general", {}).get("identity", {}).get("brand"), lang) or "HC Tsui"
-    return (
-        f'<header class="site-header"><div class="container nav-wrap"><a class="brand" href="index.html">{esc(brand)}</a>'
-        f'<button aria-controls="site-nav-{lang}" aria-expanded="false" class="menu-button" type="button">{"選單" if zh else "Menu"}</button>'
-        f'<nav aria-label="{"主要導覽" if zh else "Primary navigation"}" class="site-nav" id="site-nav-{lang}">' + "".join(links) + '</nav></div></header>'
-    )
+    path = "zh/dossier.html" if lang == "zh" else "dossier.html"
+    return site.render_site_header(context, "dossier", lang, current_path=path)
 
 
 def footer(data: dict[str, Any], lang: str) -> str:
-    rows = data.get("settings", {}).get("footer", {}).get("items", [])
-    if not rows:
-        return f'<footer class="site-footer"><div class="container footer-inner"><span>{date.today().year} Hung-Chun Tsui</span></div></footer>'
-    zones = {"left": [], "center": [], "right": []}
-    for row in rows:
-        text = pair(row.get("text"), lang).replace("{year}", str(date.today().year)).replace("{updated}", date.today().isoformat())
-        if not text:
-            continue
-        url = str(row.get("url") or "")
-        body = f'<a href="{esc(url)}">{esc(text)}</a>' if url else f'<span>{esc(text)}</span>'
-        zones.setdefault(str(row.get("alignment") or "center"), []).append(f'<span class="footer-item">{body}</span>')
-    return '<footer class="site-footer"><div class="container footer-inner">' + "".join(f'<div class="footer-zone footer-{name}">{"".join(zones[name])}</div>' for name in ("left", "center", "right")) + '</div></footer>'
+    return site.render_footer(data, lang, site.site_today(data))
 
 
 def analytics(data: dict[str, Any]) -> str:
@@ -283,9 +248,9 @@ def render(data: dict[str, Any], page: dict[str, Any], lang: str) -> str:
     cv_href = "../files/Hung-Chun-Tsui-CV-zh.pdf" if zh else "files/Hung-Chun-Tsui-CV.pdf"
     return f'''<!DOCTYPE html>
 <html lang="{"zh-Hant" if zh else "en"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="author" content="Hung-Chun Tsui"><meta name="robots" content="noindex,nofollow"><title>{esc(page_seo["title"])}</title>
-<link rel="icon" href="{prefix}assets/images/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="stylesheet" href="{prefix}assets/dossier.css"><script defer src="{prefix}assets/script.js?v=20260925-visible-math"></script><script defer src="{prefix}assets/prefetch.js"></script>
+<link rel="icon" href="{prefix}assets/images/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="stylesheet" href="{prefix}assets/dossier.css"><link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115"><script defer src="{prefix}assets/script.js?v=20260925-visible-math"></script><script defer src="{prefix}assets/prefetch.js"></script>
 <meta name="description" content="{esc(page_seo["description"])}"><link rel="canonical" href="{esc(canonical)}"><meta property="og:type" content="website"><meta property="og:title" content="{esc(page_seo["og_title"])}"><meta property="og:description" content="{esc(page_seo["og_description"])}"><meta property="og:url" content="{esc(canonical)}"><meta property="og:image" content="{esc(page_seo["image"])}"><meta property="og:site_name" content="{esc(page_seo["site_name"])}"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" hreflang="{lang}" href="{esc(canonical)}"><link rel="alternate" hreflang="{"en" if zh else "zh"}" href="{esc(alternate)}"></head>
-<body class="dossier-page" data-page="dossier" style="--accent:{esc(page.get("color") or "#5b5876")}"><a class="skip-link" href="#main">{"跳至主要內容" if zh else "Skip to content"}</a>{navigation(data, page, lang)}<main id="main"><section class="page-hero dossier-hero"><div class="container"><p class="section-label">{esc(pair(header.get("label"), lang))}</p><h1 class="page-title">{esc(pair(header.get("title"), lang))}</h1><p class="page-intro">{esc(pair(header.get("intro"), lang))}</p><div class="dossier-actions"><button class="button primary" type="button" onclick="window.print()">{"列印／另存 PDF" if zh else "Print / Save as PDF"}</button><a class="button" href="{cv_href}" rel="noopener" target="_blank">{"開啟 PDF 履歷" if zh else "Open PDF CV"}</a></div></div></section><section class="section"><div class="container dossier-grid"><div class="dossier-column">{"".join(left)}</div><div class="dossier-column">{"".join(right)}</div></div></section></main>{footer(data, lang)}{analytics(data)}</body></html>'''
+<body class="dossier-page" data-page="dossier" style="--accent:{esc(page.get("color") or "#5b5876")}"><a class="skip-link" href="#main">{"跳至主要內容" if zh else "Skip to content"}</a>{navigation(data, page, lang)}<main id="main"><section class="page-hero dossier-hero"><div class="container"><h1 class="page-title">{esc(pair(header.get("title"), lang))}</h1><div class="dossier-actions"><button class="button primary" type="button" onclick="window.print()">{"列印／另存 PDF" if zh else "Print / Save as PDF"}</button><a class="button" href="{cv_href}" rel="noopener" target="_blank">{"開啟 PDF 履歷" if zh else "Open PDF CV"}</a></div></div></section><section class="section"><div class="container dossier-grid"><div class="dossier-column">{"".join(left)}</div><div class="dossier-column">{"".join(right)}</div></div></section></main>{footer(data, lang)}{analytics(data)}</body></html>'''
 
 
 def main() -> None:
