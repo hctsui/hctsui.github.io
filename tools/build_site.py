@@ -1347,7 +1347,7 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
     }
     for pattern, replacement in patterns.items():
         text = re.sub(pattern, replacement, text)
-    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115-v5">'
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115-v5a">'
     if 'assets/compact.css' in text:
         text = re.sub(r'<link rel="stylesheet" href="[^"]*assets/compact\.css(?:\?v=[^"]*)?">', compact, text, count=1)
     else:
@@ -1372,7 +1372,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    compact_url = _absolute_url(base, "assets/compact.css?v=20261115-v5")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261115-v5a")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.svg")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))
