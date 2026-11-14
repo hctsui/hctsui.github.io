@@ -77,6 +77,8 @@
 |---|---|---|---|
 | conference | The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 2 | 第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第二週 | `conference-2703151` |
 | conference | The 19th MSJ-SI Complex, Algebraic, and Arithmetic Dynamics, Week 1 | 第 19 屆日本數學會季節研究所「複動力系統、代數動力系統與算術動力系統」第一週 | `conference-2703081` |
+| conference | The 62nd TMS Annual Meeting | 中華民國數學會第 62 屆年會 | `conference-2701181` |
+| conference | East Asia Core Doctoral Forum on Mathematics 2027 | 2027 東亞數學博士生論壇 | `conference-2701111` |
 | conference | The 12th POSTECH PMI NCTS Joint Workshop on Number Theory | 第 12 屆 POSTECH PMI NCTS 數論聯合研討會 | `conference-2612281` |
 | conference | The 2nd Multiple Eisenstein Series Research Meeting | 第二屆多重 Eisenstein 級數研究會 | `conference-2611081` |
 | conference | The 73rd Kansai Multiple Zeta Workshop | 第 73 回關西多重 zeta 值研討會 | `conference-2611071` |

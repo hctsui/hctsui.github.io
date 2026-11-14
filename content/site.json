@@ -1515,7 +1515,7 @@
       },
       "slides_url": "",
       "category_id": "activity-conferences",
-      "order": 6,
+      "order": 8,
       "display_placements": [],
       "venue": {
         "en": "Tohoku University",
@@ -1563,7 +1563,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 7,
+      "order": 9,
       "display_placements": []
     },
     {
@@ -1595,7 +1595,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 8,
+      "order": 10,
       "display_placements": []
     },
     {
@@ -1627,7 +1627,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 9,
+      "order": 11,
       "display_placements": []
     },
     {
@@ -1659,7 +1659,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 10,
+      "order": 12,
       "display_placements": []
     },
     {
@@ -1691,7 +1691,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 11,
+      "order": 13,
       "display_placements": []
     },
     {
@@ -1723,7 +1723,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 12,
+      "order": 14,
       "display_placements": []
     },
     {
@@ -1755,7 +1755,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 13,
+      "order": 15,
       "display_placements": []
     },
     {
@@ -1787,7 +1787,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 14,
+      "order": 16,
       "display_placements": []
     },
     {
@@ -1819,7 +1819,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 15,
+      "order": 17,
       "display_placements": []
     },
     {
@@ -1851,7 +1851,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 16,
+      "order": 18,
       "display_placements": []
     },
     {
@@ -1883,7 +1883,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 18,
+      "order": 20,
       "display_placements": []
     },
     {
@@ -1915,7 +1915,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 19,
+      "order": 21,
       "display_placements": []
     },
     {
@@ -1947,7 +1947,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 20,
+      "order": 22,
       "display_placements": []
     },
     {
@@ -1975,7 +1975,7 @@
       },
       "slides_url": "",
       "category_id": "activity-conferences",
-      "order": 21,
+      "order": 23,
       "display_placements": [],
       "venue": {
         "en": "Academia Sinica",
@@ -2023,7 +2023,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 24,
+      "order": 26,
       "display_placements": []
     },
     {
@@ -2055,7 +2055,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 25,
+      "order": 27,
       "display_placements": []
     },
     {
@@ -2087,7 +2087,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 5,
+      "order": 7,
       "display_placements": []
     },
     {
@@ -2119,7 +2119,7 @@
         "zh": ""
       },
       "category_id": "activity-conferences",
-      "order": 4,
+      "order": 6,
       "display_placements": []
     },
     {
@@ -2151,7 +2151,7 @@
         "zh": "講者"
       },
       "category_id": "activity-conferences",
-      "order": 3,
+      "order": 5,
       "display_placements": [],
       "venue": {
         "en": "Nagoya University",
@@ -2214,7 +2214,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 17
+      "order": 19
     },
     {
       "type": "conference",
@@ -2264,7 +2264,7 @@
         "en": "Speaker",
         "zh": "講者"
       },
-      "order": 2
+      "order": 4
     },
     {
       "type": "conference",
@@ -2306,7 +2306,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 22
+      "order": 24
     },
     {
       "type": "conference",
@@ -2348,7 +2348,7 @@
         "en": "National Tsing Hua University",
         "zh": "國立清華大學"
       },
-      "order": 23
+      "order": 25
     },
     {
       "type": "talk",
@@ -2527,6 +2527,98 @@
         "zh": "東京大學"
       },
       "order": 0
+    },
+    {
+      "type": "conference",
+      "category_id": "activity-conferences",
+      "start_date": "2027-01-18",
+      "end_date": "2027-01-19",
+      "title": {
+        "en": "The 62nd TMS Annual Meeting",
+        "zh": "中華民國數學會第 62 屆年會"
+      },
+      "venue": {
+        "en": "National Taiwan University",
+        "zh": "國立臺灣大學"
+      },
+      "city": {
+        "en": "Taipei",
+        "zh": "臺北"
+      },
+      "country": {
+        "en": "Taiwan",
+        "zh": "臺灣"
+      },
+      "url": "https://sites.google.com/math.ntu.edu.tw/2027-tms-annual-meeting?authuser=0",
+      "description": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "description_html": {
+        "en": "National Taiwan University, Taipei, Taiwan",
+        "zh": "國立臺灣大學, 臺北, 臺灣"
+      },
+      "title_html": {
+        "en": "The 62nd TMS Annual Meeting",
+        "zh": "中華民國數學會第 62 屆年會"
+      },
+      "id": "conference-2701181",
+      "display_placements": [],
+      "venue_html": {
+        "en": "National Taiwan University",
+        "zh": "國立臺灣大學"
+      },
+      "order": 2
+    },
+    {
+      "type": "conference",
+      "category_id": "activity-conferences",
+      "role": {
+        "en": "Speaker · Student Organizer",
+        "zh": "講者 · 學生協辦人"
+      },
+      "start_date": "2027-01-11",
+      "end_date": "2027-01-14",
+      "title": {
+        "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+        "zh": "2027 東亞數學博士生論壇"
+      },
+      "venue": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "city": {
+        "en": "Sendai",
+        "zh": "仙台"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "url": "https://www.math.tohoku.ac.jp/~fujie/EACDFM2027.html",
+      "description": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "description_html": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "title_html": {
+        "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+        "zh": "2027 東亞數學博士生論壇"
+      },
+      "id": "conference-2701111",
+      "display_placements": [],
+      "venue_html": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "role_html": {
+        "en": "Speaker · Student Organizer",
+        "zh": "講者 · 學生協辦人"
+      },
+      "order": 3
     }
   ],
   "honors": [
