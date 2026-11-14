@@ -489,7 +489,8 @@ def render_site_navigation(
     settings = current_site_settings(data)
     general = settings["general"]
     navigation_settings = general["navigation"]
-    links: list[str] = []
+    page_links: list[str] = []
+    controls: list[str] = []
     for page in pages:
         if page.get("show_in_navigation", True) is False:
             continue
@@ -499,7 +500,7 @@ def render_site_navigation(
         label = str((page.get("name") or {}).get(lang) or page.get("id") or "")
         active = str(page.get("id") or "") == current_page_id
         attrs = ' class="active" aria-current="page"' if active else ""
-        links.append(f'<a{attrs} data-nav="{esc(page.get("id"))}" href="{esc(href)}">{esc(label)}</a>')
+        page_links.append(f'<a{attrs} data-nav="{esc(page.get("id"))}" href="{esc(href)}">{esc(label)}</a>')
 
     home_page = next((page for page in pages if page.get("id") == "home"), None)
     home_href = _navigation_href(data, home_page, lang, absolute=absolute, current_path=current_path) if home_page else ""
@@ -508,13 +509,13 @@ def render_site_navigation(
         contact_path = "zh/contact.html" if lang == "zh" else "contact.html"
         contact_href = _absolute_url(settings["seo"]["base_url"], contact_path) if absolute else (_relative_page_href(contact_path, current_path) if current_path else "contact.html")
         attrs = ' class="active" aria-current="page"' if current_page_id == "contact" else ""
-        links.append(f'<a{attrs} data-nav="contact" href="{esc(contact_href)}">{contact_label}</a>')
+        page_links.append(f'<a{attrs} data-nav="contact" href="{esc(contact_href)}">{contact_label}</a>')
 
     if navigation_settings.get("search_enabled", True):
         placeholder = navigation_settings["search_placeholder"][lang]
         label = navigation_settings["search_label"][lang]
         index_url = _absolute_url(settings["seo"]["base_url"], "content/search-index.json") if absolute else (_relative_page_href("content/search-index.json", current_path) if current_path else ("../content/search-index.json" if lang == "zh" else "content/search-index.json"))
-        links.append(
+        controls.append(
             '<div class="site-search" data-site-search>'
             f'<label class="sr-only" for="site-search-{lang}-{esc(current_page_id or "page")}">{esc(label)}</label>'
             f'<input id="site-search-{lang}-{esc(current_page_id or "page")}" type="search" autocomplete="off" '
@@ -525,7 +526,7 @@ def render_site_navigation(
     if language_button:
         label = "中文" if lang == "en" else "English"
         aria = "切換至中文版" if lang == "en" else "Switch to English"
-        links.append(f'<button aria-label="{aria}" class="language-toggle nav-language-button" type="button" data-switch-language>{label}</button>')
+        controls.append(f'<button aria-label="{aria}" class="language-toggle nav-language-button" type="button" data-switch-language>{label}</button>')
     else:
         if current_page_id == "contact":
             counterpart = "../contact.html" if lang == "zh" else "zh/contact.html"
@@ -535,8 +536,9 @@ def render_site_navigation(
         if counterpart:
             label = "中文" if lang == "en" else "English"
             aria = "切換至中文版" if lang == "en" else "Switch to English"
-            links.append(f'<a aria-label="{aria}" class="language-toggle" href="{esc(counterpart)}">{label}</a>')
-    return '<nav aria-label="Primary navigation" class="site-nav" id="site-nav-' + esc(lang) + '">' + "".join(links) + "</nav>"
+            controls.append(f'<a aria-label="{aria}" class="language-toggle" href="{esc(counterpart)}">{label}</a>')
+    tabs = f'<div class="nav-tabs" role="group" aria-label="Pages">{"".join(page_links)}</div>'
+    return '<nav aria-label="Primary navigation" class="site-nav" id="site-nav-' + esc(lang) + '">' + tabs + "".join(controls) + "</nav>"
 
 
 def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *, absolute: bool = False, language_button: bool = False, current_path: str = "") -> str:
@@ -766,7 +768,7 @@ def render_contact_form(data: dict[str, Any], lang: str) -> str:
     intro_html = f"<p>{intro}</p>" if intro else ""
     privacy_html = f'<p class="contact-form-privacy">{labels["privacy_note"]}</p>' if labels["privacy_note"] else ""
     return (
-        f'<div class="contact-form-shell"><h3>{title}</h3>{intro_html}'
+        f'<div class="contact-form-shell"><h2>{title}</h2>{intro_html}'
         f'<form class="contact-form" method="post" action="{esc(endpoint)}" data-contact-form data-contact-mode="{esc(mode)}" data-success-message="{labels["success_message"]}">'
         f'{hidden}<div class="contact-form-grid"><label>{labels["name_label"]}<input name="name" required maxlength="160" autocomplete="name"></label>'
         f'<label>{labels["email_label"]}<input type="email" name="email" required maxlength="320" autocomplete="email"></label></div>'
@@ -1022,9 +1024,17 @@ def render_home_cover(data: dict[str, Any], lang: str) -> str:
 def apply_home_cover(hero: str, data: dict[str, Any], lang: str) -> str:
     cover = render_home_cover(data, lang)
     updated, count = re.subn(r'<div class="home-visual">.*?</div></div></div></section>', lambda _: cover + '</div></section>', hero, count=1, flags=re.S)
-    if count == 1:
-        return updated
-    return hero
+    result = updated if count == 1 else hero
+    profile = data.get("settings", {}).get("personal_profile", {})
+    affiliation = profile.get("affiliation", {}).get(lang, "")
+    if lang == "en":
+        affiliation = affiliation.replace(", ", " · ")
+    result = re.sub(r'<p class="home-affiliation">.*?</p>', '', result, flags=re.S)
+    if affiliation:
+        result = re.sub(r'(</p>)(<div class="home-actions">)',
+                        lambda match: match.group(1) + f'<p class="home-affiliation">{esc(affiliation)}</p>' + match.group(2),
+                        result, count=1)
+    return result
 
 def extract_home_hero(text: str) -> str:
     match = re.search(r'(<section class="home-hero".*?</section>)', text, flags=re.S)
@@ -1337,8 +1347,10 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
     }
     for pattern, replacement in patterns.items():
         text = re.sub(pattern, replacement, text)
-    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115">'
-    if 'assets/compact.css' not in text:
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115-v5">'
+    if 'assets/compact.css' in text:
+        text = re.sub(r'<link rel="stylesheet" href="[^"]*assets/compact\.css(?:\?v=[^"]*)?">', compact, text, count=1)
+    else:
         text = text.replace('</head>', compact + '\n</head>', 1)
     return text
 
@@ -1360,7 +1372,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    compact_url = _absolute_url(base, "assets/compact.css?v=20261115")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261115-v5")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.svg")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))
