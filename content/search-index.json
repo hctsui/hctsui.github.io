@@ -206,6 +206,13 @@
     },
     {
       "language": "en",
+      "title": "Address & office",
+      "description": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+      "url": "/index.html#contact-address-office--at--home-contact",
+      "kind": "contact"
+    },
+    {
+      "language": "en",
       "title": "Institutional email",
       "description": "hctsui@gapp.nthu.edu.tw",
       "url": "/index.html#contact-2600001--at--home-contact",
@@ -213,9 +220,23 @@
     },
     {
       "language": "en",
+      "title": "Institutional email",
+      "description": "hctsui@gapp.nthu.edu.tw",
+      "url": "/index.html#contact-institutional-email--at--home-contact",
+      "kind": "contact"
+    },
+    {
+      "language": "en",
       "title": "Personal email",
       "description": "hctsui.math@gmail.com",
       "url": "/index.html#contact-2600002--at--home-contact",
+      "kind": "contact"
+    },
+    {
+      "language": "en",
+      "title": "Personal email",
+      "description": "hctsui.math@gmail.com",
+      "url": "/index.html#contact-personal-email--at--home-contact",
       "kind": "contact"
     },
     {
@@ -332,9 +353,23 @@
     },
     {
       "language": "en",
+      "title": "Address",
+      "description": "No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
+      "url": "/cv.html#personal-address",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
       "title": "Affiliation",
       "description": "Department of Mathematics, National Tsing Hua University, Taiwan",
       "url": "/cv.html#personal-2600002",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
+      "title": "Affiliation",
+      "description": "Department of Mathematics, National Tsing Hua University, Taiwan",
+      "url": "/cv.html#contact-affiliation",
       "kind": "personal"
     },
     {
@@ -346,9 +381,23 @@
     },
     {
       "language": "en",
+      "title": "Email",
+      "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
+      "url": "/cv.html#personal-email",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
       "title": "Languages",
       "description": "Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1)",
       "url": "/cv.html#personal-2600004",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
+      "title": "Languages",
+      "description": "Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1)",
+      "url": "/cv.html#personal-languages",
       "kind": "personal"
     },
     {
@@ -360,9 +409,23 @@
     },
     {
       "language": "en",
+      "title": "Name",
+      "description": "Hung-Chun Tsui",
+      "url": "/cv.html#profile-name",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
       "title": "ORCID",
       "description": "0009-0009-7445-5634",
       "url": "/cv.html#personal-2600008",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
+      "title": "ORCID",
+      "description": "0009-0009-7445-5634",
+      "url": "/cv.html#personal-orcid",
       "kind": "personal"
     },
     {
@@ -374,9 +437,23 @@
     },
     {
       "language": "en",
+      "title": "Position",
+      "description": "PhD Student",
+      "url": "/cv.html#profile-position",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
       "title": "Website",
       "description": "https://hctsui.org",
       "url": "/cv.html#personal-2600007",
+      "kind": "personal"
+    },
+    {
+      "language": "en",
+      "title": "Website",
+      "description": "https://hctsui.org",
+      "url": "/cv.html#personal-website",
       "kind": "personal"
     },
     {
@@ -885,6 +962,13 @@
     },
     {
       "language": "zh",
+      "title": "個人信箱",
+      "description": "hctsui.math@gmail.com",
+      "url": "/zh/index.html#contact-personal-email--at--home-contact",
+      "kind": "contact"
+    },
+    {
+      "language": "zh",
       "title": "地址與辦公室",
       "description": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號",
       "url": "/zh/index.html#contact-2600003--at--home-contact",
@@ -892,9 +976,23 @@
     },
     {
       "language": "zh",
+      "title": "地址與辦公室",
+      "description": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號",
+      "url": "/zh/index.html#contact-address-office--at--home-contact",
+      "kind": "contact"
+    },
+    {
+      "language": "zh",
       "title": "學校信箱",
       "description": "hctsui@gapp.nthu.edu.tw",
       "url": "/zh/index.html#contact-2600001--at--home-contact",
+      "kind": "contact"
+    },
+    {
+      "language": "zh",
+      "title": "學校信箱",
+      "description": "hctsui@gapp.nthu.edu.tw",
+      "url": "/zh/index.html#contact-institutional-email--at--home-contact",
       "kind": "contact"
     },
     {
@@ -1011,9 +1109,23 @@
     },
     {
       "language": "zh",
+      "title": "ORCID",
+      "description": "0009-0009-7445-5634",
+      "url": "/zh/cv.html#personal-orcid",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
       "title": "地址",
       "description": "臺灣 300044 新竹市東區光復路二段 101 號",
       "url": "/zh/cv.html#personal-2600005",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
+      "title": "地址",
+      "description": "臺灣 300044 新竹市東區光復路二段 101 號",
+      "url": "/zh/cv.html#personal-address",
       "kind": "personal"
     },
     {
@@ -1025,9 +1137,23 @@
     },
     {
       "language": "zh",
+      "title": "姓名",
+      "description": "崔鴻竣",
+      "url": "/zh/cv.html#profile-name",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
       "title": "所屬單位",
       "description": "臺灣 · 國立清華大學數學系",
       "url": "/zh/cv.html#personal-2600002",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
+      "title": "所屬單位",
+      "description": "臺灣 · 國立清華大學數學系",
+      "url": "/zh/cv.html#contact-affiliation",
       "kind": "personal"
     },
     {
@@ -1039,9 +1165,23 @@
     },
     {
       "language": "zh",
+      "title": "網站",
+      "description": "https://hctsui.org",
+      "url": "/zh/cv.html#personal-website",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
       "title": "職位",
       "description": "博士生",
       "url": "/zh/cv.html#personal-2600003",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
+      "title": "職位",
+      "description": "博士生",
+      "url": "/zh/cv.html#profile-position",
       "kind": "personal"
     },
     {
@@ -1053,9 +1193,23 @@
     },
     {
       "language": "zh",
+      "title": "語言",
+      "description": "中文（母語） | 英文（CEFR C1） | 日文（CEFR A1）",
+      "url": "/zh/cv.html#personal-languages",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
       "title": "電子郵件",
       "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
       "url": "/zh/cv.html#personal-2600006",
+      "kind": "personal"
+    },
+    {
+      "language": "zh",
+      "title": "電子郵件",
+      "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
+      "url": "/zh/cv.html#personal-email",
       "kind": "personal"
     },
     {
