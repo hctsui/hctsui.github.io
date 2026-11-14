@@ -244,7 +244,7 @@ def default_contact_form() -> dict[str, Any]:
         "worker_url": "",
         "turnstile_site_key": "",
         "email_subject": "[hctsui.org] New contact message",
-        "title": {"en": "Send a message", "zh": "傳送訊息"},
+        "title": {"en": "Contact Form", "zh": "聯絡表單"},
         "intro": {
             "en": "For academic invitations or research correspondence, you may use this form.",
             "zh": "如有學術邀請或研究交流，可使用此表單聯絡。",
@@ -255,7 +255,7 @@ def default_contact_form() -> dict[str, Any]:
         "message_label": {"en": "Message", "zh": "訊息"},
         "submit_label": {"en": "Send message", "zh": "送出訊息"},
         "success_message": {"en": "Thank you. Your message has been sent.", "zh": "謝謝，訊息已送出。"},
-        "privacy_note": {"en": "Your message will be delivered privately by Web3Forms.", "zh": "完整訊息只會透過 Web3Forms 私下寄送，不會存入公開網站資料。"},
+        "privacy_note": {"en": "Your message is delivered privately and is not stored in the public website.", "zh": "訊息會私下寄送，不會存入公開網站資料。"},
         "page_design": {
             "eyebrow": {"en": "Contact", "zh": "聯絡"},
             "title": {"en": "Contact", "zh": "聯絡"},
