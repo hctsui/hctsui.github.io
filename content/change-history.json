@@ -2096,6 +2096,405 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-150-op-1",
+      "batch_issue": 150,
+      "applied_at": "2026-11-14T20:16:07.601699Z",
+      "expires_at": "2026-11-21T20:16:07.601699Z",
+      "reverted_by": null,
+      "request_digest": "11e912bc6fdde67c7d1b6cce157b87d09670dbfeb965cc1fb430b1a36a0b69e8",
+      "request_action": "update",
+      "action": "update",
+      "type": "conference",
+      "entry_id": "conference-2412181",
+      "label": {
+        "en": "NCTS One-Day Workshop on Number Theory",
+        "zh": "NCTS 一日工作坊"
+      },
+      "before": {
+        "type": "conference",
+        "category_id": "activity-conferences",
+        "start_date": "2024-12-18",
+        "end_date": "2024-12-18",
+        "title": {
+          "en": "NCTS One-Day Workshop on Number Theory",
+          "zh": "NCTS 一日工作坊"
+        },
+        "venue": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+        "description": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "title_html": {
+          "en": "NCTS One-Day Workshop on Number Theory",
+          "zh": "NCTS 一日工作坊"
+        },
+        "id": "conference-2412181",
+        "display_placements": [],
+        "venue_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "order": 24
+      },
+      "after": {
+        "type": "conference",
+        "category_id": "activity-conferences",
+        "start_date": "2024-12-18",
+        "end_date": "2024-12-18",
+        "title": {
+          "en": "NCTS One-Day Workshop on Number Theory",
+          "zh": "NCTS 一日工作坊"
+        },
+        "venue": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "https://ncts.ntu.edu.tw/news/Events/conferences/5826",
+        "description": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "title_html": {
+          "en": "NCTS One-Day Workshop on Number Theory",
+          "zh": "NCTS 一日工作坊"
+        },
+        "id": "conference-2412181",
+        "display_placements": [],
+        "venue_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "order": 24
+      },
+      "index_before": 29,
+      "index_after": 29,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-150-op-2",
+      "batch_issue": 150,
+      "applied_at": "2026-11-14T20:16:07.601699Z",
+      "expires_at": "2026-11-21T20:16:07.601699Z",
+      "reverted_by": null,
+      "request_digest": "c30ebbf93429b9ec1dd54384a09a6315e783c9d0915474fcdc6818fb1fe01207",
+      "request_action": "update",
+      "action": "update",
+      "type": "conference",
+      "entry_id": "conference-2407011",
+      "label": {
+        "en": "Summer School on Arithmetic Geometry",
+        "zh": "算術幾何暑期學校"
+      },
+      "before": {
+        "type": "conference",
+        "category_id": "activity-conferences",
+        "start_date": "2024-07-01",
+        "end_date": "2024-07-04",
+        "title": {
+          "en": "Summer School on Arithmetic Geometry",
+          "zh": "算術幾何暑期學校"
+        },
+        "venue": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+        "description": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "title_html": {
+          "en": "Summer School on Arithmetic Geometry",
+          "zh": "算術幾何暑期學校"
+        },
+        "id": "conference-2407011",
+        "display_placements": [],
+        "venue_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "order": 25
+      },
+      "after": {
+        "type": "conference",
+        "category_id": "activity-conferences",
+        "start_date": "2024-07-01",
+        "end_date": "2024-07-04",
+        "title": {
+          "en": "Summer School on Arithmetic Geometry",
+          "zh": "算術幾何暑期學校"
+        },
+        "venue": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "country": {
+          "en": "Taiwan",
+          "zh": "臺灣"
+        },
+        "url": "https://ncts.ntu.edu.tw/news/Events/courses/6148",
+        "description": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "description_html": {
+          "en": "National Tsing Hua University, Hsinchu, Taiwan",
+          "zh": "國立清華大學, 新竹, 臺灣"
+        },
+        "title_html": {
+          "en": "Summer School on Arithmetic Geometry",
+          "zh": "算術幾何暑期學校"
+        },
+        "id": "conference-2407011",
+        "display_placements": [],
+        "venue_html": {
+          "en": "National Tsing Hua University",
+          "zh": "國立清華大學"
+        },
+        "order": 25
+      },
+      "index_before": 30,
+      "index_after": 30,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-150-op-3",
+      "batch_issue": 150,
+      "applied_at": "2026-11-14T20:16:07.601699Z",
+      "expires_at": "2026-11-21T20:16:07.601699Z",
+      "reverted_by": null,
+      "request_digest": "145bbf103c3c0e20eab616ae1bb569dcb652083886a3c9ec070cdcbed60d2dfb",
+      "request_action": "notifications",
+      "action": "notifications",
+      "type": "notifications",
+      "entry_id": "notifications",
+      "label": {
+        "en": "Notification center",
+        "zh": "通知中心"
+      },
+      "before": {
+        "schema_version": 1,
+        "retention_days": 60,
+        "notifications": [
+          {
+            "id": "broken-link-conference-conference-2407011-url-https-ncts-ntu-edu-tw-even-f7511c1818",
+            "key": "broken-link:conference:conference-2407011:url:https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+            "type": "broken_link",
+            "title": "外部連結失效：算術幾何暑期學校",
+            "message": "url 回傳 HTTP 404：https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+            "created_at": "2026-11-02T23:29:11.315835Z",
+            "updated_at": "2026-11-13T21:57:36.848969Z",
+            "starred": false,
+            "read": false,
+            "status": "open",
+            "source_url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+            "payload": {
+              "url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+              "target_type": "conference",
+              "entry_id": "conference-2407011",
+              "field": "url",
+              "label": "算術幾何暑期學校",
+              "http_status": 404
+            },
+            "actions": [
+              {
+                "id": "edit",
+                "label": "前往修改"
+              }
+            ]
+          },
+          {
+            "id": "broken-link-conference-conference-2412181-url-https-ncts-ntu-edu-tw-even-b76b7a1a6a",
+            "key": "broken-link:conference:conference-2412181:url:https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+            "type": "broken_link",
+            "title": "外部連結失效：NCTS 一日工作坊",
+            "message": "url 回傳 HTTP 404：https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+            "created_at": "2026-11-02T23:29:10.098367Z",
+            "updated_at": "2026-11-13T21:57:35.796013Z",
+            "starred": false,
+            "read": false,
+            "status": "open",
+            "source_url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+            "payload": {
+              "url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+              "target_type": "conference",
+              "entry_id": "conference-2412181",
+              "field": "url",
+              "label": "NCTS 一日工作坊",
+              "http_status": 404
+            },
+            "actions": [
+              {
+                "id": "edit",
+                "label": "前往修改"
+              }
+            ]
+          },
+          {
+            "id": "contact-971c3860-3988-415f-ad1c-ed815b3987b3-1c77a9e54d",
+            "key": "contact:971c3860-3988-415f-ad1c-ed815b3987b3",
+            "type": "contact",
+            "title": "收到新的網站聯絡訊息",
+            "message": "完整內容已由 Web3Forms 私下寄到 Email；公開通知資料不保存訪客姓名、信箱或留言內容。",
+            "created_at": "2026-11-05T08:04:00.411Z",
+            "updated_at": "2026-11-05T08:04:00.411Z",
+            "starred": false,
+            "read": false,
+            "status": "open",
+            "source_url": "",
+            "payload": {
+              "event_id": "971c3860-3988-415f-ad1c-ed815b3987b3",
+              "received_at": "2026-11-05T08:04:00.411Z"
+            },
+            "actions": [
+              {
+                "id": "inbox",
+                "label": "開啟 Email 收件匣"
+              },
+              {
+                "id": "handled",
+                "label": "標記為已處理"
+              }
+            ]
+          },
+          {
+            "id": "contact-79e2e4d2-cc47-455b-ac02-8deaa9daf7bc-ba7d12d87e",
+            "key": "contact:79e2e4d2-cc47-455b-ac02-8deaa9daf7bc",
+            "type": "contact",
+            "title": "收到新的網站聯絡訊息",
+            "message": "完整內容已由 Web3Forms 私下寄到 Email；公開通知資料不保存訪客姓名、信箱或留言內容。",
+            "created_at": "2026-11-01T23:29:27.734Z",
+            "updated_at": "2026-11-01T23:29:27.734Z",
+            "starred": false,
+            "read": false,
+            "status": "open",
+            "source_url": "",
+            "payload": {
+              "event_id": "79e2e4d2-cc47-455b-ac02-8deaa9daf7bc",
+              "received_at": "2026-11-01T23:29:27.734Z"
+            },
+            "actions": [
+              {
+                "id": "inbox",
+                "label": "開啟 Email 收件匣"
+              },
+              {
+                "id": "handled",
+                "label": "標記為已處理"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "schema_version": 1,
+        "retention_days": 60,
+        "notifications": [
+          {
+            "id": "broken-link-conference-conference-2407011-url-https-ncts-ntu-edu-tw-even-f7511c1818",
+            "key": "broken-link:conference:conference-2407011:url:https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+            "type": "broken_link",
+            "title": "外部連結失效：算術幾何暑期學校",
+            "message": "url 回傳 HTTP 404：https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+            "created_at": "2026-11-02T23:29:11.315835Z",
+            "updated_at": "2026-11-14T20:15:12.504Z",
+            "starred": false,
+            "read": true,
+            "status": "open",
+            "source_url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+            "payload": {
+              "url": "https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
+              "target_type": "conference",
+              "entry_id": "conference-2407011",
+              "field": "url",
+              "label": "算術幾何暑期學校",
+              "http_status": 404
+            },
+            "actions": [
+              {
+                "id": "edit",
+                "label": "前往修改"
+              }
+            ]
+          },
+          {
+            "id": "broken-link-conference-conference-2412181-url-https-ncts-ntu-edu-tw-even-b76b7a1a6a",
+            "key": "broken-link:conference:conference-2412181:url:https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+            "type": "broken_link",
+            "title": "外部連結失效：NCTS 一日工作坊",
+            "message": "url 回傳 HTTP 404：https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+            "created_at": "2026-11-02T23:29:10.098367Z",
+            "updated_at": "2026-11-14T20:14:35.691Z",
+            "starred": false,
+            "read": true,
+            "status": "open",
+            "source_url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+            "payload": {
+              "url": "https://ncts.ntu.edu.tw/events_2_detail.php?nid=478",
+              "target_type": "conference",
+              "entry_id": "conference-2412181",
+              "field": "url",
+              "label": "NCTS 一日工作坊",
+              "http_status": 404
+            },
+            "actions": [
+              {
+                "id": "edit",
+                "label": "前往修改"
+              }
+            ]
+          }
+        ]
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
