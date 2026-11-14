@@ -41,6 +41,8 @@ main a[href]:not(.button):not(.publication-action):not(.activity-link):focus-vis
 }
 .home-actions a{min-height:31px;padding:6px 14px;font-size:12.2px}
 .home-actions a:first-child,.button.primary{background:var(--compact-blue);border-color:var(--compact-blue);color:#fff}
+.home-actions a:first-child{color:#fff!important}
+.home-actions a:first-child:hover,.home-actions a:first-child:focus-visible{color:var(--compact-blue)!important}
 .home-actions a:hover,.button:hover,.pub-links a:hover,.pub-links button:hover,.item-links a:hover{border-color:var(--compact-rust);background:#f4f0e9;color:var(--compact-blue)}
 .home-visual-panel{max-width:270px;margin-left:auto;padding:9px 0 9px 9px;border-left:1px solid #baa99a;border-top:1px solid #baa99a;background:transparent;box-shadow:none}
 .home-portrait{margin:0;background:#fff;box-shadow:0 9px 30px #2a39441c;transform:none}
