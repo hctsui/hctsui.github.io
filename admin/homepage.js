@@ -321,8 +321,8 @@ function layoutEntityChanges(beforeBundle,afterBundle,before,after,specs,kind){
 function layoutPreviewEntityCard(kind,title,status,changes){return`<section class="unified-preview-card"><div class="unified-preview-card-head"><div><span class="preview-kicker">${kind==='page'?'頁面':'類別'}</span><h4>${esc(title)}</h4></div><span class="tag preview-status-${esc(status)}">${status==='added'?'新增':status==='removed'?'刪除':'修改'}</span></div><div class="unified-preview-fields">${changes||'<p class="muted">沒有欄位差異。</p>'}</div></section>`}
 function layoutPreviewHtml(op){
   const before=normalizeLayoutBundle(op.before),after=normalizeLayoutBundle(op.after),pageBefore=new Map(before.pages.map(x=>[x.id,x])),pageAfter=new Map(after.pages.map(x=>[x.id,x])),categoryBefore=new Map(before.categories.map(x=>[x.id,x])),categoryAfter=new Map(after.categories.map(x=>[x.id,x])),items=new Map(layoutItems(effectiveSite()).map(x=>[String(x.id),x]));
-  const pageSpecs=[['name.en','導覽名稱（英文）'],['name.zh','導覽名稱（中文）'],['languages','語言版本'],['path.en','英文網址'],['path.zh','中文網址'],['header.label.en','左上小字（英文）'],['header.label.zh','左上小字（中文）'],['header.title.en','頁面標題（英文）'],['header.title.zh','頁面標題（中文）'],['header.intro.en','簡介（英文）'],['header.intro.zh','簡介（中文）'],['color','頁面主色'],['order','頁面順序']];
-  const categorySpecs=[['label.en','左上小字（英文）'],['label.zh','左上小字（中文）'],['title.en','大標題（英文）'],['title.zh','大標題（中文）'],['intro.en','簡介（英文）'],['intro.zh','簡介（中文）'],['page_id','所在頁面'],['kind','顯示風格'],['show_on_web','顯示於網站'],['show_on_cv','顯示於 PDF 履歷'],['order','類別順序']];
+  const pageSpecs=[['name.en','導覽名稱（英文）'],['name.zh','導覽名稱（中文）'],['languages','語言版本'],['path.en','英文網址'],['path.zh','中文網址'],['header.title.en','頁面標題（英文）'],['header.title.zh','頁面標題（中文）'],['header.intro.en','簡介（英文）'],['header.intro.zh','簡介（中文）'],['color','頁面主色'],['order','頁面順序']];
+  const categorySpecs=[['title.en','大標題（英文）'],['title.zh','大標題（中文）'],['intro.en','簡介（英文）'],['intro.zh','簡介（中文）'],['page_id','所在頁面'],['kind','顯示風格'],['show_on_web','顯示於網站'],['show_on_cv','顯示於 PDF 履歷'],['order','類別順序']];
   const pageCards=[];for(const id of new Set([...pageBefore.keys(),...pageAfter.keys()])){const b=pageBefore.get(id),a=pageAfter.get(id);if(homepageSignature(b)===homepageSignature(a))continue;pageCards.push(layoutPreviewEntityCard('page',a?.name?.zh||a?.name?.en||b?.name?.zh||b?.name?.en||id,!b?'added':!a?'removed':'changed',layoutEntityChanges(before,after,b,a,pageSpecs,'page')))}
   const categoryCards=[];for(const id of new Set([...categoryBefore.keys(),...categoryAfter.keys()])){const b=categoryBefore.get(id),a=categoryAfter.get(id);if(homepageSignature(b)===homepageSignature(a))continue;categoryCards.push(layoutPreviewEntityCard('category',categoryName(a||b),!b?'added':!a?'removed':'changed',layoutEntityChanges(before,after,b,a,categorySpecs,'category')))}
   const assignmentRows=[];for(const id of new Set([...Object.keys(before.assignments),...Object.keys(after.assignments)])){const b=before.assignments[id],a=after.assignments[id];if(homepageSignature(b)===homepageSignature(a))continue;assignmentRows.push(`<div class="unified-preview-move"><strong>${esc(itemName(items.get(id))||id)}</strong><div><span>${esc(layoutPosition(before,b))}</span><span class="preview-arrow">→</span><span>${esc(layoutPosition(after,a))}</span></div></div>`)}
@@ -533,7 +533,7 @@ openEditor=function(type,record,options={}){
 
 const homepageBaseCategoryFormHtml=categoryFormHtml;
 categoryFormHtml=function(category){
-  return homepageBaseCategoryFormHtml(category).replace('<div class="notice">類別是頁面中的一個大區塊。左上小字、大標題與簡介都可分別填寫中英文。</div>','<p class="field-hint compact-layout-hint">類別是頁面中的一個大區塊；左上小字、大標題與簡介可分別填寫中英文。</p>');
+  return homepageBaseCategoryFormHtml(category).replace('<div class="notice">類別是頁面中的一個大區塊。標題與簡介可分別填寫中英文。</div>','<p class="field-hint compact-layout-hint">類別標題與簡介可分別填寫中英文。</p>');
 };
 
 

@@ -90,8 +90,7 @@ def role_badge(entry: dict[str, Any], lang: str) -> str:
     role = plain_value(entry, "role", lang).strip()
     if not role or role.casefold() == "participant" or role == "一般參與者":
         return ""
-    label = "身分" if lang == "zh" else "Role"
-    return f'<p class="activity-role"><span>{label}</span>{rich_html(role)}</p>'
+    return f'<span class="role-note">{rich_html(role)}</span>'
 
 
 def render_activity(entry: dict[str, Any], lang: str) -> str:
@@ -506,12 +505,10 @@ def render_site_navigation(
     home_href = _navigation_href(data, home_page, lang, absolute=absolute, current_path=current_path) if home_page else ""
     if home_href and navigation_settings.get("show_contact_shortcut", True):
         contact_label = "聯絡" if lang == "zh" else "Contact"
-        if current_page_id == "contact":
-            contact_path = "zh/contact.html" if lang == "zh" else "contact.html"
-            contact_href = _absolute_url(settings["seo"]["base_url"], contact_path) if absolute else (_relative_page_href(contact_path, current_path) if current_path else "contact.html")
-            links.append(f'<a class="active" aria-current="page" data-nav="contact" href="{esc(contact_href)}">{contact_label}</a>')
-        else:
-            links.append(f'<a data-nav="contact" href="{esc(home_href)}#contact">{contact_label}</a>')
+        contact_path = "zh/contact.html" if lang == "zh" else "contact.html"
+        contact_href = _absolute_url(settings["seo"]["base_url"], contact_path) if absolute else (_relative_page_href(contact_path, current_path) if current_path else "contact.html")
+        attrs = ' class="active" aria-current="page"' if current_page_id == "contact" else ""
+        links.append(f'<a{attrs} data-nav="contact" href="{esc(contact_href)}">{contact_label}</a>')
 
     if navigation_settings.get("search_enabled", True):
         placeholder = navigation_settings["search_placeholder"][lang]
@@ -625,6 +622,21 @@ def render_contact(items: list[dict[str, Any]], lang: str, *, extra_card: str = 
     return '<div class="contact-grid">' + "".join(cards) + '</div>'
 
 
+def managed_contact_items(data: dict[str, Any]) -> list[dict[str, Any]]:
+    """Prefer current managed contacts when legacy aliases contain the same details."""
+    items = [x for x in data.get("profile_items", []) if x.get("type") == "contact" and x.get("category_id") == "personal-profile"]
+    items.sort(key=lambda x: int(x.get("order", 0)))
+    seen: set[str] = set()
+    unique = []
+    for item in items:
+        key = (str(item.get("url") or "").strip() or plain_value(item, "description", "en").strip()).casefold()
+        if key and key in seen:
+            continue
+        seen.add(key)
+        unique.append(item)
+    return unique
+
+
 def contact_form_home_card(data: dict[str, Any], lang: str) -> str:
     config = current_site_settings(data).get("contact_form", {})
     if not config.get("enabled"):
@@ -677,9 +689,8 @@ def category_body(data: dict[str, Any], category: dict[str, Any], lang: str, tod
 
 def render_category(data: dict[str, Any], category: dict[str, Any], lang: str, today: date, index: int) -> str:
     body, count = category_body(data, category, lang, today)
-    if count == 0 and category["kind"] not in {"contact"}:
+    if count == 0:
         return ""
-    label = rich_html(category.get("label", {}).get(lang, ""))
     title = rich_html(category.get("title", {}).get(lang, ""))
     intro = rich_html(category.get("intro", {}).get(lang, ""))
     cid = esc(category["id"])
@@ -689,7 +700,7 @@ def render_category(data: dict[str, Any], category: dict[str, Any], lang: str, t
         classes += " contact-section"
     return (
         f'<section class="{classes}" data-category-id="{cid}" id="{cid}"><div class="container">'
-        f'<p class="section-label">{label}</p><h2>{title}</h2>{f"<p class=\"section-intro\">{intro}</p>" if intro else ""}{body}</div></section>'
+        f'<h2>{title}</h2>{f"<p class=\"section-intro\">{intro}</p>" if intro else ""}{body}</div></section>'
     )
 
 
@@ -701,7 +712,6 @@ def render_home_overview_panel(
 ) -> str:
     """Render the two legacy homepage columns from managed category data."""
     items = category_items(data, category, today)
-    label = rich_html(category.get("label", {}).get(lang, ""))
     title = rich_html(category.get("title", {}).get(lang, ""))
     intro = rich_html(category.get("intro", {}).get(lang, ""))
     cid = esc(category["id"])
@@ -712,7 +722,7 @@ def render_home_overview_panel(
         return (
             f'<div class="home-publications managed-category category-featured_publications" '
             f'data-category-id="{cid}" id="{cid}"><div class="home-section-head"><div>'
-            f'<p class="section-label">{label}</p><h2>{title}</h2></div>'
+            f'<h2>{title}</h2></div>'
             f'<a class="text-link" href="publications.html">{link_text}</a></div>{intro_html}'
             f'<ol class="publication-list" id="latest-publications">\n'
             f'<!-- CMS:HOME_PUBLICATIONS:START -->\n{entries}\n'
@@ -722,7 +732,7 @@ def render_home_overview_panel(
     link_text = "所有活動 →" if lang == "zh" else "All activities →"
     return (
         f'<aside class="home-upcoming managed-category category-upcoming" '
-        f'data-category-id="{cid}" id="{cid}"><p class="section-label">{label}</p>'
+        f'data-category-id="{cid}" id="{cid}">'
         f'<h2>{title}</h2>{intro_html}<div class="timeline">\n'
         f'<!-- CMS:UPCOMING:START -->\n{entries}\n'
         f'<!-- CMS:UPCOMING:END -->\n</div>'
@@ -807,17 +817,18 @@ def apply_contact_page_design(text: str, design: dict[str, Any]) -> str:
 def render_contact_page_main(data: dict[str, Any], lang: str) -> str:
     config = current_site_settings(data)["contact_form"]
     design = config["page_design"]
-    eyebrow = rich_html(design["eyebrow"][lang])
     title = rich_html(design["title"][lang])
-    description = rich_html(design["description"][lang])
     form = render_contact_form(data, lang)
+    details = managed_contact_items(data)
+    details_title = "聯絡方式" if lang == "zh" else "Get in touch"
     if not form:
         unavailable = "聯絡表單目前尚未開放。" if lang == "zh" else "The contact form is currently unavailable."
         form = f'<div class="contact-form-unavailable">{esc(unavailable)}</div>'
     return (
         '<section class="contact-page-hero"><div class="container">'
-        f'<p class="section-label">{eyebrow}</p><h1>{title}</h1><p>{description}</p>'
+        f'<h1>{title}</h1>'
         '</div></section>'
+        f'<section class="contact-details-section"><div class="container"><h2>{details_title}</h2>{render_contact(details, lang)}</div></section>'
         '<section class="contact-page-section"><div class="container contact-page-container">'
         f'{form}</div></section>'
     )
@@ -831,7 +842,8 @@ def render_home_contact(
 ) -> str:
     """Keep the original split contact layout and its public #contact anchor."""
     items = category_items(data, category, today)
-    label = rich_html(category.get("label", {}).get(lang, ""))
+    if not items:
+        items = managed_contact_items(data)
     title = rich_html(category.get("title", {}).get(lang, ""))
     intro = rich_html(category.get("intro", {}).get(lang, ""))
     cid = esc(category["id"])
@@ -839,7 +851,7 @@ def render_home_contact(
     return (
         f'<section class="section managed-category category-contact contact-section" '
         f'data-category-id="{cid}" id="contact"><div class="container split"><div>'
-        f'<p class="section-label">{label}</p><h2>{title}</h2>{intro_html}</div>'
+        f'<h2>{title}</h2>{intro_html}</div>'
         f'<div>{render_contact(items, lang, extra_card=contact_form_home_card(data, lang))}</div></div></section>'
     )
 
@@ -896,12 +908,11 @@ def render_home_sections(
     return "".join(rendered)
 
 
-def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
+def page_header(data: dict[str, Any], page_id: str, lang: str, visible_categories: list[tuple[dict[str, Any], int]] | None = None) -> str:
     page = next(p for p in normalized_pages(data) if p["id"] == page_id)
     header = page.get("header")
     if not header:
         return ""
-    label = rich_html(header["label"][lang])
     title = rich_html(header["title"][lang])
     intro = rich_html(header["intro"][lang])
     download = ""
@@ -909,7 +920,18 @@ def page_header(data: dict[str, Any], page_id: str, lang: str) -> str:
         href = "https://hctsui.org/files/Hung-Chun-Tsui-CV-zh.pdf" if lang == "zh" else "https://hctsui.org/files/Hung-Chun-Tsui-CV.pdf"
         text = "下載 PDF 履歷" if lang == "zh" else "Download PDF CV"
         download = f'<a class="button primary cv-download" href="{href}" rel="noopener" target="_blank">{text}</a>'
-    return f'<section class="page-hero"><div class="container"><p class="section-label">{label}</p><h1 class="page-title">{title}</h1><p class="page-intro">{intro}</p>{download}</div></section>'
+    intro_html = f'<p class="page-intro">{intro}</p>' if page_id not in {"cv", "publications", "activities", "teaching"} and intro else ""
+    jumps = ""
+    if page_id not in {"home", "cv", "contact"} and visible_categories:
+        links = "".join(
+            f'<a href="#{esc(category["id"])}">{rich_html(category["title"].get(lang, ""))}'
+            f'<span class="jump-count">{count}</span></a>'
+            for category, count in visible_categories if count
+        )
+        if links:
+            label = "頁面區段" if lang == "zh" else "Page sections"
+            jumps = f'<nav class="section-jumps" aria-label="{label}">{links}</nav>'
+    return f'<section class="page-hero"><div class="container"><h1 class="page-title">{title}</h1>{intro_html}{download}{jumps}</div></section>'
 
 
 def _course_pair(row: dict[str, Any], field: str, lang: str) -> str:
@@ -1315,6 +1337,9 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
     }
     for pattern, replacement in patterns.items():
         text = re.sub(pattern, replacement, text)
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115">'
+    if 'assets/compact.css' not in text:
+        text = text.replace('</head>', compact + '\n</head>', 1)
     return text
 
 
@@ -1335,6 +1360,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261115")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.svg")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))
@@ -1357,7 +1383,6 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
           <main class="not-found-main" id="main-{lang}">
             <section class="not-found-card">
               <div class="not-found-code">404</div>
-              <p class="not-found-eyebrow">{esc(error["eyebrow"][lang])}</p>
               <h1>{esc(error["title"][lang])}</h1>
               <p class="not-found-description">{esc(error["description"][lang])}</p>
               {redirect}
@@ -1397,6 +1422,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     .not-found-language .site-footer{{margin-top:auto}}
     .nav-language-button{{font:inherit;cursor:pointer}}
   </style>
+  <link rel="stylesheet" href="{esc(compact_url)}">
 </head>
 <body data-page="404">
   {language_panel("en")}
@@ -1453,9 +1479,10 @@ def build(today: date, update_date: bool = True) -> list[Path]:
             elif page.get("page_type") == "course":
                 content = render_course_page(data, page, lang)
             else:
-                rendered = [render_category(data, c, lang, today, i) for i, c in enumerate(categories)]
-                sections = "".join(x for x in rendered if x)
-                content = page_header(data, page_id, lang) + sections
+                rendered = [(c, render_category(data, c, lang, today, i)) for i, c in enumerate(categories)]
+                sections = "".join(markup for _, markup in rendered if markup)
+                visible = [(c, len(category_items(data, c, today))) for c, markup in rendered if markup]
+                content = page_header(data, page_id, lang, visible) + sections
             new = replace_main(old, content)
             new = replace_navigation(new, data, page_id, lang, rel)
             new = apply_static_asset_paths(new, lang, rel)

@@ -283,15 +283,16 @@ def normalized_categories(data: dict[str, Any]) -> list[dict[str, Any]]:
         cid = str(source.get("id") or "").strip()
         kind = str(source.get("kind") or "generic").strip()
         page_id = str(source.get("page_id") or "cv").strip()
-        if not cid or cid in seen or kind not in ALL_CATEGORY_KINDS or page_id not in page_ids:
+        internal = (page_id, kind) in {("personal-profile", "mixed"), ("pdf-cv", "personal")}
+        if not cid or cid in seen or (kind not in ALL_CATEGORY_KINDS and not internal) or (page_id not in page_ids and not internal):
             continue
         seen.add(cid)
         result.append({
             "id": cid,
             "page_id": page_id,
             "kind": kind,
-            "label": pair(source.get("label"), CATEGORY_KIND_LABELS[kind]),
-            "title": pair(source.get("title"), CATEGORY_KIND_LABELS[kind]),
+            "label": pair(source.get("label"), CATEGORY_KIND_LABELS.get(kind, {"en": "Profile", "zh": "個人資料"})),
+            "title": pair(source.get("title"), CATEGORY_KIND_LABELS.get(kind, {"en": "Profile", "zh": "個人資料"})),
             "intro": pair(source.get("intro")),
             "order": int(source.get("order", index)),
             "show_on_web": bool(source.get("show_on_web", True)),
@@ -443,7 +444,7 @@ def validate_category_data(data: dict[str, Any]) -> None:
                 if not str(page.get(field, {}).get(lang) or "").strip():
                     raise ValueError(f"Page {page['id']} {field}.{lang} cannot be blank.")
         if page.get("header"):
-            for field in ("label", "title"):
+            for field in ("title",):
                 for lang in languages:
                     if not str(page["header"].get(field, {}).get(lang) or "").strip():
                         raise ValueError(f"Page {page['id']} header.{field}.{lang} cannot be blank.")
@@ -477,6 +478,8 @@ def validate_category_data(data: dict[str, Any]) -> None:
         raise ValueError("settings.categories contains duplicate IDs.")
     page_set = set(page_ids)
     for category in categories:
+        if category["page_id"] in {"personal-profile", "pdf-cv"} and not category.get("show_on_web"):
+            continue
         if category["page_id"] not in page_set:
             raise ValueError(f"Category {category['id']} refers to an unknown page.")
         page = next(row for row in pages if row["id"] == category["page_id"])
@@ -484,7 +487,7 @@ def validate_category_data(data: dict[str, Any]) -> None:
             raise ValueError(f"Category {category['id']} cannot be placed on a course page.")
         if category["kind"] not in ALL_CATEGORY_KINDS:
             raise ValueError(f"Category {category['id']} has an unsupported kind.")
-        for field in ("label", "title"):
+        for field in ("title",):
             for lang in ("en", "zh"):
                 if not str(category.get(field, {}).get(lang) or "").strip():
                     raise ValueError(f"Category {category['id']} {field}.{lang} cannot be blank.")
