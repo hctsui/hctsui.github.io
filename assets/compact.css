@@ -189,8 +189,10 @@ body,body[data-page]{font-size:13.5px;line-height:1.46;color:var(--compact-body)
 .home-affiliation{margin:7px 0 0;color:#71808a;font-size:11px;line-height:1.45}
 .home-actions{margin-top:16px}
 .home-actions a,.home-actions a:first-child,.button.primary,.pub-links a,.pub-links button,.item-links a,.social-links a{min-height:27px;background:#304858;border:1px solid #304858;border-radius:3px;color:#fff!important;font-size:11px;font-weight:700;box-shadow:none}
+.pub-links > .publication-action,.home-publications .pub-links > .publication-action{min-height:25px;padding:5px 10px;background:#304858;border:1px solid #304858;border-radius:3px;color:#fff!important;font-size:10.5px;font-weight:700}
 .home-actions a{min-height:29px;padding:6px 13px;font-size:11.5px}
 .home-actions a:hover,.home-actions a:first-child:hover,.button.primary:hover,.pub-links a:hover,.pub-links button:hover,.item-links a:hover,.social-links a:hover{background:#426275;border-color:#426275;color:#fff!important}
+.pub-links > .publication-action:hover,.pub-links > .publication-action:focus-visible,.pub-links > .publication-action[aria-expanded="true"],.home-publications .pub-links > .publication-action:hover,.home-publications .pub-links > .publication-action:focus-visible,.home-publications .pub-links > .publication-action[aria-expanded="true"]{background:#426275;border-color:#426275;color:#fff!important}
 .home-visual-panel{max-width:248px;border-left:1px solid #c5d1d4;border-top:1px solid #c5d1d4;padding:9px 0 9px 9px}.home-portrait img{height:184px}.home-portrait figcaption{font-size:10.5px}
 .home-overview{padding:28px 0 34px}.home-overview-grid{gap:40px}
 .home-section-head{margin-bottom:12px}.home-section-head h2,.home-upcoming h2,.contact-section h2{font-size:26px}
