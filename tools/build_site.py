@@ -90,7 +90,9 @@ def role_badge(entry: dict[str, Any], lang: str) -> str:
     role = plain_value(entry, "role", lang).strip()
     if not role or role.casefold() == "participant" or role == "一般參與者":
         return ""
-    return f'<span class="role-note">{rich_html(role)}</span>'
+    # A non-breaking space keeps the final title word with its role label,
+    # even when a long conference name wraps in the homepage sidebar.
+    return f'&#160;<span class="role-note">{rich_html(role)}</span>'
 
 
 def render_activity(entry: dict[str, Any], lang: str) -> str:
