@@ -65,6 +65,11 @@ class CompactDesignTests(unittest.TestCase):
             "id": "new-item", "type": "generic", "category_id": "activity-new",
             "order": 0, "title": {"en": "A new entry", "zh": "新項目"},
         })
+        # Keep this category empty even when the live CMS has organization entries.
+        data["activities"] = [
+            item for item in data["activities"]
+            if item.get("category_id") != "activity-organization"
+        ]
         today = date(2026, 11, 15)
         visible = []
         for index, category in enumerate(categories_for_page(data, "activities")):
