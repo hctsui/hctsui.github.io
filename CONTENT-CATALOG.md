@@ -71,6 +71,12 @@
 | talk | On $q$-shuffle Relations for Multiple Eisenstein Series in Positive Characteristic | 正特徵多重 Eisenstein 級數的 $q$-洗牌關係 | `talk-2509031` |
 | talk | On the Uniqueness of $v$-adic Gamma Functions in the Gross–Koblitz–Thakur Formulas | Gross–Koblitz–Thakur 公式中 $v$-進 Gamma 函數的唯一性 | `talk-2504171` |
 
+### Organization / 學術活動籌辦
+
+| Type | English title | 中文名稱 | Entry ID |
+|---|---|---|---|
+| organization | East Asia Core Doctoral Forum on Mathematics 2027 | 2027 東亞數學博士論壇 | `organization-2700001` |
+
 ### Conferences and Workshops / 會議與工作坊
 
 | Type | English title | 中文名稱 | Entry ID |

@@ -1146,7 +1146,7 @@
       "honor": 4,
       "talk": 0,
       "conference": 0,
-      "organization": 0,
+      "organization": 1,
       "interest": 3,
       "education": 2,
       "contact": 3,
@@ -2620,6 +2620,64 @@
         "zh": "講者 · 學生協辦人"
       },
       "order": 3
+    },
+    {
+      "type": "organization",
+      "category_id": "activity-organization",
+      "organization_kind": {
+        "en": "Conference",
+        "zh": "會議"
+      },
+      "role": {
+        "en": "Student Organizer",
+        "zh": "學生協辦人"
+      },
+      "start_date": "2027-01-11",
+      "end_date": "2027-01-14",
+      "title": {
+        "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+        "zh": "2027 東亞數學博士論壇"
+      },
+      "venue": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "city": {
+        "en": "Sendai",
+        "zh": "仙台"
+      },
+      "country": {
+        "en": "Japan",
+        "zh": "日本"
+      },
+      "url": "https://www.math.tohoku.ac.jp/~fujie/EACDFM2027.html",
+      "description": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "description_html": {
+        "en": "Tohoku University, Sendai, Japan",
+        "zh": "東北大學, 仙台, 日本"
+      },
+      "title_html": {
+        "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+        "zh": "2027 東亞數學博士論壇"
+      },
+      "id": "organization-2700001",
+      "display_placements": [],
+      "venue_html": {
+        "en": "Tohoku University",
+        "zh": "東北大學"
+      },
+      "role_html": {
+        "en": "Student Organizer",
+        "zh": "學生協辦人"
+      },
+      "organization_kind_html": {
+        "en": "Conference",
+        "zh": "會議"
+      },
+      "order": 0
     }
   ],
   "honors": [

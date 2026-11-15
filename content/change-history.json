@@ -2554,6 +2554,2058 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-157-op-1",
+      "batch_issue": 157,
+      "applied_at": "2026-11-15T18:07:50.301924Z",
+      "expires_at": "2026-11-22T18:07:50.301924Z",
+      "reverted_by": null,
+      "request_digest": "5a608a468a356d935b57a659ea5b94152d5f8badbda2507100070db76282e310",
+      "request_action": "add",
+      "action": "add",
+      "type": "organization",
+      "entry_id": "organization-2700001",
+      "label": {
+        "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+        "zh": "2027 東亞數學博士論壇"
+      },
+      "before": null,
+      "after": {
+        "type": "organization",
+        "category_id": "activity-organization",
+        "organization_kind": {
+          "en": "Conference",
+          "zh": "會議"
+        },
+        "role": {
+          "en": "Student Organizer",
+          "zh": "學生協辦人"
+        },
+        "start_date": "2027-01-11",
+        "end_date": "2027-01-14",
+        "title": {
+          "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+          "zh": "2027 東亞數學博士論壇"
+        },
+        "venue": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "city": {
+          "en": "Sendai",
+          "zh": "仙台"
+        },
+        "country": {
+          "en": "Japan",
+          "zh": "日本"
+        },
+        "url": "https://www.math.tohoku.ac.jp/~fujie/EACDFM2027.html",
+        "description": {
+          "en": "Tohoku University, Sendai, Japan",
+          "zh": "東北大學, 仙台, 日本"
+        },
+        "description_html": {
+          "en": "Tohoku University, Sendai, Japan",
+          "zh": "東北大學, 仙台, 日本"
+        },
+        "title_html": {
+          "en": "East Asia Core Doctoral Forum on Mathematics 2027",
+          "zh": "2027 東亞數學博士論壇"
+        },
+        "id": "organization-2700001",
+        "display_placements": [],
+        "venue_html": {
+          "en": "Tohoku University",
+          "zh": "東北大學"
+        },
+        "role_html": {
+          "en": "Student Organizer",
+          "zh": "學生協辦人"
+        },
+        "organization_kind_html": {
+          "en": "Conference",
+          "zh": "會議"
+        }
+      },
+      "index_before": null,
+      "index_after": 37,
+      "undo_of": null
+    },
+    {
+      "history_id": "issue-157-op-2",
+      "batch_issue": 157,
+      "applied_at": "2026-11-15T18:07:50.301924Z",
+      "expires_at": "2026-11-22T18:07:50.301924Z",
+      "reverted_by": null,
+      "request_digest": "5b47c20557b5a6b3b76a4bb2037d4e25de5713449a82a9f6c2c10e53a4971863",
+      "request_action": "layout",
+      "action": "layout",
+      "type": "layout",
+      "entry_id": "layout",
+      "label": {
+        "en": "Page and category layout",
+        "zh": "頁面與類別"
+      },
+      "before": {
+        "pages": [
+          {
+            "id": "home",
+            "name": {
+              "en": "Home",
+              "zh": "首頁"
+            },
+            "path": {
+              "en": "index.html",
+              "zh": "zh/index.html"
+            },
+            "header": null,
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 0,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "cv",
+            "name": {
+              "en": "CV",
+              "zh": "履歷"
+            },
+            "path": {
+              "en": "cv.html",
+              "zh": "zh/cv.html"
+            },
+            "header": {
+              "label": {
+                "en": "Academic profile",
+                "zh": "學術資料"
+              },
+              "title": {
+                "en": "Curriculum Vitae",
+                "zh": "履歷"
+              },
+              "intro": {
+                "en": "Education, research interests, and honors.",
+                "zh": "學歷、研究領域與獎項"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 1,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "publications",
+            "name": {
+              "en": "Publications",
+              "zh": "論文"
+            },
+            "path": {
+              "en": "publications.html",
+              "zh": "zh/publications.html"
+            },
+            "header": {
+              "label": {
+                "en": "Research record",
+                "zh": "研究紀錄"
+              },
+              "title": {
+                "en": "Publications and Preprints",
+                "zh": "論文與預印本"
+              },
+              "intro": {
+                "en": "A complete list of current papers and preprints.",
+                "zh": "論文與預印本的完整列表"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 2,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "activities",
+            "name": {
+              "en": "Activities",
+              "zh": "學術活動"
+            },
+            "path": {
+              "en": "activities.html",
+              "zh": "zh/activities.html"
+            },
+            "header": {
+              "label": {
+                "en": "Academic record",
+                "zh": "學術紀錄"
+              },
+              "title": {
+                "en": "Activities",
+                "zh": "學術活動"
+              },
+              "intro": {
+                "en": "Academic visits, presentations, conferences and workshops.",
+                "zh": "學術訪問、學術報告、會議與工作坊"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 3,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "teaching",
+            "name": {
+              "en": "Teaching",
+              "zh": "教學"
+            },
+            "path": {
+              "en": "teaching.html",
+              "zh": "zh/teaching.html"
+            },
+            "header": {
+              "label": {
+                "en": "Teaching record",
+                "zh": "教學紀錄"
+              },
+              "title": {
+                "en": "Teaching Experience",
+                "zh": "教學經歷"
+              },
+              "intro": {
+                "en": "Teaching and course-assistant experience.",
+                "zh": "教學與課程助教經歷"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 4,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "pdf-cv",
+            "name": {
+              "en": "PDF CV",
+              "zh": "PDF 履歷"
+            },
+            "path": {
+              "en": "",
+              "zh": ""
+            },
+            "languages": [
+              "en",
+              "zh"
+            ],
+            "header": null,
+            "color": "#735748",
+            "show_in_navigation": false,
+            "order": 9000,
+            "virtual": true,
+            "virtual_kind": "pdf_cv"
+          },
+          {
+            "id": "personal-profile",
+            "name": {
+              "en": "Personal Information",
+              "zh": "個人資料"
+            },
+            "path": {
+              "en": "",
+              "zh": ""
+            },
+            "languages": [
+              "en",
+              "zh"
+            ],
+            "header": null,
+            "color": "#675c83",
+            "show_in_navigation": false,
+            "order": 9001,
+            "virtual": true,
+            "virtual_kind": "personal_profile"
+          }
+        ],
+        "categories": [
+          {
+            "id": "home-publications",
+            "page_id": "home",
+            "kind": "featured_publications",
+            "label": {
+              "en": "Recent work",
+              "zh": "近期成果"
+            },
+            "title": {
+              "en": "Selected Publications",
+              "zh": "精選論文"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": false
+          },
+          {
+            "id": "home-upcoming",
+            "page_id": "home",
+            "kind": "upcoming",
+            "label": {
+              "en": "Calendar",
+              "zh": "行程"
+            },
+            "title": {
+              "en": "Upcoming",
+              "zh": "近期活動"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": false
+          },
+          {
+            "id": "home-contact",
+            "page_id": "home",
+            "kind": "contact",
+            "label": {
+              "en": "Contact",
+              "zh": "聯絡資訊"
+            },
+            "title": {
+              "en": "Get in touch",
+              "zh": "聯絡"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": false
+          },
+          {
+            "id": "cv-research",
+            "page_id": "cv",
+            "kind": "interest",
+            "label": {
+              "en": "Fields",
+              "zh": "研究方向"
+            },
+            "title": {
+              "en": "Research Interests",
+              "zh": "研究領域"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "cv-education",
+            "page_id": "cv",
+            "kind": "education",
+            "label": {
+              "en": "Degrees",
+              "zh": "學位"
+            },
+            "title": {
+              "en": "Education",
+              "zh": "學歷"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "cv-honors",
+            "page_id": "cv",
+            "kind": "honor",
+            "label": {
+              "en": "Recognition",
+              "zh": "獎助紀錄"
+            },
+            "title": {
+              "en": "Honors and Awards",
+              "zh": "獎項與榮譽"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "publication-journal-articles",
+            "page_id": "publications",
+            "kind": "publication",
+            "label": {
+              "en": "Manuscript type",
+              "zh": "稿件類型"
+            },
+            "title": {
+              "en": "Journal Articles",
+              "zh": "期刊論文"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "publication-preprints",
+            "page_id": "publications",
+            "kind": "publication",
+            "label": {
+              "en": "Manuscript type",
+              "zh": "稿件類型"
+            },
+            "title": {
+              "en": "Preprints",
+              "zh": "預印本"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "publication-survey-papers",
+            "page_id": "publications",
+            "kind": "publication",
+            "label": {
+              "en": "Manuscript type",
+              "zh": "稿件類型"
+            },
+            "title": {
+              "en": "Survey Papers",
+              "zh": "綜述論文"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-visits",
+            "page_id": "activities",
+            "kind": "visit",
+            "label": {
+              "en": "Visit",
+              "zh": "訪問經歷"
+            },
+            "title": {
+              "en": "Academic Visits",
+              "zh": "學術訪問"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-talks",
+            "page_id": "activities",
+            "kind": "talk",
+            "label": {
+              "en": "Talks",
+              "zh": "演講紀錄"
+            },
+            "title": {
+              "en": "Presentations",
+              "zh": "學術報告"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-organization",
+            "page_id": "activities",
+            "kind": "organization",
+            "label": {
+              "en": "Organizing Experience",
+              "zh": "籌辦經歷"
+            },
+            "title": {
+              "en": "Organization",
+              "zh": "學術活動籌辦"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-conferences",
+            "page_id": "activities",
+            "kind": "conference",
+            "label": {
+              "en": "Participation",
+              "zh": "參與紀錄"
+            },
+            "title": {
+              "en": "Conferences and Workshops",
+              "zh": "會議與工作坊"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 3,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "teaching-national-tsing-hua-university",
+            "page_id": "teaching",
+            "kind": "teaching",
+            "label": {
+              "en": "Institution",
+              "zh": "機構"
+            },
+            "title": {
+              "en": "National Tsing Hua University",
+              "zh": "國立清華大學"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "cv-personal",
+            "page_id": "pdf-cv",
+            "kind": "personal",
+            "label": {
+              "en": "Details",
+              "zh": "個人資料"
+            },
+            "title": {
+              "en": "Personal Information",
+              "zh": "個人資訊"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": false,
+            "show_on_cv": true
+          },
+          {
+            "id": "personal-profile",
+            "page_id": "personal-profile",
+            "kind": "mixed",
+            "label": {
+              "en": "Profile",
+              "zh": "個人資料"
+            },
+            "title": {
+              "en": "Personal Information",
+              "zh": "個人資料"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": false,
+            "show_on_cv": false
+          }
+        ],
+        "cv_category_order": [
+          "cv-research",
+          "cv-education",
+          "publication-journal-articles",
+          "publication-preprints",
+          "publication-survey-papers",
+          "activity-visits",
+          "activity-talks",
+          "activity-organization",
+          "cv-honors",
+          "activity-conferences",
+          "teaching-national-tsing-hua-university",
+          "cv-personal"
+        ],
+        "assignments": {
+          "interest-2600001": {
+            "category_id": "cv-research",
+            "order": 0
+          },
+          "interest-2600003": {
+            "category_id": "cv-research",
+            "order": 2
+          },
+          "education-2500002": {
+            "category_id": "cv-education",
+            "order": 0
+          },
+          "education-2100001": {
+            "category_id": "cv-education",
+            "order": 1
+          },
+          "personal-2600004": {
+            "category_id": "personal-profile",
+            "order": 6
+          },
+          "personal-2600005": {
+            "category_id": "personal-profile",
+            "order": 7
+          },
+          "personal-2600006": {
+            "category_id": "personal-profile",
+            "order": 8
+          },
+          "personal-2600007": {
+            "category_id": "personal-profile",
+            "order": 9
+          },
+          "personal-2600008": {
+            "category_id": "personal-profile",
+            "order": 10
+          },
+          "contact-2600001": {
+            "category_id": "personal-profile",
+            "order": 3
+          },
+          "contact-2600002": {
+            "category_id": "personal-profile",
+            "order": 4
+          },
+          "personal-2600002": {
+            "category_id": "personal-profile",
+            "order": 1
+          },
+          "contact-2600003": {
+            "category_id": "personal-profile",
+            "order": 5
+          },
+          "personal-2600001": {
+            "category_id": "personal-profile",
+            "order": 0
+          },
+          "personal-2600003": {
+            "category_id": "personal-profile",
+            "order": 2
+          },
+          "interest-2600002": {
+            "category_id": "cv-research",
+            "order": 1
+          },
+          "honor-26392004": {
+            "category_id": "cv-honors",
+            "order": 0
+          },
+          "honor-25158003": {
+            "category_id": "cv-honors",
+            "order": 1
+          },
+          "honor-24158001": {
+            "category_id": "cv-honors",
+            "order": 2
+          },
+          "honor-24158002": {
+            "category_id": "cv-honors",
+            "order": 3
+          },
+          "publication-2504001": {
+            "category_id": "publication-preprints",
+            "order": 6
+          },
+          "publication-2504002": {
+            "category_id": "publication-preprints",
+            "order": 5
+          },
+          "publication-2603003": {
+            "category_id": "publication-preprints",
+            "order": 4
+          },
+          "publication-2604004": {
+            "category_id": "publication-journal-articles",
+            "order": 0
+          },
+          "publication-2609005": {
+            "category_id": "publication-preprints",
+            "order": 3
+          },
+          "publication-2609006": {
+            "category_id": "publication-preprints",
+            "order": 2
+          },
+          "publication-2609007": {
+            "category_id": "publication-preprints",
+            "order": 1
+          },
+          "publication-2610008": {
+            "category_id": "publication-preprints",
+            "order": 0
+          },
+          "visit-2607001": {
+            "category_id": "activity-visits",
+            "order": 0
+          },
+          "talk-2607061": {
+            "category_id": "activity-talks",
+            "order": 2
+          },
+          "talk-2606121": {
+            "category_id": "activity-talks",
+            "order": 3
+          },
+          "talk-2602081": {
+            "category_id": "activity-talks",
+            "order": 4
+          },
+          "talk-2509301": {
+            "category_id": "activity-talks",
+            "order": 5
+          },
+          "talk-2509031": {
+            "category_id": "activity-talks",
+            "order": 6
+          },
+          "talk-2504171": {
+            "category_id": "activity-talks",
+            "order": 7
+          },
+          "conference-2607181": {
+            "category_id": "activity-conferences",
+            "order": 8
+          },
+          "conference-2607071": {
+            "category_id": "activity-conferences",
+            "order": 9
+          },
+          "conference-2606111": {
+            "category_id": "activity-conferences",
+            "order": 10
+          },
+          "conference-2602081": {
+            "category_id": "activity-conferences",
+            "order": 11
+          },
+          "conference-2601211": {
+            "category_id": "activity-conferences",
+            "order": 12
+          },
+          "conference-2512151": {
+            "category_id": "activity-conferences",
+            "order": 13
+          },
+          "conference-2509291": {
+            "category_id": "activity-conferences",
+            "order": 14
+          },
+          "conference-2509011": {
+            "category_id": "activity-conferences",
+            "order": 15
+          },
+          "conference-2508251": {
+            "category_id": "activity-conferences",
+            "order": 16
+          },
+          "conference-2506301": {
+            "category_id": "activity-conferences",
+            "order": 17
+          },
+          "conference-2506251": {
+            "category_id": "activity-conferences",
+            "order": 18
+          },
+          "conference-2502171": {
+            "category_id": "activity-conferences",
+            "order": 20
+          },
+          "conference-2502101": {
+            "category_id": "activity-conferences",
+            "order": 21
+          },
+          "conference-2501141": {
+            "category_id": "activity-conferences",
+            "order": 22
+          },
+          "conference-2501021": {
+            "category_id": "activity-conferences",
+            "order": 23
+          },
+          "conference-2401221": {
+            "category_id": "activity-conferences",
+            "order": 26
+          },
+          "conference-2301161": {
+            "category_id": "activity-conferences",
+            "order": 27
+          },
+          "conference-2608241": {
+            "category_id": "activity-conferences",
+            "order": 7
+          },
+          "conference-2611071": {
+            "category_id": "activity-conferences",
+            "order": 6
+          },
+          "conference-2611081": {
+            "category_id": "activity-conferences",
+            "order": 5
+          },
+          "conference-2504171": {
+            "category_id": "activity-conferences",
+            "order": 19
+          },
+          "conference-2612281": {
+            "category_id": "activity-conferences",
+            "order": 4
+          },
+          "conference-2412181": {
+            "category_id": "activity-conferences",
+            "order": 24
+          },
+          "conference-2407011": {
+            "category_id": "activity-conferences",
+            "order": 25
+          },
+          "talk-2610151": {
+            "category_id": "activity-talks",
+            "order": 1
+          },
+          "talk-2611081": {
+            "category_id": "activity-talks",
+            "order": 0
+          },
+          "conference-2703081": {
+            "category_id": "activity-conferences",
+            "order": 1
+          },
+          "conference-2703151": {
+            "category_id": "activity-conferences",
+            "order": 0
+          },
+          "conference-2701181": {
+            "category_id": "activity-conferences",
+            "order": 2
+          },
+          "conference-2701111": {
+            "category_id": "activity-conferences",
+            "order": 3
+          },
+          "organization-2700001": {
+            "category_id": "activity-organization",
+            "order": 999999
+          },
+          "teaching-2503006": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 5
+          },
+          "teaching-2601009": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 4
+          },
+          "teaching-2601008": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 3
+          },
+          "teaching-2503007": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 6
+          },
+          "teaching-2403003": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 9
+          },
+          "teaching-2501005": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 8
+          },
+          "teaching-2501004": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 7
+          },
+          "teaching-2303001": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 11
+          },
+          "teaching-2401002": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 10
+          },
+          "teaching-2603012": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 2
+          },
+          "teaching-2603010": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 0
+          },
+          "teaching-2603011": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 1
+          }
+        },
+        "dossier_category_order": [
+          "cv-research",
+          "cv-education",
+          "publication-journal-articles",
+          "publication-preprints",
+          "publication-survey-papers",
+          "activity-talks",
+          "cv-honors",
+          "teaching-national-tsing-hua-university"
+        ],
+        "placements": {
+          "interest-2600001": [],
+          "interest-2600003": [],
+          "education-2500002": [],
+          "education-2100001": [],
+          "personal-2600004": [
+            {
+              "category_id": "cv-personal",
+              "order": 0
+            }
+          ],
+          "personal-2600005": [
+            {
+              "category_id": "cv-personal",
+              "order": 1
+            }
+          ],
+          "personal-2600006": [
+            {
+              "category_id": "cv-personal",
+              "order": 2
+            }
+          ],
+          "personal-2600007": [
+            {
+              "category_id": "cv-personal",
+              "order": 3
+            }
+          ],
+          "personal-2600008": [
+            {
+              "category_id": "cv-personal",
+              "order": 4
+            }
+          ],
+          "contact-2600001": [
+            {
+              "category_id": "home-contact",
+              "order": 0
+            }
+          ],
+          "contact-2600002": [
+            {
+              "category_id": "home-contact",
+              "order": 1
+            }
+          ],
+          "personal-2600002": [],
+          "contact-2600003": [
+            {
+              "category_id": "home-contact",
+              "order": 2
+            }
+          ],
+          "personal-2600001": [],
+          "personal-2600003": [],
+          "interest-2600002": [],
+          "honor-26392004": [],
+          "honor-25158003": [],
+          "honor-24158001": [],
+          "honor-24158002": [],
+          "publication-2504001": [],
+          "publication-2504002": [],
+          "publication-2603003": [],
+          "publication-2604004": [],
+          "publication-2609005": [],
+          "publication-2609006": [],
+          "publication-2609007": [],
+          "publication-2610008": [],
+          "visit-2607001": [],
+          "talk-2607061": [],
+          "talk-2606121": [],
+          "talk-2602081": [],
+          "talk-2509301": [],
+          "talk-2509031": [],
+          "talk-2504171": [],
+          "conference-2607181": [],
+          "conference-2607071": [],
+          "conference-2606111": [],
+          "conference-2602081": [],
+          "conference-2601211": [],
+          "conference-2512151": [],
+          "conference-2509291": [],
+          "conference-2509011": [],
+          "conference-2508251": [],
+          "conference-2506301": [],
+          "conference-2506251": [],
+          "conference-2502171": [],
+          "conference-2502101": [],
+          "conference-2501141": [],
+          "conference-2501021": [],
+          "conference-2401221": [],
+          "conference-2301161": [],
+          "conference-2608241": [],
+          "conference-2611071": [],
+          "conference-2611081": [],
+          "conference-2504171": [],
+          "conference-2612281": [],
+          "conference-2412181": [],
+          "conference-2407011": [],
+          "talk-2610151": [],
+          "talk-2611081": [],
+          "conference-2703081": [],
+          "conference-2703151": [],
+          "conference-2701181": [],
+          "conference-2701111": [],
+          "organization-2700001": [],
+          "teaching-2503006": [],
+          "teaching-2601009": [],
+          "teaching-2601008": [],
+          "teaching-2503007": [],
+          "teaching-2403003": [],
+          "teaching-2501005": [],
+          "teaching-2501004": [],
+          "teaching-2303001": [],
+          "teaching-2401002": [],
+          "teaching-2603012": [],
+          "teaching-2603010": [],
+          "teaching-2603011": []
+        }
+      },
+      "after": {
+        "pages": [
+          {
+            "id": "home",
+            "name": {
+              "en": "Home",
+              "zh": "首頁"
+            },
+            "path": {
+              "en": "index.html",
+              "zh": "zh/index.html"
+            },
+            "header": null,
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 0,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "cv",
+            "name": {
+              "en": "CV",
+              "zh": "履歷"
+            },
+            "path": {
+              "en": "cv.html",
+              "zh": "zh/cv.html"
+            },
+            "header": {
+              "label": {
+                "en": "Academic profile",
+                "zh": "學術資料"
+              },
+              "title": {
+                "en": "Curriculum Vitae",
+                "zh": "履歷"
+              },
+              "intro": {
+                "en": "Education, research interests, and honors.",
+                "zh": "學歷、研究領域與獎項"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 1,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "publications",
+            "name": {
+              "en": "Publications",
+              "zh": "論文"
+            },
+            "path": {
+              "en": "publications.html",
+              "zh": "zh/publications.html"
+            },
+            "header": {
+              "label": {
+                "en": "Research record",
+                "zh": "研究紀錄"
+              },
+              "title": {
+                "en": "Publications and Preprints",
+                "zh": "論文與預印本"
+              },
+              "intro": {
+                "en": "A complete list of current papers and preprints.",
+                "zh": "論文與預印本的完整列表"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 2,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "activities",
+            "name": {
+              "en": "Activities",
+              "zh": "學術活動"
+            },
+            "path": {
+              "en": "activities.html",
+              "zh": "zh/activities.html"
+            },
+            "header": {
+              "label": {
+                "en": "Academic record",
+                "zh": "學術紀錄"
+              },
+              "title": {
+                "en": "Activities",
+                "zh": "學術活動"
+              },
+              "intro": {
+                "en": "Academic visits, presentations, conferences and workshops.",
+                "zh": "學術訪問、學術報告、會議與工作坊"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 3,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "teaching",
+            "name": {
+              "en": "Teaching",
+              "zh": "教學"
+            },
+            "path": {
+              "en": "teaching.html",
+              "zh": "zh/teaching.html"
+            },
+            "header": {
+              "label": {
+                "en": "Teaching record",
+                "zh": "教學紀錄"
+              },
+              "title": {
+                "en": "Teaching Experience",
+                "zh": "教學經歷"
+              },
+              "intro": {
+                "en": "Teaching and course-assistant experience.",
+                "zh": "教學與課程助教經歷"
+              }
+            },
+            "color": "#304858",
+            "show_in_navigation": true,
+            "order": 4,
+            "page_type": "general",
+            "languages": [
+              "en",
+              "zh"
+            ]
+          },
+          {
+            "id": "pdf-cv",
+            "name": {
+              "en": "PDF CV",
+              "zh": "PDF 履歷"
+            },
+            "path": {
+              "en": "",
+              "zh": ""
+            },
+            "languages": [
+              "en",
+              "zh"
+            ],
+            "header": null,
+            "color": "#735748",
+            "show_in_navigation": false,
+            "order": 9000,
+            "virtual": true,
+            "virtual_kind": "pdf_cv"
+          },
+          {
+            "id": "personal-profile",
+            "name": {
+              "en": "Personal Information",
+              "zh": "個人資料"
+            },
+            "path": {
+              "en": "",
+              "zh": ""
+            },
+            "languages": [
+              "en",
+              "zh"
+            ],
+            "header": null,
+            "color": "#675c83",
+            "show_in_navigation": false,
+            "order": 9001,
+            "virtual": true,
+            "virtual_kind": "personal_profile"
+          }
+        ],
+        "categories": [
+          {
+            "id": "home-publications",
+            "page_id": "home",
+            "kind": "featured_publications",
+            "label": {
+              "en": "Recent work",
+              "zh": "近期成果"
+            },
+            "title": {
+              "en": "Selected Publications",
+              "zh": "精選論文"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": false
+          },
+          {
+            "id": "home-upcoming",
+            "page_id": "home",
+            "kind": "upcoming",
+            "label": {
+              "en": "Calendar",
+              "zh": "行程"
+            },
+            "title": {
+              "en": "Upcoming",
+              "zh": "近期活動"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": false
+          },
+          {
+            "id": "home-contact",
+            "page_id": "home",
+            "kind": "contact",
+            "label": {
+              "en": "Contact",
+              "zh": "聯絡資訊"
+            },
+            "title": {
+              "en": "Get in touch",
+              "zh": "聯絡"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": false
+          },
+          {
+            "id": "cv-research",
+            "page_id": "cv",
+            "kind": "interest",
+            "label": {
+              "en": "Fields",
+              "zh": "研究方向"
+            },
+            "title": {
+              "en": "Research Interests",
+              "zh": "研究領域"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "cv-education",
+            "page_id": "cv",
+            "kind": "education",
+            "label": {
+              "en": "Degrees",
+              "zh": "學位"
+            },
+            "title": {
+              "en": "Education",
+              "zh": "學歷"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "cv-honors",
+            "page_id": "cv",
+            "kind": "honor",
+            "label": {
+              "en": "Recognition",
+              "zh": "獎助紀錄"
+            },
+            "title": {
+              "en": "Honors and Awards",
+              "zh": "獎項與榮譽"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "publication-journal-articles",
+            "page_id": "publications",
+            "kind": "publication",
+            "label": {
+              "en": "Manuscript type",
+              "zh": "稿件類型"
+            },
+            "title": {
+              "en": "Journal Articles",
+              "zh": "期刊論文"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "publication-preprints",
+            "page_id": "publications",
+            "kind": "publication",
+            "label": {
+              "en": "Manuscript type",
+              "zh": "稿件類型"
+            },
+            "title": {
+              "en": "Preprints",
+              "zh": "預印本"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "publication-survey-papers",
+            "page_id": "publications",
+            "kind": "publication",
+            "label": {
+              "en": "Manuscript type",
+              "zh": "稿件類型"
+            },
+            "title": {
+              "en": "Survey Papers",
+              "zh": "綜述論文"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-visits",
+            "page_id": "activities",
+            "kind": "visit",
+            "label": {
+              "en": "Visit",
+              "zh": "訪問經歷"
+            },
+            "title": {
+              "en": "Academic Visits",
+              "zh": "學術訪問"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-talks",
+            "page_id": "activities",
+            "kind": "talk",
+            "label": {
+              "en": "Talks",
+              "zh": "演講紀錄"
+            },
+            "title": {
+              "en": "Presentations",
+              "zh": "學術報告"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 1,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-organization",
+            "page_id": "activities",
+            "kind": "organization",
+            "label": {
+              "en": "Organizing Experience",
+              "zh": "籌辦經歷"
+            },
+            "title": {
+              "en": "Organization",
+              "zh": "學術活動籌辦"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 2,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "activity-conferences",
+            "page_id": "activities",
+            "kind": "conference",
+            "label": {
+              "en": "Participation",
+              "zh": "參與紀錄"
+            },
+            "title": {
+              "en": "Conferences and Workshops",
+              "zh": "會議與工作坊"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 3,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "teaching-national-tsing-hua-university",
+            "page_id": "teaching",
+            "kind": "teaching",
+            "label": {
+              "en": "Institution",
+              "zh": "機構"
+            },
+            "title": {
+              "en": "National Tsing Hua University",
+              "zh": "國立清華大學"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": true,
+            "show_on_cv": true
+          },
+          {
+            "id": "cv-personal",
+            "page_id": "pdf-cv",
+            "kind": "personal",
+            "label": {
+              "en": "Details",
+              "zh": "個人資料"
+            },
+            "title": {
+              "en": "Personal Information",
+              "zh": "個人資訊"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": false,
+            "show_on_cv": true
+          },
+          {
+            "id": "personal-profile",
+            "page_id": "personal-profile",
+            "kind": "mixed",
+            "label": {
+              "en": "Profile",
+              "zh": "個人資料"
+            },
+            "title": {
+              "en": "Personal Information",
+              "zh": "個人資料"
+            },
+            "intro": {
+              "en": "",
+              "zh": ""
+            },
+            "order": 0,
+            "show_on_web": false,
+            "show_on_cv": false
+          }
+        ],
+        "cv_category_order": [
+          "cv-research",
+          "cv-education",
+          "publication-journal-articles",
+          "publication-preprints",
+          "publication-survey-papers",
+          "activity-visits",
+          "activity-talks",
+          "activity-organization",
+          "cv-honors",
+          "activity-conferences",
+          "teaching-national-tsing-hua-university",
+          "cv-personal"
+        ],
+        "assignments": {
+          "interest-2600001": {
+            "category_id": "cv-research",
+            "order": 0
+          },
+          "interest-2600003": {
+            "category_id": "cv-research",
+            "order": 2
+          },
+          "education-2500002": {
+            "category_id": "cv-education",
+            "order": 0
+          },
+          "education-2100001": {
+            "category_id": "cv-education",
+            "order": 1
+          },
+          "personal-2600004": {
+            "category_id": "personal-profile",
+            "order": 6
+          },
+          "personal-2600005": {
+            "category_id": "personal-profile",
+            "order": 7
+          },
+          "personal-2600006": {
+            "category_id": "personal-profile",
+            "order": 8
+          },
+          "personal-2600007": {
+            "category_id": "personal-profile",
+            "order": 9
+          },
+          "personal-2600008": {
+            "category_id": "personal-profile",
+            "order": 10
+          },
+          "contact-2600001": {
+            "category_id": "personal-profile",
+            "order": 3
+          },
+          "contact-2600002": {
+            "category_id": "personal-profile",
+            "order": 4
+          },
+          "personal-2600002": {
+            "category_id": "personal-profile",
+            "order": 1
+          },
+          "contact-2600003": {
+            "category_id": "personal-profile",
+            "order": 5
+          },
+          "personal-2600001": {
+            "category_id": "personal-profile",
+            "order": 0
+          },
+          "personal-2600003": {
+            "category_id": "personal-profile",
+            "order": 2
+          },
+          "interest-2600002": {
+            "category_id": "cv-research",
+            "order": 1
+          },
+          "honor-26392004": {
+            "category_id": "cv-honors",
+            "order": 0
+          },
+          "honor-25158003": {
+            "category_id": "cv-honors",
+            "order": 1
+          },
+          "honor-24158001": {
+            "category_id": "cv-honors",
+            "order": 2
+          },
+          "honor-24158002": {
+            "category_id": "cv-honors",
+            "order": 3
+          },
+          "publication-2504001": {
+            "category_id": "publication-preprints",
+            "order": 6
+          },
+          "publication-2504002": {
+            "category_id": "publication-preprints",
+            "order": 5
+          },
+          "publication-2603003": {
+            "category_id": "publication-preprints",
+            "order": 4
+          },
+          "publication-2604004": {
+            "category_id": "publication-journal-articles",
+            "order": 0
+          },
+          "publication-2609005": {
+            "category_id": "publication-preprints",
+            "order": 3
+          },
+          "publication-2609006": {
+            "category_id": "publication-preprints",
+            "order": 2
+          },
+          "publication-2609007": {
+            "category_id": "publication-preprints",
+            "order": 1
+          },
+          "publication-2610008": {
+            "category_id": "publication-preprints",
+            "order": 0
+          },
+          "visit-2607001": {
+            "category_id": "activity-visits",
+            "order": 0
+          },
+          "talk-2607061": {
+            "category_id": "activity-talks",
+            "order": 2
+          },
+          "talk-2606121": {
+            "category_id": "activity-talks",
+            "order": 3
+          },
+          "talk-2602081": {
+            "category_id": "activity-talks",
+            "order": 4
+          },
+          "talk-2509301": {
+            "category_id": "activity-talks",
+            "order": 5
+          },
+          "talk-2509031": {
+            "category_id": "activity-talks",
+            "order": 6
+          },
+          "talk-2504171": {
+            "category_id": "activity-talks",
+            "order": 7
+          },
+          "conference-2607181": {
+            "category_id": "activity-conferences",
+            "order": 8
+          },
+          "conference-2607071": {
+            "category_id": "activity-conferences",
+            "order": 9
+          },
+          "conference-2606111": {
+            "category_id": "activity-conferences",
+            "order": 10
+          },
+          "conference-2602081": {
+            "category_id": "activity-conferences",
+            "order": 11
+          },
+          "conference-2601211": {
+            "category_id": "activity-conferences",
+            "order": 12
+          },
+          "conference-2512151": {
+            "category_id": "activity-conferences",
+            "order": 13
+          },
+          "conference-2509291": {
+            "category_id": "activity-conferences",
+            "order": 14
+          },
+          "conference-2509011": {
+            "category_id": "activity-conferences",
+            "order": 15
+          },
+          "conference-2508251": {
+            "category_id": "activity-conferences",
+            "order": 16
+          },
+          "conference-2506301": {
+            "category_id": "activity-conferences",
+            "order": 17
+          },
+          "conference-2506251": {
+            "category_id": "activity-conferences",
+            "order": 18
+          },
+          "conference-2502171": {
+            "category_id": "activity-conferences",
+            "order": 20
+          },
+          "conference-2502101": {
+            "category_id": "activity-conferences",
+            "order": 21
+          },
+          "conference-2501141": {
+            "category_id": "activity-conferences",
+            "order": 22
+          },
+          "conference-2501021": {
+            "category_id": "activity-conferences",
+            "order": 23
+          },
+          "conference-2401221": {
+            "category_id": "activity-conferences",
+            "order": 26
+          },
+          "conference-2301161": {
+            "category_id": "activity-conferences",
+            "order": 27
+          },
+          "conference-2608241": {
+            "category_id": "activity-conferences",
+            "order": 7
+          },
+          "conference-2611071": {
+            "category_id": "activity-conferences",
+            "order": 6
+          },
+          "conference-2611081": {
+            "category_id": "activity-conferences",
+            "order": 5
+          },
+          "conference-2504171": {
+            "category_id": "activity-conferences",
+            "order": 19
+          },
+          "conference-2612281": {
+            "category_id": "activity-conferences",
+            "order": 4
+          },
+          "conference-2412181": {
+            "category_id": "activity-conferences",
+            "order": 24
+          },
+          "conference-2407011": {
+            "category_id": "activity-conferences",
+            "order": 25
+          },
+          "talk-2610151": {
+            "category_id": "activity-talks",
+            "order": 1
+          },
+          "talk-2611081": {
+            "category_id": "activity-talks",
+            "order": 0
+          },
+          "conference-2703081": {
+            "category_id": "activity-conferences",
+            "order": 1
+          },
+          "conference-2703151": {
+            "category_id": "activity-conferences",
+            "order": 0
+          },
+          "conference-2701181": {
+            "category_id": "activity-conferences",
+            "order": 2
+          },
+          "conference-2701111": {
+            "category_id": "activity-conferences",
+            "order": 3
+          },
+          "organization-2700001": {
+            "category_id": "activity-organization",
+            "order": 0
+          },
+          "teaching-2503006": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 5
+          },
+          "teaching-2601009": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 4
+          },
+          "teaching-2601008": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 3
+          },
+          "teaching-2503007": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 6
+          },
+          "teaching-2403003": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 9
+          },
+          "teaching-2501005": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 8
+          },
+          "teaching-2501004": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 7
+          },
+          "teaching-2303001": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 11
+          },
+          "teaching-2401002": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 10
+          },
+          "teaching-2603012": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 2
+          },
+          "teaching-2603010": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 0
+          },
+          "teaching-2603011": {
+            "category_id": "teaching-national-tsing-hua-university",
+            "order": 1
+          }
+        },
+        "dossier_category_order": [
+          "cv-research",
+          "cv-education",
+          "publication-journal-articles",
+          "publication-preprints",
+          "publication-survey-papers",
+          "activity-talks",
+          "cv-honors",
+          "teaching-national-tsing-hua-university"
+        ],
+        "placements": {
+          "interest-2600001": [],
+          "interest-2600003": [],
+          "education-2500002": [],
+          "education-2100001": [],
+          "personal-2600004": [
+            {
+              "category_id": "cv-personal",
+              "order": 0
+            }
+          ],
+          "personal-2600005": [
+            {
+              "category_id": "cv-personal",
+              "order": 1
+            }
+          ],
+          "personal-2600006": [
+            {
+              "category_id": "cv-personal",
+              "order": 2
+            }
+          ],
+          "personal-2600007": [
+            {
+              "category_id": "cv-personal",
+              "order": 3
+            }
+          ],
+          "personal-2600008": [
+            {
+              "category_id": "cv-personal",
+              "order": 4
+            }
+          ],
+          "contact-2600001": [
+            {
+              "category_id": "home-contact",
+              "order": 0
+            }
+          ],
+          "contact-2600002": [
+            {
+              "category_id": "home-contact",
+              "order": 1
+            }
+          ],
+          "personal-2600002": [],
+          "contact-2600003": [
+            {
+              "category_id": "home-contact",
+              "order": 2
+            }
+          ],
+          "personal-2600001": [],
+          "personal-2600003": [],
+          "interest-2600002": [],
+          "honor-26392004": [],
+          "honor-25158003": [],
+          "honor-24158001": [],
+          "honor-24158002": [],
+          "publication-2504001": [],
+          "publication-2504002": [],
+          "publication-2603003": [],
+          "publication-2604004": [],
+          "publication-2609005": [],
+          "publication-2609006": [],
+          "publication-2609007": [],
+          "publication-2610008": [],
+          "visit-2607001": [],
+          "talk-2607061": [],
+          "talk-2606121": [],
+          "talk-2602081": [],
+          "talk-2509301": [],
+          "talk-2509031": [],
+          "talk-2504171": [],
+          "conference-2607181": [],
+          "conference-2607071": [],
+          "conference-2606111": [],
+          "conference-2602081": [],
+          "conference-2601211": [],
+          "conference-2512151": [],
+          "conference-2509291": [],
+          "conference-2509011": [],
+          "conference-2508251": [],
+          "conference-2506301": [],
+          "conference-2506251": [],
+          "conference-2502171": [],
+          "conference-2502101": [],
+          "conference-2501141": [],
+          "conference-2501021": [],
+          "conference-2401221": [],
+          "conference-2301161": [],
+          "conference-2608241": [],
+          "conference-2611071": [],
+          "conference-2611081": [],
+          "conference-2504171": [],
+          "conference-2612281": [],
+          "conference-2412181": [],
+          "conference-2407011": [],
+          "talk-2610151": [],
+          "talk-2611081": [],
+          "conference-2703081": [],
+          "conference-2703151": [],
+          "conference-2701181": [],
+          "conference-2701111": [],
+          "organization-2700001": [],
+          "teaching-2503006": [],
+          "teaching-2601009": [],
+          "teaching-2601008": [],
+          "teaching-2503007": [],
+          "teaching-2403003": [],
+          "teaching-2501005": [],
+          "teaching-2501004": [],
+          "teaching-2303001": [],
+          "teaching-2401002": [],
+          "teaching-2603012": [],
+          "teaching-2603010": [],
+          "teaching-2603011": []
+        }
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
