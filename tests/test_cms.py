@@ -345,8 +345,8 @@ class CategoryArchitectureTests(unittest.TestCase):
         self.assertEqual(render_category(data, category, "en", date(2026, 1, 1), 0), "")
         entry = {"id": "c", "type": "conference", "start_date": "2026-01-01", "end_date": "2026-01-01", "title": {"en": "Example", "zh": "範例"}, "role": {"en": "Speaker", "zh": "講者"}}
         rendered = render_activity(entry, "en")
-        self.assertIn('<span class="role-note">Speaker</span>', rendered)
-        self.assertNotIn("<h3>Example<span", rendered)
+        self.assertIn('<h3>Example<span class="role-note">Speaker</span></h3>', rendered)
+        self.assertIn('<h3>範例<span class="role-note">講者</span></h3>', render_activity(entry, "zh"))
 
     def test_talk_slides_use_the_same_button_group_as_publication_links(self) -> None:
         entry = {

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import re
 import sys
 import unittest
 from datetime import date
@@ -12,12 +13,23 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 from build_site import (  # noqa: E402
     category_items, load_data, page_header, render_category,
-    render_contact_page_main, render_course_page,
+    render_contact_page_main, render_course_page, render_publication_article,
 )
 from category_config import categories_for_page, normalized_pages, validate_category_data  # noqa: E402
 
 
 class CompactDesignTests(unittest.TestCase):
+    def test_chinese_featured_publication_authors_use_chinese_names(self) -> None:
+        data = load_data()
+        entries = {item["id"]: item for item in data["publications"]}
+        journal = render_publication_article(entries["publication-2604004"], "zh", homepage=True)
+        collaborative = render_publication_article(entries["publication-2603003"], "zh", homepage=True)
+        self.assertIn('<p class="authors"><strong>崔鴻竣</strong></p>', journal)
+        authors = collaborative.split('<p class="authors">', 1)[1].split('</p>', 1)[0]
+        self.assertIn('<strong>崔鴻竣</strong>', authors)
+        self.assertIn('張庭瑋, 陳松筠, 黃斐浚, 崔鴻竣', re.sub(r'<[^>]+>', '', authors))
+        self.assertNotIn('Hung-Chun Tsui', authors)
+
     def test_section_links_follow_content_and_admin_order(self) -> None:
         data = load_data()
         rows = data["settings"]["categories"]
@@ -77,6 +89,22 @@ class CompactDesignTests(unittest.TestCase):
         self.assertIn('name="botcheck"', markup)
         self.assertIn('class="cf-turnstile"', markup)
         self.assertNotIn("section-label", markup)
+
+    def test_home_contact_deduplicates_legacy_profile_aliases(self) -> None:
+        from build_site import render_contact
+
+        data = load_data()
+        legacy = next(x for x in data["profile_items"] if x["id"] == "contact-2600001")
+        personal = next(x for x in data["profile_items"] if x["id"] == "contact-2600002")
+        office = next(x for x in data["profile_items"] if x["id"] == "contact-2600003")
+        items = [legacy, dict(legacy, id="contact-institutional-email"),
+                 personal, dict(personal, id="contact-personal-email"),
+                 office, dict(office, id="contact-address-office")]
+        for lang in ("en", "zh"):
+            markup = render_contact(items, lang)
+            self.assertEqual(markup.count('href="mailto:hctsui@gapp.nthu.edu.tw"'), 1)
+            self.assertEqual(markup.count('href="mailto:hctsui.math@gmail.com"'), 1)
+            self.assertEqual(markup.count('class="contact-location"'), 1)
 
 
 if __name__ == "__main__":

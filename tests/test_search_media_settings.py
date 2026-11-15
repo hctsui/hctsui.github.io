@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from tools.r2_build_fix import apply_static_asset_paths_safely
 from tools.site_settings_config import normalized_site_settings
@@ -106,6 +107,18 @@ class SearchMediaSettingsTests(unittest.TestCase):
         index = json.loads(read("content/search-index.json"))
         self.assertTrue(any(item.get("language") == "en" for item in index["items"]))
         self.assertTrue(any(item.get("language") == "zh" for item in index["items"]))
+        from build_search_index import _VisibleAnchors
+
+        anchors = {}
+        for item in index["items"]:
+            location = urlsplit(item["url"])
+            path = location.path.lstrip("/")
+            if path not in anchors:
+                parser = _VisibleAnchors()
+                parser.feed(read(path))
+                anchors[path] = parser.ids
+            if location.fragment:
+                self.assertIn(location.fragment, anchors[path], item["url"])
 
     def test_search_labels_keep_math_readable_without_delimiters(self) -> None:
         from build_search_index import plain

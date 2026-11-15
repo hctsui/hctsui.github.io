@@ -99,6 +99,16 @@ class PersonalProfileExtensionTests(unittest.TestCase):
         )
         self.assertEqual(rows, [{"category_id": "other", "order": 3}])
 
+    def test_profile_sync_reuses_legacy_contact_records(self) -> None:
+        data = self.sample_data()
+        legacy = data["profile_items"][1]
+        legacy["id"] = "contact-2600001"
+        legacy["personal_key"] = "institutional_email"
+        extensions.sync_personal_profile(data)
+        matches = [row for row in data["profile_items"] if row.get("personal_key") == "institutional_email"]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]["id"], "contact-2600001")
+
 
 class SourceContractTests(unittest.TestCase):
     def read(self, relative: str) -> str:
