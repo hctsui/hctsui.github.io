@@ -73,7 +73,7 @@ main a[href]:not(.button):not(.publication-action):not(.activity-link):focus-vis
 .home-upcoming .timeline-item{display:block;padding:13px 0}
 .home-upcoming .timeline-item h3{font:500 15px/1.3 var(--compact-serif);margin:0 0 5px}
 .home-upcoming .timeline-item p{font-size:11.9px;color:var(--compact-muted)}
-.role-note,.activity-role{display:inline-flex;vertical-align:middle;align-items:center;margin-left:8px;padding:2px 7px;border:1px solid #bbcbd3;border-radius:3px;background:#f0f5f6;color:#466473;font:650 9.5px/1.4 Inter,Arial,sans-serif;white-space:normal}
+.role-note,.activity-role{display:inline-flex;vertical-align:middle;align-items:center;margin-left:7px;padding:2px 7px;border:1px solid #bbcbd3;border-radius:3px;background:#f0f5f6;color:#466473;font:650 9.5px/1.4 Inter,Arial,sans-serif;white-space:nowrap}
 .role-note::before,.activity-role::before{display:none}
 .contact-section{background:var(--compact-blue);color:#ecf0f2;padding:31px 0}
 .contact-section .split{display:grid;grid-template-columns:1fr 1.5fr;gap:40px}
