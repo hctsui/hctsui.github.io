@@ -245,3 +245,75 @@ body[data-page="contact"] .contact-form input,body[data-page="contact"] .contact
   .home-hero{background:#fff}.home-hero-grid{padding:25px 0}.home-name{font-size:clamp(40px,11vw,54px)}
   .timeline-item,.compact-list article,.teaching-card{grid-template-columns:1fr;gap:3px;padding:10px 0}
 }
+
+/* V10 Quiet: shared slate system and segmented navigation. */
+:root{--compact-rust:#456b7d;--compact-blue:#2c4658;--compact-line:#d9e3e7;--compact-soft:#e7eef1}
+body[data-page]{--accent:#456b7d;--accent-dark:#2c4658;--accent-soft:#e7eef1;--footer:#304858;--footer-dark:#243947}
+.site-header{border-bottom-color:#d9e3e7}
+.nav-wrap{min-height:68px}
+.site-nav{gap:12px}
+.site-nav .nav-tabs{height:40px;align-items:stretch;gap:0;padding:3px;border:1px solid #294354;border-radius:5px;background:#2c4658;box-shadow:0 5px 18px #243e4c1d}
+.site-nav .nav-tabs>a{display:flex;align-items:center;justify-content:center;min-height:32px;padding:0 16px;border:0;border-right:1px solid #5c7584;border-radius:0;color:#dde8ed;font-size:11.5px;font-weight:700}
+.site-nav .nav-tabs>a:last-child{border-right:0}
+.site-nav .nav-tabs>a:hover:not(.active){background:#3e5c6c;color:#fff}
+.site-nav .nav-tabs>a.active{padding:0 16px;border:0;border-radius:2px;background:#edf4f6;color:#233f50;box-shadow:inset 0 1px #fff}
+.site-search{max-width:190px}
+.site-search input{width:146px;height:40px;min-height:40px;padding:0 12px;border:1px solid #c6d8e0;border-radius:4px;background:#f8fbfc;color:#2a485a;font-size:11.5px}
+.site-search input:focus{border-color:#63899a;outline:0;box-shadow:0 0 0 3px #aac4d153}
+.site-search-results{border-color:#c3d4dd;border-radius:5px;box-shadow:0 19px 55px #1d374b2e}
+.site-search-results a:hover,.site-search-results a.active{background:#eef4f6!important;color:#2d5368!important}
+.site-nav .language-toggle,.site-nav .nav-language-button{min-height:40px;padding:0 14px!important;border-radius:4px}
+.site-nav :is(a,button):focus-visible,.menu-button:focus-visible{outline:2px solid #83a8b9;outline-offset:2px}
+
+/* Home: Edge Cut and original half-page photograph. */
+.home-hero{position:relative;overflow:hidden;background:#f8fbfc}
+.home-hero:before{content:"";position:absolute;right:0;top:0;bottom:0;width:43%;background:#dce9ef;clip-path:polygon(35% 0,100% 0,100% 100%,0 100%)}
+.home-hero-grid{position:relative;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:42px;min-height:380px;padding:30px 0}
+.home-hero-copy{position:relative;z-index:1;min-width:0;border-left:3px solid #456f82;padding-left:25px}
+.home-visual,.home-visual-panel,.home-portrait{width:100%;height:100%;min-width:0;max-width:none;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+.home-portrait{display:flex;flex-direction:column}
+.home-portrait img{width:100%;height:100%;min-height:315px;max-height:420px;flex:1;object-fit:cover}
+.home-portrait figcaption{align-self:end;padding:7px 0;background:transparent;text-align:right}
+
+/* Inner pages: low contrast ghost text generated from the managed heading. */
+.page-hero-quiet{position:relative;overflow:hidden;background:#f5f8f9!important}
+.page-hero-quiet:before{content:attr(data-title);position:absolute;right:-.18em;top:0;max-width:80%;overflow:hidden;white-space:nowrap;font:500 clamp(80px,9vw,154px)/1 var(--compact-serif);letter-spacing:-.06em;color:#d7e6eb;opacity:.33;pointer-events:none}
+.page-hero-quiet>.container{position:relative;z-index:1;border-left:2px solid #7195a5;padding-left:24px}
+.page-hero-quiet>.container:before{content:"";position:absolute;left:-3px;top:0;height:34%;width:3px;background:#52758a}
+.page-hero-quiet h1{position:relative;margin:0;overflow-wrap:anywhere}
+.page-hero-quiet .section-jumps,.page-hero-quiet .cv-download{position:relative}
+.section-jumps a{color:#486170!important}.jump-count{font-variant-numeric:normal}
+
+/* 05 Solid actions and contextual links. */
+.home-actions a,.button.primary,.pub-links a,.pub-links button,.item-links a,.social-links a,.contact-submit{border-radius:3px;background:#304858;border-color:#304858;color:#fff!important}
+.home-actions a:hover,.button.primary:hover,.pub-links a:hover,.pub-links button:hover,.item-links a:hover,.social-links a:hover,.contact-submit:hover{background:#426275;border-color:#426275;color:#fff!important}
+main a[href]:not(.button):not(.publication-action):not(.activity-link):not(.citation-copy):not(.not-found-button){color:#315a70;text-decoration:none}
+main a[href]:not(.button):not(.publication-action):not(.activity-link):hover,main a[href]:not(.button):not(.publication-action):not(.activity-link):focus-visible{text-decoration:underline;text-underline-offset:3px}
+.site-footer a,.contact-section a[href]{color:#f3f8fa!important;text-decoration:none}
+.site-footer a:hover,.site-footer a:focus-visible,.contact-section a[href]:hover,.contact-section a[href]:focus-visible{text-decoration:underline!important}
+.contact-details-section .contact-grid a[href]{color:#315a70!important}
+.contact-form-entry a sup{display:inline-block;position:relative;top:-.22em;margin-left:.08em;font-size:.65em;line-height:0}
+.role-note{display:inline-block;margin-left:0;padding:1px 5px;border:1px solid #a9c0ca;border-radius:2px;background:#f3f7f8;color:#466473;font-size:9px;white-space:nowrap}
+
+/* V8 selected card variants. Each category uses its managed kind, so new CMS rows inherit it. */
+.category-featured_publications .publication,.home-publications .publication{grid-template-columns:52px minmax(0,1fr);border-left:2px solid #a8c0cb;padding-left:10px}
+.category-featured_publications .pub-year,.home-publications .pub-year{color:#315a70;font-weight:800}
+.category-upcoming .timeline,.home-upcoming .timeline{border-top:0;border-left:2px solid #b5cad3;padding-left:14px}
+.category-upcoming .timeline-item,.home-upcoming .timeline-item{position:relative;border-bottom:1px solid #e2eaed}
+.category-upcoming .timeline-item:before,.home-upcoming .timeline-item:before{content:"";position:absolute;left:-19px;top:17px;width:7px;height:7px;border-radius:50%;background:#456b7d}
+.category-publication .publication{grid-template-columns:55px minmax(0,1fr);border-left:2px solid #a9c1cc;padding-left:12px}
+.category-publication .pub-year{font-weight:800;color:#315a70}
+.category-talk .timeline-item{border:0;border-left:3px solid #8fabb8;background:#f1f5f6;padding:12px 14px;margin:8px 0}
+.category-conference .timeline-item{border:0;border-left:2px solid #a8bdc7;background:#f4f7f8;padding:10px 14px;margin:7px 0}
+.category-visit .timeline-item{border:0;border-left:3px solid #7895a5;background:#edf3f5;padding:14px 16px;margin:9px 0}
+.category-interest .interest-summary-item{border:1px solid #d5e1e6;background:#f2f6f7;padding:10px 14px;margin:6px 0}
+.category-education .compact-list article{border:0;border-left:2px solid #9bb5c0;background:#f3f7f8;padding:12px 15px;margin:7px 0}
+.category-honor .timeline-item{border:0;border-left:2px solid #abc1ca;background:#f2f6f7;padding:11px 15px;margin:7px 0}
+.category-teaching .teaching-card{border:0;border-left:2px solid #a3bac5;border-radius:0;background:#f2f6f7;padding:12px 15px;box-shadow:none}
+.category-contact .contact-grid>div,.contact-section .contact-grid>div{min-width:0;padding:12px 14px;border:1px solid #66808e;background:#3a5667}
+.contact-details-section .contact-grid>div{padding:12px 14px;border:1px solid #d6e2e7;background:#f3f7f8}
+.contact-details-section .contact-grid a,.contact-details-section .contact-grid p{overflow-wrap:anywhere}
+
+@media(max-width:1050px){.site-nav .nav-tabs>a,.site-nav .nav-tabs>a.active{padding:0 10px}.site-search input{width:118px}}
+@media(max-width:850px){.menu-button{display:inline-flex}.site-nav{display:none;position:absolute;top:100%;left:20px;right:20px;max-height:calc(100vh - 75px);overflow:auto;flex-direction:column;align-items:stretch;gap:12px;padding:14px;background:#fff;border:1px solid #d2e0e5;box-shadow:0 16px 35px #203e552e}.site-nav.open{display:flex}.site-nav .nav-tabs{height:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));white-space:normal}.site-nav .nav-tabs>a,.site-nav .nav-tabs>a.active{min-height:35px;padding:7px 9px}.site-search,.site-search input{width:100%;max-width:none}.site-search-results{left:0;right:0;width:100%}}
+@media(max-width:700px){.home-hero:before{display:none}.home-hero-grid{grid-template-columns:1fr;gap:18px;min-height:0;padding:25px 0}.home-hero-copy{padding-left:15px}.home-portrait img{min-height:230px;max-height:360px}.page-hero-quiet:before{font-size:80px;max-width:100%;opacity:.25}.page-hero-quiet>.container{padding-left:16px}.category-teaching .teaching-card,.category-visit .timeline-item,.category-conference .timeline-item,.category-talk .timeline-item{grid-template-columns:1fr;gap:3px}}

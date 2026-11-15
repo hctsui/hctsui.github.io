@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from typing import Any
 
 PROFILE_CATEGORY_ID = "personal-profile"
@@ -74,6 +75,7 @@ def personal_profile(data: dict[str, Any]) -> dict[str, Any]:
     website = _find_item(data, "personal-website") or {}
     orcid = _find_item(data, "personal-orcid") or {}
     address = _description(data, "personal-address")
+    office_item = _find_item(data, "contact-address-office") or {}
     office = _description(data, "contact-address-office")
     languages = _description(data, "personal-languages")
     result = {
@@ -87,6 +89,7 @@ def personal_profile(data: dict[str, Any]) -> dict[str, Any]:
         "orcid": _text(source.get("orcid") or orcid.get("description", {}).get("en")),
         "address": _pair(source.get("address"), address),
         "office": _pair(source.get("office"), office),
+        "office_url": _text(source.get("office_url") if "office_url" in source else office_item.get("url")),
         "languages": _pair(source.get("languages"), languages),
     }
     return result
@@ -106,6 +109,7 @@ def normalize_profile(value: Any, data: dict[str, Any] | None = None) -> dict[st
         "orcid": _text(value.get("orcid") if "orcid" in value else fallback["orcid"]),
         "address": _pair(value.get("address"), fallback["address"]),
         "office": _pair(value.get("office"), fallback["office"]),
+        "office_url": _text(value.get("office_url") if "office_url" in value else fallback["office_url"]),
         "languages": _pair(value.get("languages"), fallback["languages"]),
     }
 
@@ -272,6 +276,9 @@ def sync_personal_profile(data: dict[str, Any], value: Any | None = None) -> dic
     """Store one canonical profile and synchronize every managed profile item."""
     previous = personal_profile(data)
     profile = normalize_profile(value if value is not None else previous, data)
+    office_url = profile["office_url"]
+    if office_url and not re.fullmatch(r"https?://[^\s]+", office_url, flags=re.I):
+        raise ValueError("office_url must use http or https")
     settings = data.setdefault("settings", {})
     settings["personal_profile"] = copy.deepcopy(profile)
     _sync_identity_settings(data, previous, profile)
@@ -313,7 +320,7 @@ def sync_personal_profile(data: dict[str, Any], value: Any | None = None) -> dic
         ("profile-position", "personal", {"en": "Position", "zh": "職位"}, profile["position"], "position", "contact", "", [], 2),
         ("contact-institutional-email", "contact", {"en": "Institutional email", "zh": "學校信箱"}, {"en": profile["institutional_email"], "zh": profile["institutional_email"]}, "institutional_email", "contact", f"mailto:{profile['institutional_email']}" if profile["institutional_email"] else "", [_placement("home-contact", 0)], 3),
         ("contact-personal-email", "contact", {"en": "Personal email", "zh": "個人信箱"}, {"en": profile["personal_email"], "zh": profile["personal_email"]}, "personal_email", "contact", f"mailto:{profile['personal_email']}" if profile["personal_email"] else "", [_placement("home-contact", 1)], 4),
-        ("contact-address-office", "contact", {"en": "Address & office", "zh": "地址與辦公室"}, profile["office"], "office", "contact", "", [_placement("home-contact", 2)], 5),
+        ("contact-address-office", "contact", {"en": "Address & office", "zh": "地址與辦公室"}, profile["office"], "office", "contact", profile["office_url"], [_placement("home-contact", 2)], 5),
         ("personal-languages", "personal", {"en": "Languages", "zh": "語言"}, profile["languages"], "languages", "personal", "", [_placement("cv-personal", 0)], 6),
         ("personal-address", "personal", {"en": "Address", "zh": "地址"}, profile["address"], "address", "personal", "", [_placement("cv-personal", 1)], 7),
         ("personal-email", "personal", {"en": "Email", "zh": "電子郵件"}, {"en": combined_email, "zh": combined_email}, "email", "personal", "", [_placement("cv-personal", 2)], 8),

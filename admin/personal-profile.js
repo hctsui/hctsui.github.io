@@ -37,12 +37,13 @@
       orcid:String(source.orcid||findItem('personal-orcid')?.description?.en||'').trim(),
       address:pair(source.address,description('personal-address')),
       office:pair(source.office,description('contact-address-office')),
+      office_url:String(source.office_url??findItem('contact-address-office')?.url??'').trim(),
       languages:pair(source.languages,description('personal-languages')),
     };
   }
   function normalize(value){
     const fallback=inferProfile(),source=value&&typeof value==='object'?value:{};
-    return {schema_version:1,name:pair(source.name,fallback.name),affiliation:pair(source.affiliation,fallback.affiliation),position:pair(source.position,fallback.position),institutional_email:String('institutional_email'in source?source.institutional_email:fallback.institutional_email).trim(),personal_email:String('personal_email'in source?source.personal_email:fallback.personal_email).trim(),website:String('website'in source?source.website:fallback.website).trim(),orcid:String('orcid'in source?source.orcid:fallback.orcid).trim(),address:pair(source.address,fallback.address),office:pair(source.office,fallback.office),languages:pair(source.languages,fallback.languages)};
+    return {schema_version:1,name:pair(source.name,fallback.name),affiliation:pair(source.affiliation,fallback.affiliation),position:pair(source.position,fallback.position),institutional_email:String('institutional_email'in source?source.institutional_email:fallback.institutional_email).trim(),personal_email:String('personal_email'in source?source.personal_email:fallback.personal_email).trim(),website:String('website'in source?source.website:fallback.website).trim(),orcid:String('orcid'in source?source.orcid:fallback.orcid).trim(),address:pair(source.address,fallback.address),office:pair(source.office,fallback.office),office_url:String('office_url'in source?source.office_url:fallback.office_url).trim(),languages:pair(source.languages,fallback.languages)};
   }
 
   function placementRows(value,primary=''){
@@ -104,7 +105,7 @@
       ['profile-position',{type:'personal',title:{en:'Position',zh:'職位'},description:profile.position,key:'position',style:'contact',order:2}],
       ['contact-institutional-email',{type:'contact',title:{en:'Institutional email',zh:'學校信箱'},description:{en:profile.institutional_email,zh:profile.institutional_email},key:'institutional_email',style:'contact',url:profile.institutional_email?`mailto:${profile.institutional_email}`:'',defaults:[{category_id:'home-contact',order:0}],order:3}],
       ['contact-personal-email',{type:'contact',title:{en:'Personal email',zh:'個人信箱'},description:{en:profile.personal_email,zh:profile.personal_email},key:'personal_email',style:'contact',url:profile.personal_email?`mailto:${profile.personal_email}`:'',defaults:[{category_id:'home-contact',order:1}],order:4}],
-      ['contact-address-office',{type:'contact',title:{en:'Address & office',zh:'地址與辦公室'},description:profile.office,key:'office',style:'contact',defaults:[{category_id:'home-contact',order:2}],order:5}],
+      ['contact-address-office',{type:'contact',title:{en:'Address & office',zh:'地址與辦公室'},description:profile.office,key:'office',style:'contact',url:profile.office_url,defaults:[{category_id:'home-contact',order:2}],order:5}],
       ['personal-languages',{type:'personal',title:{en:'Languages',zh:'語言'},description:profile.languages,key:'languages',style:'personal',defaults:[{category_id:'cv-personal',order:0}],order:6}],
       ['personal-address',{type:'personal',title:{en:'Address',zh:'地址'},description:profile.address,key:'address',style:'personal',defaults:[{category_id:'cv-personal',order:1}],order:7}],
       ['personal-email',{type:'personal',title:{en:'Email',zh:'電子郵件'},description:{en:combined,zh:combined},key:'email',style:'personal',defaults:[{category_id:'cv-personal',order:2}],order:8}],
@@ -232,7 +233,7 @@
       ${fieldPair('姓名','name')}${fieldPair('所屬單位','affiliation',true)}${fieldPair('職位','position')}
       <div class="pair-grid"><div class="field"><label>學校信箱</label><input data-profile-field="institutional_email" type="email"></div><div class="field"><label>個人信箱</label><input data-profile-field="personal_email" type="email"></div></div>
       <div class="pair-grid"><div class="field"><label>個人網站</label><input data-profile-field="website" placeholder="https://..."></div><div class="field"><label>ORCID</label><input data-profile-field="orcid" placeholder="0000-0000-0000-0000"></div></div>
-      ${fieldPair('地址','address',true)}${fieldPair('辦公室／聯絡地址','office',true)}${fieldPair('語言','languages',true)}
+      ${fieldPair('地址','address',true)}${fieldPair('辦公室／聯絡地址','office',true)}<div class="field"><label>辦公室地址連結（選填，http 或 https）</label><input data-profile-field="office_url" type="url" placeholder="https://…"></div>${fieldPair('語言','languages',true)}
       ${profilePlacementHtml()}
       <div class="actions"><button class="button primary" id="savePersonalProfileDraft">儲存個人資料草稿</button><button class="button" id="resetPersonalProfileDraft">還原目前網站資料</button></div>`;
   }
@@ -249,6 +250,7 @@
     box.querySelector('#savePersonalProfileDraft').onclick=()=>{
       const next=collectProfileForm(box);
       if(!next.name.en||!next.name.zh)return flash('姓名的中英文都不能留白');
+      if(next.office_url&&!/^https?:\/\/[^\s]+$/i.test(next.office_url))return flash('辦公室地址連結須使用 http 或 https');
       applyProfilePlacements(box);profileDraft=normalize(next);saveLocal();
       if(typeof saveLayoutDraft==='function'&&layoutDirty())saveLayoutDraft('已儲存個人資料與顯示位置草稿');
       if(generalPanel)setTimeout(showGeneralProfilePanel,0);
@@ -339,7 +341,7 @@
   document.querySelector('#drafts')?.addEventListener('click',event=>{const button=event.target.closest('button');if(button?.hasAttribute('data-edit-personal-profile'))openPersonalProfileSettings();else if(button?.hasAttribute('data-drop-personal-profile')){profileDraft=copy(profileBase);localStorage.removeItem(DRAFT_KEY);renderAll();flash('已移除個人資料草稿')}});
 
   const baseRenderPreview=renderPreview;
-  renderPreview=function(refreshDictionary=true){baseRenderPreview(refreshDictionary);if(dirty()){const fields=[];for(const key of ['name','affiliation','position','institutional_email','personal_email','website','orcid','address','office','languages'])if(stable(profileBase[key])!==stable(profileDraft[key]))fields.push(KEY_LABELS[key]||key);$('#preview').insertAdjacentHTML('beforeend',`<details class="diff"><summary><strong>個人資料</strong>：${esc(fields.join('、')||'有變更')}</summary><div class="preview-card"><dl class="profile-draft-preview"><dt>Name</dt><dd>${esc(profileDraft.name.en)}／${esc(profileDraft.name.zh)}</dd><dt>Affiliation</dt><dd>${esc(profileDraft.affiliation.en)}／${esc(profileDraft.affiliation.zh)}</dd><dt>Position</dt><dd>${esc(profileDraft.position.en)}／${esc(profileDraft.position.zh)}</dd></dl></div></details>`);$('#payload').textContent=JSON.stringify(payload(),null,2)}};
+  renderPreview=function(refreshDictionary=true){baseRenderPreview(refreshDictionary);if(dirty()){const fields=[];for(const key of ['name','affiliation','position','institutional_email','personal_email','website','orcid','address','office','office_url','languages'])if(stable(profileBase[key])!==stable(profileDraft[key]))fields.push(KEY_LABELS[key]||key);$('#preview').insertAdjacentHTML('beforeend',`<details class="diff"><summary><strong>個人資料</strong>：${esc(fields.join('、')||'有變更')}</summary><div class="preview-card"><dl class="profile-draft-preview"><dt>Name</dt><dd>${esc(profileDraft.name.en)}／${esc(profileDraft.name.zh)}</dd><dt>Affiliation</dt><dd>${esc(profileDraft.affiliation.en)}／${esc(profileDraft.affiliation.zh)}</dd><dt>Position</dt><dd>${esc(profileDraft.position.en)}／${esc(profileDraft.position.zh)}</dd></dl></div></details>`);$('#payload').textContent=JSON.stringify(payload(),null,2)}};
 
   const baseClearSubmittedDraft=clearSubmittedDraft;
   clearSubmittedDraft=function(){localStorage.removeItem(DRAFT_KEY);profileReady=false;return baseClearSubmittedDraft()};

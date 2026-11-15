@@ -155,7 +155,7 @@ class CanonicalFilenameTests(unittest.TestCase):
         for relative, asset_prefix in (("contact.html", ""), ("zh/contact.html", "../")):
             page = read(relative)
             self.assertIn('data-page="contact"', page)
-            self.assertIn('class="contact-page-hero"', page)
+            self.assertIn('class="contact-page-hero page-hero-quiet"', page)
             self.assertIn('class="contact-page-section"', page)
             self.assertIn(f'href="{asset_prefix}assets/style.css"', page)
             self.assertRegex(page, rf'src="{re.escape(asset_prefix)}assets/script\.js(?:\?v=[^"]+)?"')

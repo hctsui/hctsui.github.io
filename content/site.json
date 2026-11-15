@@ -304,7 +304,7 @@
           "zh": "zh/index.html"
         },
         "header": null,
-        "color": "#a34f3b",
+        "color": "#304858",
         "show_in_navigation": true,
         "order": 0,
         "page_type": "general",
@@ -337,7 +337,7 @@
             "zh": "學歷、研究領域與獎項"
           }
         },
-        "color": "#8b5a2b",
+        "color": "#304858",
         "show_in_navigation": true,
         "order": 1,
         "page_type": "general",
@@ -370,7 +370,7 @@
             "zh": "論文與預印本的完整列表"
           }
         },
-        "color": "#315f9b",
+        "color": "#304858",
         "show_in_navigation": true,
         "order": 2,
         "page_type": "general",
@@ -403,7 +403,7 @@
             "zh": "學術訪問、學術報告、會議與工作坊"
           }
         },
-        "color": "#176b52",
+        "color": "#304858",
         "show_in_navigation": true,
         "order": 3,
         "page_type": "general",
@@ -436,7 +436,7 @@
             "zh": "教學與課程助教經歷"
           }
         },
-        "color": "#b14b86",
+        "color": "#304858",
         "show_in_navigation": true,
         "order": 4,
         "page_type": "general",
@@ -977,7 +977,7 @@
       "colors": {
         "background": "#f8f6f2",
         "surface": "#ffffff",
-        "accent": "#9a5540",
+        "accent": "#304858",
         "text": "#26313d",
         "muted": "#69727a",
         "button": "#2c4758",

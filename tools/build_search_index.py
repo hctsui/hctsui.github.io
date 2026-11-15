@@ -139,6 +139,16 @@ def build_index() -> dict[str, Any]:
                 add(lang, plain(category.get("title"), lang), plain(category.get("intro"), lang), f"{path}#{category.get('id')}", "section")
 
     for item in all_records(data):
+        # Managed contact records live in Personal Profile but are shown in the
+        # homepage contact panel, whose public anchor is the stable #contact.
+        if item.get("type") == "contact" and any(
+            str((placement or {}).get("category_id") or "") == "home-contact"
+            for placement in item.get("display_placements", [])
+        ):
+            for lang in ("en", "zh"):
+                path = "zh/index.html" if lang == "zh" else "index.html"
+                add(lang, entry_title(item, lang), description(item, lang), f"{path}#contact", "contact")
+            continue
         category = category_by_id.get(str(item.get("category_id") or ""))
         anchor_id = str(item.get("id") or "")
         if not category or category.get("show_on_web") is False:
