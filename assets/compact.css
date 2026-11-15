@@ -83,6 +83,7 @@ main a[href]:not(.button):not(.publication-action):not(.activity-link):focus-vis
 .contact-grid div:last-child{grid-column:1/-1}
 .contact-grid span{font-size:9.5px;color:#bbc8cf;letter-spacing:.08em;margin-bottom:3px}
 .contact-grid a,.contact-grid p{font-size:12.5px;color:#e3e8ea;margin:0}
+.contact-grid .contact-form-entry a{font-size:12.5px}
 .contact-section a[href]{color:#fff!important}
 .contact-section a[href]:hover{color:#fff!important}
 .site-footer{background:#1f303d;color:#bfc8d0;padding:13px 0;font-size:10.5px}
