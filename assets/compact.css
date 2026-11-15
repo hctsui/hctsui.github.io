@@ -83,7 +83,7 @@ main a[href]:not(.button):not(.publication-action):not(.activity-link):focus-vis
 .contact-grid div:last-child{grid-column:1/-1}
 .contact-grid span{font-size:9.5px;color:#bbc8cf;letter-spacing:.08em;margin-bottom:3px}
 .contact-grid a,.contact-grid p{font-size:12.5px;color:#e3e8ea;margin:0}
-.contact-section a[href]{color:#d4e7f0!important}
+.contact-section a[href]{color:#fff!important}
 .contact-section a[href]:hover{color:#fff!important}
 .site-footer{background:#1f303d;color:#bfc8d0;padding:13px 0;font-size:10.5px}
 .footer-inner{align-items:center;gap:10px}
@@ -200,6 +200,7 @@ body,body[data-page]{font-size:13.5px;line-height:1.46;color:var(--compact-body)
 .publication{grid-template-columns:44px minmax(0,1fr);gap:15px;padding:12px 0 13px}
 .publication h3{font-size:16px;line-height:1.29;margin-bottom:4px}
 .pub-year,.timeline-item time,.compact-list time,.teaching-card .date{color:#607784;font-size:10.6px;font-weight:750}
+.home-publications .pub-year,.home-upcoming .timeline-item time{color:#607784}
 .authors,.venue{font-size:11.9px;line-height:1.35}
 .pub-links,.item-links{margin-top:7px;gap:5px}.pub-links a,.pub-links button,.item-links a{min-height:25px;padding:5px 10px;font-size:10.5px}
 .home-upcoming{padding-left:28px}.home-upcoming h2{font-size:23px;margin-bottom:12px}
