@@ -253,16 +253,18 @@ body[data-page]{--accent:#456b7d;--accent-dark:#2c4658;--accent-soft:#e7eef1;--f
 .nav-wrap{min-height:68px}
 .site-nav{gap:12px}
 .site-nav .nav-tabs{height:40px;align-items:stretch;gap:0;padding:3px;border:1px solid #294354;border-radius:5px;background:#2c4658;box-shadow:0 5px 18px #243e4c1d}
-.site-nav .nav-tabs>a{display:flex;align-items:center;justify-content:center;min-height:32px;padding:0 16px;border:0;border-right:1px solid #5c7584;border-radius:0;color:#dde8ed;font-size:11.5px;font-weight:700}
+.site-nav .nav-tabs>a,body[data-page] .site-nav .nav-tabs>a{display:flex;align-items:center;justify-content:center;min-height:32px;padding:0 16px;border:0;border-right:1px solid #5c7584;border-radius:0;color:#dde8ed;font-size:11.5px;font-weight:700}
 .site-nav .nav-tabs>a:last-child{border-right:0}
-.site-nav .nav-tabs>a:hover:not(.active){background:#3e5c6c;color:#fff}
-.site-nav .nav-tabs>a.active{padding:0 16px;border:0;border-radius:2px;background:#edf4f6;color:#233f50;box-shadow:inset 0 1px #fff}
+.site-nav .nav-tabs>a:hover:not(.active),body[data-page] .site-nav .nav-tabs>a:hover:not(.active){background:#3e5c6c;color:#fff}
+.site-nav .nav-tabs>a.active,body[data-page] .site-nav .nav-tabs>a.active{padding:0 16px;border:0;border-radius:2px;background:#edf4f6;color:#233f50;box-shadow:inset 0 1px #fff}
 .site-search{max-width:190px}
 .site-search input{width:146px;height:40px;min-height:40px;padding:0 12px;border:1px solid #c6d8e0;border-radius:4px;background:#f8fbfc;color:#2a485a;font-size:11.5px}
 .site-search input:focus{border-color:#63899a;outline:0;box-shadow:0 0 0 3px #aac4d153}
 .site-search-results{border-color:#c3d4dd;border-radius:5px;box-shadow:0 19px 55px #1d374b2e}
 .site-search-results a:hover,.site-search-results a.active{background:#eef4f6!important;color:#2d5368!important}
 .site-nav .language-toggle,.site-nav .nav-language-button{min-height:40px;padding:0 14px!important;border-radius:4px}
+body[data-page] .site-nav .language-toggle{border-color:#304858!important;background:#304858;color:#fff!important}
+body[data-page] .site-nav .language-toggle:hover,body[data-page] .site-nav .language-toggle:focus-visible{background:#426275;color:#fff!important}
 .site-nav :is(a,button):focus-visible,.menu-button:focus-visible{outline:2px solid #83a8b9;outline-offset:2px}
 
 /* Home: Edge Cut and original half-page photograph. */
@@ -276,7 +278,7 @@ body[data-page]{--accent:#456b7d;--accent-dark:#2c4658;--accent-soft:#e7eef1;--f
 .home-portrait figcaption{align-self:end;padding:7px 0;background:transparent;text-align:right}
 
 /* Inner pages: low contrast ghost text generated from the managed heading. */
-.page-hero-quiet{position:relative;overflow:hidden;background:#f5f8f9!important}
+.page-hero-quiet{position:relative;overflow:hidden;background:#f5f8f9!important;text-align:left}
 .page-hero-quiet:before{content:attr(data-title);position:absolute;right:-.18em;top:0;max-width:80%;overflow:hidden;white-space:nowrap;font:500 clamp(80px,9vw,154px)/1 var(--compact-serif);letter-spacing:-.06em;color:#d7e6eb;opacity:.33;pointer-events:none}
 .page-hero-quiet>.container{position:relative;z-index:1;border-left:2px solid #7195a5;padding-left:24px}
 .page-hero-quiet>.container:before{content:"";position:absolute;left:-3px;top:0;height:34%;width:3px;background:#52758a}
@@ -309,7 +311,7 @@ main a[href]:not(.button):not(.publication-action):not(.activity-link):hover,mai
 .category-interest .interest-summary-item{border:1px solid #d5e1e6;background:#f2f6f7;padding:10px 14px;margin:6px 0}
 .category-education .compact-list article{border:0;border-left:2px solid #9bb5c0;background:#f3f7f8;padding:12px 15px;margin:7px 0}
 .category-honor .timeline-item{border:0;border-left:2px solid #abc1ca;background:#f2f6f7;padding:11px 15px;margin:7px 0}
-.category-teaching .teaching-card{border:0;border-left:2px solid #a3bac5;border-radius:0;background:#f2f6f7;padding:12px 15px;box-shadow:none}
+.category-teaching .teaching-card{border:1px solid #d6e3e8;border-left:2px solid #a3bac5;border-radius:0;background:#f2f6f7;padding:12px 15px;margin:6px 0;box-shadow:none}
 .category-contact .contact-grid>div,.contact-section .contact-grid>div{min-width:0;padding:12px 14px;border:1px solid #66808e;background:#3a5667}
 .contact-details-section .contact-grid>div{padding:12px 14px;border:1px solid #d6e2e7;background:#f3f7f8}
 .contact-details-section .contact-grid a,.contact-details-section .contact-grid p{overflow-wrap:anywhere}
