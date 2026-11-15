@@ -95,9 +95,15 @@ def role_badge(entry: dict[str, Any], lang: str) -> str:
     return f'&#160;<span class="role-note">{rich_html(role)}</span>'
 
 
-def render_activity(entry: dict[str, Any], lang: str) -> str:
+def render_activity(entry: dict[str, Any], lang: str, today: date | None = None) -> str:
     title = linked_title(entry, lang)
     badge = role_badge(entry, lang) if entry.get("type") == "conference" else ""
+    if entry.get("type") == "visit":
+        today = today or datetime.now(ZoneInfo("Asia/Taipei")).date()
+        start = str(entry.get("start_date") or "")
+        end = str(entry.get("end_date") or start)
+        if start and start <= today.isoformat() <= end:
+            badge = f'&#160;<span class="role-note">{"進行中" if lang == "zh" else "Current"}</span>'
     slides = ""
     if entry.get("slides_url"):
         label = "投影片" if lang == "zh" else "Slides"
@@ -687,7 +693,7 @@ def category_body(data: dict[str, Any], category: dict[str, Any], lang: str, tod
     if kind == "featured_publications":
         return '<ol class="publication-list">' + "".join(f'<li>{render_publication_article(x, lang, homepage=True)}</li>' for x in items) + '</ol>', len(items)
     if kind == "upcoming":
-        return '<div class="timeline">' + "".join(render_activity(x, lang) for x in items) + '</div>', len(items)
+        return '<div class="timeline">' + "".join(render_activity(x, lang, today) for x in items) + '</div>', len(items)
     if kind == "contact":
         return render_contact(items, lang), len(items)
     if kind == "interest":
@@ -699,7 +705,7 @@ def category_body(data: dict[str, Any], category: dict[str, Any], lang: str, tod
     if kind == "publication":
         return '<ol class="publication-list">' + "".join(f'<li>{render_publication_article(x, lang)}</li>' for x in items) + '</ol>', len(items)
     if kind in {"visit", "talk", "conference"}:
-        return '<div class="timeline compact-timeline">' + "".join(render_activity(x, lang) for x in items) + '</div>', len(items)
+        return '<div class="timeline compact-timeline">' + "".join(render_activity(x, lang, today) for x in items) + '</div>', len(items)
     if kind == "organization":
         return '<div class="timeline organization-timeline">' + "".join(render_organization(x, lang) for x in items) + '</div>', len(items)
     if kind == "teaching":
@@ -750,7 +756,7 @@ def render_home_overview_panel(
             f'<!-- CMS:HOME_PUBLICATIONS:START -->\n{entries}\n'
             f'<!-- CMS:HOME_PUBLICATIONS:END -->\n</ol></div>'
         )
-    entries = "".join(render_activity(item, lang) for item in items)
+    entries = "".join(render_activity(item, lang, today) for item in items)
     link_text = "所有活動 →" if lang == "zh" else "All activities →"
     return (
         f'<aside class="home-upcoming managed-category category-upcoming" '
@@ -1367,7 +1373,7 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
     }
     for pattern, replacement in patterns.items():
         text = re.sub(pattern, replacement, text)
-    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115-v10q3">'
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261116-v10q4">'
     if 'assets/compact.css' in text:
         text = re.sub(r'<link rel="stylesheet" href="[^"]*assets/compact\.css(?:\?v=[^"]*)?">', compact, text, count=1)
     else:
@@ -1392,7 +1398,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    compact_url = _absolute_url(base, "assets/compact.css?v=20261115-v10q3")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261116-v10q4")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.svg")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 from people_config import link_people_html, load_people
@@ -135,6 +135,17 @@ def _active_activity(item: dict[str, Any], today: date) -> bool:
     return bool(final_date and final_date >= today.isoformat())
 
 
+def activity_visible_on_activities(item: dict[str, Any], today: date) -> bool:
+    """Date when a scheduled item first enters the public Activities page."""
+    kind = str(item.get("type") or "")
+    start = str(item.get("start_date") or "")
+    if kind in {"organization", "visit"}:
+        return bool(start and start <= today.isoformat())
+    if kind == "talk":
+        return bool(start and start <= (today + timedelta(days=2)).isoformat())
+    return True
+
+
 def _preferred_order(items: list[dict[str, Any]], selected_ids: list[str]) -> list[dict[str, Any]]:
     """Keep the selected set, but apply an optional user-defined relative order."""
     by_id = {str(item.get("id")): item for item in items}
@@ -159,7 +170,14 @@ def homepage_publications(data: dict[str, Any]) -> list[dict[str, Any]]:
 
 def homepage_activities(data: dict[str, Any], today: date) -> list[dict[str, Any]]:
     config = normalized_homepage_config(data)["activities"]
-    items = [item for item in data.get("activities", []) if _active_activity(item, today)]
+    items = [
+        item for item in data.get("activities", [])
+        if _active_activity(item, today)
+        and (
+            item.get("type") == "conference"
+            or (item.get("type") == "visit" and str(item.get("start_date") or "") > today.isoformat())
+        )
+    ]
     by_id = {str(item.get("id")): item for item in items}
     if config["mode"] == "manual":
         return [by_id[item_id] for item_id in config["selected_ids"] if item_id in by_id]

@@ -596,7 +596,7 @@ def patch_build_site(module: Any) -> None:
 
     module.apply_home_cover = apply_home_cover
 
-    def render_one(data: dict[str, Any], item: dict[str, Any], lang: str) -> str:
+    def render_one(data: dict[str, Any], item: dict[str, Any], lang: str, today: Any) -> str:
         style = str(item.get("display_style") or item.get("type") or "generic")
         if style == "publication":
             return '<ol class="publication-list mixed-block"><li>' + module.render_publication_article(item, lang) + "</li></ol>"
@@ -609,7 +609,7 @@ def patch_build_site(module: Any) -> None:
         if style == "honor":
             return '<div class="timeline compact-timeline mixed-block">' + module.render_honor(item, lang) + "</div>"
         if style in {"visit", "talk", "conference"}:
-            return '<div class="timeline compact-timeline mixed-block">' + module.render_activity(item, lang) + "</div>"
+            return '<div class="timeline compact-timeline mixed-block">' + module.render_activity(item, lang, today) + "</div>"
         if style == "organization":
             return '<div class="timeline organization-timeline mixed-block">' + module.render_organization(item, lang) + "</div>"
         if style in {"contact", "personal"}:
@@ -620,7 +620,7 @@ def patch_build_site(module: Any) -> None:
         if category.get("kind") != MIXED_KIND:
             return original(data, category, lang, today)
         items = module.category_items(data, category, today)
-        return '<div class="mixed-content">' + "".join(render_one(data, item, lang) for item in items) + "</div>", len(items)
+        return '<div class="mixed-content">' + "".join(render_one(data, item, lang, today) for item in items) + "</div>", len(items)
 
     module.category_body = category_body
     module._cms_extensions_patched = True
