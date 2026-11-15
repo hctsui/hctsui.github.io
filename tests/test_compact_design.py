@@ -19,6 +19,25 @@ from category_config import categories_for_page, normalized_pages, validate_cate
 
 
 class CompactDesignTests(unittest.TestCase):
+    def test_office_link_survives_profile_sync_and_is_localized(self) -> None:
+        from cms_extensions import personal_profile, sync_personal_profile
+        from build_site import managed_contact_items, render_contact
+
+        data = load_data()
+        profile = personal_profile(data)
+        profile["office_url"] = "https://example.org/location"
+        sync_personal_profile(data, profile)
+        for lang in ("en", "zh"):
+            markup = render_contact(managed_contact_items(data), lang)
+            self.assertIn('href="https://example.org/location"', markup)
+            self.assertIn(profile["office"][lang], markup)
+        profile["office_url"] = ""
+        sync_personal_profile(data, profile)
+        self.assertNotIn('href="https://example.org/location"', render_contact(managed_contact_items(data), "en"))
+        profile["office_url"] = "javascript:alert(1)"
+        with self.assertRaises(ValueError):
+            sync_personal_profile(data, profile)
+
     def test_chinese_featured_publication_authors_use_chinese_names(self) -> None:
         data = load_data()
         entries = {item["id"]: item for item in data["publications"]}
@@ -110,8 +129,8 @@ class CompactDesignTests(unittest.TestCase):
         from build_site import contact_form_home_card
 
         data = load_data()
-        self.assertIn('Fill out →</a>', contact_form_home_card(data, "en"))
-        self.assertIn('填寫 →</a>', contact_form_home_card(data, "zh"))
+        self.assertIn('Fill out<sup aria-hidden="true">↗</sup></a>', contact_form_home_card(data, "en"))
+        self.assertIn('填寫<sup aria-hidden="true">↗</sup></a>', contact_form_home_card(data, "zh"))
 
 
 if __name__ == "__main__":

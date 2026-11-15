@@ -630,6 +630,8 @@ def render_contact(items: list[dict[str, Any]], lang: str, *, extra_card: str = 
         title = rich_html(plain_value(entry, "title", lang))
         value = rich_html(plain_value(entry, "description", lang))
         url = str(entry.get("url") or "").strip()
+        if url and not re.match(r"^https?://[^\s]+$", url, flags=re.I) and not re.match(r"^mailto:[^\s@]+@[^\s@]+$", url, flags=re.I):
+            url = ""
         body = f'<a href="{esc(url)}" rel="noopener">{value}</a>' if url else f'<p>{value}</p>'
         entry_id = str(entry.get("id") or "")
         row_class = ' class="contact-location"' if entry_id == "contact-address-office" else ""
@@ -662,11 +664,11 @@ def contact_form_home_card(data: dict[str, Any], lang: str) -> str:
     if not config.get("enabled"):
         return ""
     title = "聯絡表單" if lang == "zh" else "Contact Form"
-    label = "填寫 →" if lang == "zh" else "Fill out →"
+    label = "填寫" if lang == "zh" else "Fill out"
     href = "contact.html"
     return (
         '<div class="contact-form-entry" data-system-entry="contact-form">'
-        f'<span>{title}</span><a href="{href}">{label}</a></div>'
+        f'<span>{title}</span><a href="{href}">{label}<sup aria-hidden="true">↗</sup></a></div>'
     )
 
 
@@ -845,7 +847,7 @@ def render_contact_page_main(data: dict[str, Any], lang: str) -> str:
         unavailable = "聯絡表單目前尚未開放。" if lang == "zh" else "The contact form is currently unavailable."
         form = f'<div class="contact-form-unavailable">{esc(unavailable)}</div>'
     return (
-        '<section class="contact-page-hero"><div class="container">'
+        f'<section class="contact-page-hero page-hero-quiet" data-title="{esc(design["title"][lang])}"><div class="container">'
         f'<h1>{title}</h1>'
         '</div></section>'
         f'<section class="contact-details-section"><div class="container"><h2>{details_title}</h2>{render_contact(details, lang)}</div></section>'
@@ -940,7 +942,7 @@ def page_header(data: dict[str, Any], page_id: str, lang: str, visible_categorie
         href = "https://hctsui.org/files/Hung-Chun-Tsui-CV-zh.pdf" if lang == "zh" else "https://hctsui.org/files/Hung-Chun-Tsui-CV.pdf"
         text = "下載 PDF 履歷" if lang == "zh" else "Download PDF CV"
         download = f'<a class="button primary cv-download" href="{href}" rel="noopener" target="_blank">{text}</a>'
-    intro_html = f'<p class="page-intro">{intro}</p>' if page_id not in {"cv", "publications", "activities", "teaching"} and intro else ""
+    intro_html = ""
     jumps = ""
     if page_id not in {"home", "cv", "contact"} and visible_categories:
         links = "".join(
@@ -951,7 +953,7 @@ def page_header(data: dict[str, Any], page_id: str, lang: str, visible_categorie
         if links:
             label = "頁面區段" if lang == "zh" else "Page sections"
             jumps = f'<nav class="section-jumps" aria-label="{label}">{links}</nav>'
-    return f'<section class="page-hero"><div class="container"><h1 class="page-title">{title}</h1>{intro_html}{download}{jumps}</div></section>'
+    return f'<section class="page-hero page-hero-quiet" data-title="{esc(header["title"][lang])}"><div class="container"><h1 class="page-title">{title}</h1>{intro_html}{download}{jumps}</div></section>'
 
 
 def _course_pair(row: dict[str, Any], field: str, lang: str) -> str:
@@ -1345,7 +1347,7 @@ def custom_page_shell(page: dict[str, Any], lang: str) -> str:
 
 
 def page_theme_style(color: str) -> str:
-    value = color if re.fullmatch(r"#[0-9a-fA-F]{6}", color or "") else "#8b3d2e"
+    value = color if re.fullmatch(r"#[0-9a-fA-F]{6}", color or "") else "#304858"
     rgb = tuple(int(value[i:i + 2], 16) for i in (1, 3, 5))
     dark = "#" + "".join(f"{round(channel * .68):02x}" for channel in rgb)
     soft_rgb = tuple(round(255 - (255 - channel) * .22) for channel in rgb)

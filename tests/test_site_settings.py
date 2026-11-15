@@ -232,8 +232,8 @@ class SiteSettingsTests(unittest.TestCase):
         settings["contact_form"]["page_design"]["colors"]["accent"] = "#123456"
         data["settings"].update(settings)
         self.assertIn('<div class="contact-form-entry"', contact_form_home_card(data, "en"))
-        self.assertIn('href="contact.html">Fill out →</a>', contact_form_home_card(data, "en"))
-        self.assertIn('href="contact.html">填寫 →</a>', contact_form_home_card(data, "zh"))
+        self.assertIn('href="contact.html">Fill out<sup aria-hidden="true">↗</sup></a>', contact_form_home_card(data, "en"))
+        self.assertIn('href="contact.html">填寫<sup aria-hidden="true">↗</sup></a>', contact_form_home_card(data, "zh"))
         page = render_contact_page_main(data, "en")
         self.assertIn("Write to me", page)
         self.assertIn('class="contact-form-shell"', page)

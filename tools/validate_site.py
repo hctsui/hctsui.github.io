@@ -203,7 +203,7 @@ for page in data.get("settings", {}).get("pages", []):
 contact_settings = current_site_settings(data)["contact_form"]
 for rel in ("contact.html", "zh/contact.html"):
     text = (ROOT / rel).read_text(encoding="utf-8")
-    for fragment in ('data-page="contact"', 'class="contact-page-hero"', 'class="contact-page-section"'):
+    for fragment in ('data-page="contact"', 'class="contact-page-hero page-hero-quiet"', 'class="contact-page-section"'):
         if fragment not in text:
             errors.append(f"{rel}: missing contact page contract {fragment!r}")
     if contact_settings["enabled"] and 'class="contact-form-shell"' not in text:

@@ -335,7 +335,7 @@ def default_error_page() -> dict[str, Any]:
         "colors": {
             "background": "#f8f6f2",
             "surface": "#ffffff",
-            "accent": "#9a5540",
+            "accent": "#304858",
             "text": "#26313d",
             "muted": "#69727a",
             "button": "#2c4758",
