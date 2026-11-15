@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import json
-from datetime import date
+import os
+from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlparse
+from zoneinfo import ZoneInfo
 
 from category_config import all_items, categories_for_page, migrate_category_data, validate_category_data
+from homepage_config import homepage_activities
 from homepage_config import validate_homepage_config
 from people_config import load_people, validate_people
 from site_settings_config import current_site_settings, validate_site_settings
@@ -129,8 +132,13 @@ page_files = {
     "teaching": ("teaching.html", "zh/teaching.html"),
     "contact": ("contact.html", "zh/contact.html"),
 }
+today_override = os.environ.get("SITE_TODAY", "")
+today = date.fromisoformat(today_override) if today_override else datetime.now(
+    ZoneInfo(data.get("settings", {}).get("timezone", "Asia/Tokyo"))
+).date()
+upcoming_ids = {str(item.get("id") or "") for item in homepage_activities(data, today)}
 for page_id, files in page_files.items():
-    category_ids = [c["id"] for c in categories_for_page(data, page_id) if c.get("show_on_web", True)]
+    categories = [c for c in categories_for_page(data, page_id) if c.get("show_on_web", True)]
     for rel in files:
         path = ROOT / rel
         text = path.read_text(encoding="utf-8")
@@ -138,10 +146,16 @@ for page_id, files in page_files.items():
             errors.append(f"{rel}: must contain exactly one doctype")
         if text.count('<main id="main">') != 1:
             errors.append(f"{rel}: must contain exactly one main element")
-        for category_id in category_ids:
+        for category in categories:
+            category_id = category["id"]
             count = text.count(f'data-category-id="{category_id}"')
-            # Empty categories are intentionally hidden.
-            has_items = any(item.get("category_id") == category_id for item in all_items(data))
+            # Activities already shown in homepage Upcoming are omitted from
+            # Activities. A category containing only those items is hidden.
+            has_items = any(
+                item.get("category_id") == category_id
+                and (page_id != "activities" or str(item.get("id") or "") not in upcoming_ids)
+                for item in all_items(data)
+            )
             if has_items and count != 1:
                 errors.append(f"{rel}: category {category_id} should appear exactly once")
 
