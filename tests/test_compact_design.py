@@ -106,6 +106,13 @@ class CompactDesignTests(unittest.TestCase):
             self.assertEqual(markup.count('href="mailto:hctsui.math@gmail.com"'), 1)
             self.assertEqual(markup.count('class="contact-location"'), 1)
 
+    def test_home_contact_form_link_has_directional_cue(self) -> None:
+        from build_site import contact_form_home_card
+
+        data = load_data()
+        self.assertIn('Fill out →</a>', contact_form_home_card(data, "en"))
+        self.assertIn('填寫 →</a>', contact_form_home_card(data, "zh"))
+
 
 if __name__ == "__main__":
     unittest.main()
