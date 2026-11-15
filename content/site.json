@@ -1080,6 +1080,7 @@
         "en": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
         "zh": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號"
       },
+      "office_url": "https://www.google.com/maps/search/?api=1&query=National+Tsing+Hua+University+General+Building+III",
       "languages": {
         "en": "Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1)",
         "zh": "中文（母語） | 英文（CEFR C1） | 日文（CEFR A1）"
@@ -4060,7 +4061,8 @@
         }
       ],
       "personal_key": "office",
-      "display_style": "contact"
+      "display_style": "contact",
+      "url": "https://www.google.com/maps/search/?api=1&query=National+Tsing+Hua+University+General+Building+III"
     },
     {
       "id": "personal-2600001",
