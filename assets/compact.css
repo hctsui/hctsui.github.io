@@ -316,6 +316,16 @@ main a[href]:not(.button):not(.publication-action):not(.activity-link):hover,mai
 .contact-details-section .contact-grid>div{padding:12px 14px;border:1px solid #d6e2e7;background:#f3f7f8}
 .contact-details-section .contact-grid a,.contact-details-section .contact-grid p{overflow-wrap:anywhere}
 
+/* Keep the bilingual error page in the same quiet visual language. */
+body[data-page="404"]{--nf-background:#f5f8f9;--nf-surface:#f5f8f9;--nf-accent:#456b7d;--nf-button:#304858}
+.not-found-main{width:min(900px,calc(100% - 56px))}
+.not-found-card{border:0!important;border-left:3px solid #7195a5!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;text-align:left!important;padding:24px 32px!important}
+.not-found-code{font-weight:500!important;letter-spacing:-.06em}
+.not-found-card h1{font:500 clamp(37px,4.5vw,52px)/1.1 var(--compact-serif)!important;letter-spacing:-.045em}
+.not-found-description{margin-left:0!important}
+.not-found-actions{justify-content:flex-start!important}
+.not-found-button{border-radius:3px!important}
+
 @media(max-width:1050px){.site-nav .nav-tabs>a,.site-nav .nav-tabs>a.active{padding:0 10px}.site-search input{width:118px}}
 @media(max-width:850px){.menu-button{display:inline-flex}.site-nav{display:none;position:absolute;top:100%;left:20px;right:20px;max-height:calc(100vh - 75px);overflow:auto;flex-direction:column;align-items:stretch;gap:12px;padding:14px;background:#fff;border:1px solid #d2e0e5;box-shadow:0 16px 35px #203e552e}.site-nav.open{display:flex}.site-nav .nav-tabs{height:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));white-space:normal}.site-nav .nav-tabs>a,.site-nav .nav-tabs>a.active{min-height:35px;padding:7px 9px}.site-search,.site-search input{width:100%;max-width:none}.site-search-results{left:0;right:0;width:100%}}
-@media(max-width:700px){.home-hero:before{display:none}.home-hero-grid{grid-template-columns:1fr;gap:18px;min-height:0;padding:25px 0}.home-hero-copy{padding-left:15px}.home-portrait img{min-height:230px;max-height:360px}.page-hero-quiet:before{font-size:80px;max-width:100%;opacity:.25}.page-hero-quiet>.container{padding-left:16px}.category-teaching .teaching-card,.category-visit .timeline-item,.category-conference .timeline-item,.category-talk .timeline-item{grid-template-columns:1fr;gap:3px}}
+@media(max-width:700px){.home-hero:before{display:none}.home-hero-grid{grid-template-columns:1fr;gap:18px;min-height:0;padding:25px 0}.home-hero-copy{padding-left:15px}.home-portrait img{min-height:230px;max-height:360px}.page-hero-quiet:before{font-size:80px;max-width:100%;opacity:.25}.page-hero-quiet>.container{padding-left:16px}.category-teaching .teaching-card,.category-visit .timeline-item,.category-conference .timeline-item,.category-talk .timeline-item{grid-template-columns:1fr;gap:3px}.not-found-main{width:calc(100% - 32px)}.not-found-card{padding:20px!important}}

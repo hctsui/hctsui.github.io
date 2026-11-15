@@ -35,7 +35,7 @@ a { font-weight: 700; }
 
 
 /* Distinct page colors, shared layout */
-body[data-page="home"]{--accent:#a34f3b;--accent-dark:#733426;--accent-soft:#ead7cf;--surface-alt:#f1ece5;--line:#ddd2cb;--footer:#3d2c28;--footer-dark:#291d1a}
+body[data-page="home"]{--accent:#456b7d;--accent-dark:#2c4658;--accent-soft:#e7eef1;--surface-alt:#f3f7f8;--line:#d9e3e7;--footer:#304858;--footer-dark:#243947}
 body[data-page="publications"]{--accent:#315f9b;--accent-dark:#20436f;--accent-soft:#dce8f6;--surface-alt:#edf3fa;--line:#cbd8e8;--footer:#263c59;--footer-dark:#19283d}
 body[data-page="activities"]{--accent:#3f7a65;--accent-dark:#285443;--accent-soft:#dcece5;--surface-alt:#edf5f1;--line:#cbded5;--footer:#29483d;--footer-dark:#1b3029}
 body[data-page="honors"]{--accent:#9a6a20;--accent-dark:#684714;--accent-soft:#f2e6c9;--surface-alt:#faf5e8;--line:#e3d4ad;--footer:#554322;--footer-dark:#382d18}
