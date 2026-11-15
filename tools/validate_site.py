@@ -10,8 +10,7 @@ from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
 from category_config import all_items, categories_for_page, migrate_category_data, validate_category_data
-from homepage_config import homepage_activities
-from homepage_config import validate_homepage_config
+from homepage_config import activity_visible_on_activities, homepage_activities, validate_homepage_config
 from people_config import load_people, validate_people
 from site_settings_config import current_site_settings, validate_site_settings
 from process_request import migrate_data
@@ -149,11 +148,15 @@ for page_id, files in page_files.items():
         for category in categories:
             category_id = category["id"]
             count = text.count(f'data-category-id="{category_id}"')
-            # Activities already shown in homepage Upcoming are omitted from
-            # Activities. A category containing only those items is hidden.
+            # The generated Activities page applies the same date gates and
+            # omits items already shown in homepage Upcoming.
             has_items = any(
                 item.get("category_id") == category_id
-                and (page_id != "activities" or str(item.get("id") or "") not in upcoming_ids)
+                and (
+                    page_id != "activities"
+                    or (activity_visible_on_activities(item, today)
+                        and str(item.get("id") or "") not in upcoming_ids)
+                )
                 for item in all_items(data)
             )
             if has_items and count != 1:

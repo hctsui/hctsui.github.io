@@ -120,7 +120,11 @@ function homepageToday(){try{return new Date().toLocaleDateString('sv-SE',{timeZ
 function homepageItemTitle(item){return title(item)||item?.id||'未命名項目'}
 function homepageDate(item,section){return section==='activities'?String(item?.start_date||''):String(item?.date||item?.year||'')}
 function homepageCandidates(data,section){
-  const items=section==='publications'?[...(data?.publications||[])]:[...(data?.activities||[])].filter(item=>String(item.end_date||item.start_date||'')>=homepageToday());
+  const today=homepageToday();
+  const items=section==='publications'?[...(data?.publications||[])]:[...(data?.activities||[])].filter(item=>
+    String(item.end_date||item.start_date||'')>=today&&
+    (item.type==='conference'||(item.type==='visit'&&String(item.start_date||'')>today))
+  );
   return items.sort((a,b)=>homepageDate(b,section).localeCompare(homepageDate(a,section))||String(a.id).localeCompare(String(b.id)));
 }
 function homepageAutomaticIds(data,section,config){
@@ -145,7 +149,7 @@ function homepageAvailableHtml(data,section,config){
   if(config.mode!=='manual')return'';
   const candidates=homepageCandidates(data,section),selected=new Set(homepageResolvedIds(data,section,config));
   const available=candidates.filter(item=>!selected.has(String(item.id))).map(item=>`<button class="homepage-choice" data-home-add="${esc(section)}:${esc(item.id)}"><span>加入</span><strong>${esc(homepageItemTitle(item))}</strong><small>${esc(homepageDate(item,section))}</small></button>`).join('');
-  return`<div class="homepage-manual"><h4>可加入項目</h4><div class="homepage-choice-list">${available||'<p class="muted">沒有其他可加入項目。</p>'}</div>${section==='activities'?'<p class="field-hint">只列出尚未結束的活動；活動結束後會自動從首頁隱藏。</p>':''}</div>`;
+  return`<div class="homepage-manual"><h4>可加入項目</h4><div class="homepage-choice-list">${available||'<p class="muted">沒有其他可加入項目。</p>'}</div>${section==='activities'?'<p class="field-hint">首頁只顯示會議與尚未開始的訪問；籌辦經歷到開始日、演講提前兩天、訪問開始當日會由每日建置顯示在 Activities。</p>':''}</div>`;
 }
 function homepageSectionBodyHtml(data,section){
   const config=homepageDraft[section],isPublications=section==='publications';

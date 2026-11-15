@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any
 
 _ABSOLUTE_URL = re.compile(r"https?://[^\s\"'<>]+", flags=re.I)
-_ACTIVITY_PAGE_KINDS = {"visit", "talk", "conference", "organization"}
 _ACTIVITY_HTML_PATHS = ("activities.html", "zh/activities.html")
 
 
@@ -59,16 +58,16 @@ def filter_upcoming_from_activities(
     today: date,
     items: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Exclude exactly the entries currently rendered as homepage Upcoming."""
+    """Apply activity start dates and avoid repeating homepage Upcoming items."""
     if str(category.get("page_id") or "") != "activities":
         return items
-    if str(category.get("kind") or "") not in _ACTIVITY_PAGE_KINDS:
-        return items
 
+    from homepage_config import activity_visible_on_activities
     upcoming = _upcoming_ids(module, data, today)
-    if not upcoming:
-        return items
-    return [item for item in items if _source_id(item) not in upcoming]
+    return [
+        item for item in items
+        if activity_visible_on_activities(item, today) and _source_id(item) not in upcoming
+    ]
 
 
 def _article_markers(text: str, source_id: str) -> list[str]:
