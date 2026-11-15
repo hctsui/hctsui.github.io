@@ -12,7 +12,7 @@
       "language": "en",
       "title": "East Asia Core Doctoral Forum on Mathematics 2027",
       "description": "Tohoku University · Tohoku University, Sendai, Japan · Sendai · Japan",
-      "url": "/activities.html#conference-2701111",
+      "url": "/index.html#conference-2701111",
       "kind": "conference"
     },
     {
@@ -82,7 +82,7 @@
       "language": "en",
       "title": "The 12th POSTECH PMI NCTS Joint Workshop on Number Theory",
       "description": "National Taiwan University · National Taiwan University, Taipei, Taiwan · Taipei · Taiwan",
-      "url": "/activities.html#conference-2612281",
+      "url": "/index.html#conference-2612281",
       "kind": "conference"
     },
     {
@@ -166,7 +166,7 @@
       "language": "en",
       "title": "The 62nd TMS Annual Meeting",
       "description": "National Taiwan University · National Taiwan University, Taipei, Taiwan · Taipei · Taiwan",
-      "url": "/activities.html#conference-2701181",
+      "url": "/index.html#conference-2701181",
       "kind": "conference"
     },
     {
@@ -201,42 +201,21 @@
       "language": "en",
       "title": "Address & office",
       "description": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
-      "url": "/index.html#contact-2600003--at--home-contact",
-      "kind": "contact"
-    },
-    {
-      "language": "en",
-      "title": "Address & office",
-      "description": "General Building III, Room 628, 6F; No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
-      "url": "/index.html#contact-address-office--at--home-contact",
+      "url": "/index.html#contact",
       "kind": "contact"
     },
     {
       "language": "en",
       "title": "Institutional email",
       "description": "hctsui@gapp.nthu.edu.tw",
-      "url": "/index.html#contact-2600001--at--home-contact",
-      "kind": "contact"
-    },
-    {
-      "language": "en",
-      "title": "Institutional email",
-      "description": "hctsui@gapp.nthu.edu.tw",
-      "url": "/index.html#contact-institutional-email--at--home-contact",
+      "url": "/index.html#contact",
       "kind": "contact"
     },
     {
       "language": "en",
       "title": "Personal email",
       "description": "hctsui.math@gmail.com",
-      "url": "/index.html#contact-2600002--at--home-contact",
-      "kind": "contact"
-    },
-    {
-      "language": "en",
-      "title": "Personal email",
-      "description": "hctsui.math@gmail.com",
-      "url": "/index.html#contact-personal-email--at--home-contact",
+      "url": "/index.html#contact",
       "kind": "contact"
     },
     {
@@ -346,118 +325,6 @@
     },
     {
       "language": "en",
-      "title": "Address",
-      "description": "No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
-      "url": "/cv.html#personal-2600005",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Address",
-      "description": "No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300044, Taiwan (R.O.C.)",
-      "url": "/cv.html#personal-address",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Affiliation",
-      "description": "Department of Mathematics, National Tsing Hua University, Taiwan",
-      "url": "/cv.html#personal-2600002",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Affiliation",
-      "description": "Department of Mathematics, National Tsing Hua University, Taiwan",
-      "url": "/cv.html#contact-affiliation",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Email",
-      "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
-      "url": "/cv.html#personal-2600006",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Email",
-      "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
-      "url": "/cv.html#personal-email",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Languages",
-      "description": "Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1)",
-      "url": "/cv.html#personal-2600004",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Languages",
-      "description": "Mandarin (Native) | English (CEFR C1) | Japanese (CEFR A1)",
-      "url": "/cv.html#personal-languages",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Name",
-      "description": "Hung-Chun Tsui",
-      "url": "/cv.html#personal-2600001",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Name",
-      "description": "Hung-Chun Tsui",
-      "url": "/cv.html#profile-name",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "ORCID",
-      "description": "0009-0009-7445-5634",
-      "url": "/cv.html#personal-2600008",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "ORCID",
-      "description": "0009-0009-7445-5634",
-      "url": "/cv.html#personal-orcid",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Position",
-      "description": "PhD Student",
-      "url": "/cv.html#personal-2600003",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Position",
-      "description": "PhD Student",
-      "url": "/cv.html#profile-position",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Website",
-      "description": "https://hctsui.org",
-      "url": "/cv.html#personal-2600007",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
-      "title": "Website",
-      "description": "https://hctsui.org",
-      "url": "/cv.html#personal-website",
-      "kind": "personal"
-    },
-    {
-      "language": "en",
       "title": "Algebra Structures of Multiple Eisenstein Series in Positive Characteristic",
       "description": "Ting-Wei Chang, Song-Yun Chen, Fei-Jun Huang, and Hung-Chun Tsui · arXiv: 2603.10376.",
       "url": "/publications.html#publication-2603003",
@@ -537,7 +404,7 @@
       "language": "en",
       "title": "Get in touch",
       "description": "",
-      "url": "/index.html#home-contact",
+      "url": "/index.html#contact",
       "kind": "section"
     },
     {
@@ -559,13 +426,6 @@
       "title": "National Tsing Hua University",
       "description": "",
       "url": "/teaching.html#teaching-national-tsing-hua-university",
-      "kind": "section"
-    },
-    {
-      "language": "en",
-      "title": "Organization",
-      "description": "",
-      "url": "/activities.html#activity-organization",
       "kind": "section"
     },
     {
@@ -594,13 +454,6 @@
       "title": "Selected Publications",
       "description": "",
       "url": "/index.html#home-publications",
-      "kind": "section"
-    },
-    {
-      "language": "en",
-      "title": "Survey Papers",
-      "description": "",
-      "url": "/publications.html#publication-survey-papers",
       "kind": "section"
     },
     {
@@ -768,7 +621,7 @@
       "language": "zh",
       "title": "2027 東亞數學博士生論壇",
       "description": "東北大學 · 東北大學, 仙台, 日本 · 仙台 · 日本",
-      "url": "/zh/activities.html#conference-2701111",
+      "url": "/zh/index.html#conference-2701111",
       "kind": "conference"
     },
     {
@@ -831,7 +684,7 @@
       "language": "zh",
       "title": "中華民國數學會第 62 屆年會",
       "description": "國立臺灣大學 · 國立臺灣大學, 臺北, 臺灣 · 臺北 · 臺灣",
-      "url": "/zh/activities.html#conference-2701181",
+      "url": "/zh/index.html#conference-2701181",
       "kind": "conference"
     },
     {
@@ -880,7 +733,7 @@
       "language": "zh",
       "title": "第 12 屆 POSTECH PMI NCTS 數論聯合研討會",
       "description": "國立臺灣大學 · 國立臺灣大學, 臺北, 臺灣 · 臺北 · 臺灣",
-      "url": "/zh/activities.html#conference-2612281",
+      "url": "/zh/index.html#conference-2612281",
       "kind": "conference"
     },
     {
@@ -957,42 +810,21 @@
       "language": "zh",
       "title": "個人信箱",
       "description": "hctsui.math@gmail.com",
-      "url": "/zh/index.html#contact-2600002--at--home-contact",
-      "kind": "contact"
-    },
-    {
-      "language": "zh",
-      "title": "個人信箱",
-      "description": "hctsui.math@gmail.com",
-      "url": "/zh/index.html#contact-personal-email--at--home-contact",
+      "url": "/zh/index.html#contact",
       "kind": "contact"
     },
     {
       "language": "zh",
       "title": "地址與辦公室",
       "description": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號",
-      "url": "/zh/index.html#contact-2600003--at--home-contact",
-      "kind": "contact"
-    },
-    {
-      "language": "zh",
-      "title": "地址與辦公室",
-      "description": "國立清華大學第三綜合大樓 6 樓 628 室 · 300044 臺灣新竹市東區光復路二段 101 號",
-      "url": "/zh/index.html#contact-address-office--at--home-contact",
+      "url": "/zh/index.html#contact",
       "kind": "contact"
     },
     {
       "language": "zh",
       "title": "學校信箱",
       "description": "hctsui@gapp.nthu.edu.tw",
-      "url": "/zh/index.html#contact-2600001--at--home-contact",
-      "kind": "contact"
-    },
-    {
-      "language": "zh",
-      "title": "學校信箱",
-      "description": "hctsui@gapp.nthu.edu.tw",
-      "url": "/zh/index.html#contact-institutional-email--at--home-contact",
+      "url": "/zh/index.html#contact",
       "kind": "contact"
     },
     {
@@ -1102,118 +934,6 @@
     },
     {
       "language": "zh",
-      "title": "ORCID",
-      "description": "0009-0009-7445-5634",
-      "url": "/zh/cv.html#personal-2600008",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "ORCID",
-      "description": "0009-0009-7445-5634",
-      "url": "/zh/cv.html#personal-orcid",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "地址",
-      "description": "臺灣 300044 新竹市東區光復路二段 101 號",
-      "url": "/zh/cv.html#personal-2600005",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "地址",
-      "description": "臺灣 300044 新竹市東區光復路二段 101 號",
-      "url": "/zh/cv.html#personal-address",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "姓名",
-      "description": "崔鴻竣",
-      "url": "/zh/cv.html#personal-2600001",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "姓名",
-      "description": "崔鴻竣",
-      "url": "/zh/cv.html#profile-name",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "所屬單位",
-      "description": "臺灣 · 國立清華大學數學系",
-      "url": "/zh/cv.html#personal-2600002",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "所屬單位",
-      "description": "臺灣 · 國立清華大學數學系",
-      "url": "/zh/cv.html#contact-affiliation",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "網站",
-      "description": "https://hctsui.org",
-      "url": "/zh/cv.html#personal-2600007",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "網站",
-      "description": "https://hctsui.org",
-      "url": "/zh/cv.html#personal-website",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "職位",
-      "description": "博士生",
-      "url": "/zh/cv.html#personal-2600003",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "職位",
-      "description": "博士生",
-      "url": "/zh/cv.html#profile-position",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "語言",
-      "description": "中文（母語） | 英文（CEFR C1） | 日文（CEFR A1）",
-      "url": "/zh/cv.html#personal-2600004",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "語言",
-      "description": "中文（母語） | 英文（CEFR C1） | 日文（CEFR A1）",
-      "url": "/zh/cv.html#personal-languages",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "電子郵件",
-      "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
-      "url": "/zh/cv.html#personal-2600006",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
-      "title": "電子郵件",
-      "description": "hctsui@gapp.nthu.edu.tw | hctsui.math@gmail.com",
-      "url": "/zh/cv.html#personal-email",
-      "kind": "personal"
-    },
-    {
-      "language": "zh",
       "title": "v-進 Carlitz 多重對數函數與 v-進多重 zeta 值的分次結構",
       "description": "崔鴻竣 · arXiv：2610.25063。",
       "url": "/zh/publications.html#publication-2610008",
@@ -1291,13 +1011,6 @@
     },
     {
       "language": "zh",
-      "title": "學術活動籌辦",
-      "description": "",
-      "url": "/zh/activities.html#activity-organization",
-      "kind": "section"
-    },
-    {
-      "language": "zh",
       "title": "學術訪問",
       "description": "",
       "url": "/zh/activities.html#activity-visits",
@@ -1340,16 +1053,9 @@
     },
     {
       "language": "zh",
-      "title": "綜述論文",
-      "description": "",
-      "url": "/zh/publications.html#publication-survey-papers",
-      "kind": "section"
-    },
-    {
-      "language": "zh",
       "title": "聯絡",
       "description": "",
-      "url": "/zh/index.html#home-contact",
+      "url": "/zh/index.html#contact",
       "kind": "section"
     },
     {
