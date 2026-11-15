@@ -321,7 +321,9 @@ def sync_personal_profile(data: dict[str, Any], value: Any | None = None) -> dic
         ("personal-orcid", "personal", {"en": "ORCID", "zh": "ORCID"}, {"en": profile["orcid"], "zh": profile["orcid"]}, "orcid", "personal", orcid_url, [_placement("cv-personal", 4)], 10),
     ]
     for args in rows:
-        item = _upsert(profile_items, args[0])
+        item = next((row for row in profile_items if isinstance(row, dict) and row.get("personal_key") == args[4]), None)
+        if item is None:
+            item = _upsert(profile_items, args[0])
         # Preserve user-added extra placements, but enforce the managed defaults.
         previous = normalize_placements(item.get("display_placements"), primary=PROFILE_CATEGORY_ID)
         merged = {row["category_id"]: row for row in previous}
@@ -340,6 +342,22 @@ def sync_personal_profile(data: dict[str, Any], value: Any | None = None) -> dic
             placements=list(merged.values()),
             order=args[8],
         )
+
+    # Older site data used different IDs for the same profile fields. Keep one
+    # managed record per field so the admin and public pages cannot list both.
+    for args in rows:
+        key = args[4]
+        matches = [row for row in profile_items if isinstance(row, dict) and row.get("personal_key") == key]
+        keeper = next((row for row in matches if row.get("id") == args[0]), matches[0])
+        for duplicate in matches:
+            if duplicate is keeper:
+                continue
+            placements = normalize_placements(
+                [*keeper.get("display_placements", []), *duplicate.get("display_placements", [])],
+                primary=PROFILE_CATEGORY_ID,
+            )
+            keeper["display_placements"] = placements
+            profile_items.remove(duplicate)
 
     # The old contact affiliation must not appear in the Contact category.
     affiliation_item = _find_item(data, "contact-affiliation")

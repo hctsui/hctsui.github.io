@@ -106,7 +106,7 @@ def render_activity(entry: dict[str, Any], lang: str) -> str:
     desc = inline_value(entry, "description", lang)
     return (
         f'<article class="timeline-item" id="{esc(entry.get("id"))}" data-entry-id="{esc(entry.get("id"))}">'
-        f'<time>{esc(display_range(entry))}</time><div><h3>{title}</h3>{badge}'
+        f'<time>{esc(display_range(entry))}</time><div><h3>{title}{badge}</h3>'
         f'{f"<p>{desc}</p>" if desc else ""}{slides}</div></article>'
     )
 
@@ -606,9 +606,25 @@ def render_generic(entry: dict[str, Any], lang: str) -> str:
 
 
 def render_contact(items: list[dict[str, Any]], lang: str, *, extra_card: str = "") -> str:
+    canonical_ids = {
+        "institutional_email": "contact-institutional-email",
+        "personal_email": "contact-personal-email",
+        "office": "contact-address-office",
+    }
+    preferred = {key: next((item for item in items if item.get("id") == canonical_id), None)
+                 for key, canonical_id in canonical_ids.items()}
     cards = []
     inserted = False
+    seen: set[str] = set()
     for entry in items:
+        personal_key = str(entry.get("personal_key") or "")
+        if preferred.get(personal_key) is not None and entry is not preferred[personal_key]:
+            continue
+        identity = (str(entry.get("url") or "").strip() or plain_value(entry, "description", lang).strip()).casefold()
+        if identity and identity in seen:
+            continue
+        if identity:
+            seen.add(identity)
         title = rich_html(plain_value(entry, "title", lang))
         value = rich_html(plain_value(entry, "description", lang))
         url = str(entry.get("url") or "").strip()
@@ -1347,7 +1363,7 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
     }
     for pattern, replacement in patterns.items():
         text = re.sub(pattern, replacement, text)
-    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115-v5b">'
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261115-v5c">'
     if 'assets/compact.css' in text:
         text = re.sub(r'<link rel="stylesheet" href="[^"]*assets/compact\.css(?:\?v=[^"]*)?">', compact, text, count=1)
     else:
@@ -1372,7 +1388,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    compact_url = _absolute_url(base, "assets/compact.css?v=20261115-v5b")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261115-v5c")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.svg")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))

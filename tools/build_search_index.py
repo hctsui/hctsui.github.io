@@ -6,8 +6,10 @@ from __future__ import annotations
 import json
 import html
 import re
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 import cms_extensions
 cms_extensions.install()
@@ -18,6 +20,38 @@ from markup_config import static_math_html
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "content" / "site.json"
 OUTPUT = ROOT / "content" / "search-index.json"
+
+
+class _VisibleAnchors(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.ids: set[str] = set()
+        self.entries: set[str] = set()
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        values = dict(attrs)
+        if values.get("id"):
+            self.ids.add(values["id"])
+        if values.get("data-entry-id"):
+            self.entries.add(values["data-entry-id"])
+
+
+def valid_search_location(url: str, anchors: dict[str, _VisibleAnchors]) -> str:
+    """Resolve each result to an anchor that exists in the generated pages."""
+    path, fragment = urlsplit(url).path.lstrip("/"), urlsplit(url).fragment
+    current = anchors.get(path)
+    if current and (not fragment or fragment in current.ids):
+        return url
+    if not fragment:
+        return ""
+    home = "zh/index.html" if path.startswith("zh/") else "index.html"
+    homepage = anchors.get(home)
+    if homepage and fragment in homepage.ids:
+        return f"/{home}#{fragment}"
+    if homepage and (fragment == "home-contact" or fragment in homepage.entries):
+        if "contact" in homepage.ids:
+            return f"/{home}#contact"
+    return ""
 
 DOSSIER_PAGE = {
     "id": "dossier",
@@ -127,8 +161,26 @@ def build_index() -> dict[str, Any]:
             if path:
                 add(lang, entry_title(item, lang), description(item, lang), f"{path}#{anchor_id}", str(item.get("type") or "item"))
 
-    rows.sort(key=lambda row: (row["language"], row["kind"], row["title"].casefold()))
-    return {"schema_version": 1, "items": rows}
+    anchors: dict[str, _VisibleAnchors] = {}
+    for page in pages:
+        for path in (page.get("path") or {}).values():
+            if path and path not in anchors and (ROOT / path).is_file():
+                parser = _VisibleAnchors()
+                parser.feed((ROOT / path).read_text(encoding="utf-8"))
+                anchors[path] = parser
+    resolved = []
+    resolved_keys: set[tuple[str, str, str]] = set()
+    for row in rows:
+        location = valid_search_location(row["url"], anchors)
+        if not location:
+            continue
+        row["url"] = location
+        key = (row["language"], row["title"].casefold(), location)
+        if key not in resolved_keys:
+            resolved.append(row)
+            resolved_keys.add(key)
+    resolved.sort(key=lambda row: (row["language"], row["kind"], row["title"].casefold()))
+    return {"schema_version": 1, "items": resolved}
 
 def main() -> None:
     OUTPUT.write_text(json.dumps(build_index(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
