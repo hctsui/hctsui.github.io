@@ -128,43 +128,6 @@ def _install_settings() -> None:
     batch.apply_undo = apply_undo
 
 
-def _install_visibility() -> None:
-    import r2_build_fix as renderfix
-    old_clean = renderfix.clean_generated_activity_pages
-
-    def filter_activity(module, data, category, today, items):
-        if str(category.get("kind") or "") == "upcoming":
-            return items
-        return [item for item in items if activity_finished(item, today)]
-
-    def clean_pages(module, data, today):
-        paths = old_clean(module, data, today)
-        root = Path(module.ROOT)
-        hidden_ids = {
-            str(row.get("id")) for row in data.get("activities", [])
-            if row.get("id") and not activity_finished(row, today)
-        }
-        for rel in ("activities.html", "zh/activities.html"):
-            path = root / rel
-            if not path.is_file():
-                continue
-            original = path.read_text(encoding="utf-8")
-            text = original
-            for item_id in sorted(hidden_ids):
-                for rendered_id in renderfix._article_markers(text, item_id):
-                    text = renderfix._remove_article(text, rendered_id)
-            if any(renderfix._article_markers(text, item_id) for item_id in hidden_ids):
-                raise RuntimeError(f"Unfinished activities still present in {rel}")
-            if text != original:
-                path.write_text(text, encoding="utf-8")
-                if path not in paths:
-                    paths.append(path)
-        return paths
-
-    renderfix.filter_upcoming_from_activities = filter_activity
-    renderfix.clean_generated_activity_pages = clean_pages
-
-
 def _install_dossier_visibility() -> None:
     # build_dossier.py does `from category_config import items_for_category`.
     # Patch only within that command; other CMS/admin data remains unfiltered.
@@ -179,16 +142,22 @@ def _install_dossier_visibility() -> None:
 
 
 def _install_search_visibility() -> None:
-    # The index reads all content directly. Do not index hidden future records
-    # (even though they remain editable in content/site.json / Admin).
+    # The index reads all content directly; match the pages' date gates so an
+    # entry becomes searchable when it first appears in Upcoming or Activities.
     import process_request as core
+    from homepage_config import activity_visible_on_activities, homepage_activities
     original = core.migrate_data
 
     def public_only(data):
         result = original(data)
         public = copy.deepcopy(result)
         today = local_today(public)
-        public["activities"] = [row for row in public.get("activities", []) if activity_finished(row, today)]
+        upcoming = {str(row.get("id") or "") for row in homepage_activities(public, today)}
+        public["activities"] = [
+            row for row in public.get("activities", [])
+            if str(row.get("id") or "") in upcoming
+            or activity_visible_on_activities(row, today)
+        ]
         return public
 
     core.migrate_data = public_only
@@ -224,7 +193,6 @@ def install() -> None:
         return
     _INSTALLED = True
     _install_settings()
-    _install_visibility()
     name = Path(sys.argv[0]).name
     if name == "build_dossier.py":
         _install_dossier_visibility()
