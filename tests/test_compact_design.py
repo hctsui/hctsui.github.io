@@ -19,6 +19,36 @@ from category_config import categories_for_page, normalized_pages, validate_cate
 
 
 class CompactDesignTests(unittest.TestCase):
+    def test_new_publication_category_inherits_section_heading_and_jump(self) -> None:
+        from category_config import ensure_item_categories
+
+        data = load_data()
+        data["settings"]["categories"].append({
+            "id": "publication-survey-papers", "page_id": "publications",
+            "kind": "publication", "title": {"en": "Survey Papers", "zh": "綜述論文"},
+            "intro": {"en": "", "zh": ""}, "order": 10,
+            "show_on_web": True, "show_on_cv": True,
+        })
+        item = copy.deepcopy(data["publications"][0])
+        item.update(id="publication-survey-demo", group_id="survey-papers",
+                    category_id="publication-survey-papers")
+        data["publications"].append(item)
+        ensure_item_categories(data)
+        today = date(2026, 11, 16)
+        for lang, title in (("en", "Survey Papers"), ("zh", "綜述論文")):
+            rendered = [(category, render_category(data, category, lang, today, i))
+                        for i, category in enumerate(categories_for_page(data, "publications"))]
+            section = next(markup for category, markup in rendered
+                           if category["id"] == "publication-survey-papers")
+            visible = [(category, len(category_items(data, category, today)))
+                       for category, markup in rendered if markup]
+            self.assertIn(f'<h2 class="section-title">{title}</h2>', section)
+            self.assertIn('id="publication-survey-demo"', section)
+            self.assertIn(f'href="#publication-survey-papers">{title}',
+                          page_header(data, "publications", lang, visible))
+        css = (ROOT / "assets" / "compact.css").read_text(encoding="utf-8")
+        self.assertIn('.managed-category.section>.container>.section-title', css)
+
     def test_office_link_survives_profile_sync_and_is_localized(self) -> None:
         from cms_extensions import personal_profile, sync_personal_profile
         from build_site import managed_contact_items, render_contact

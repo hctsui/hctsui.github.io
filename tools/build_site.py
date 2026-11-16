@@ -556,9 +556,13 @@ def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *,
     home_page = next((page for page in normalized_pages(data) if page.get("id") == "home"), None)
     home_href = _navigation_href(data, home_page, lang, absolute=absolute, current_path=current_path) if home_page else "/"
     nav = render_site_navigation(data, current_page_id, lang, absolute=absolute, language_button=language_button, current_path=current_path)
+    icon_path = _absolute_url(current_site_settings(data)["seo"]["base_url"], "assets/images/carlitz-period-512.png") if absolute else ("../" * len(PurePosixPath(current_path).parent.parts) if current_path else ("../" if lang == "zh" else "")) + "assets/images/carlitz-period-512.png"
+    # The managed brand name remains the accessible name. Replace only the old
+    # HC initials in the visible wordmark; custom brand names remain intact.
+    visible_brand = re.sub(r"^HC\s+", "", brand, flags=re.I)
     return (
         '<header class="site-header"><div class="container nav-wrap">'
-        f'<a class="brand" href="{esc(home_href)}">{esc(brand)}</a>'
+        f'<a class="brand" href="{esc(home_href)}" aria-label="{esc(brand)}"><img class="brand-icon" src="{esc(icon_path)}" alt="" width="32" height="32"><span>{esc(visible_brand)}</span></a>'
         f'<button aria-controls="site-nav-{lang}" aria-expanded="false" class="menu-button" type="button">{esc(menu)}</button>'
         f'{nav}</div></header>'
     )
@@ -728,7 +732,7 @@ def render_category(data: dict[str, Any], category: dict[str, Any], lang: str, t
         classes += " contact-section"
     return (
         f'<section class="{classes}" data-category-id="{cid}" id="{cid}"><div class="container">'
-        f'<h2>{title}</h2>{f"<p class=\"section-intro\">{intro}</p>" if intro else ""}{body}</div></section>'
+        f'<h2 class="section-title">{title}</h2>{f"<p class=\"section-intro\">{intro}</p>" if intro else ""}{body}</div></section>'
     )
 
 
@@ -868,7 +872,7 @@ def render_home_contact(
     lang: str,
     today: date,
 ) -> str:
-    """Keep the original split contact layout and its public #contact anchor."""
+    """Render the managed homepage contacts in a single floating plate."""
     items = category_items(data, category, today)
     if not items:
         items = managed_contact_items(data)
@@ -878,9 +882,9 @@ def render_home_contact(
     intro_html = f'<p class="section-intro">{intro}</p>' if intro else ""
     return (
         f'<section class="section managed-category category-contact contact-section" '
-        f'data-category-id="{cid}" id="contact"><div class="container split"><div>'
+        f'data-category-id="{cid}" id="contact"><div class="container contact-layout"><div class="contact-heading">'
         f'<h2>{title}</h2>{intro_html}</div>'
-        f'<div>{render_contact(items, lang, extra_card=contact_form_home_card(data, lang))}</div></div></section>'
+        f'<div class="contact-plate">{render_contact(items, lang, extra_card=contact_form_home_card(data, lang))}</div></div></section>'
     )
 
 
@@ -1373,7 +1377,16 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
     }
     for pattern, replacement in patterns.items():
         text = re.sub(pattern, replacement, text)
-    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261116-v10q4">'
+    # Replace the icon set as a unit on every rebuild, including legacy HTML.
+    text = re.sub(r'<link\b[^>]*\brel=["\'](?:shortcut )?icon["\'][^>]*>', '', text, flags=re.I)
+    text = re.sub(r'<link\b[^>]*\brel=["\']apple-touch-icon["\'][^>]*>', '', text, flags=re.I)
+    icon_links = (
+        f'<link rel="icon" href="{prefix}assets/images/favicon.ico" sizes="any">'
+        f'<link rel="icon" href="{prefix}assets/images/carlitz-period-512.png" type="image/png">'
+        f'<link rel="apple-touch-icon" href="{prefix}assets/images/carlitz-period-180.png" sizes="180x180">'
+    )
+    text = text.replace('</head>', icon_links + '\n</head>', 1)
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261116-contact-logo">'
     if 'assets/compact.css' in text:
         text = re.sub(r'<link rel="stylesheet" href="[^"]*assets/compact\.css(?:\?v=[^"]*)?">', compact, text, count=1)
     else:
@@ -1398,9 +1411,10 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    compact_url = _absolute_url(base, "assets/compact.css?v=20261116-v10q4")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261116-contact-logo")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
-    favicon_url = _absolute_url(base, "assets/images/favicon.svg")
+    favicon_url = _absolute_url(base, "assets/images/favicon.ico")
+    touch_url = _absolute_url(base, "assets/images/carlitz-period-180.png")
     language_payload = json.dumps({"home": home, "redirect": error["auto_redirect"]}, ensure_ascii=False, separators=(",", ":"))
 
     def language_panel(lang: str) -> str:
@@ -1440,7 +1454,8 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>404 | {esc(seo["site_name"]["en"])}</title>
-  <link rel="icon" href="{esc(favicon_url)}" type="image/svg+xml">
+  <link rel="icon" href="{esc(favicon_url)}" sizes="any">
+  <link rel="apple-touch-icon" href="{esc(touch_url)}" sizes="180x180">
   <link rel="stylesheet" href="{esc(css_url)}">
   <script defer src="{esc(script_url)}"></script>
   <style>

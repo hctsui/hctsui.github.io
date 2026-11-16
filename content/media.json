@@ -2,11 +2,43 @@
   "schema_version": 1,
   "images": [
     {
+      "path": "assets/images/carlitz-period-180.png",
+      "name": "carlitz-period-180.png",
+      "label": "carlitz period 180",
+      "extension": ".png",
+      "size": 18844,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/carlitz-period-192.png",
+      "name": "carlitz-period-192.png",
+      "label": "carlitz period 192",
+      "extension": ".png",
+      "size": 20719,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/carlitz-period-512.png",
+      "name": "carlitz-period-512.png",
+      "label": "carlitz period 512",
+      "extension": ".png",
+      "size": 79724,
+      "kind": "images"
+    },
+    {
+      "path": "assets/images/carlitz-period-64.png",
+      "name": "carlitz-period-64.png",
+      "label": "carlitz period 64",
+      "extension": ".png",
+      "size": 4710,
+      "kind": "images"
+    },
+    {
       "path": "assets/images/favicon.svg",
       "name": "favicon.svg",
       "label": "favicon",
       "extension": ".svg",
-      "size": 226,
+      "size": 6408,
       "kind": "images"
     },
     {
