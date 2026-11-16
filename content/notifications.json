@@ -3,6 +3,33 @@
   "retention_days": 60,
   "notifications": [
     {
+      "id": "contact-b6e5ac87-d870-46b9-aea1-b7617fa9337b-1f3adb43c5",
+      "key": "contact:b6e5ac87-d870-46b9-aea1-b7617fa9337b",
+      "type": "contact",
+      "title": "收到新的網站聯絡訊息",
+      "message": "完整內容已由 Web3Forms 私下寄到 Email；公開通知資料不保存訪客姓名、信箱或留言內容。",
+      "created_at": "2026-11-16T08:50:13.067Z",
+      "updated_at": "2026-11-16T08:50:13.067Z",
+      "starred": false,
+      "read": false,
+      "status": "open",
+      "source_url": "",
+      "payload": {
+        "event_id": "b6e5ac87-d870-46b9-aea1-b7617fa9337b",
+        "received_at": "2026-11-16T08:50:13.067Z"
+      },
+      "actions": [
+        {
+          "id": "inbox",
+          "label": "開啟 Email 收件匣"
+        },
+        {
+          "id": "handled",
+          "label": "標記為已處理"
+        }
+      ]
+    },
+    {
       "id": "broken-link-conference-conference-2407011-url-https-ncts-ntu-edu-tw-even-f7511c1818",
       "key": "broken-link:conference:conference-2407011:url:https://ncts.ntu.edu.tw/events_3_detail.php?nid=343",
       "type": "broken_link",
