@@ -200,12 +200,13 @@ for rel, labels in home_contract.items():
         required_fragments.extend(
             (
                 'data-category-id="home-contact" id="contact"',
-                'class="container split"',
+                'class="container contact-layout"',
+                'class="contact-plate"',
             )
         )
     for fragment in required_fragments:
         if fragment not in text:
-            errors.append(f"{rel}: missing legacy homepage contract {fragment!r}")
+            errors.append(f"{rel}: missing homepage contract {fragment!r}")
 
 for page in data.get("settings", {}).get("pages", []):
     for lang in ("en", "zh"):
