@@ -556,13 +556,9 @@ def render_site_header(data: dict[str, Any], current_page_id: str, lang: str, *,
     home_page = next((page for page in normalized_pages(data) if page.get("id") == "home"), None)
     home_href = _navigation_href(data, home_page, lang, absolute=absolute, current_path=current_path) if home_page else "/"
     nav = render_site_navigation(data, current_page_id, lang, absolute=absolute, language_button=language_button, current_path=current_path)
-    icon_path = _absolute_url(current_site_settings(data)["seo"]["base_url"], "assets/images/carlitz-period-512.png") if absolute else ("../" * len(PurePosixPath(current_path).parent.parts) if current_path else ("../" if lang == "zh" else "")) + "assets/images/carlitz-period-512.png"
-    # The managed brand name remains the accessible name. Replace only the old
-    # HC initials in the visible wordmark; custom brand names remain intact.
-    visible_brand = re.sub(r"^HC\s+", "", brand, flags=re.I)
     return (
         '<header class="site-header"><div class="container nav-wrap">'
-        f'<a class="brand" href="{esc(home_href)}" aria-label="{esc(brand)}"><img class="brand-icon" src="{esc(icon_path)}" alt="" width="32" height="32"><span>{esc(visible_brand)}</span></a>'
+        f'<a class="brand" href="{esc(home_href)}">{esc(brand)}</a>'
         f'<button aria-controls="site-nav-{lang}" aria-expanded="false" class="menu-button" type="button">{esc(menu)}</button>'
         f'{nav}</div></header>'
     )
@@ -1386,7 +1382,7 @@ def apply_static_asset_paths(text: str, lang: str, page_path: str = "") -> str:
         f'<link rel="apple-touch-icon" href="{prefix}assets/images/carlitz-period-180.png" sizes="180x180">'
     )
     text = text.replace('</head>', icon_links + '\n</head>', 1)
-    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261116-contact-logo">'
+    compact = f'<link rel="stylesheet" href="{prefix}assets/compact.css?v=20261116-contact-hc">'
     if 'assets/compact.css' in text:
         text = re.sub(r'<link rel="stylesheet" href="[^"]*assets/compact\.css(?:\?v=[^"]*)?">', compact, text, count=1)
     else:
@@ -1411,7 +1407,7 @@ def render_404_page(data: dict[str, Any], today: date) -> str:
     }
     secondary = {lang: _absolute_url(base, error["secondary_url"][lang]) for lang in ("en", "zh")}
     css_url = _absolute_url(base, "assets/style.css")
-    compact_url = _absolute_url(base, "assets/compact.css?v=20261116-contact-logo")
+    compact_url = _absolute_url(base, "assets/compact.css?v=20261116-contact-hc")
     script_url = _absolute_url(base, "assets/script.js") + "?v=20260925-visible-math"
     favicon_url = _absolute_url(base, "assets/images/favicon.ico")
     touch_url = _absolute_url(base, "assets/images/carlitz-period-180.png")

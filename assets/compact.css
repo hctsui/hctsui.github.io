@@ -340,10 +340,6 @@ body[data-page="404"]{--nf-background:#f5f8f9;--nf-surface:#f5f8f9;--nf-accent:#
 @media(max-width:850px){.menu-button{display:inline-flex}.site-nav{display:none;position:absolute;top:100%;left:20px;right:20px;max-height:calc(100vh - 75px);overflow:auto;flex-direction:column;align-items:stretch;gap:12px;padding:14px;background:#fff;border:1px solid #d2e0e5;box-shadow:0 16px 35px #203e552e}.site-nav.open{display:flex}.site-nav .nav-tabs{height:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));white-space:normal}.site-nav .nav-tabs>a,.site-nav .nav-tabs>a.active{min-height:35px;padding:7px 9px}.site-search,.site-search input{width:100%;max-width:none}.site-search-results{left:0;right:0;width:100%}}
 @media(max-width:700px){.home-hero:before{display:none}.home-hero{background:#fff}.home-hero-grid{grid-template-columns:1fr;gap:0;min-height:0;padding:0}.home-hero-copy{margin:0;padding:32px 15px}.home-visual{width:calc(100% + 56px);height:330px;margin:0 -28px}.home-visual-panel{clip-path:none}.home-portrait img{min-height:330px;max-height:none}.home-name{font-size:clamp(44px,10vw,62px)}.page-hero-quiet:before{font-size:80px;max-width:100%;opacity:.25}.page-hero-quiet>.container{padding-left:18px}.category-teaching .teaching-card,.category-visit .timeline-item,.category-conference .timeline-item,.category-talk .timeline-item{grid-template-columns:1fr;gap:3px}.not-found-main{width:calc(100% - 32px)}.not-found-card{padding:20px!important}}
 
-/* The site identity is generated on every page from the managed brand name. */
-.brand{display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
-.brand-icon{display:block;width:32px;height:32px;flex:none;object-fit:contain}
-
 /* The same section heading is used by every CMS category, including future ones. */
 .managed-category.section>.container>.section-title{
   padding-bottom:11px;

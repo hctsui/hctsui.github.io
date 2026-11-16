@@ -19,6 +19,15 @@ from category_config import categories_for_page, normalized_pages, validate_cate
 
 
 class CompactDesignTests(unittest.TestCase):
+    def test_header_keeps_hc_wordmark_without_favicon_image(self) -> None:
+        from build_site import render_site_header
+
+        data = load_data()
+        for lang in ("en", "zh"):
+            header = render_site_header(data, "home", lang)
+            self.assertIn('>HC Tsui</a>', header)
+            self.assertNotIn('brand-icon', header)
+
     def test_new_publication_category_inherits_section_heading_and_jump(self) -> None:
         from category_config import ensure_item_categories
 
