@@ -15,7 +15,7 @@
       },
       "activities": {
         "mode": "soonest",
-        "limit": 5,
+        "limit": 4,
         "selected_ids": [
           "conference-2608241",
           "conference-2611071",

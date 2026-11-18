@@ -4606,6 +4606,65 @@
       "index_before": null,
       "index_after": null,
       "undo_of": null
+    },
+    {
+      "history_id": "issue-160-op-1",
+      "batch_issue": 160,
+      "applied_at": "2026-11-18T05:37:32.508118Z",
+      "expires_at": "2026-11-25T05:37:32.508118Z",
+      "reverted_by": null,
+      "request_digest": "3cf359ee80e44d8afd62f377c56cfdace3b0ebf48d599ae6f55fa33a52be6f71",
+      "request_action": "homepage",
+      "action": "homepage",
+      "type": "homepage",
+      "entry_id": "homepage",
+      "label": {
+        "en": "Homepage selections",
+        "zh": "首頁精選"
+      },
+      "before": {
+        "publications": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "publication-2604004",
+            "publication-2610008",
+            "publication-2609005"
+          ]
+        },
+        "activities": {
+          "mode": "soonest",
+          "limit": 5,
+          "selected_ids": [
+            "conference-2608241",
+            "conference-2611071",
+            "conference-2611081"
+          ]
+        }
+      },
+      "after": {
+        "publications": {
+          "mode": "manual",
+          "limit": 3,
+          "selected_ids": [
+            "publication-2604004",
+            "publication-2610008",
+            "publication-2609005"
+          ]
+        },
+        "activities": {
+          "mode": "soonest",
+          "limit": 4,
+          "selected_ids": [
+            "conference-2608241",
+            "conference-2611071",
+            "conference-2611081"
+          ]
+        }
+      },
+      "index_before": null,
+      "index_after": null,
+      "undo_of": null
     }
   ]
 }
